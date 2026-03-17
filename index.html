@@ -2932,6 +2932,23 @@ aside.sidebar {
   padding:20px 24px; margin-top:28px;
   border:1px solid var(--g200);
 }
+.psl-tip {
+  margin-top:14px; padding:14px 18px;
+  background:linear-gradient(135deg,#fff8e1,#fff3cd);
+  border:1.5px solid #f5c842; border-radius:12px;
+  display:flex; align-items:flex-start; gap:12px;
+}
+[data-theme="dark"] .psl-tip {
+  background:linear-gradient(135deg,#2a2410,#1f1c0a);
+  border-color:#7a6010;
+}
+.psl-tip-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+.psl-tip-title { font-size:13px; font-weight:700; color:#92680a; margin-bottom:4px; }
+[data-theme="dark"] .psl-tip-title { color:#f5c842; }
+.psl-tip-text { font-size:12.5px; color:#7a5c0a; line-height:1.6; }
+[data-theme="dark"] .psl-tip-text { color:#c9a83a; }
+.psl-tip-text strong { color:#92680a; }
+[data-theme="dark"] .psl-tip-text strong { color:#f5c842; }
 
 /* ════ BU DAUPHINE ════ */
 .bu-status-badge {
@@ -4402,6 +4419,16 @@ aside.sidebar {
         <div class="bu-service-name">WiFi eduroam</div>
         <div class="bu-service-desc">Tuto connexion au WiFi campus</div>
       </a>
+      <a href="https://moodle.psl.eu/" target="_blank" class="bu-service-card">
+        <div class="bu-service-ic">🎓</div>
+        <div class="bu-service-name">Moodle PSL</div>
+        <div class="bu-service-desc">Cours en ligne &amp; ressources péda.</div>
+      </a>
+      <a href="https://login.microsoftonline.com/" target="_blank" class="bu-service-card">
+        <div class="bu-service-ic">🏛️</div>
+        <div class="bu-service-name">My Dauphine</div>
+        <div class="bu-service-desc">Espace personnel SharePoint</div>
+      </a>
     </div>
 
     <!-- PSL SPORT -->
@@ -4469,6 +4496,16 @@ aside.sidebar {
         <div class="bu-service-ic">📶</div>
         <div class="bu-service-name">WiFi eduroam</div>
         <div class="bu-service-desc">Tuto connexion au WiFi campus</div>
+      </a>
+      <a href="https://moodle.psl.eu/" target="_blank" class="bu-service-card">
+        <div class="bu-service-ic">🎓</div>
+        <div class="bu-service-name">Moodle PSL</div>
+        <div class="bu-service-desc">Cours en ligne &amp; ressources péda.</div>
+      </a>
+      <a href="https://login.microsoftonline.com/" target="_blank" class="bu-service-card">
+        <div class="bu-service-ic">🏛️</div>
+        <div class="bu-service-name">My Dauphine</div>
+        <div class="bu-service-desc">Espace personnel SharePoint</div>
       </a>
     </div>
 
@@ -4679,6 +4716,17 @@ aside.sidebar {
         <div style="font-size:13px;color:var(--g600)">Inscription via le site PSL Sport · Paiement en ligne · Accès immédiat</div>
       </div>
       <a href="https://sports.inscription.psl.eu/" target="_blank" rel="noopener" class="btn" style="background:var(--blue);color:#fff">🏃 S'inscrire sur sport.psl.eu ↗</a>
+    </div>
+
+    <!-- TIP RÉSERVATION -->
+    <div class="psl-tip">
+      <div class="psl-tip-icon">💡</div>
+      <div class="psl-tip-body">
+        <div class="psl-tip-title">Astuce réservation — chaque jeudi à 8h</div>
+        <div class="psl-tip-text">
+          Les créneaux de la semaine suivante s'ouvrent <strong>chaque jeudi à 8h</strong>, que ce soit pour la salle de sport ou les cours collectifs. Si tu veux être sûr d'avoir ta séance, connecte-toi dès le jeudi matin pour réserver avant que ça parte.
+        </div>
+      </div>
     </div>
 
   </div>
