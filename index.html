@@ -7,9 +7,9 @@
 <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 32 32&#39;&gt;&lt;rect width=&#39;32&#39; height=&#39;32&#39; rx=&#39;6&#39; fill=&#39;%23003d7a&#39;/&gt;&lt;text x=&#39;16&#39; y=&#39;23&#39; text-anchor=&#39;middle&#39; fill=&#39;white&#39; font-size=&#39;20&#39; font-family=&#39;Georgia,serif&#39; font-style=&#39;italic&#39;&gt;D&lt;/text&gt;&lt;/svg&gt;" type="image/svg+xml">
 
 <meta name="theme-color" content="#003d7a">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link href="./DauphineGuide — L1 Droit-Éco Dauphine_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -7436,10 +7436,13 @@ function scheduleProfilNotifs(prof) {
 
 // ════ ONBOARDING ════
 function checkStep1(){
-  var p=document.getElementById('obPrenom').value.trim();
-  var g=document.getElementById('obGroupe').value;
+  var p=document.getElementById('obPrenom');
+  var g=document.getElementById('obGroupe');
   var b=document.getElementById('obCta1');
-  if(b)b.disabled=!(p.length>=2&&g);
+  if(!p||!g||!b)return;
+  var pVal=p.value.trim();
+  var gVal=g.value;
+  if(b)b.disabled=!(pVal.length>=2&&gVal);
 }
 function goStep(n){
   [1,2,3].forEach(function(i){
