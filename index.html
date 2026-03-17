@@ -10669,10 +10669,19 @@ setTimeout(renderCpHistorique, 800);
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker enregistré'))
-        .catch(err => console.log('SW registration failed:', err));
+      const swPath = new URL('sw.js', document.baseURI).href;
+      navigator.serviceWorker.register(swPath, { scope: './' })
+        .then(reg => {
+          console.log('✓ Service Worker enregistré:', reg.scope);
+          // Check for updates
+          reg.addEventListener('updatefound', () => {
+            console.log('Service Worker update found');
+          });
+        })
+        .catch(err => console.log('✗ SW registration échoué:', err));
     });
+  } else {
+    console.log('Service Workers not supported');
   }
 </script>
 </body></html>
