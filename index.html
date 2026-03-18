@@ -10540,6 +10540,7 @@ function renderNewsPanel(type, items, dateStr) {
   listEl.innerHTML = '<div class="news-panel-actions">'
     + '<div class="news-panel-count">Généré le ' + dateStr + ' · ' + items.length + ' articles</div>'
     + '<button class="news-clear-btn" onclick="clearNewsTab(\'' + type + '\')">🗑️ Effacer</button>'
+    + '<button class="news-clear-btn" onclick="clearNewsCache()" style="background:var(--g100);color:var(--g600);margin-left:6px">🔄 Réinitialiser le cache</button>'
     + '</div>'
     + items.map(function(n, i) {
       var lien = n.lien && n.lien.startsWith('http')
@@ -10604,6 +10605,16 @@ function clearNewsTab(type) {
 }
 
 function clearNews() { ['semaine','jour','constit','eco'].forEach(clearNewsTab); }
+
+function clearNewsCache() {
+  var now = new Date();
+  ['semaine','jour','constit','eco'].forEach(function(type) {
+    var todayKey = newsKey(type) + '_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
+    try { localStorage.removeItem(todayKey); } catch(e) {}
+  });
+  clearNews();
+  toast('Cache du jour effacé — tu peux regénérer les actus', '🗑️');
+}
 
 function closeNewsModal() { document.getElementById('newsModalBg').classList.remove('open'); }
 
