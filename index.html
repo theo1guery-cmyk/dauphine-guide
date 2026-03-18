@@ -6111,8 +6111,9 @@ async function generateFlashcardsGroq() {
     var raw   = data.choices[0].message.content.trim();
     console.log('Groq raw response:', raw); // Debug
     
-    // Éliminer les backticks code blocks d'abord
+    // Nettoyage agressif
     raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+    raw = raw.replace(/^\s*[\w\s]*\n/m, ''); // Supprimer première ligne si texte
     
     // Extraction robuste du JSON (cherche [ ... ])
     var jsonStart = raw.indexOf('[');
@@ -6123,7 +6124,37 @@ async function generateFlashcardsGroq() {
       throw new Error('Groq n\'a pas retourne du JSON valide. Reessaie.');
     }
     
-    var clean = raw.substring(jsonStart, jsonEnd + 1).trim();
+    // Extraction avec essai progressif
+    var clean = null;
+    var cards = null;
+    
+    // Essai 1: substring exact
+    try {
+      clean = raw.substring(jsonStart, jsonEnd + 1);
+      console.log('Attempt 1 - substring:', clean.substring(0, 100) + '...');
+      cards = JSON.parse(clean);
+    } catch(e1) {
+      console.warn('Attempt 1 failed:', e1.message);
+      
+      // Essai 2: retirer progressivement de la fin
+      for (var i = jsonEnd; i > jsonStart + 10; i--) {
+        try {
+          clean = raw.substring(jsonStart, i);
+          console.log('Attempt 2 - trying substring at position ' + i);
+          cards = JSON.parse(clean);
+          console.log('✓ Success at position ' + i);
+          break;
+        } catch(e2) {}
+      }
+    }
+    
+    if (!cards) {
+      console.error('All extraction attempts failed. Raw:', raw);
+      throw new Error('Impossible d\'extraire une reponse JSON valide');
+    }
+
+    if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
+
     console.log('Extracted JSON:', clean); // Debug
     
     var cards = JSON.parse(clean);
@@ -9114,10 +9145,10 @@ async function notesGenGroq() {
     var raw   = data.choices[0].message.content.trim();
     console.log('Groq notesGen raw:', raw); // Debug
     
-    // Éliminer les backticks code blocks d'abord
+    // Nettoyage agressif
     raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+    raw = raw.replace(/^\s*[\w\s]*\n/m, ''); // Supprimer première ligne si texte
     
-    // Chercher le JSON
     var jsonStart = raw.indexOf('[');
     var jsonEnd = raw.lastIndexOf(']');
     
@@ -9126,12 +9157,38 @@ async function notesGenGroq() {
       throw new Error('Groq n\'a pas retourne du JSON valide');
     }
     
-    var clean = raw.substring(jsonStart, jsonEnd + 1).trim();
-    console.log('Extracted JSON for notesGen:', clean); // Debug
+    // Extraction avec essai progressif
+    var clean = null;
+    var cards = null;
     
-    var cards = JSON.parse(clean);
+    // Essai 1: substring exact
+    try {
+      clean = raw.substring(jsonStart, jsonEnd + 1);
+      console.log('Attempt 1 - substring:', clean.substring(0, 100) + '...');
+      cards = JSON.parse(clean);
+    } catch(e1) {
+      console.warn('Attempt 1 failed:', e1.message);
+      
+      // Essai 2: retirer progressivement de la fin
+      for (var i = jsonEnd; i > jsonStart + 10; i--) {
+        try {
+          clean = raw.substring(jsonStart, i);
+          console.log('Attempt 2 - trying substring at position ' + i);
+          cards = JSON.parse(clean);
+          console.log('✓ Success at position ' + i);
+          break;
+        } catch(e2) {}
+      }
+    }
+    
+    if (!cards) {
+      console.error('All extraction attempts failed. Raw:', raw);
+      throw new Error('Impossible d\'extraire une reponse JSON valide');
+    }
 
     if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
+
+    console.log('Extracted JSON for notesGen:', clean); // Debug
 
     cards = cards.map(function(c) {
       return { cat: c.cat || mat, q: c.q, r: c.r, status: 'none' };
