@@ -5651,17 +5651,21 @@ aside.sidebar {
     <!-- Step 1: copy prompt -->
     <div id="notesGenStep1">
       <p style="font-size:13px;color:var(--g600);margin-bottom:12px">
-        Copie le prompt ci-dessous, colle-le sur
-        <a href="https://claude.ai/" target="_blank" style="color:var(--blue-mid)">claude.ai</a>,
-        puis reviens ici pour importer le JSON retourné.
+        Clique sur <strong>Générer</strong> — les flashcards apparaîssent directement depuis ta note.
       </p>
-      <div id="notesGenPromptPreview" style="background:var(--g50);border:1px solid var(--g200);
-        border-radius:8px;padding:10px 12px;font-size:11px;color:var(--g600);line-height:1.6;
-        max-height:80px;overflow:hidden;margin-bottom:12px;font-family:monospace"></div>
+      <div id="notesGenLoading" style="display:none;text-align:center;padding:12px;font-size:13px;color:var(--g600)">⏳ Generation en cours…</div>
       <div class="rev-modal-actions">
         <button class="rev-modal-cancel" onclick="notesGenClose()">Annuler</button>
-        <button class="rev-modal-save" id="notesGenCopyBtn" onclick="notesGenCopyPrompt()">📋 Copier le prompt</button>
+        <button class="rev-modal-save" id="notesGenCopyBtn" onclick="notesGenGroq()">✨ Générer avec Groq</button>
       </div>
+
+      <details style="margin-top:12px">
+        <summary style="font-size:11px;color:var(--g400);cursor:pointer;user-select:none">🔧 Fallback manuel (copier-coller)</summary>
+        <div style="margin-top:10px">
+          <div id="notesGenPromptPreview" style="background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--g600);line-height:1.6;max-height:80px;overflow:hidden;margin-bottom:12px;font-family:monospace"></div>
+          <button class="rev-modal-save" onclick="notesGenCopyPrompt()" style="width:100%">📋 Copier le prompt pour Claude</button>
+        </div>
+      </details>
     </div>
 
     <!-- Step 2: paste JSON -->
@@ -5669,11 +5673,9 @@ aside.sidebar {
       <p style="font-size:13px;color:var(--g600);margin-bottom:8px">
         ✅ Prompt copié ! Colle maintenant le JSON retourné par Claude :
       </p>
-      <textarea id="notesGenJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Réponse.&quot;}]" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;
-        padding:10px 12px;font-size:12px;font-family:&#39;Figtree&#39;,sans-serif;resize:vertical;
-        min-height:100px;color:var(--g900);outline:none" onfocus="this.style.borderColor=&#39;var(--blue-mid)&#39;" onblur="this.style.borderColor=&#39;var(--g200)&#39;"></textarea>
+      <textarea id="notesGenJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;}]" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:100px;color:var(--g900);outline:none"></textarea>
       <div class="rev-modal-actions" style="margin-top:10px">
-        <button class="rev-modal-cancel" onclick="document.getElementById(&#39;notesGenStep1&#39;).style.display=&#39;&#39;;document.getElementById(&#39;notesGenStep2&#39;).style.display=&#39;none&#39;">← Retour</button>
+        <button class="rev-modal-cancel" onclick="document.getElementById('notesGenStep1').style.display='';document.getElementById('notesGenStep2').style.display='none'">← Retour</button>
         <button class="rev-modal-save" onclick="notesGenImport()">✨ Importer les flashcards</button>
       </div>
     </div>
@@ -9071,6 +9073,74 @@ function notesGenImport() {
     toast(cards.length + ' flashcards importées depuis ta note !', '✨');
   } catch(e) {
     toast('JSON invalide — vérifie la réponse de Claude', '❌');
+  }
+}
+
+async function notesGenGroq() {
+  if (!window._notesGenPrompt) return;
+  var note = activeNoteId ? notes.find(function(n){ return n.id === activeNoteId; }) : null;
+  var mat  = note ? (note.mat || 'Cours') : 'Cours';
+  var btn  = document.getElementById('notesGenCopyBtn');
+  var load = document.getElementById('notesGenLoading');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ En cours...';
+  if (load) load.style.display = 'block';
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + GROQ_API_KEY
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        max_tokens: 1500,
+        temperature: 0.4,
+        messages: [{ role: 'user', content: window._notesGenPrompt }]
+      })
+    });
+
+    if (!res.ok) {
+      var errData = await res.json();
+      throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
+    }
+
+    var data  = await res.json();
+    var raw   = data.choices[0].message.content.trim();
+    var jsonStart = raw.indexOf('[');
+    var jsonEnd = raw.lastIndexOf(']');
+    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
+      throw new Error('Pas de JSON valide dans la réponse');
+    }
+    var clean = raw.substring(jsonStart, jsonEnd + 1);
+    var cards = JSON.parse(clean);
+
+    if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
+
+    cards = cards.map(function(c) {
+      return { cat: c.cat || mat, q: c.q, r: c.r, status: 'none' };
+    });
+    deck = cards.concat(deck);
+    saveDeck();
+    renderFilters(); renderCard(); renderStats();
+    notesGenClose();
+    toast(cards.length + ' flashcards generees depuis ta note !', '✨');
+
+  } catch(e) {
+    console.error('Groq notesGen error:', e);
+    if (e.message && e.message.indexOf('401') > -1) {
+      toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    } else if (e.message && e.message.indexOf('429') > -1) {
+      toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+    } else {
+      toast('Erreur : ' + e.message, '❌');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Générer avec Groq';
+    if (load) load.style.display = 'none';
   }
 }
 
