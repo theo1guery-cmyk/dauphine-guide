@@ -3385,7 +3385,10 @@ aside.sidebar {
           <div class="hc-shine"></div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
             <div class="hc-badge" style="margin-bottom:0">📰 News</div>
-            <div class="news-carousel-dots" id="homeNewsDots"></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="news-carousel-dots" id="homeNewsDots"></div>
+              <button onclick="event.stopPropagation();renderHomeNewsCarousel();this.textContent='✅';setTimeout(()=>this.textContent='🔄',1200)" title="Synchroniser les news" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;color:#fff;font-size:11px;padding:3px 7px;cursor:pointer;flex-shrink:0">🔄</button>
+            </div>
           </div>
           <div id="homeNewsCarousel" style="flex:1;position:relative;overflow:hidden;min-height:120px"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:8px;padding:8px 0"><div style="font-size:28px">📰</div><div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6">Génère des actus<br>dans <strong style="color:rgba(255,255,255,.7)">News juridiques</strong></div></div></div>
           <div class="hc-link" style="margin-top:8px">Voir toutes les news →</div>
@@ -10240,8 +10243,16 @@ function renderHomeNewsCarousel() {
   var container = document.getElementById('homeNewsCarousel');
   var dotsEl    = document.getElementById('homeNewsDots');
   if (!container) return;
+  // Load from per-tab keys (semaine en priorité, sinon jour, constit, eco)
   var saved = null;
-  try { saved = JSON.parse(localStorage.getItem('dauphine_news')); } catch(e) {}
+  var _types = ['semaine','jour','constit','eco'];
+  for (var _t = 0; _t < _types.length; _t++) {
+    try {
+      var _c = JSON.parse(localStorage.getItem('dauphine_news_' + _types[_t]));
+      if (_c && _c.items && _c.items.length) { saved = _c; break; }
+    } catch(e) {}
+  }
+  if (!saved) { try { saved = JSON.parse(localStorage.getItem('dauphine_news')); } catch(e) {} }
   if (!saved || !saved.items || !saved.items.length) {
     container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:8px;padding:8px 0"><div style="font-size:28px">📰</div><div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6">Génère des actus<br>dans <strong style=\"color:rgba(255,255,255,.7)\">News juridiques</strong></div></div>';
     if (dotsEl) dotsEl.innerHTML = '';
