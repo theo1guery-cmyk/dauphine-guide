@@ -10411,10 +10411,14 @@ async function generateNewsGroq(type) {
         'Authorization': 'Bearer ' + GROQ_API_KEY
       },
       body: JSON.stringify({
-        model: GROQ_MODEL,
+        model: 'groq/compound-mini',
         max_tokens: 2000,
-        temperature: 0.3,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        search_settings: {
+          include_domains: ['lemonde.fr', 'lesechos.fr', 'legifrance.gouv.fr',
+            'conseil-constitutionnel.fr', 'courdecassation.fr', 'dalloz.fr',
+            'lefigaro.fr', 'liberation.fr', 'bfmtv.com', 'vie-publique.fr']
+        }
       })
     });
 
