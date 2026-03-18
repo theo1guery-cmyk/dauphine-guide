@@ -6111,6 +6111,9 @@ async function generateFlashcardsGroq() {
     var raw   = data.choices[0].message.content.trim();
     console.log('Groq raw response:', raw); // Debug
     
+    // Éliminer les backticks code blocks d'abord
+    raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+    
     // Extraction robuste du JSON (cherche [ ... ])
     var jsonStart = raw.indexOf('[');
     var jsonEnd = raw.lastIndexOf(']');
@@ -9109,12 +9112,23 @@ async function notesGenGroq() {
 
     var data  = await res.json();
     var raw   = data.choices[0].message.content.trim();
+    console.log('Groq notesGen raw:', raw); // Debug
+    
+    // Éliminer les backticks code blocks d'abord
+    raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+    
+    // Chercher le JSON
     var jsonStart = raw.indexOf('[');
     var jsonEnd = raw.lastIndexOf(']');
+    
     if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
-      throw new Error('Pas de JSON valide dans la réponse');
+      console.error('JSON extraction failed. Raw:', raw);
+      throw new Error('Groq n\'a pas retourne du JSON valide');
     }
-    var clean = raw.substring(jsonStart, jsonEnd + 1);
+    
+    var clean = raw.substring(jsonStart, jsonEnd + 1).trim();
+    console.log('Extracted JSON for notesGen:', clean); // Debug
+    
     var cards = JSON.parse(clean);
 
     if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
