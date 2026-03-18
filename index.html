@@ -3649,18 +3649,21 @@ aside.sidebar {
           <textarea class="flash-textarea" id="flashInput" placeholder="Ex : La microéconomie analyse les comportements des agents..." style="min-height:100px"></textarea>
         </div>
 
-        <button class="flash-btn" onclick="copyPrompt()" id="copyPromptBtn" style="background:var(--blue-mid);margin-bottom:10px">📋 Copier le prompt pour Claude</button>
+        <button class="flash-btn" id="flashGenBtn" onclick="generateFlashcardsGroq()">✨ Générer les flashcards</button>
+        <div class="flash-loading" id="flashLoading" style="display:none">⏳ Generation en cours…</div>
 
-        <div id="promptPreview" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:12px;max-height:80px;overflow:hidden">
-          <em>Le prompt apparaîtra ici…</em>
-        </div>
-
-        <div style="margin-bottom:4px">
-          <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📥 Étape 2 — Colle le JSON retourné par Claude</label>
-          <textarea id="flashJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Réponse.&quot;},...]" style="width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:&#39;Figtree&#39;,sans-serif;resize:vertical;min-height:80px;color:var(--g900);transition:border-color .15s" onfocus="this.style.borderColor=&#39;var(--blue-mid)&#39;" onblur="this.style.borderColor=&#39;var(--g200)&#39;"></textarea>
-        </div>
-        <button class="flash-btn" id="flashGenBtn" onclick="importFlashJSON()">✨ Importer les flashcards</button>
-        <div class="flash-loading" id="flashLoading">⏳ Import en cours…</div>
+        <details style="margin-top:12px">
+          <summary style="font-size:11px;color:var(--g400);cursor:pointer;user-select:none">🔧 Fallback manuel (copier-coller)</summary>
+          <div style="margin-top:10px">
+            <button class="flash-btn" onclick="copyPrompt()" id="copyPromptBtn" style="background:var(--blue-mid);margin-bottom:10px">📋 Copier le prompt pour Claude</button>
+            <div id="promptPreview" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:12px;max-height:80px;overflow:hidden">
+              <em>Le prompt apparaîtra ici...</em>
+            </div>
+            <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📥 Colle le JSON retourné par Claude</label>
+            <textarea id="flashJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;},...]" style="width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:Figtree,sans-serif;resize:vertical;min-height:80px;color:var(--g900);transition:border-color .15s"></textarea>
+            <button class="flash-btn" onclick="importFlashJSON()" style="margin-top:8px">✨ Importer les flashcards</button>
+          </div>
+        </details>
       </div>
       <div style="margin-top:14px;background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:18px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -3842,7 +3845,7 @@ aside.sidebar {
     </button>
   </div>
 
-  <script>
+  <script charset="utf-8">
   (function() {
     var CARDS = [{"cat": "Droit", "q": "Qu'est-ce que la règle de droit ?", "r": "Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.", "status": "none"}, {"cat": "Droit", "q": "Hiérarchie des normes (pyramide de Kelsen)", "r": "Constitution → Traités int. → Lois organiques → Lois ordinaires → Règlements (décrets, arrêtés).", "status": "none"}, {"cat": "Droit", "q": "Qu'est-ce que l'effet relatif des conventions ?", "r": "Le contrat ne crée d'obligations qu'entre les parties — ne profite ni ne nuit aux tiers (art. 1199 C.civ).", "status": "none"}, {"cat": "Droit", "q": "Définition de l'infraction pénale", "r": "Fait prévu et puni par la loi. 3 éléments : légal, matériel, moral.", "status": "none"}, {"cat": "Droit", "q": "Nullum crimen, nulla poena sine lege", "r": "Principe de légalité des peines : on ne peut être puni que pour un fait prévu par un texte antérieur.", "status": "none"}, {"cat": "Droit", "q": "Conseil de l'Europe vs Union européenne", "r": "CdE : 46 États, CEDH. UE : 27 États, marché unique, CJUE, droit contraignant.", "status": "none"}, {"cat": "Droit constit.", "q": "Exécutif bicéphale sous la Ve République", "r": "Président (élu SUD, 5 ans) + Premier ministre nommé par le Président, responsable devant l'AN.", "status": "none"}, {"cat": "Droit constit.", "q": "Qu'est-ce qu'une QPC ?", "r": "Question Prioritaire de Constitutionnalité : contester la conformité d'une loi aux droits fondamentaux (art. 61-1).", "status": "none"}, {"cat": "Microéco", "q": "Contrainte budgétaire du consommateur", "r": "pX·X + pY·Y ≤ R — dépenses limitées au revenu R aux prix pX, pY.", "status": "none"}, {"cat": "Microéco", "q": "Condition d'optimum du consommateur", "r": "TmS(x/y) = px/py — le taux marginal de substitution égale le rapport des prix.", "status": "none"}, {"cat": "Microéco", "q": "Effet de substitution", "r": "Hausse de prix d'un bien → substitution vers le bien moins cher, à utilité constante.", "status": "none"}, {"cat": "Microéco", "q": "Optimum de Pareto", "r": "Allocation où améliorer la situation d'un agent est impossible sans détériorer celle d'un autre.", "status": "none"}, {"cat": "Macroéco", "q": "PIB par l'approche dépenses", "r": "PIB = C + I + G + (X − M)", "status": "none"}, {"cat": "Macroéco", "q": "Modèle de Solow (résumé)", "r": "Y = f(K, L). Capital s'accumule jusqu'à l'état stationnaire. Croissance LT = progrès technique.", "status": "none"}, {"cat": "Macroéco", "q": "3 fonctions de la monnaie", "r": "Intermédiaire des échanges · Unité de compte · Réserve de valeur.", "status": "none"}, {"cat": "Comptabilité", "q": "Principe de prudence", "r": "On comptabilise les pertes probables immédiatement, mais on n'anticipe pas les gains futurs.", "status": "none"}, {"cat": "Comptabilité", "q": "Résultat net comptable", "r": "Résultat = Produits – Charges. Bénéfice si > 0, perte si < 0.", "status": "none"}, {"cat": "Comptabilité", "q": "Différence charge / décaissement", "r": "Charge diminue le résultat (ex. amortissement). Décaissement = sortie de trésorerie réelle.", "status": "none"}, {"cat": "Maths", "q": "Condition nécessaire d'extremum f(x,y)", "r": "∂f/∂x = 0 ET ∂f/∂y = 0 (point critique). Vérifier le hessien pour la suffisance.", "status": "none"}, {"cat": "Maths", "q": "Méthode du Lagrangien", "r": "L(x,y,λ) = f(x,y) − λ·g(x,y). Résoudre ∇L = 0 pour optimiser sous contrainte g(x,y) = 0.", "status": "none"}, {"cat": "Sciences Po", "q": "3 types de légitimité (Weber)", "r": "Traditionnelle (coutume) · Charismatique (personnalité) · Rationnelle-légale (droit, procédure).", "status": "none"}, {"cat": "Sciences Po", "q": "Gouvernement représentatif", "r": "Délégation du pouvoir à des représentants élus, distinct de la démocratie directe. Principe de mandat.", "status": "none"}];
     var ap = { pile:[], cur:null, ok:0, ko:0, total:0, cat:'all' };
@@ -5833,7 +5836,7 @@ aside.sidebar {
 <div class="toast" id="toast"><span id="tIc">✓</span><span id="tMsg">OK</span></div>
 
 <script data-cfasync="false" src="./DauphineGuide — L1 Droit-Éco Dauphine_files/email-decode.min.js"></script>
-<script>
+<script charset="utf-8">
 
 const GLOSSAIRE = [
   {terme:"Acte juridique",def:"Manifestation de volonté destinée à produire des effets de droit (ex: contrat, testament)."},
@@ -6053,6 +6056,85 @@ function updateAnnualAvg(){
       else if(annual>=10)mentEl.textContent='Admis ✅';
       else mentEl.textContent='Insuffisant ⚠️';
     }else mentEl.style.display='none';
+  }
+}
+
+// ─── GROQ API ───
+var GROQ_API_KEY = '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';dfg6';
+var GROQ_MODEL   = 'llama-3.1-8b-instant';
+
+async function generateFlashcardsGroq() {
+  var text    = document.getElementById('flashInput').value.trim();
+  var matiere = getSelectedMatiere();
+  var btn     = document.getElementById('flashGenBtn');
+  var load    = document.getElementById('flashLoading');
+
+  if (!matiere) { toast('Choisis une matiere avant tout', '⚠️'); return; }
+  if (!text || text.length < 20) { toast('Colle ton cours dans le champ', '⚠️'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Generation en cours...';
+  if (load) load.style.display = 'block';
+
+  var prompt = "Tu es un assistant pedagogique expert pour L1 Droit-Eco Paris-Dauphine.\n\n"
+    + "Matiere : " + matiere + "\n\n"
+    + "Genere exactement 8 flashcards a partir du cours ci-dessous.\n\n"
+    + "REGLE ABSOLUE : retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans backticks, sans aucun texte avant ou apres.\n"
+    + "[{\"cat\":\"" + matiere + "\",\"q\":\"Question ?\",\"r\":\"Reponse concise (1-2 phrases max).\"}]\n"
+    + "Les questions testent la comprehension, pas la memorisation. Ecris en francais.\n\n"
+    + "COURS :\n" + text.slice(0, 4000);
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + GROQ_API_KEY
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        max_tokens: 1200,
+        temperature: 0.4,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      var errData = await res.json();
+      throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
+    }
+
+    var data  = await res.json();
+    var raw   = data.choices[0].message.content.trim();
+    var clean = raw.replace(/```json|```/g, '').trim();
+    var cards = JSON.parse(clean);
+
+    if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
+
+    cards = cards.map(function(c) { return { cat: matiere, q: c.q, r: c.r, status: 'none' }; });
+    deck  = cards.concat(deck);
+    cardIdx = 0;
+    renderFilters(); renderCard(); renderStats();
+    toast(cards.length + ' flashcards generees pour ' + matiere + ' !', '✨');
+    document.getElementById('flashInput').value = '';
+    document.getElementById('flashMatiereSelect').value = '';
+    var autre = document.getElementById('flashMatiereAutre');
+    if (autre) { autre.value = ''; autre.style.display = 'none'; }
+    if (typeof saveDeck === 'function') saveDeck();
+
+  } catch(e) {
+    console.error('Groq error:', e);
+    if (e.message && e.message.indexOf('401') > -1) {
+      toast('Cle API invalide — verifie GROQ_API_KEY dans le code', '❌');
+    } else if (e.message && e.message.indexOf('429') > -1) {
+      toast('Limite Groq atteinte — reessaie dans quelques secondes', '⚠️');
+    } else {
+      toast('Erreur : ' + e.message, '❌');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Generer les flashcards';
+    if (load) load.style.display = 'none';
   }
 }
 
@@ -10739,7 +10821,7 @@ setTimeout(renderCpHistorique, 800);
 
 
 <!-- Service Worker Registration -->
-<script>
+<script charset="utf-8">
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       const swPath = new URL('sw.js', document.baseURI).href;
