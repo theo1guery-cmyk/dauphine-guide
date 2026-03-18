@@ -6066,6 +6066,7 @@ function updateAnnualAvg(){
 // ─── GROQ API ───
 var GROQ_API_KEY = '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';
 var GROQ_MODEL   = 'llama-3.1-8b-instant';
+var GEMINI_API_KEY = 'AIzaSyDJYr2XAZ5gi02iU9p-AZ493jtTuV09dQQ'; // <- Gemini pour news avec Google Search
 
 async function generateFlashcardsGroq() {
   var text    = document.getElementById('flashInput').value.trim();
@@ -10358,7 +10359,7 @@ function switchNewsTab(type, btn) {
   if (panel) panel.classList.add('active');
 }
 
-// ─── NEWS GROQ AUTO ───
+// ─── NEWS GEMINI ───
 function newsDateStr() {
   var now    = new Date();
   var days   = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
@@ -10377,119 +10378,94 @@ function newsTodayKey(type) {
   return newsKey(type) + '_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
 }
 
+function clearNewsCache() {
+  var now = new Date();
+  ['semaine','jour','constit','eco'].forEach(function(type) {
+    var todayKey = newsKey(type) + '_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
+    try { localStorage.removeItem(todayKey); } catch(e) {}
+  });
+  clearNews();
+  toast('Cache du jour efface — tu peux regenerer les actus', '🗑️');
+}
+
 async function generateNewsGroq(type) {
   var btn = document.getElementById('newsGenBtn-' + type);
 
-  // Vérifier si déjà genéré aujourd'hui
+  // Verifier cache du jour
   var todayKey = newsTodayKey(type);
   try {
     var cached = JSON.parse(localStorage.getItem(todayKey));
     if (cached && cached.items && cached.items.length) {
-      var dateStr = newsDateShort();
-      try { localStorage.setItem(newsKey(type), JSON.stringify({date: dateStr, items: cached.items})); } catch(e) {}
+      try { localStorage.setItem(newsKey(type), JSON.stringify({date: cached.date, items: cached.items})); } catch(e) {}
       switchNewsTab(type, document.querySelector('.news-tab[data-tab="' + type + '"]'));
       renderNewsPanel(type, cached.items, cached.date);
-      toast('News déjà générées aujourd\'hui — affichage du cache', '📰');
+      toast('News deja generees aujourd\'hui', '📰');
       return;
     }
   } catch(e) {}
 
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Chargement...'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recherche en cours...'; }
 
-  var dateStr  = newsDateStr();
-  var config   = NEWS_PROMPTS[type];
-
-  var prompt = config.prompt(dateStr)
-    + '\n\nIMPORTANT : utilise ta capacité de recherche web pour trouver de vraies actualités récentes du jour. '
-    + 'Retourne uniquement des informations vérifiables avec de vrais liens.';
+  var dateStr = newsDateStr();
+  var config  = NEWS_PROMPTS[type];
+  var prompt  = config.prompt(dateStr);
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
-      },
-      body: JSON.stringify({
-        model: 'groq/compound-mini',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }],
-        search_settings: {
-          include_domains: ['lemonde.fr', 'lesechos.fr', 'legifrance.gouv.fr',
-            'conseil-constitutionnel.fr', 'courdecassation.fr', 'dalloz.fr',
-            'lefigaro.fr', 'liberation.fr', 'bfmtv.com', 'vie-publique.fr']
-        }
-      })
-    });
+    var res = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_API_KEY,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          tools: [{ google_search: {} }],
+          generationConfig: { temperature: 0.3, maxOutputTokens: 2000 }
+        })
+      }
+    );
 
     if (!res.ok) {
       var errData = await res.json();
-      throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
+      var msg = errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status;
+      throw new Error(msg);
     }
 
-    var data  = await res.json();
-    var raw   = data.choices[0].message.content ? data.choices[0].message.content.trim() : '';
-    console.log('Groq news raw:', raw);
-    
-    // Nettoyage
-    raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
-    raw = raw.replace(/^\s*[\w\s]*\n/m, '');
-    
-    var jsonStart = raw.indexOf('[');
-    var jsonEnd = raw.lastIndexOf(']');
-    
-    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
-      console.error('JSON extraction failed. Raw:', raw);
-      throw new Error('Format invalide');
-    }
-    
-    var clean = null;
-    var items = null;
-    
-    try {
-      clean = raw.substring(jsonStart, jsonEnd + 1);
-      items = JSON.parse(clean);
-    } catch(e1) {
-      for (var i = jsonEnd; i > jsonStart + 10; i--) {
-        try {
-          clean = raw.substring(jsonStart, i);
-          items = JSON.parse(clean);
-          break;
-        } catch(e2) {}
-      }
-    }
-    
-    if (!items) throw new Error('Impossible d\'extraire une réponse JSON valide');
+    var data = await res.json();
+    var raw  = data.candidates[0].content.parts[0].text.trim();
+    var clean = raw.replace(/```json|```/g, '').trim();
+
+    // Extraire le JSON meme si Gemini ajoute du texte autour
+    var match = clean.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Pas de JSON trouve dans la reponse');
+    var items = JSON.parse(match[0]);
+
     if (!Array.isArray(items) || !items[0] || !items[0].titre) throw new Error('Format JSON invalide');
 
     var dateShort = newsDateShort();
-
-    // Sauvegarder avec clé du jour (cache 24h)
     try { localStorage.setItem(todayKey, JSON.stringify({date: dateShort, items: items})); } catch(e) {}
-    // Sauvegarder aussi dans la clé standard pour le carousel home
     try { localStorage.setItem(newsKey(type), JSON.stringify({date: dateShort, items: items})); } catch(e) {}
 
     switchNewsTab(type, document.querySelector('.news-tab[data-tab="' + type + '"]'));
     renderNewsPanel(type, items, dateShort);
     renderHomeNewsCarousel();
-    toast(items.length + ' actus générées ! 📰', '✅');
+    toast(items.length + ' actus trouvees ! 📰', '✅');
 
   } catch(e) {
-    console.error('Groq news error:', e);
+    console.error('Gemini news error:', e);
     if (e.message && e.message.indexOf('401') > -1) {
-      toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+      toast('Cle API invalide — verifie GEMINI_API_KEY', '❌');
     } else if (e.message && e.message.indexOf('429') > -1) {
-      toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+      toast('Limite Gemini atteinte — reessaie plus tard', '⚠️');
     } else {
       toast('Erreur : ' + e.message, '❌');
     }
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '✨ Générer'; }
+    if (btn) { btn.disabled = false; btn.textContent = '✨ Generer'; }
   }
 }
 
 function autoGenerateNewsIfNeeded() {
-  ['semaine', 'jour', 'constit', 'eco'].forEach(function(type) {
+  ['semaine','jour','constit','eco'].forEach(function(type) {
     var todayKey = newsTodayKey(type);
     try {
       var cached = JSON.parse(localStorage.getItem(todayKey));
@@ -10500,6 +10476,18 @@ function autoGenerateNewsIfNeeded() {
     } catch(e) {}
   });
 }
+
+var _newsPageInit = false;
+setTimeout(function() {
+  var origSP = showPage;
+  showPage = function(pageId, btn) {
+    origSP(pageId, btn);
+    if (pageId === 'news' && !_newsPageInit) {
+      _newsPageInit = true;
+      autoGenerateNewsIfNeeded();
+    }
+  };
+}, 500);
 
 function openNewsModal(type) {
   _newsType = type;
