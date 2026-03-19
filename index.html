@@ -6164,6 +6164,11 @@ function analyzeExamPriorities() {
       toast('Rentre au moins une note', '⚠️');
       throw new Error('No data');
     }
+    
+    // D'abord calculer la moyenne actuelle
+    var totalEctsInAnalysis = analysis.reduce(function(sum, a) { return sum + a.ects; }, 0);
+    var avgCalc = analysis.reduce(function(sum, a) { return sum + ((a.hasCC ? a.ccGrade : a.estimedExamGrade) * a.ects); }, 0) / totalEctsInAnalysis;
+    
     // Calcul pragmatique : trouver une stratégie simple
     var withCCForAnalysis = analysis.filter(function(a) { return a.hasCC; });
     withCCForAnalysis.forEach(function(a) {
@@ -6232,9 +6237,6 @@ function analyzeExamPriorities() {
       return a.ccGrade - b.ccGrade;
     });
     var html = '<div style="margin:0">';
-    var totalEctsInAnalysis = analysis.reduce(function(sum, a) { return sum + a.ects; }, 0);
-    var avgCalc = analysis.reduce(function(sum, a) { return sum + ((a.hasCC ? a.ccGrade : a.estimedExamGrade) * a.ects); }, 0) / totalEctsInAnalysis;
-    
     html += '<div style="margin-bottom:16px;padding:12px;background:var(--blue) rgba(59,130,246,0.06);border-radius:8px;border-left:3px solid var(--blue)">';
     html += '<strong style="color:var(--blue)">📊 Situation actuelle (ECTS-pondérée):</strong><br>';
     html += 'Moyenne: <strong>' + avgCalc.toFixed(2) + '/20</strong> | Cible: <strong>' + targetGrade + '/20</strong> | Gap: <strong>' + (targetGrade - avgCalc).toFixed(2) + '</strong>';
