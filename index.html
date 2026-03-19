@@ -3591,17 +3591,29 @@ aside.sidebar {
     </div>
   </div>
 
-  <!-- Planning suggestions -->
+  <!-- Analysis of exam priorities based on target grade -->
   <div style="margin-top:32px;padding:20px;background:var(--g50);border-radius:12px;border:1px solid var(--g200)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h3 style="font-size:16px;font-weight:600;color:var(--text-main);margin:0 0 16px 0">🎯 Analyser mes priorités pour les partiels</h3>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div>
-        <h3 style="font-size:16px;font-weight:600;color:var(--text-main);margin:0">📅 Suggestion de planning</h3>
-        <p style="font-size:12px;color:var(--text-sub);margin:4px 0 0 0">Analyse tes résultats actuels et génère un plan de révision personnalisé</p>
+        <label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:6px">📊 Moyenne cible au semestre</label>
+        <input type="number" id="targetGrade" placeholder="Ex: 12" min="0" max="20" step="0.5" value="12" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
       </div>
-      <button class="cp-gen-btn" onclick="generateRevisionPlanning()" id="planBtn" style="margin:0">⚡ Générer</button>
+      <div>
+        <label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:6px">📅 Semestre à analyser</label>
+        <select id="analyseSem" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
+          <option value="1">Semestre 1</option>
+          <option value="2">Semestre 2</option>
+          <option value="both">S1 + S2</option>
+        </select>
+      </div>
     </div>
-    <div id="planningResult" style="display:none;margin-top:12px;padding:12px;background:#fff;border-radius:8px;border:1px solid var(--g200);font-size:13px;line-height:1.7;color:var(--text-main)"></div>
-    <div id="planningLoading" style="display:none;text-align:center;padding:12px;font-size:13px;color:var(--text-sub)">⏳ Analyse en cours…</div>
+
+    <button class="cp-gen-btn" onclick="analyzeExamPriorities()" id="analyzeBtn" style="width:100%;margin-bottom:12px">⚡ Analyser mes priorités</button>
+
+    <div id="prioritiesResult" style="display:none;margin-top:12px;padding:14px;background:#fff;border-radius:8px;border:1px solid var(--g200);font-size:13px;line-height:1.8;color:var(--text-main)"></div>
+    <div id="prioritiesLoading" style="display:none;text-align:center;padding:12px;font-size:13px;color:var(--text-sub)">⏳ Analyse en cours…</div>
   </div>
 </section>
 </div>
@@ -6089,104 +6101,137 @@ function updateAnnualAvg(){
   }
 }
 
-async function generateRevisionPlanning() {
-  var btn = document.getElementById('planBtn');
-  var loading = document.getElementById('planningLoading');
-  var result = document.getElementById('planningResult');
+function analyzeExamPriorities() {
+  var targetGradeEl = document.getElementById('targetGrade');
+  var semesterEl = document.getElementById('analyseSem');
+  var btn = document.getElementById('analyzeBtn');
+  var loading = document.getElementById('prioritiesLoading');
+  var result = document.getElementById('prioritiesResult');
+
+  var targetGrade = parseFloat(targetGradeEl.value);
+  var semester = semesterEl.value; // "1", "2", or "both"
 
   if (btn) btn.disabled = true;
   if (loading) loading.style.display = 'block';
   if (result) result.style.display = 'none';
 
-  // Récupérer les notes actuelles
-  var notes = [];
-  MATIERES.forEach(function(m) {
-    var ccEl = document.getElementById('cc_' + m.id);
-    var exEl = document.getElementById('ex_' + m.id);
-    var ccV = ccEl ? parseFloat(ccEl.value) : NaN;
-    var exV = exEl ? parseFloat(exEl.value) : NaN;
-    var ccPct = m.cc || 0;
-    
-    var moy = NaN;
-    if (!isNaN(exV) && ccPct === 0) moy = exV;
-    else if (!isNaN(ccV) && !isNaN(exV)) moy = (ccV * ccPct / 100) + (exV * (m.exam || 100) / 100);
-    else if (!isNaN(exV)) moy = exV;
-    
-    if (!isNaN(moy)) {
-      notes.push({
-        matiere: m.nom,
-        moyenne: moy,
-        semestre: m.sem,
-        ects: m.ects
-      });
-    }
+  // Récupérer les matières du/des semestre(s) sélectionné(s)
+  var selectedMatieres = MATIERES.filter(function(m) {
+    if (semester === 'both') return true;
+    return m.sem == parseInt(semester);
   });
 
-  if (notes.length === 0) {
-    toast('Rentre au moins une note pour générer un planning', '⚠️');
+  // Récupérer les notes CC et calculer les priorités
+  var analysis = [];
+  selectedMatieres.forEach(function(m) {
+    var ccEl = document.getElementById('cc_' + m.id);
+    var ccGrade = ccEl ? parseFloat(ccEl.value) : null;
+    
+    // Si pas de note CC rentrée, skip
+    if (ccGrade === null || isNaN(ccGrade)) {
+      return;
+    }
+
+    var ccPct = m.cc || 0;
+    var examPct = m.exam || 100;
+
+    // Calculer la note d'examen requise pour atteindre la moyenne cible
+    // Moyenne = (CC * cc% + Exam * exam%) / 100
+    // Donc: Exam = (targetGrade * 100 - CC * cc%) / exam%
+    var requiredExamGrade = (targetGrade * 100 - ccGrade * ccPct) / examPct;
+
+    // Calculer le delta: combien de points je dois avoir au moins
+    var delta = requiredExamGrade - ccGrade; // Différence par rapport à la CC actuelle
+
+    analysis.push({
+      matiere: m.nom,
+      id: m.id,
+      sem: m.sem,
+      ects: m.ects,
+      ccGrade: ccGrade,
+      ccPct: ccPct,
+      examPct: examPct,
+      requiredExamGrade: Math.max(0, Math.min(20, requiredExamGrade)), // Clamp 0-20
+      originalRequiredExamGrade: requiredExamGrade,
+      delta: delta,
+      priority: ccGrade // Plus la CC est basse, plus haute la priorité
+    });
+  });
+
+  if (analysis.length === 0) {
+    toast('Rentre au moins une note de CC pour analyser', '⚠️');
     if (btn) btn.disabled = false;
     if (loading) loading.style.display = 'none';
     return;
   }
 
-  var prompt = 'Tu es un conseiller pédagogique à Paris-Dauphine. Analyse ces notes d\'étudiant et génère UN PLAN DE RÉVISION COURT ET ACTIONNABLE.\n\n'
-    + 'Notes actuelles:\n' + notes.map(function(n) { return '- ' + n.matiere + ' (S' + n.semestre + '): ' + n.moyenne.toFixed(2) + '/20'; }).join('\n') + '\n\n'
-    + 'Réponds UNIQUEMENT avec du texte brut, sans markdown, sans tirets, sans emphasis. Format exact:\n\n'
-    + 'ANALYSE:\n[2-3 phrases sur la situation générale]\n\n'
-    + 'PRIORITÉS:\n[3-5 lignes avec les matières à retravailler et pourquoi]\n\n'
-    + 'PLAN:\n[5-7 lignes concrete avec semaine par semaine]\n\n'
-    + 'OBJECTIF:\n[2-3 phrases avec la cible et comment l\'atteindre]\n\n'
-    + 'Texte brut uniquement.';
+  // Trier par CC (priorité: notes les plus basses en premier)
+  analysis.sort(function(a, b) {
+    return a.ccGrade - b.ccGrade;
+  });
 
-  try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        max_tokens: 1000,
-        temperature: 0.7,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+  // Générer le HTML du résultat
+  var html = '<div style="margin:0">';
+  
+  // Résumé général
+  var avgCC = analysis.reduce(function(sum, a) { return sum + a.ccGrade; }, 0) / analysis.length;
+  html += '<div style="margin-bottom:16px;padding:12px;background:var(--blue) rgba(59,130,246,0.06);border-radius:8px;border-left:3px solid var(--blue)">';
+  html += '<strong style="color:var(--blue)">📊 Votre situation:</strong><br>';
+  html += 'Moyenne CC actuelle: <strong>' + avgCC.toFixed(2) + '/20</strong> | Cible: <strong>' + targetGrade + '/20</strong> | Gap: <strong>' + (targetGrade - avgCC).toFixed(2) + '</strong>';
+  html += '</div>';
 
-    if (!res.ok) {
-      var errData = await res.json();
-      throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
-    }
-
-    var data = await res.json();
-    var rawResponse = data.choices[0].message.content.trim();
-
-    // Formater les sections
-    var formatted = rawResponse
-      .replace(/ANALYSE:/g, '<strong>📊 ANALYSE</strong>')
-      .replace(/PRIORITÉS:/g, '<strong>🎯 PRIORITÉS</strong>')
-      .replace(/PLAN:/g, '<strong>📅 PLAN</strong>')
-      .replace(/OBJECTIF:/g, '<strong>🏆 OBJECTIF</strong>')
-      .replace(/\n/g, '<br>');
-
-    if (result) {
-      result.innerHTML = formatted;
-      result.style.display = 'block';
-    }
+  // Détails par matière
+  html += '<div style="margin-top:12px"><strong style="color:var(--text-main);font-size:14px">Priorités par matière:</strong></div>';
+  
+  analysis.forEach(function(a, idx) {
+    var priority = idx + 1;
+    var priorityText = priority === 1 ? '🔴 CRITIQUE' : priority === 2 ? '🟡 HAUTE' : '🟢 NORMAL';
     
-    toast('Planning généré ! 📅', '✅');
-
-  } catch (e) {
-    console.error('Planning error:', e);
-    if (e.message && e.message.indexOf('401') > -1) {
-      toast('Clé API invalide', '❌');
+    // Déterminer la couleur basée sur le score d'examen requis
+    var scoreColor = '#22c55e'; // Vert par défaut
+    var scoreLabel = '✅';
+    if (a.originalRequiredExamGrade < 0) {
+      scoreColor = '#22c55e';
+      scoreLabel = '✅ Validé';
+    } else if (a.originalRequiredExamGrade > 20) {
+      scoreColor = '#ef4444';
+      scoreLabel = '❌ Impossible';
+    } else if (a.originalRequiredExamGrade > 15) {
+      scoreColor = '#f59e0b';
+      scoreLabel = '⚠️ Exigent';
+    } else if (a.originalRequiredExamGrade > 12) {
+      scoreColor = '#f59e0b';
+      scoreLabel = '⚡ Challenging';
     } else {
-      toast('Erreur: ' + e.message, '❌');
+      scoreColor = '#22c55e';
+      scoreLabel = '✅ Réalisable';
     }
-  } finally {
-    if (btn) btn.disabled = false;
-    if (loading) loading.style.display = 'none';
+
+    html += '<div style="margin:10px 0;padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid ' + scoreColor + '">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html += '<strong style="color:var(--text-main);font-size:14px">' + (priority) + '. ' + a.matiere + '</strong>';
+    html += '<span style="font-size:12px;color:#666;font-weight:500">' + priorityText + '</span>';
+    html += '</div>';
+    
+    html += '<div style="font-size:13px;color:var(--text-sub);line-height:1.6">';
+    html += '📌 CC actuelle: <strong style="color:var(--text-main)">' + a.ccGrade.toFixed(1) + '/20</strong> (' + a.ccPct + '%)<br>';
+    html += '⚡ Note exam requise: <strong style="color:' + scoreColor + '">' + a.requiredExamGrade.toFixed(1) + '/20</strong> (' + a.examPct + '%)<br>';
+    html += '' + scoreLabel + ' ' + (a.originalRequiredExamGrade < 0 ? '👍 Votre CC suffit!' : a.originalRequiredExamGrade > 20 ? 'Score examen impossible à atteindre' : 'Vous devez scorer environ +' + a.delta.toFixed(1) + ' qu\'en CC');
+    html += '</div>';
+    html += '</div>';
+  });
+
+  html += '</div>';
+
+  if (result) {
+    result.innerHTML = html;
+    result.style.display = 'block';
   }
+
+  toast('Analyse générée! 🎯', '✅');
+
+  if (btn) btn.disabled = false;
+  if (loading) loading.style.display = 'none';
 }
 
 // ─── GROQ API ───
