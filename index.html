@@ -6136,12 +6136,50 @@ function analyzeExamPriorities() {
     var examPct = m.exam || 100;
 
     // Calculer la note d'examen requise pour atteindre la moyenne cible
-    // Moyenne = (CC * cc% + Exam * exam%) / 100
-    // Donc: Exam = (targetGrade * 100 - CC * cc%) / exam%
     var requiredExamGrade = (targetGrade * 100 - ccGrade * ccPct) / examPct;
 
-    // Calculer le delta: combien de points je dois avoir au moins
-    var delta = requiredExamGrade - ccGrade; // Différence par rapport à la CC actuelle
+    // **ANALYSER LA DIFFICULTÉ BASÉE SUR LA CC**
+    // Évaluer combien cette matière est difficile pour l'étudiant
+    var difficultyScore; // 0-10, 10 = facile, 0 = très difficile
+    if (ccGrade < 8) difficultyScore = 2; // Très difficile
+    else if (ccGrade < 10) difficultyScore = 3; // Très difficile
+    else if (ccGrade < 12) difficultyScore = 4; // Difficile
+    else if (ccGrade < 14) difficultyScore = 6; // Moyen
+    else if (ccGrade < 16) difficultyScore = 7; // Assez facile
+    else difficultyScore = 9; // Facile
+
+    var difficultyLabel;
+    if (ccGrade < 10) difficultyLabel = '🔴 Très difficile';
+    else if (ccGrade < 12) difficultyLabel = '🟠 Difficile';
+    else if (ccGrade < 14) difficultyLabel = '🟡 Moyen';
+    else if (ccGrade < 16) difficultyLabel = '🟢 Assez facile';
+    else difficultyLabel = '✅ Facile';
+
+    // **CALCULER UN OBJECTIF RÉALISTE**
+    // Si une matière est difficile (CC faible), réduire l'objectif d'examen pour être encourageant
+    var realisticTarget = requiredExamGrade;
+    
+    // Plus la matière est difficile, plus on diminue l'objectif théorique pour proposer quelque chose de réalisable
+    if (difficultyScore <= 3) {
+      // Très difficile: proposer +1.5 points max d'amélioration
+      realisticTarget = Math.min(requiredExamGrade, ccGrade + 1.5);
+    } else if (difficultyScore <= 4) {
+      // Difficile: proposer +2.5 points d'amélioration
+      realisticTarget = Math.min(requiredExamGrade, ccGrade + 2.5);
+    } else if (difficultyScore <= 6) {
+      // Moyen: proposer +4 points d'amélioration
+      realisticTarget = Math.min(requiredExamGrade, ccGrade + 4);
+    } else {
+      // Facile: proposer l'objectif sans réduc
+      realisticTarget = requiredExamGrade;
+    }
+
+    // Clamper entre 0 et 20
+    realisticTarget = Math.max(0, Math.min(20, realisticTarget));
+
+    // Calculer le delta
+    var delta = realisticTarget - ccGrade;
+    var theoreticalDelta = requiredExamGrade - ccGrade;
 
     analysis.push({
       matiere: m.nom,
@@ -6151,10 +6189,14 @@ function analyzeExamPriorities() {
       ccGrade: ccGrade,
       ccPct: ccPct,
       examPct: examPct,
-      requiredExamGrade: Math.max(0, Math.min(20, requiredExamGrade)), // Clamp 0-20
+      requiredExamGrade: Math.max(0, Math.min(20, requiredExamGrade)),
       originalRequiredExamGrade: requiredExamGrade,
+      realisticTarget: realisticTarget,
       delta: delta,
-      priority: ccGrade // Plus la CC est basse, plus haute la priorité
+      theoreticalDelta: theoreticalDelta,
+      difficultyScore: difficultyScore,
+      difficultyLabel: difficultyLabel,
+      priority: ccGrade
     });
   });
 
@@ -6187,24 +6229,35 @@ function analyzeExamPriorities() {
     var priority = idx + 1;
     var priorityText = priority === 1 ? '🔴 CRITIQUE' : priority === 2 ? '🟡 HAUTE' : '🟢 NORMAL';
     
-    // Déterminer la couleur basée sur le score d'examen requis
-    var scoreColor = '#22c55e'; // Vert par défaut
+    // Couleur et label basé sur si l'objectif réaliste est réalisable
+    var scoreColor = '#22c55e';
     var scoreLabel = '✅';
-    if (a.originalRequiredExamGrade < 0) {
-      scoreColor = '#22c55e';
-      scoreLabel = '✅ Validé';
-    } else if (a.originalRequiredExamGrade > 20) {
+    var advice = '';
+
+    if (a.realisticTarget > 20) {
       scoreColor = '#ef4444';
       scoreLabel = '❌ Impossible';
-    } else if (a.originalRequiredExamGrade > 15) {
+      advice = '⚠️ La cible est inatteignable. Réduis ton objectif de semestre ou accepte une légère note.';
+    } else if (a.realisticTarget < 0) {
+      scoreColor = '#22c55e';
+      scoreLabel = '✅ Validé';
+      advice = '👍 Ta CC suffit déjà! Maintiens ton niveau à l\'examen.';
+    } else if (a.realisticTarget > 18) {
+      scoreColor = '#ef4444';
+      scoreLabel = '🔴 Très exigent';
+      advice = 'Cible haute mais possible avec un bon travail ciblé.';
+    } else if (a.realisticTarget > 15) {
       scoreColor = '#f59e0b';
-      scoreLabel = '⚠️ Exigent';
-    } else if (a.originalRequiredExamGrade > 12) {
+      scoreLabel = '🟡 Challenging';
+      advice = 'Matière difficile pour toi — focus sur les fondamentaux!';
+    } else if (a.realisticTarget > 12) {
       scoreColor = '#f59e0b';
-      scoreLabel = '⚡ Challenging';
+      scoreLabel = '⚡ Achievable';
+      advice = 'Objectif réaliste: +' + a.delta.toFixed(1) + ' points par rapport à ta CC.';
     } else {
       scoreColor = '#22c55e';
       scoreLabel = '✅ Réalisable';
+      advice = '👍 Très réalisable! Prépare-toi sans anxiété.';
     }
 
     html += '<div style="margin:10px 0;padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid ' + scoreColor + '">';
@@ -6213,10 +6266,15 @@ function analyzeExamPriorities() {
     html += '<span style="font-size:12px;color:#666;font-weight:500">' + priorityText + '</span>';
     html += '</div>';
     
-    html += '<div style="font-size:13px;color:var(--text-sub);line-height:1.6">';
-    html += '📌 CC actuelle: <strong style="color:var(--text-main)">' + a.ccGrade.toFixed(1) + '/20</strong> (' + a.ccPct + '%)<br>';
-    html += '⚡ Note exam requise: <strong style="color:' + scoreColor + '">' + a.requiredExamGrade.toFixed(1) + '/20</strong> (' + a.examPct + '%)<br>';
-    html += '' + scoreLabel + ' ' + (a.originalRequiredExamGrade < 0 ? '👍 Votre CC suffit!' : a.originalRequiredExamGrade > 20 ? 'Score examen impossible à atteindre' : 'Vous devez scorer environ +' + a.delta.toFixed(1) + ' qu\'en CC');
+    html += '<div style="font-size:13px;color:var(--text-sub);line-height:1.8">';
+    html += '📌 CC actuelle: <strong style="color:var(--text-main)">' + a.ccGrade.toFixed(1) + '/20</strong> (' + a.ccPct + '%) — ' + a.difficultyLabel + '<br>';
+    html += '🎯 Objectif réaliste à l\'examen: <strong style="color:' + scoreColor + '">' + a.realisticTarget.toFixed(1) + '/20</strong> (' + a.examPct + '%)<br>';
+    html += '💡 ' + advice;
+    if (a.realisticTarget !== a.requiredExamGrade && a.realisticTarget < a.requiredExamGrade) {
+      html += '<div style="margin-top:8px;font-size:12px;color:#666;padding:8px;background:rgba(0,0,0,0.02);border-radius:4px">';
+      html += '<em>Note: Objectif théorique = ' + a.requiredExamGrade.toFixed(1) + '/20, mais ajusté à ta réalité pour être encourageant.</em>';
+      html += '</div>';
+    }
     html += '</div>';
     html += '</div>';
   });
