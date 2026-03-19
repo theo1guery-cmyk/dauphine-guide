@@ -10911,14 +10911,33 @@ async function planningIAGenerate() {
     var data = await res.json();
     var raw = data.choices[0].message.content.trim();
 
-    // Extract JSON sessions block — handle optional markdown code fence wrapping (```json ... ```)
-    var sessionsMatch = raw.match(/SESSIONS_JSON:\s*(?:```(?:json)?\s*)?(\[[\s\S]*\])(?:\s*```)?/);
+    // Extract JSON sessions block — robust: handles SESSIONS_JSON with/without colon, any code fence style
     window._planningIASessions = [];
-    if (sessionsMatch) {
-      try { window._planningIASessions = JSON.parse(sessionsMatch[1]); } catch(pe) { window._planningIASessions = []; }
+    var _sessionsBlockStart = -1, _sessionsBlockEnd = -1;
+    var _markerIdx = raw.indexOf('SESSIONS_JSON');
+    if (_markerIdx !== -1) {
+      var _afterMarker = raw.slice(_markerIdx);
+      var _bracketStart = _afterMarker.indexOf('[');
+      if (_bracketStart !== -1) {
+        _sessionsBlockStart = _markerIdx;
+        var _jsonStr = _afterMarker.slice(_bracketStart);
+        var _depth = 0, _endIdx = -1;
+        for (var _ci = 0; _ci < _jsonStr.length; _ci++) {
+          if (_jsonStr[_ci] === '[') _depth++;
+          else if (_jsonStr[_ci] === ']') { _depth--; if (!_depth) { _endIdx = _ci; break; } }
+        }
+        if (_endIdx !== -1) {
+          _sessionsBlockEnd = _markerIdx + _bracketStart + _endIdx + 1;
+          var _trailingFence = raw.slice(_sessionsBlockEnd).match(/^[\s\n]*`{1,3}/);
+          if (_trailingFence) _sessionsBlockEnd += _trailingFence[0].length;
+          try { window._planningIASessions = JSON.parse(_jsonStr.slice(0, _endIdx + 1)); } catch(pe) { window._planningIASessions = []; }
+        }
+      }
     }
     // Strip the JSON block from the displayed markdown
-    var result = raw.replace(/SESSIONS_JSON:\s*(?:```(?:json)?\s*)?\[[\s\S]*\](?:\s*```)?/, '').trimEnd();
+    var result = (_sessionsBlockStart !== -1 && _sessionsBlockEnd !== -1)
+      ? (raw.slice(0, _sessionsBlockStart) + raw.slice(_sessionsBlockEnd)).trimEnd()
+      : raw.trimEnd();
 
     window._planningIAResult = result;
     document.getElementById('planningIAResult').innerHTML = markdownToHtml(result);
