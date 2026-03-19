@@ -10440,51 +10440,109 @@ async function generateNewsGroq(type) {
     // Extraire le JSON robustement - chercher le premier [ d'abord, puis {
     var jsonStart = clean.indexOf('[');
     if (jsonStart === -1) jsonStart = clean.indexOf('{');
-    var jsonEnd = clean.lastIndexOf(']');
-    if (jsonEnd === -1) jsonEnd = clean.lastIndexOf('}');
     
-    console.log('JSON search - start:', jsonStart, 'end:', jsonEnd, 'length:', clean.length);
+    console.log('JSON search - start:', jsonStart, 'length:', clean.length);
     
-    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
-      console.error('❌ JSON extraction failed. Clean text:', clean.substring(0, 500));
+    if (jsonStart === -1) {
+      console.error('❌ No JSON start found. Clean text:', clean.substring(0, 500));
       throw new Error('Pas de JSON trouve dans la reponse');
     }
     
+    // Chercher la fin du JSON - compter les crochets/accolades open/close
+    function findJsonEnd(str, startIdx) {
+      var depth = 0;
+      var inString = false;
+      var escapeNext = false;
+      
+      for (var i = startIdx; i < str.length; i++) {
+        var ch = str[i];
+        
+        if (escapeNext) {
+          escapeNext = false;
+          continue;
+        }
+        
+        if (ch === '\\') {
+          escapeNext = true;
+          continue;
+        }
+        
+        if (ch === '"') {
+          inString = !inString;
+          continue;
+        }
+        
+        if (inString) continue;
+        
+        if (ch === '{' || ch === '[') depth++;
+        if (ch === '}' || ch === ']') depth--;
+        
+        if (depth === 0 && i > startIdx) return i; // Fin complète
+      }
+      
+      return -1; // JSON pas fermé correctement
+    }
+    
+    var jsonEnd = findJsonEnd(clean, jsonStart);
+    console.log('JSON end found at:', jsonEnd);
+    
     var items = null;
-    // Essai 1: substring exact du premier [ ou { au dernier ] ou }
     try {
-      var jsonStr = clean.substring(jsonStart, jsonEnd + 1);
-      console.log('Trying to parse exact substring (len=' + jsonStr.length + '):', jsonStr.substring(0, 150) + '...');
+      var jsonStr;
+      
+      if (jsonEnd === -1) {
+        // Reponse tronquee - fermer le JSON automatiquement
+        console.log('Response appears truncated, auto-closing JSON...');
+        var firstChar = clean[jsonStart];
+        var closeChar = firstChar === '[' ? ']' : '}';
+        
+        // Compter les niveaux ouverts
+        var depth = 0;
+        for (var i = jsonStart; i < clean.length; i++) {
+          var ch = clean[i];
+          if (ch === '"') {
+            // Chercher la fin de la string
+            i++;
+            while (i < clean.length && clean[i] !== '"') {
+              if (clean[i] === '\\') i++;
+              i++;
+            }
+            continue;
+          }
+          if (ch === '{' || ch === '[') depth++;
+          if (ch === '}' || ch === ']') depth--;
+        }
+        
+        // Ajouter les caracteres de fermeture manquants
+        jsonStr = clean.substring(jsonStart);
+        for (var j = 1; j < depth; j++) jsonStr += '}';
+        jsonStr += closeChar;
+        console.log('Auto-closed JSON, closing with ' + depth + ' chars');
+      } else {
+        jsonStr = clean.substring(jsonStart, jsonEnd + 1);
+      }
+      
+      console.log('Trying to parse (len=' + jsonStr.length + '):', jsonStr.substring(0, 150) + '...');
       items = JSON.parse(jsonStr);
       console.log('✓ JSON parsed successfully, items count:', items.length);
     } catch(e1) {
-      console.warn('Essai 1 failed:', e1.message);
-      console.log('Response might be truncated, trying progressive parsing...');
+      console.error('Parse failed:', e1.message);
+      console.log('Attempting progressive parsing...');
       
-      // Essai 2: Ajouter progressivement des caractères depuis la fin (si réponse tronquée)
-      var added = 0;
-      for (var i = 1; i <= 20 && added < 1000; i++) {
+      // Essai: retirer progressivement de la fin
+      var startPos = jsonStart;
+      for (var i = clean.length - 1; i > jsonStart + 50; i--) {
         try {
-          // Essayer d'ajouter des caractères
-          var testStr = clean.substring(jsonStart, jsonEnd + 1 + i) + ']';
+          var testStr = clean.substring(jsonStart, i);
+          // Essayer de fermer
+          var firstChar = clean[jsonStart];
+          var closeChar = firstChar === '[' ? ']' : '}';
+          testStr += closeChar;
+          
           items = JSON.parse(testStr);
-          console.log('✓ JSON parsed with ' + i + ' extra chars + closing bracket');
+          console.log('✓ JSON parsed with substring up to pos ' + i);
           break;
-        } catch(e2) {
-          added++;
-        }
-      }
-      
-      // Essai 3: Retirer progressivement de la fin
-      if (!items) {
-        for (var i = jsonEnd; i > jsonStart + 50; i--) {
-          try {
-            var jsonStr = clean.substring(jsonStart, i) + ']';
-            items = JSON.parse(jsonStr);
-            console.log('✓ JSON parsed at position ' + i + ' with closing bracket');
-            break;
-          } catch(e3) {}
-        }
+        } catch(e2) {}
       }
     }
     
