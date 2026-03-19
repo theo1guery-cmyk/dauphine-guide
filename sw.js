@@ -1,7 +1,7 @@
-const CACHE_NAME = 'dauphine-guide-v2';
+const CACHE_NAME = 'dauphine-guide-v3-' + new Date().getTime();
 const urlsToCache = [
   './',
-  './index.html',
+  './index.html?v=3',
   './manifest.json',
   './icon-192.svg',
   './icon-512.svg'
