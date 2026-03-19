@@ -10292,61 +10292,25 @@ var NEWS_PROMPTS = {
   semaine: {
     title: '🗞️ News de la semaine',
     prompt: function(date) {
-      return 'Tu es un juriste spécialisé dans l\'actualité juridique française.\n\n'
-        + 'Nous sommes le ' + date + '.\n\n'
-        + 'TÂCHE CRUCIALE : Utilise UNIQUEMENT les résultats de Google Search pour trouver les 5-7 principales actualités juridiques FR/EU de cette semaine.\n\n'
-        + 'RÈGLES ABSOLUES :\n'
-        + '1. Les articles trouvés DOIVENT dater de cette semaine UNIQUEMENT\n'
-        + '2. Les liens DOIVENT être vérifiés et valides (domaines officiels : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr, etc)\n'
-        + '3. Ignore les articles sans source vérifiable\n'
-        + '4. Retourne UNIQUEMENT un tableau JSON valide, sans markdown, pas de backticks\n\n'
-        + 'Format exact : [{"titre":"Titre court","resume":"Résumé en 2-3 phrases pour L1","lien":"https://url-valide.fr/article","source":"Le Monde, Les Échos, Légifrance..."}]\n\n'
-        + 'Si tu ne trouves pas 5-7 articles valides, retourne moins mais VÉRIFIE les sources.';
+      return 'Tu es un juriste spécialisé dans l\'actualité juridique française. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les 5-7 principales actualités juridiques FR/EU de cette semaine. RÈGLES : (1) Articles UNIQUEMENT de cette semaine. (2) Liens vérifiés sur : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr. (3) Pas d\'articles sans source vérifiable. (4) Retourne UNIQUEMENT un JSON valide. Format : [{"titre":"Titre","resume":"2-3 phrases L1","lien":"https://url-real.fr","source":"Média"}]. Si moins de 5 articles valides, retourne ce que tu trouves.';
     }
   },
   jour: {
     title: '📅 News du jour',
     prompt: function(date) {
-      return 'Tu es un juriste spécialisé dans l\'actualité juridique française.\n\n'
-        + 'Nous sommes le ' + date + '.\n\n'
-        + 'TÂCHE CRUCIALE : Utilise UNIQUEMENT Google Search pour trouver les 3-5 principales actualités juridiques françaises du JOUR MÊME.\n\n'
-        + 'RÈGLES ABSOLUES :\n'
-        + '1. Articles UNIQUEMENT d\'aujourd\'hui ' + date + '\n'
-        + '2. Les liens DOIVENT être vérifiés et accessibles (sources : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr)\n'
-        + '3. Ignore les articles sans source officielle\n'
-        + '4. Retourne UNIQUEMENT un tableau JSON valide, pas de texte avant/après\n\n'
-        + 'Format : [{"titre":"Titre","resume":"Résumé 2-3 phrases","lien":"https://url-valide.fr","source":"Média"}]\n\n'
-        + 'Priorité : VÉRIFICATION des sources > quantité d\'articles.';
+      return 'Tu es un juriste spécialisé dans l\'actualité juridique française. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les 3-5 actualités juridiques françaises d\'aujourd\'hui. RÈGLES : (1) Articles du jour uniquement. (2) Liens vérifiés : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr. (3) Source officielle obligatoire. (4) Retourne UNIQUEMENT JSON. Format : [{"titre":"Titre","resume":"2-3 phrases","lien":"https://url-real.fr","source":"Média"}]. Qualité > quantité.';
     }
   },
   constit: {
     title: '🏛️ Droit constitutionnel',
     prompt: function(date) {
-      return 'Tu es un constitutionnaliste français.\n\n'
-        + 'Nous sommes le ' + date + '.\n\n'
-        + 'TÂCHE : Utilise UNIQUEMENT Google Search pour trouver les actualités récentes de droit constitutionnel (cette semaine/mois).\n\n'
-        + 'RÈGLES :\n'
-        + '1. Articles récents seulement (1-4 semaines maximum)\n'
-        + '2. Sources vérifiées : conseil-constitutionnel.fr, legifrance.gouv.fr, Le Monde, Les Échos\n'
-        + '3. Liens valides et accessibles uniquement\n'
-        + '4. Retourne UNIQUEMENT un tableau JSON sans markdown\n\n'
-        + 'Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-valide.fr","source":"Source"}]\n\n'
-        + 'Qualité > Quantité.';
+      return 'Tu es un constitutionnaliste. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les actualités récentes de droit constitutionnel (1-4 semaines). RÈGLES : (1) Articles récents seulement. (2) Sources vérifiées : conseil-constitutionnel.fr, legifrance.gouv.fr, Le Monde, Les Échos. (3) Liens accessibles. (4) JSON valide uniquement. Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-real.fr","source":"Source"}]. Qualité importante.';
     }
   },
   eco: {
     title: '📈 Économie',
     prompt: function(date) {
-      return 'Tu es un économiste spécialisé dans l\'actualité macro/micro française et européenne.\n\n'
-        + 'Nous sommes le ' + date + '.\n\n'
-        + 'TÂCHE : Utilise UNIQUEMENT Google Search pour les actualités économiques récentes (cette semaine).\n\n'
-        + 'RÈGLES :\n'
-        + '1. Articles récents de cette semaine uniquement\n'
-        + '2. Sources sûres : Les Échos, Le Monde, Reuters, BCE, INSEE\n'
-        + '3. Liens vérifiés et actifs\n'
-        + '4. Retourne UNIQUEMENT un tableau JSON, pas de markdown\n\n'
-        + 'Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-valide.fr","source":"Média"}]\n\n'
-        + 'Vérifie les sources avant de retourner.';
+      return 'Tu es un économiste. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les actualités économiques de cette semaine. RÈGLES : (1) Articles cette semaine uniquement. (2) Sources : Les Échos, Le Monde, Reuters, BCE, INSEE. (3) Liens vérifiés. (4) JSON valide. Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-real.fr","source":"Média"}]. Vérifie avant de retourner.';
     }
   }
 };
