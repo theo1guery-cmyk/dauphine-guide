@@ -5813,12 +5813,27 @@ aside.sidebar {
 <div class="rev-modal-bg" id="planningIAModalBg" onclick="if(event.target===this)planningIAClose()">
   <div class="rev-modal" style="max-width:640px">
     <h3>📅 <em>Plan de révision</em> personnalisé</h3>
+    <div id="planningIAForm" style="margin-bottom:14px">
+      <p style="font-size:13px;color:var(--g600);margin:0 0 14px">L'IA va générer un planning adapté à tes examens, en évitant tes heures de cours et en privilégiant les soirs et week-ends.</p>
+      <div style="margin-bottom:12px">
+        <label style="font-size:12px;font-weight:700;color:var(--g700);display:block;margin-bottom:6px">⏱️ Combien d'heures de travail estimes-tu nécessaires au total ?</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" id="planningIAHours" min="1" max="200" value="10" style="width:80px;padding:8px 10px;border:1.5px solid var(--g200);border-radius:8px;font-size:14px;font-weight:600;font-family:'Figtree',sans-serif;color:var(--g900);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'" />
+          <span style="font-size:13px;color:var(--g600)">heures de révision au total</span>
+        </div>
+        <p style="font-size:11px;color:var(--g400);margin:5px 0 0">Ex : 5h pour un devoir rapide, 20h+ pour des examens importants</p>
+      </div>
+      <div class="rev-modal-actions" style="margin:0">
+        <button class="rev-modal-cancel" onclick="planningIAClose()">Annuler</button>
+        <button class="rev-modal-save" onclick="planningIAGenerate()" style="background:linear-gradient(135deg,#7c3aed,#a855f7);border-color:#7c3aed">🤖 Générer le planning</button>
+      </div>
+    </div>
     <div id="planningIALoading" style="display:none;text-align:center;padding:24px">
       <div class="notes-gen-spinner"></div>
       <div style="font-size:13px;color:var(--g600);margin-top:8px">Groq analyse tes examens et tes notes…</div>
     </div>
     <div id="planningIAResult" class="ia-result-content" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:14px;max-height:460px;overflow-y:auto;margin-bottom:12px"></div>
-    <div class="rev-modal-actions">
+    <div class="rev-modal-actions" id="planningIAResultActions" style="display:none">
       <button class="rev-modal-cancel" onclick="planningIAClose()">Fermer</button>
       <button class="rev-modal-save" id="planningIACopyBtn" onclick="planningIACopy()" style="display:none">📋 Copier</button>
       <button class="rev-modal-save" id="planningIAAddBtn" onclick="planningIAAddToPlanning()" style="display:none;background:var(--purple,#a855f7);border-color:var(--purple,#a855f7)">📅 Ajouter au planning</button>
@@ -10743,12 +10758,33 @@ function explainClose() {
 }
 
 // ════ SUGGESTIONS PLANNING IA ════
-async function planningIASuggestions() {
+function planningIASuggestions() {
+  // Show the modal with the estimation form first
   document.getElementById('planningIAModalBg').classList.add('open');
-  document.getElementById('planningIALoading').style.display = 'block';
+  document.getElementById('planningIAForm').style.display = 'block';
+  document.getElementById('planningIALoading').style.display = 'none';
   document.getElementById('planningIAResult').style.display = 'none';
+  var resultActions = document.getElementById('planningIAResultActions');
+  if (resultActions) resultActions.style.display = 'none';
   var copyBtn = document.getElementById('planningIACopyBtn');
   if (copyBtn) copyBtn.style.display = 'none';
+  var addBtn = document.getElementById('planningIAAddBtn');
+  if (addBtn) addBtn.style.display = 'none';
+  // Reset hours input
+  var hoursInput = document.getElementById('planningIAHours');
+  if (hoursInput) hoursInput.value = '10';
+}
+
+async function planningIAGenerate() {
+  var hoursInput = document.getElementById('planningIAHours');
+  var estimatedHours = hoursInput ? Math.max(1, parseInt(hoursInput.value) || 10) : 10;
+
+  // Switch to loading state
+  document.getElementById('planningIAForm').style.display = 'none';
+  document.getElementById('planningIALoading').style.display = 'block';
+  document.getElementById('planningIAResult').style.display = 'none';
+  var resultActions = document.getElementById('planningIAResultActions');
+  if (resultActions) resultActions.style.display = 'none';
 
   var today = new Date().toISOString().split('T')[0];
 
@@ -10776,19 +10812,40 @@ async function planningIASuggestions() {
     .map(function(c){ return '- ' + c.cat + ' : ' + c.q; })
     .join('\n');
 
+  // Build the list of busy (class) time slots to avoid
+  var allCourseEvents = (typeof getActiveEvents === 'function' ? getActiveEvents() : []);
+  var twoWeeksLater = new Date(); twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+  var twoWeeksLaterStr = twoWeeksLater.toISOString().split('T')[0];
+  var coursSlots = allCourseEvents
+    .filter(function(e){ return e.date >= today && e.date <= twoWeeksLaterStr; })
+    .map(function(e){ return '- ' + e.date + ' ' + e.time + '–' + e.end + ' : ' + e.summary; })
+    .join('\n');
+
+  // Estimate session duration based on total hours
+  var sessionDuration = estimatedHours <= 5 ? 60 : estimatedHours <= 15 ? 90 : 120;
+  var maxSessions = Math.min(14, Math.ceil(estimatedHours / (sessionDuration / 60)));
+
   var prompt = 'Tu es un coach de révision expert pour des étudiants en L1 Droit-Économie à Paris-Dauphine.\n\n'
     + 'Date d\'aujourd\'hui : ' + today + '\n\n'
-    + (upcomingExams ? 'DEVOIRS ET EXAMENS À VENIR :\n' + upcomingExams + '\n\n' : 'Aucun examen renseigné dans l\'agenda.\n\n')
+    + 'CHARGE DE TRAVAIL ESTIMÉE : ' + estimatedHours + ' heures de révision au total\n'
+    + '→ Répartis ces ' + estimatedHours + 'h en séances de ' + sessionDuration + ' min (max ' + maxSessions + ' créneaux).\n\n'
+    + (upcomingExams ? 'DEVOIRS ET EXAMENS À VENIR (respecte impérativement ces deadlines) :\n' + upcomingExams + '\n\n' : 'Aucun examen renseigné dans l\'agenda.\n\n')
     + (manualExams   ? 'CRÉNEAUX PLANIFIÉS (examens/révisions) :\n' + manualExams + '\n\n' : '')
+    + (coursSlots    ? 'COURS PLANIFIÉS (créneaux OBLIGATOIREMENT à éviter — ne place AUCUNE révision pendant ces horaires) :\n' + coursSlots + '\n\n' : '')
     + (notesCtx      ? 'NOTES DE COURS DISPONIBLES :\n' + notesCtx + '\n\n' : 'Pas encore de notes créées.\n\n')
     + (hardCards     ? 'FLASHCARDS DIFFICILES (à retravailler) :\n' + hardCards + '\n\n' : '')
     + 'MISSION :\nCrée un plan de révision personnalisé et réaliste pour les 2 prochaines semaines.\n\n'
+    + 'RÈGLES ABSOLUES pour placer les créneaux :\n'
+    + '1. Ne jamais placer de révision pendant les cours listés ci-dessus.\n'
+    + '2. Privilégier en priorité les week-ends (samedi et dimanche) et les soirées (à partir de 18h30 en semaine).\n'
+    + '3. Si la charge de travail le permet, compléter avec des créneaux en milieu de journée (12h30–14h) les jours de semaine sans cours.\n'
+    + '4. Placer les révisions les plus importantes AVANT la date de rendu/l\'examen correspondant.\n\n'
     + 'FORMAT REQUIS (Markdown) :\n'
-    + '## 🎯 Priorités de révision\n(Les 3-4 matières à travailler en priorité avec justification)\n\n'
-    + '## 📅 Planning suggéré (14 jours)\n(Planning jour par jour avec créneaux et durées recommandés)\n\n'
+    + '## 🎯 Priorités de révision\n(Les 3-4 matières à travailler en priorité avec justification et deadline)\n\n'
+    + '## 📅 Planning suggéré (' + maxSessions + ' séances × ' + sessionDuration + 'min ≈ ' + estimatedHours + 'h)\n(Planning jour par jour — uniquement week-ends et soirées sauf si nécessaire)\n\n'
     + '## 💡 Conseils personnalisés\n(3-4 conseils pratiques adaptés à la situation)\n\n'
     + 'Sois concret, réaliste et motivant.\n\n'
-    + 'IMPORTANT : À la toute fin de ta réponse, ajoute exactement ce bloc (remplace les valeurs par les vraies séances suggérées, maximum 14 créneaux, durée typique 1h30) :\n'
+    + 'IMPORTANT : À la toute fin de ta réponse, ajoute exactement ce bloc JSON (max ' + maxSessions + ' créneaux, durée ' + sessionDuration + ' min, UNIQUEMENT les week-ends et soirées ≥18h30 sauf si déjà à court de créneaux) :\n'
     + 'SESSIONS_JSON:[{"date":"AAAA-MM-JJ","time":"HH:MM","end":"HH:MM","summary":"Révision Matière"},...]';
 
   try {
@@ -10815,6 +10872,8 @@ async function planningIASuggestions() {
     document.getElementById('planningIAResult').innerHTML = markdownToHtml(result);
     document.getElementById('planningIALoading').style.display = 'none';
     document.getElementById('planningIAResult').style.display = 'block';
+    if (resultActions) resultActions.style.display = '';
+    var copyBtn = document.getElementById('planningIACopyBtn');
     if (copyBtn) copyBtn.style.display = '';
     var addBtn = document.getElementById('planningIAAddBtn');
     if (addBtn) addBtn.style.display = window._planningIASessions.length ? '' : 'none';
@@ -10829,6 +10888,11 @@ async function planningIASuggestions() {
 
 function planningIAClose() {
   document.getElementById('planningIAModalBg').classList.remove('open');
+  // Reset to form state for next opening
+  document.getElementById('planningIAForm').style.display = 'block';
+  document.getElementById('planningIAResult').style.display = 'none';
+  var resultActions = document.getElementById('planningIAResultActions');
+  if (resultActions) resultActions.style.display = 'none';
 }
 
 function planningIACopy() {
