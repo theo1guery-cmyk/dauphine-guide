@@ -1210,7 +1210,7 @@ html{scroll-behavior:smooth}
 @media(max-width:480px){
   .login-card{padding:28px 20px;border-radius:14px}
   .login-title{font-size:20px}
-  #loginScreen{align-items:flex-start;padding-top:clamp(32px,8vh,80px)}
+  #loginScreen{align-items:flex-start;padding-top:clamp(16px,4vh,48px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 }
 /* Éléments cachés en accès limité */
 .drive-only{transition:opacity .2s}
@@ -9824,6 +9824,18 @@ function initLogin() {
     var inp = document.getElementById('loginInput');
     if (inp) inp.focus();
   }, 300);
+  // Ajuster la hauteur de l'écran quand le clavier virtuel s'ouvre (mobile)
+  if (window.visualViewport) {
+    window._loginVVHandler = function() {
+      var screen = document.getElementById('loginScreen');
+      if (!screen || screen.style.display === 'none' || screen.classList.contains('fade-out')) return;
+      screen.style.height = window.visualViewport.height + 'px';
+      // Faire défiler vers le bouton pour s'assurer qu'il est visible
+      var btn = screen.querySelector('.login-btn');
+      if (btn) setTimeout(function() { btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+    };
+    window.visualViewport.addEventListener('resize', window._loginVVHandler);
+  }
 }
 
 function submitLogin() {
@@ -9874,8 +9886,14 @@ function hideLoginScreen() {
   var screen = document.getElementById('loginScreen');
   if (!screen) return;
   screen.classList.add('fade-out');
+  // Nettoyer le handler clavier virtuel
+  if (window.visualViewport && window._loginVVHandler) {
+    window.visualViewport.removeEventListener('resize', window._loginVVHandler);
+    window._loginVVHandler = null;
+  }
   setTimeout(function() {
     screen.style.display = 'none';
+    screen.style.height = ''; // Réinitialiser la hauteur ajustée
     // Rafraîchir tous les widgets de la page d'accueil après connexion
     setTimeout(function() { updateHomeStats(); }, 100);
   }, 500);
