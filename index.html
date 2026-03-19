@@ -10292,23 +10292,31 @@ var NEWS_PROMPTS = {
   semaine: {
     title: '🗞️ News de la semaine',
     prompt: function(date) {
-      return 'Tu es un juriste et économiste spécialisé dans l\'actualité française.\n\n'
+      return 'Tu es un juriste spécialisé dans l\'actualité juridique française.\n\n'
         + 'Nous sommes le ' + date + '.\n\n'
-        + 'Génère un résumé des 5 à 7 principales actualités juridiques et économiques françaises et européennes de cette semaine.\n\n'
-        + 'RÈGLE ABSOLUE : retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans backticks, sans texte avant ou après.\n'
-        + 'Format exact : [{"titre":"Titre","resume":"Résumé en 2-3 phrases pour étudiant L1 Droit-Éco","lien":"https://url-reel.fr","source":"Nom du média"}]\n\n'
-        + 'Sources : Le Monde, Légifrance, Dalloz, Les Échos, Conseil constitutionnel, Cour de cassation.';
+        + 'TÂCHE CRUCIALE : Utilise UNIQUEMENT les résultats de Google Search pour trouver les 5-7 principales actualités juridiques FR/EU de cette semaine.\n\n'
+        + 'RÈGLES ABSOLUES :\n'
+        + '1. Les articles trouvés DOIVENT dater de cette semaine UNIQUEMENT\n'
+        + '2. Les liens DOIVENT être vérifiés et valides (domaines officiels : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr, etc)\n'
+        + '3. Ignore les articles sans source vérifiable\n'
+        + '4. Retourne UNIQUEMENT un tableau JSON valide, sans markdown, pas de backticks\n\n'
+        + 'Format exact : [{"titre":"Titre court","resume":"Résumé en 2-3 phrases pour L1","lien":"https://url-valide.fr/article","source":"Le Monde, Les Échos, Légifrance..."}]\n\n'
+        + 'Si tu ne trouves pas 5-7 articles valides, retourne moins mais VÉRIFIE les sources.';
     }
   },
   jour: {
     title: '📅 News du jour',
     prompt: function(date) {
-      return 'Tu es un juriste et économiste spécialisé dans l\'actualité française.\n\n'
+      return 'Tu es un juriste spécialisé dans l\'actualité juridique française.\n\n'
         + 'Nous sommes le ' + date + '.\n\n'
-        + 'Génère un résumé des 4 à 5 principales actualités juridiques et économiques françaises du jour.\n\n'
-        + 'RÈGLE ABSOLUE : retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans backticks.\n'
-        + 'Format : [{"titre":"Titre","resume":"Résumé 2-3 phrases","lien":"https://url-reel.fr","source":"Média"}]\n\n'
-        + 'Sources réelles uniquement : Le Monde, Légifrance, Les Échos, Conseil constitutionnel.';
+        + 'TÂCHE CRUCIALE : Utilise UNIQUEMENT Google Search pour trouver les 3-5 principales actualités juridiques françaises du JOUR MÊME.\n\n'
+        + 'RÈGLES ABSOLUES :\n'
+        + '1. Articles UNIQUEMENT d\'aujourd\'hui ' + date + '\n'
+        + '2. Les liens DOIVENT être vérifiés et accessibles (sources : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr)\n'
+        + '3. Ignore les articles sans source officielle\n'
+        + '4. Retourne UNIQUEMENT un tableau JSON valide, pas de texte avant/après\n\n'
+        + 'Format : [{"titre":"Titre","resume":"Résumé 2-3 phrases","lien":"https://url-valide.fr","source":"Média"}]\n\n'
+        + 'Priorité : VÉRIFICATION des sources > quantité d\'articles.';
     }
   },
   constit: {
@@ -10316,25 +10324,31 @@ var NEWS_PROMPTS = {
     prompt: function(date) {
       return 'Tu es un constitutionnaliste français.\n\n'
         + 'Nous sommes le ' + date + '.\n\n'
-        + 'Génère 4 à 5 actualités récentes en droit constitutionnel français (décisions Conseil constitutionnel, QPC, réformes institutionnelles...).\n\n'
-        + 'RÈGLE ABSOLUE : retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans backticks.\n'
-        + 'Format : [{"titre":"Titre","resume":"Résumé pédagogique 2-3 phrases L1","lien":"https://url-reel.fr","source":"Conseil constitutionnel / Légifrance..."}]';
+        + 'TÂCHE : Utilise UNIQUEMENT Google Search pour trouver les actualités récentes de droit constitutionnel (cette semaine/mois).\n\n'
+        + 'RÈGLES :\n'
+        + '1. Articles récents seulement (1-4 semaines maximum)\n'
+        + '2. Sources vérifiées : conseil-constitutionnel.fr, legifrance.gouv.fr, Le Monde, Les Échos\n'
+        + '3. Liens valides et accessibles uniquement\n'
+        + '4. Retourne UNIQUEMENT un tableau JSON sans markdown\n\n'
+        + 'Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-valide.fr","source":"Source"}]\n\n'
+        + 'Qualité > Quantité.';
     }
   },
   eco: {
     title: '📈 Économie',
     prompt: function(date) {
-      return 'Tu es un économiste spécialisé dans l\'actualité économique française et européenne.\n\n'
+      return 'Tu es un économiste spécialisé dans l\'actualité macro/micro française et européenne.\n\n'
         + 'Nous sommes le ' + date + '.\n\n'
-        + 'Génère 4 à 5 actualités économiques récentes (macro, BCE, budget, marchés, emploi...).\n\n'
-        + 'RÈGLE ABSOLUE : retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans backticks.\n'
-        + 'Format : [{"titre":"Titre","resume":"Résumé 2-3 phrases L1 Éco","lien":"https://url-reel.fr","source":"Les Échos / Le Monde / BCE..."}]';
+        + 'TÂCHE : Utilise UNIQUEMENT Google Search pour les actualités économiques récentes (cette semaine).\n\n'
+        + 'RÈGLES :\n'
+        + '1. Articles récents de cette semaine uniquement\n'
+        + '2. Sources sûres : Les Échos, Le Monde, Reuters, BCE, INSEE\n'
+        + '3. Liens vérifiés et actifs\n'
+        + '4. Retourne UNIQUEMENT un tableau JSON, pas de markdown\n\n'
+        + 'Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-valide.fr","source":"Média"}]\n\n'
+        + 'Vérifie les sources avant de retourner.';
     }
   }
-};
-
-// Storage keys per tab
-function newsKey(type) { return 'dauphine_news_' + type; }
 
 // Déclencher autoGenerate quand on arrive sur la page news
 var _newsPageInit = false;
