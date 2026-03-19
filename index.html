@@ -5248,54 +5248,6 @@ aside.sidebar {
   <div class="learn-body" id="learnBody">
     <!-- Populated by JS -->
   </div>
-
-  <div class="rev-modal">
-    <h3 id="slotModalTitle">📅 Ajouter un <em>creneau</em></h3>
-    <div class="slot-type-tabs">
-      <button class="slot-type-tab revision on" onclick="setSlotType(&#39;revision&#39;,this)">🕐 Revision</button>
-      <button class="slot-type-tab cours" onclick="setSlotType(&#39;cours&#39;,this)">📚 Cours</button>
-      <button class="slot-type-tab exam" onclick="setSlotType(&#39;exam&#39;,this)">✍️ Examen</button>
-    </div>
-    <div class="rev-conflict" id="slotConflict">⚠️ Conflit avec un creneau existant !</div>
-    <div class="rev-field">
-      <label>Matiere / Intitule</label>
-      <select class="rev-select" id="slotMat"><option value="">-- Choisir --</option>
-            <option value="Droit Constitutionnel">Droit Constitutionnel</option>
-            <option value="Droit penal">Droit penal</option>
-            <option value="Droit Europeen">Droit Europeen</option>
-            <option value="Microeconomie">Microeconomie</option>
-            <option value="Macroeconomie">Macroeconomie</option>
-            <option value="Mathematiques">Mathematiques</option>
-            <option value="Comptabilite">Comptabilite</option>
-            <option value="Gestion">Gestion</option>
-            <option value="Anglais">Anglais</option>
-            <option value="Sciences politiques">Sciences politiques</option>
-            <option value="Enjeux Ecologiques">Enjeux Ecologiques</option>
-            <option value="Soft Skills">Soft Skills</option>
-            <option value="Autre">Autre</option></select>
-    </div>
-    <div class="rev-row">
-      <div class="rev-field"><label>Date</label><input class="rev-input" type="date" id="slotDate"></div>
-      <div class="rev-field"><label>Debut</label><input class="rev-input" type="time" id="slotStart" value="09:00"></div>
-    </div>
-    <div class="rev-row">
-      <div class="rev-field"><label>Duree</label>
-        <select class="rev-select" id="slotDur">
-          <option value="30">30 min</option>
-          <option value="60" selected="">1h</option>
-          <option value="90">1h30</option>
-          <option value="120">2h</option>
-          <option value="180">3h</option>
-          <option value="240">4h</option>
-        </select>
-      </div>
-      <div class="rev-field"><label>Lieu (optionnel)</label><input class="rev-input" type="text" id="slotLieu" placeholder="Salle, BU..."></div>
-    </div>
-    <div class="rev-modal-actions">
-      <button class="rev-modal-cancel" onclick="closeSlotModal()">Annuler</button>
-      <button class="rev-modal-save" onclick="saveSlot()">✓ Ajouter</button>
-    </div>
-  </div>
 </div>
 <div class="manage-modal" id="manageModal" onclick="if(event.target===this)closeManage()">
   <div class="manage-inner">
@@ -8997,7 +8949,7 @@ if(document.readyState==='loading'){
 
 // ════ MODE APPRENDRE ════
 var learnState = {
-  deck:[],pile:[],mode:'strict',
+  deck:[],pile:[],mode:'qcm',
   current:null,answered:false,
   ok:0,ko:0,total:0,
   retypeRequired:false
@@ -9023,30 +8975,14 @@ function renderLearnStart(){
   body.innerHTML = '<div class="learn-start-screen">'
     +'<div class="learn-start-title">Mode <em>Apprendre</em></div>'
     +'<p style="font-size:13px;color:var(--g600)">'+learnState.deck.length+' cartes selectionees</p>'
-    +'<div class="learn-mode-cards">'
-    +'<div class="learn-mode-card selected" id="lmStrict" onclick="selectLearnMode(\'strict\')">'
-    +'<div class="learn-mode-icon">&#9989;</div>'
-    +'<div class="learn-mode-name">Reponse stricte</div>'
-    +'<div class="learn-mode-desc">Tu dois taper exactement la bonne reponse (casse ignoree).</div>'
-    +'</div>'
-    +'<div class="learn-mode-card" id="lmSimilar" onclick="selectLearnMode(\'similar\')">'
-    +'<div class="learn-mode-icon">&#129504;</div>'
-    +'<div class="learn-mode-name">Reponse similaire <span class="learn-ai-badge">IA</span></div>'
-    +'<div class="learn-mode-desc">L\'IA compare le sens de ta reponse avec la bonne reponse.</div>'
-    +'</div>'
-    +'</div>'
-    +'<div class="learn-mode-cards" style="margin-top:0">'+'<div class="learn-mode-card" id="lmQcm" onclick="selectLearnMode(\'qcm\')" style="grid-column:span 2">'+'<div class="learn-mode-icon">&#127381;</div>'+'<div class="learn-mode-name">QCM &mdash; Choix multiples <span class="learn-ai-badge">IA</span></div>'+'<div class="learn-mode-desc">3 mauvaises r\u00e9ponses g\u00e9n\u00e9r\u00e9es par IA. Clique sur la bonne r\u00e9ponse.</div>'+'</div></div>'
+    +'<div class="learn-mode-cards" style="margin-top:0">'
+    +'<div class="learn-mode-card selected" id="lmQcm" style="grid-column:span 2">'
+    +'<div class="learn-mode-icon">&#127381;</div>'
+    +'<div class="learn-mode-name">QCM &mdash; Choix multiples <span class="learn-ai-badge">IA</span></div>'
+    +'<div class="learn-mode-desc">3 mauvaises r\u00e9ponses g\u00e9n\u00e9r\u00e9es par IA. Clique sur la bonne r\u00e9ponse.</div>'
+    +'</div></div>'
     +'<button class="learn-start-btn" onclick="startLearn()">Commencer &#8594;</button>'
     +'</div>';
-}
-
-function selectLearnMode(mode){
-  learnState.mode=mode;
-  ['lmStrict','lmSimilar','lmQcm'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.classList.remove('selected');
-  });
-  var ids={strict:'lmStrict',similar:'lmSimilar',qcm:'lmQcm'};
-  var el=document.getElementById(ids[mode]);if(el)el.classList.add('selected');
 }
 
 function startLearn(){
@@ -9120,8 +9056,8 @@ function generateQcmChoicesWithAI(card,callback){
     body:JSON.stringify({
       model:'claude-sonnet-4-20250514',
       max_tokens:300,
-      system:'Tu es un cr\u00e9ateur de QCM pour \u00e9tudiants. G\u00e9n\u00e8re exactement 3 mauvaises r\u00e9ponses plausibles mais incorrectes pour la question donn\u00e9e. R\u00e9ponds UNIQUEMENT par un JSON valide: {"wrong": ["rep1", "rep2", "rep3"]}. Les mauvaises r\u00e9ponses doivent \u00eatre dans la m\u00eame langue que la bonne r\u00e9ponse, de longueur similaire, et plausibles mais clairement incorrectes.',
-      messages:[{role:'user',content:'Question: '+card.q+'\nBonne r\u00e9ponse: '+card.r+'\nG\u00e9n\u00e8re 3 mauvaises r\u00e9ponses plausibles.'}]
+      system:'Tu es un cr\u00e9ateur de QCM difficiles pour \u00e9tudiants en droit et \u00e9conomie. G\u00e9n\u00e8re exactement 3 mauvaises r\u00e9ponses qui portent \u00e0 confusion : elles doivent utiliser le m\u00eame vocabulaire technique que la bonne r\u00e9ponse, appartenir au m\u00eame domaine juridique ou \u00e9conomique, \u00eatre de longueur similaire, et sembler plausibles sans une connaissance approfondie du sujet. R\u00e9ponds UNIQUEMENT par un JSON valide: {"wrong": ["rep1", "rep2", "rep3"]}.',
+      messages:[{role:'user',content:'Question: '+card.q+'\nBonne r\u00e9ponse: '+card.r+'\nG\u00e9n\u00e8re 3 mauvaises r\u00e9ponses trompeuses et th\u00e9matiquement coh\u00e9rentes.'}]
     })
   }).then(function(r){return r.json();})
   .then(function(data){
