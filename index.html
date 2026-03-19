@@ -3942,6 +3942,16 @@ aside.sidebar {
   </div>
 
   <script charset="utf-8">
+  // ════════════════════════════════════════
+  // SYSTÈME DE CONNEXION — DauphineGuide
+  // Déclaré en GLOBAL SCOPE (accessible partout)
+  // ════════════════════════════════════════
+  window.ACCESS_CODES = {
+    '.pjf+NI^,rxqWzB?E%bK': 'full',    // ← Code accès complet (Drive inclus)
+    'VISITEUR2025':         'limited', // ← Code accès limité (sans Drive)
+    'DAUPHINE26':           'prank'    // ← 😈
+  };
+  
   (function() {
     var CARDS = [{"cat": "Droit", "q": "Qu'est-ce que la règle de droit ?", "r": "Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.", "status": "none"}, {"cat": "Droit", "q": "Hiérarchie des normes (pyramide de Kelsen)", "r": "Constitution → Traités int. → Lois organiques → Lois ordinaires → Règlements (décrets, arrêtés).", "status": "none"}, {"cat": "Droit", "q": "Qu'est-ce que l'effet relatif des conventions ?", "r": "Le contrat ne crée d'obligations qu'entre les parties — ne profite ni ne nuit aux tiers (art. 1199 C.civ).", "status": "none"}, {"cat": "Droit", "q": "Définition de l'infraction pénale", "r": "Fait prévu et puni par la loi. 3 éléments : légal, matériel, moral.", "status": "none"}, {"cat": "Droit", "q": "Nullum crimen, nulla poena sine lege", "r": "Principe de légalité des peines : on ne peut être puni que pour un fait prévu par un texte antérieur.", "status": "none"}, {"cat": "Droit", "q": "Conseil de l'Europe vs Union européenne", "r": "CdE : 46 États, CEDH. UE : 27 États, marché unique, CJUE, droit contraignant.", "status": "none"}, {"cat": "Droit constit.", "q": "Exécutif bicéphale sous la Ve République", "r": "Président (élu SUD, 5 ans) + Premier ministre nommé par le Président, responsable devant l'AN.", "status": "none"}, {"cat": "Droit constit.", "q": "Qu'est-ce qu'une QPC ?", "r": "Question Prioritaire de Constitutionnalité : contester la conformité d'une loi aux droits fondamentaux (art. 61-1).", "status": "none"}, {"cat": "Microéco", "q": "Contrainte budgétaire du consommateur", "r": "pX·X + pY·Y ≤ R — dépenses limitées au revenu R aux prix pX, pY.", "status": "none"}, {"cat": "Microéco", "q": "Condition d'optimum du consommateur", "r": "TmS(x/y) = px/py — le taux marginal de substitution égale le rapport des prix.", "status": "none"}, {"cat": "Microéco", "q": "Effet de substitution", "r": "Hausse de prix d'un bien → substitution vers le bien moins cher, à utilité constante.", "status": "none"}, {"cat": "Microéco", "q": "Optimum de Pareto", "r": "Allocation où améliorer la situation d'un agent est impossible sans détériorer celle d'un autre.", "status": "none"}, {"cat": "Macroéco", "q": "PIB par l'approche dépenses", "r": "PIB = C + I + G + (X − M)", "status": "none"}, {"cat": "Macroéco", "q": "Modèle de Solow (résumé)", "r": "Y = f(K, L). Capital s'accumule jusqu'à l'état stationnaire. Croissance LT = progrès technique.", "status": "none"}, {"cat": "Macroéco", "q": "3 fonctions de la monnaie", "r": "Intermédiaire des échanges · Unité de compte · Réserve de valeur.", "status": "none"}, {"cat": "Comptabilité", "q": "Principe de prudence", "r": "On comptabilise les pertes probables immédiatement, mais on n'anticipe pas les gains futurs.", "status": "none"}, {"cat": "Comptabilité", "q": "Résultat net comptable", "r": "Résultat = Produits – Charges. Bénéfice si > 0, perte si < 0.", "status": "none"}, {"cat": "Comptabilité", "q": "Différence charge / décaissement", "r": "Charge diminue le résultat (ex. amortissement). Décaissement = sortie de trésorerie réelle.", "status": "none"}, {"cat": "Maths", "q": "Condition nécessaire d'extremum f(x,y)", "r": "∂f/∂x = 0 ET ∂f/∂y = 0 (point critique). Vérifier le hessien pour la suffisance.", "status": "none"}, {"cat": "Maths", "q": "Méthode du Lagrangien", "r": "L(x,y,λ) = f(x,y) − λ·g(x,y). Résoudre ∇L = 0 pour optimiser sous contrainte g(x,y) = 0.", "status": "none"}, {"cat": "Sciences Po", "q": "3 types de légitimité (Weber)", "r": "Traditionnelle (coutume) · Charismatique (personnalité) · Rationnelle-légale (droit, procédure).", "status": "none"}, {"cat": "Sciences Po", "q": "Gouvernement représentatif", "r": "Délégation du pouvoir à des représentants élus, distinct de la démocratie directe. Principe de mandat.", "status": "none"}];
     var ap = { pile:[], cur:null, ok:0, ko:0, total:0, cat:'all' };
@@ -9794,15 +9804,7 @@ if (document.readyState === 'loading') {
 }
 
 
-// ════════════════════════════════════════
-// SYSTÈME DE CONNEXION — DauphineGuide
-// Pour changer les codes : modifie ACCESS_CODES ci-dessous
-// ════════════════════════════════════════
-window.ACCESS_CODES = {
-  '.pjf+NI^,rxqWzB?E%bK': 'full',    // ← Code accès complet (Drive inclus)
-  'VISITEUR2025':         'limited', // ← Code accès limité (sans Drive)
-  'DAUPHINE26':           'prank'    // ← 😈
-};
+
 
 var currentAccess = null;
 
