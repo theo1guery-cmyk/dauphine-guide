@@ -3877,6 +3877,7 @@ aside.sidebar {
   <div class="slbl">Flashcards</div>
   <div class="sh2">Mode <em>Apprendre</em></div>
   <p class="sdesc">Réponds à la question. Si faux, tu peux quand même cliquer <em>J'avais raison</em>.</p>
+  <button class="learn-trigger-btn" onclick="openLearn()" style="margin-bottom:20px">🎓 Mode avancé &mdash; QCM &amp; IA</button>
 
   <!-- Filtres matière -->
   <div id="ap-filters" style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 24px"><button data-cat="all" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(26, 86, 196); background: rgb(26, 86, 196); color: rgb(255, 255, 255); cursor: pointer; font-family: Figtree, sans-serif;">Toutes</button><button data-cat="Comptabilité" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Comptabilité</button><button data-cat="Droit" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Droit</button><button data-cat="Droit constit." style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Droit constit.</button><button data-cat="Macroéco" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Macroéco</button><button data-cat="Maths" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Maths</button><button data-cat="Microéco" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Microéco</button><button data-cat="Sciences Po" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Sciences Po</button></div>
@@ -8946,7 +8947,7 @@ function renderLearnStart(){
     +'<div class="learn-mode-desc">L\'IA compare le sens de ta reponse avec la bonne reponse.</div>'
     +'</div>'
     +'</div>'
-    +'<div class="learn-mode-cards" style="margin-top:0">'+'<div class="learn-mode-card" id="lmQcm" onclick="selectLearnMode(\'qcm\')" style="grid-column:span 2">'+'<div class="learn-mode-icon">&#127381;</div>'+'<div class="learn-mode-name">QCM &mdash; Choix multiples</div>'+'<div class="learn-mode-desc">4 propositions generees automatiquement. Clique sur la bonne reponse.</div>'+'</div></div>'
+    +'<div class="learn-mode-cards" style="margin-top:0">'+'<div class="learn-mode-card" id="lmQcm" onclick="selectLearnMode(\'qcm\')" style="grid-column:span 2">'+'<div class="learn-mode-icon">&#127381;</div>'+'<div class="learn-mode-name">QCM &mdash; Choix multiples <span class="learn-ai-badge">IA</span></div>'+'<div class="learn-mode-desc">3 mauvaises r\u00e9ponses g\u00e9n\u00e9r\u00e9es par IA. Clique sur la bonne r\u00e9ponse.</div>'+'</div></div>'
     +'<button class="learn-start-btn" onclick="startLearn()">Commencer &#8594;</button>'
     +'</div>';
 }
@@ -9000,12 +9001,53 @@ function renderLearnQuestion(){
 function renderLearnQcm(){
   var card=learnState.current;if(!card){renderLearnEnd();return;}
   updateLearnProgress();
-  var others=learnState.deck.filter(function(x){return x.r!==card.r;});
-  others.sort(function(){return Math.random()-.5;});
-  var choices=[card.r].concat(others.slice(0,3).map(function(x){return x.r;}));
-  while(choices.length<4)choices.push('—');
-  choices.sort(function(){return Math.random()-.5;});
-  learnState.currentChoices=choices;
+  var body=document.getElementById('learnBody');
+  body.innerHTML='<div class="learn-card-area"><div class="learn-card">'
+    +'<div class="learn-cat">'+(card.cat||'')+'</div>'
+    +'<div class="learn-question">'+(card.q||'')+'</div>'
+    +'</div></div>'
+    +'<div style="text-align:center;padding:24px 0;color:var(--g500);font-size:13px;font-weight:600">'
+    +'<span class="learn-ai-badge">IA</span>&nbsp; G\u00e9n\u00e9ration des propositions...</div>'
+    +'<div class="learn-feedback" id="lFeedback"></div>';
+  generateQcmChoicesWithAI(card,function(wrongAnswers){
+    var choices;
+    if(wrongAnswers&&wrongAnswers.length>=3){
+      choices=[card.r].concat(wrongAnswers.slice(0,3));
+    } else {
+      var others=learnState.deck.filter(function(x){return x.r!==card.r;});
+      others.sort(function(){return Math.random()-.5;});
+      choices=[card.r].concat(others.slice(0,3).map(function(x){return x.r;}));
+      while(choices.length<4)choices.push('\u2014');
+    }
+    choices.sort(function(){return Math.random()-.5;});
+    learnState.currentChoices=choices;
+    renderLearnQcmChoices(card,choices);
+  });
+}
+
+function generateQcmChoicesWithAI(card,callback){
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:300,
+      system:'Tu es un cr\u00e9ateur de QCM pour \u00e9tudiants. G\u00e9n\u00e8re exactement 3 mauvaises r\u00e9ponses plausibles mais incorrectes pour la question donn\u00e9e. R\u00e9ponds UNIQUEMENT par un JSON valide: {"wrong": ["rep1", "rep2", "rep3"]}. Les mauvaises r\u00e9ponses doivent \u00eatre dans la m\u00eame langue que la bonne r\u00e9ponse, de longueur similaire, et plausibles mais clairement incorrectes.',
+      messages:[{role:'user',content:'Question: '+card.q+'\nBonne r\u00e9ponse: '+card.r+'\nG\u00e9n\u00e8re 3 mauvaises r\u00e9ponses plausibles.'}]
+    })
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    var text=(data.content&&data.content[0]&&data.content[0].text)||'{"wrong":[]}';
+    try{
+      var clean=text.replace(/```json|```/g,'').trim();
+      var result=JSON.parse(clean);
+      callback(result.wrong&&result.wrong.length>=3?result.wrong:null);
+    }catch(e){callback(null);}
+  })
+  .catch(function(){callback(null);});
+}
+
+function renderLearnQcmChoices(card,choices){
   var body=document.getElementById('learnBody');
   var btns=choices.map(function(ch,i){
     return '<button class="focus-btn" id="qcm'+i+'" onclick="answerQcm('+i+')" '
