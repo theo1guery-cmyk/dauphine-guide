@@ -6984,11 +6984,19 @@ function renderWeek(){
       eb.innerHTML='<div style="font-size:10px;color:#d1d5db;text-align:center;padding:10px 4px">Libre</div>';
     } else {
       dayEvts.sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+      var prevEndMin=null;
+      function tmMin(s){if(!s)return null;var p=s.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);}
       dayEvts.forEach(function(e){
         var ev=document.createElement('div');
         var extraClass = e.slotType==='revision'?' rev-slot':e.slotType==='exam'?' exam-slot':e.slotType==='manual-cours'?' manual-slot':'';
         ev.className='wev'+extraClass;
         ev.style.background=e.color;ev.style.borderColor=e.border;
+        var startMin=tmMin(e.time);
+        if(prevEndMin!==null&&startMin!==null&&startMin-prevEndMin>30){
+          var extra=Math.min(Math.round((startMin-prevEndMin)/60*10),18);
+          ev.style.marginTop=extra+'px';
+        }
+        prevEndMin=tmMin(e.end)||startMin;
         var title=e.summary.length>28?e.summary.slice(0,28)+'...':e.summary;
         var timeStr=e.time+(e.end&&e.end!==e.time?' - '+e.end:'');
         var delBtn = e.manualId ? '<button class="rev-del" onclick="event.stopPropagation();deleteManualSlot('+e.manualId+')" title="Supprimer">x</button>' : '';
