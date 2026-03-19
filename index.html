@@ -3607,12 +3607,17 @@ aside.sidebar {
       </div>
       <div>
         <label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:6px">📅 Semestre à analyser</label>
-        <select id="analyseSem" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
+        <select id="analyseSem" onchange="updateNoCCFields()" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
           <option value="1">Semestre 1</option>
           <option value="2">Semestre 2</option>
           <option value="both">S1 + S2</option>
         </select>
       </div>
+    </div>
+
+    <div id="noCCEstimations" style="display:none;margin-bottom:16px;padding:12px;background:rgba(249,115,22,0.08);border-radius:8px;border:1px solid rgba(249,115,22,0.2)">
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--text-main);margin-bottom:10px">📝 Matières 100% examen — Estimation de ton score:</label>
+      <div id="noCCFieldsContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px"></div>
     </div>
 
     <button class="cp-gen-btn" onclick="analyzeExamPriorities()" id="analyzeBtn" style="width:100%;margin-bottom:12px">⚡ Analyser mes priorités</button>
@@ -6112,207 +6117,140 @@ function analyzeExamPriorities() {
   var btn = document.getElementById('analyzeBtn');
   var loading = document.getElementById('prioritiesLoading');
   var result = document.getElementById('prioritiesResult');
-
   var targetGrade = parseFloat(targetGradeEl.value);
-  var semester = semesterEl.value; // "1", "2", or "both"
-
+  var semester = semesterEl.value;
   if (btn) btn.disabled = true;
   if (loading) loading.style.display = 'block';
   if (result) result.style.display = 'none';
-
-  // Récupérer les matières du/des semestre(s) sélectionné(s)
-  var selectedMatieres = MATIERES.filter(function(m) {
-    if (semester === 'both') return true;
-    return m.sem == parseInt(semester);
-  }).filter(function(m) { return m.coef > 0; }); // Ignorer soft skills
-
-  // Récupérer les notes CC actuelles
-  var analysis = [];
-  var totalEcts = 0;
-  var currentWeightedSum = 0; // Sum(CC_i * ects_i)
-
-  selectedMatieres.forEach(function(m) {
-    var ccEl = document.getElementById('cc_' + m.id);
-    var ccGrade = ccEl ? parseFloat(ccEl.value) : null;
-    
-    if (ccGrade === null || isNaN(ccGrade)) {
-      ccGrade = 0; // Traiter comme 0 si pas de note
-    }
-
-    totalEcts += m.ects;
-    currentWeightedSum += ccGrade * m.ects;
-
-    var ccPct = m.cc || 0;
-    var examPct = m.exam || 100;
-
-    analysis.push({
-      matiere: m.nom,
-      id: m.id,
-      sem: m.sem,
-      ects: m.ects,
-      ccGrade: ccGrade,
-      ccPct: ccPct,
-      examPct: examPct
+  try {
+    var selectedMatieres = MATIERES.filter(function(m) {
+      if (semester === 'both') return true;
+      return m.sem == parseInt(semester);
+    }).filter(function(m) { return m.coef > 0; });
+    var withCCMatieres = selectedMatieres.filter(function(m) { return m.cc > 0; });
+    var noCCMatieres = selectedMatieres.filter(function(m) { return m.cc === 0; });
+    var analysis = [];
+    var totalEcts = 0;
+    withCCMatieres.forEach(function(m) {
+      var ccEl = document.getElementById('cc_' + m.id);
+      var ccGrade = ccEl ? parseFloat(ccEl.value) : null;
+      if (ccGrade === null || isNaN(ccGrade)) ccGrade = 0;
+      totalEcts += m.ects;
+      analysis.push({
+        matiere: m.nom, id: m.id, sem: m.sem, ects: m.ects,
+        ccGrade: ccGrade, ccPct: m.cc || 0, examPct: m.exam || 100, hasCC: true
+      });
     });
-  });
-
-  if (analysis.length === 0) {
-    toast('Rentre au moins une note de CC pour analyser', '⚠️');
-    if (btn) btn.disabled = false;
-    if (loading) loading.style.display = 'none';
-    return;
-  }
-
-  // === CALCUL DE L'OBJECTIF D'EXAMEN RÉALISTE PAR MATIÈRE ===
-  // Pour chaque matière i: supposer que les autres maintiennent leur CC
-  // Et calculer quel score d'examen pour matière i atteint la cible
-
-  analysis.forEach(function(a) {
-    // Calcul: somme pondérée pour les AUTRES matières (en supposant examen = CC)
-    var otherWeightedSum = 0;
-    var otherEcts = 0;
-    
-    analysis.forEach(function(other) {
-      if (other.id !== a.id) {
-        // Moyenne de la matière = (CC * cc% + CC * exam%) / 100 = CC (puisqu'on suppose exam = CC)
-        otherWeightedSum += other.ccGrade * other.ects;
-        otherEcts += other.ects;
+    noCCMatieres.forEach(function(m) {
+      var estimEl = document.getElementById('estimExam_' + m.id);
+      var estimGrade = estimEl ? parseFloat(estimEl.value) : null;
+      if (estimGrade === null || isNaN(estimGrade)) {
+        toast('Rentre ton estimation d\'examen pour ' + m.nom, '⚠️');
+        throw new Error('Missing');
+      }
+      totalEcts += m.ects;
+      analysis.push({
+        matiere: m.nom, id: m.id, sem: m.sem, ects: m.ects,
+        ccGrade: 0, ccPct: 0, examPct: 100,
+        estimedExamGrade: estimGrade, hasCC: false
+      });
+    });
+    if (analysis.length === 0) {
+      toast('Rentre au moins une note', '⚠️');
+      throw new Error('No data');
+    }
+    analysis.forEach(function(a) {
+      if (!a.hasCC) return;
+      var otherWeightedSum = 0;
+      analysis.forEach(function(other) {
+        if (other.id !== a.id) {
+          var gradeForOther = other.hasCC ? other.ccGrade : other.estimedExamGrade;
+          otherWeightedSum += gradeForOther * other.ects;
+        }
+      });
+      var targetWeightedForThisMat = (targetGrade * totalEcts - otherWeightedSum);
+      var matiereAvgForTarget = targetWeightedForThisMat / a.ects;
+      var requiredExamGrade = (matiereAvgForTarget * 100 - a.ccGrade * a.ccPct) / a.examPct;
+      var difficultyScore = a.ccGrade < 8 ? 2 : a.ccGrade < 10 ? 3 : a.ccGrade < 12 ? 4 : a.ccGrade < 14 ? 6 : a.ccGrade < 16 ? 7 : 9;
+      var difficultyLabel = a.ccGrade < 10 ? '🔴 Très difficile' : a.ccGrade < 12 ? '🟠 Difficile' : a.ccGrade < 14 ? '🟡 Moyen' : a.ccGrade < 16 ? '🟢 Assez facile' : '✅ Facile';
+      var realisticTarget = requiredExamGrade;
+      if (difficultyScore <= 3) realisticTarget = Math.min(requiredExamGrade, a.ccGrade + 1.5);
+      else if (difficultyScore <= 4) realisticTarget = Math.min(requiredExamGrade, a.ccGrade + 2.5);
+      else if (difficultyScore <= 6) realisticTarget = Math.min(requiredExamGrade, a.ccGrade + 4);
+      realisticTarget = Math.max(0, Math.min(20, realisticTarget));
+      a.requiredExamGrade = Math.max(0, Math.min(20, requiredExamGrade));
+      a.realisticTarget = realisticTarget;
+      a.delta = realisticTarget - a.ccGrade;
+      a.difficultyScore = difficultyScore;
+      a.difficultyLabel = difficultyLabel;
+    });
+    analysis.sort(function(a, b) {
+      if (a.hasCC !== b.hasCC) return b.hasCC - a.hasCC;
+      return a.ccGrade - b.ccGrade;
+    });
+    var html = '<div style="margin:0">';
+    var avgCalc = analysis.reduce(function(sum, a) { return sum + ((a.hasCC ? a.ccGrade : a.estimedExamGrade) * a.ects); }, 0) / totalEcts;
+    html += '<div style="margin-bottom:16px;padding:12px;background:var(--blue) rgba(59,130,246,0.06);border-radius:8px;border-left:3px solid var(--blue)">';
+    html += '<strong style="color:var(--blue)">📊 Situation (ECTS-pondérée):</strong><br>';
+    html += 'Moyenne actuelle: <strong>' + avgCalc.toFixed(2) + '/20</strong> | Cible: <strong>' + targetGrade + '/20</strong> | Gap: <strong>' + (targetGrade - avgCalc).toFixed(2) + '</strong>';
+    html += '</div><div style="margin-top:12px"><strong>Analyse par matière:</strong></div>';
+    analysis.forEach(function(a) {
+      if (a.hasCC) {
+        var scoreColor = a.realisticTarget > 20 ? '#ef4444' : a.realisticTarget < 0 ? '#22c55e' : a.realisticTarget > 15 ? '#f59e0b' : a.realisticTarget > 12 ? '#f59e0b' : '#22c55e';
+        var advice = a.realisticTarget > 20 ? '⚠️ Impossible.' : a.realisticTarget < 0 ? '👍 CC suffit!' : a.realisticTarget > 15 ? 'Focus fondamentaux!' : a.realisticTarget > 12 ? 'Gain: +' + a.delta.toFixed(1) : '👍 Réalisable!';
+        html += '<div style="margin:8px 0;padding:10px;background:var(--g50);border-left:3px solid ' + scoreColor + '">';
+        html += '<strong>' + a.matiere + '</strong> (' + a.ects + ' ECTS)<br>';
+        html += '📌 CC: ' + a.ccGrade.toFixed(1) + '/20 — ' + a.difficultyLabel + '<br>';
+        html += '🎯 Exam: <strong style="color:' + scoreColor + '">' + a.realisticTarget.toFixed(1) + '/20</strong><br>';
+        html += '💡 ' + advice;
+        html += '</div>';
+      } else {
+        html += '<div style="margin:8px 0;padding:10px;background:var(--g50);border-left:3px solid #06b6d4">';
+        html += '<strong>' + a.matiere + '</strong> (' + a.ects + ' ECTS)<br>';
+        html += '📝 Ton estimation: ' + a.estimedExamGrade.toFixed(1) + '/20 ✅';
+        html += '</div>';
       }
     });
-
-    // Pour la matière actuelle:
-    // targetGrade = (otherWeightedSum + (cc_i * cc%_i + exam_i * exam%_i) / 100 * ects_i) / totalEcts
-    // targetGrade * totalEcts = otherWeightedSum + (cc_i * cc%_i + exam_i * exam%_i) / 100 * ects_i
-    // targetGrade * totalEcts - otherWeightedSum = (cc_i * cc%_i + exam_i * exam%_i) / 100 * ects_i
-    // (targetGrade * totalEcts - otherWeightedSum) / ects_i * 100 = cc_i * cc%_i + exam_i * exam%_i
-    // exam_i * exam%_i = (targetGrade * totalEcts - otherWeightedSum) / ects_i * 100 - cc_i * cc%_i
-    // exam_i = ((targetGrade * totalEcts - otherWeightedSum) / ects_i * 100 - cc_i * cc%_i) / exam%_i
-
-    var targetWeightedForThisMat = (targetGrade * totalEcts - otherWeightedSum);
-    var matiereAvgForTarget = targetWeightedForThisMat / a.ects;
-    
-    // matiereAvgForTarget = (cc_i * cc%_i + exam_i * exam%_i) / 100
-    // exam_i = (matiereAvgForTarget * 100 - cc_i * cc%_i) / exam%_i
-    var requiredExamGrade = (matiereAvgForTarget * 100 - a.ccGrade * a.ccPct) / a.examPct;
-
-    // **ANALYSER LA DIFFICULTÉ BASÉE SUR LA CC**
-    var difficultyScore;
-    if (a.ccGrade < 8) difficultyScore = 2;
-    else if (a.ccGrade < 10) difficultyScore = 3;
-    else if (a.ccGrade < 12) difficultyScore = 4;
-    else if (a.ccGrade < 14) difficultyScore = 6;
-    else if (a.ccGrade < 16) difficultyScore = 7;
-    else difficultyScore = 9;
-
-    var difficultyLabel;
-    if (a.ccGrade < 10) difficultyLabel = '🔴 Très difficile';
-    else if (a.ccGrade < 12) difficultyLabel = '🟠 Difficile';
-    else if (a.ccGrade < 14) difficultyLabel = '🟡 Moyen';
-    else if (a.ccGrade < 16) difficultyLabel = '🟢 Assez facile';
-    else difficultyLabel = '✅ Facile';
-
-    // **OBJECTIF RÉALISTE**
-    var realisticTarget = requiredExamGrade;
-    if (difficultyScore <= 3) {
-      realisticTarget = Math.min(requiredExamGrade, a.ccGrade + 1.5);
-    } else if (difficultyScore <= 4) {
-      realisticTarget = Math.min(requiredExamGrade, a.ccGrade + 2.5);
-    } else if (difficultyScore <= 6) {
-      realisticTarget = Math.min(requiredExamGrade, a.ccGrade + 4);
-    }
-
-    realisticTarget = Math.max(0, Math.min(20, realisticTarget));
-
-    a.requiredExamGrade = Math.max(0, Math.min(20, requiredExamGrade));
-    a.originalRequiredExamGrade = requiredExamGrade;
-    a.realisticTarget = realisticTarget;
-    a.delta = realisticTarget - a.ccGrade;
-    a.theoreticalDelta = requiredExamGrade - a.ccGrade;
-    a.difficultyScore = difficultyScore;
-    a.difficultyLabel = difficultyLabel;
-  });
-
-  // Trier par CC (priorité: notes les plus basses en premier)
-  analysis.sort(function(a, b) {
-    return a.ccGrade - b.ccGrade;
-  });
-
-  // === GÉNÉRATION DU HTML ===
-  var html = '<div style="margin:0">';
-  
-  // Résumé général
-  var avgCC = analysis.reduce(function(sum, a) { return sum + a.ccGrade * a.ects; }, 0) / totalEcts;
-  html += '<div style="margin-bottom:16px;padding:12px;background:var(--blue) rgba(59,130,246,0.06);border-radius:8px;border-left:3px solid var(--blue)">';
-  html += '<strong style="color:var(--blue)">📊 Votre situation (moyenne ECTS-pondérée):</strong><br>';
-  html += 'CC actuelle: <strong>' + avgCC.toFixed(2) + '/20</strong> | Cible semestre: <strong>' + targetGrade + '/20</strong> | À combler: <strong>' + (targetGrade - avgCC).toFixed(2) + ' pts</strong>';
-  html += '</div>';
-
-  html += '<div style="margin-top:12px"><strong style="color:var(--text-main);font-size:14px">Priorités par matière:</strong></div>';
-  
-  analysis.forEach(function(a, idx) {
-    var priority = idx + 1;
-    var priorityText = priority === 1 ? '🔴 CRITIQUE' : priority === 2 ? '🟡 HAUTE' : '🟢 NORMAL';
-    
-    var scoreColor = '#22c55e';
-    var scoreLabel = '✅';
-    var advice = '';
-
-    if (a.realisticTarget > 20) {
-      scoreColor = '#ef4444';
-      scoreLabel = '❌ Impossible';
-      advice = '⚠️ Cible inatteignable. Revois ton objectif semestre.';
-    } else if (a.realisticTarget < 0) {
-      scoreColor = '#22c55e';
-      scoreLabel = '✅ Validé';
-      advice = '👍 Ta CC suffit! Maintiens ton niveau à l\'examen.';
-    } else if (a.realisticTarget > 18) {
-      scoreColor = '#ef4444';
-      scoreLabel = '🔴 Très exigent';
-      advice = 'Cible haute mais possible avec un bon travail ciblé.';
-    } else if (a.realisticTarget > 15) {
-      scoreColor = '#f59e0b';
-      scoreLabel = '🟡 Challenging';
-      advice = 'Matière difficile pour toi — focus sur les fondamentaux!';
-    } else if (a.realisticTarget > 12) {
-      scoreColor = '#f59e0b';
-      scoreLabel = '⚡ Achievable';
-      advice = 'Objectif réaliste: +' + a.delta.toFixed(1) + ' pts par rapport à ta CC.';
-    } else {
-      scoreColor = '#22c55e';
-      scoreLabel = '✅ Réalisable';
-      advice = '👍 Très réalisable! Prépare-toi sans anxiété.';
-    }
-
-    html += '<div style="margin:10px 0;padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid ' + scoreColor + '">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html += '<strong style="color:var(--text-main);font-size:14px">' + (priority) + '. ' + a.matiere + '</strong>';
-    html += '<span style="font-size:12px;color:#666;font-weight:500">' + priorityText + ' (' + a.ects + ' ECTS)</span>';
     html += '</div>';
-    
-    html += '<div style="font-size:13px;color:var(--text-sub);line-height:1.8">';
-    html += '📌 CC actuelle: <strong style="color:var(--text-main)">' + a.ccGrade.toFixed(1) + '/20</strong> (' + a.ccPct + '%) — ' + a.difficultyLabel + '<br>';
-    html += '🎯 Objectif à l\'examen: <strong style="color:' + scoreColor + '">' + a.realisticTarget.toFixed(1) + '/20</strong> (' + a.examPct + '%)<br>';
-    html += '💡 ' + advice;
-    if (a.realisticTarget !== a.requiredExamGrade && a.realisticTarget < a.requiredExamGrade) {
-      html += '<div style="margin-top:8px;font-size:12px;color:#666;padding:8px;background:rgba(0,0,0,0.02);border-radius:4px">';
-      html += '<em>Théorique: ' + a.requiredExamGrade.toFixed(1) + '/20 | Cible réaliste: ' + a.realisticTarget.toFixed(1) + '/20</em>';
-      html += '</div>';
+    if (result) {
+      result.innerHTML = html;
+      result.style.display = 'block';
     }
-    html += '</div>';
-    html += '</div>';
-  });
-
-  html += '</div>';
-
-  if (result) {
-    result.innerHTML = html;
-    result.style.display = 'block';
+    toast('Analysé! 🎯', '✅');
+  } catch (e) {
+    console.error(e);
+  } finally {
+    if (btn) btn.disabled = false;
+    if (loading) loading.style.display = 'none';
   }
-
-  toast('Analyse générée! 🎯', '✅');
-
-  if (btn) btn.disabled = false;
-  if (loading) loading.style.display = 'none';
+}
+function updateNoCCFields() {
+  var semester = document.getElementById('analyseSem').value;
+  var container = document.getElementById('noCCFieldsContainer');
+  var section = document.getElementById('noCCEstimations');
+  
+  // Récupérer les matières sans CC pour ce semestre
+  var noCCMatieres = MATIERES.filter(function(m) {
+    if (semester === 'both') return true;
+    if (m.sem != parseInt(semester)) return false;
+    return m.cc === 0 && m.coef > 0;
+  });
+  
+  if (noCCMatieres.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  
+  section.style.display = 'block';
+  container.innerHTML = '';
+  
+  noCCMatieres.forEach(function(m) {
+    var fieldId = 'estimExam_' + m.id;
+    var div = document.createElement('div');
+    div.innerHTML = '<label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:4px">' + m.emoji + ' ' + m.nom.slice(0, 20) + '</label>'
+      + '<input type="number" id="' + fieldId + '" placeholder="Ex: 14" min="0" max="20" step="0.5" value="" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:6px;padding:6px 8px;font-size:12px;outline:none" onfocus="this.style.borderColor=\'var(--blue-mid)\'" onblur="this.style.borderColor=\'var(--g200)\'">';
+    container.appendChild(div);
+  });
 }
 
 // ─── GROQ API ───
