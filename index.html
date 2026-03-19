@@ -10911,14 +10911,14 @@ async function planningIAGenerate() {
     var data = await res.json();
     var raw = data.choices[0].message.content.trim();
 
-    // Extract JSON sessions block
-    var sessionsMatch = raw.match(/SESSIONS_JSON:(\[[\s\S]*?\])/);
+    // Extract JSON sessions block (greedy + optional whitespace to handle AI formatting variations)
+    var sessionsMatch = raw.match(/SESSIONS_JSON:\s*(\[[\s\S]*\])/);
     window._planningIASessions = [];
     if (sessionsMatch) {
       try { window._planningIASessions = JSON.parse(sessionsMatch[1]); } catch(pe) { window._planningIASessions = []; }
     }
     // Strip the JSON block from the displayed markdown
-    var result = raw.replace(/SESSIONS_JSON:\[[\s\S]*?\]/, '').trimEnd();
+    var result = raw.replace(/SESSIONS_JSON:\s*\[[\s\S]*\]/, '').trimEnd();
 
     window._planningIAResult = result;
     document.getElementById('planningIAResult').innerHTML = markdownToHtml(result);
@@ -10957,21 +10957,35 @@ function planningIACopy() {
 function planningIAAddToPlanning() {
   var sessions = window._planningIASessions;
   if (!sessions || !sessions.length) { toast('Aucune séance à importer.', '⚠️'); return; }
+  // Normalize a time string "H:MM" or "HH:MM" -> "HH:MM"
+  function normTime(t) {
+    if (!t) return null;
+    var p = t.trim().match(/^(\d{1,2}):(\d{2})$/);
+    if (!p) return null;
+    return (p[1].length < 2 ? '0' + p[1] : p[1]) + ':' + p[2];
+  }
+  // Normalize a date string "YYYY-M-D" or "YYYY-MM-DD" -> "YYYY-MM-DD"
+  function normDate(d) {
+    if (!d) return null;
+    var p = d.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (!p) return null;
+    return p[1] + '-' + (p[2].length < 2 ? '0' + p[2] : p[2]) + '-' + (p[3].length < 2 ? '0' + p[3] : p[3]);
+  }
   var added = 0;
   sessions.forEach(function(s) {
     if (!s.date || !s.time || !s.summary) return;
-    // Basic date/time validation
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(s.date)) return;
-    if (!/^\d{2}:\d{2}$/.test(s.time)) return;
-    var end = s.end && /^\d{2}:\d{2}$/.test(s.end) ? s.end : (function() {
-      var sp = s.time.split(':');
+    var date = normDate(String(s.date));
+    var time = normTime(String(s.time));
+    if (!date || !time) return;
+    var end = normTime(String(s.end || '')) || (function() {
+      var sp = time.split(':');
       var m = parseInt(sp[0]) * 60 + parseInt(sp[1]) + 90;
       return (Math.floor(m / 60) < 10 ? '0' : '') + Math.floor(m / 60) + ':' + (m % 60 < 10 ? '0' : '') + (m % 60);
     })();
     manualEvents.push({
       manualId: Date.now() + added,
-      date: s.date,
-      time: s.time,
+      date: date,
+      time: time,
       end: end,
       summary: s.summary,
       location: '',
