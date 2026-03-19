@@ -4318,6 +4318,7 @@ aside.sidebar {
             <button class="note-pdf-btn" onclick="exportNoteAsPDF()" title="Exporter en PDF">📄 PDF</button>
             <button class="notes-gen-btn" id="notesGenBtn" onclick="generateFlashcardsFromNote()" title="Générer des flashcards depuis cette note">✨ Générer flashcards</button>
             <button class="notes-fluide-btn" id="notesFluideBtn" onclick="fluidifierNote()" title="Corriger et mettre en forme la note">✍️ Fluidifier</button>
+            <button class="notes-fluide-btn" id="notesCpBtn" onclick="cpFromNote()" title="Générer un cas pratique depuis cette note" style="background:linear-gradient(135deg,#003d7a,#0057ad);color:#fff;border-color:#003d7a">⚖️ Cas pratique</button>
             <button class="notes-del-btn" onclick="deleteCurrentNote()">🗑</button>
             <span class="notes-save-badge" id="noteSaveBadge">✓ Sauvegarde</span>
           </div>
@@ -4846,7 +4847,12 @@ aside.sidebar {
           </select>
         </div>
       </div>
-      <button class="cp-gen-btn" onclick="openCpModal()">⚖️ Générer le cas pratique</button>
+      <div style="margin-top:16px">
+        <label class="cp-label" style="display:block;margin-bottom:6px">📄 Coller un cours (optionnel)</label>
+        <textarea id="cpCours" placeholder="Colle ici ton cours, tes notes ou un extrait de cours — Groq s'en servira pour créer un cas pratique ancré dans ce que tu as vraiment étudié..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:100px;color:var(--g900);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'"></textarea>
+        <p style="font-size:11px;color:var(--g400);margin-top:4px">Si vide, Groq génère un cas pratique générique sur le thème choisi.</p>
+      </div>
+      <button class="cp-gen-btn" onclick="openCpModal()" style="margin-top:16px">⚖️ Générer le cas pratique</button>
     </div>
 
     <!-- Result -->
@@ -10852,6 +10858,37 @@ function clearAllCp() {
   toast('Historique effacé', '🗑️');
 }
 
+function cpFromNote() {
+  if (!activeNoteId) { toast('Ouvre une note d\'abord', '⚠️'); return; }
+  var note = notes.find(function(n){ return n.id === activeNoteId; });
+  if (!note) return;
+
+  var content = '';
+  var ta = document.getElementById('noteTextarea');
+  if (ta) content = ta.value || '';
+  content = content.trim();
+  if (content.length < 30) { toast('Note trop courte', '⚠️'); return; }
+
+  // Pré-remplir la section cas pratiques
+  showPage('caspratiques', null);
+  setTimeout(function() {
+    var cpCours = document.getElementById('cpCours');
+    if (cpCours) cpCours.value = content;
+    // Pré-remplir la matière si dispo
+    var matSel = document.getElementById('cpMatiere');
+    if (matSel && note.mat) {
+      var opts = matSel.options;
+      for (var i = 0; i < opts.length; i++) {
+        if (opts[i].value.toLowerCase().indexOf(note.mat.toLowerCase()) > -1) {
+          matSel.value = opts[i].value;
+          break;
+        }
+      }
+    }
+    toast('Cours importé depuis ta note — choisis un thème et génère !', '⚖️');
+  }, 200);
+}
+
 async function generateCpGroq() {
   var matiere    = document.getElementById('cpMatiere').value;
   var theme      = document.getElementById('cpTheme').value.trim();
@@ -10865,8 +10902,11 @@ async function generateCpGroq() {
   btn.textContent = '⏳ Generation...';
   if (load) load.style.display = 'block';
 
+  var cours = document.getElementById('cpCours') ? document.getElementById('cpCours').value.trim() : '';
+
   var prompt = 'Reponds uniquement avec le texte brut du cas pratique. Aucune mise en forme markdown, aucun tiret, aucun asterisque, aucun tableau, aucun emoji, aucune introduction, aucune conclusion.\n\n'
     + 'Tu es un professeur de droit a Paris-Dauphine PSL. Genere un cas pratique de niveau ' + difficulte + ' en ' + matiere + ' sur le theme : ' + theme + '.\n\n'
+    + (cours ? 'BASE-TOI OBLIGATOIREMENT sur ce cours pour construire le cas pratique — utilise les notions, articles et exemples du cours :\n\n' + cours.slice(0, 3000) + '\n\n' : '')
     + 'Utilise exactement ces trois titres precedes de ## :\n\n'
     + '## FAITS\n'
     + '[Situation realiste en 5 a 8 lignes de texte continu]\n\n'
