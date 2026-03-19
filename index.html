@@ -1210,7 +1210,7 @@ html{scroll-behavior:smooth}
 @media(max-width:768px){
   .login-card{padding:28px 20px;border-radius:14px}
   .login-title{font-size:20px}
-  #loginScreen{align-items:flex-start;padding-top:clamp(16px,4vh,48px);padding-bottom:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #loginScreen{align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;height:100vh;height:100dvh}
 }
 /* Éléments cachés en accès limité */
 .drive-only{transition:opacity .2s}
@@ -9799,17 +9799,16 @@ if (document.readyState === 'loading') {
 // Pour changer les codes : modifie ACCESS_CODES ci-dessous
 // ════════════════════════════════════════
 var ACCESS_CODES = {
-  '.pjf+NI^,rxqWzB?E%bK': 'full',    // ← Code accès complet (Drive inclus)
-  'visiteur2025':          'limited', // ← Code accès limité (sans Drive)
-  'dauphine26':            'prank'    // ← 😈
+  'DAUPHINE2025': 'full',    // ← Code accès complet (Drive inclus)
+  'VISITEUR2025': 'limited', // ← Code accès limité (sans Drive)
+  'DAUPHINE26':   'prank'    // ← 😈
 };
 
 var currentAccess = null;
 
 function initLogin() {
   // Vérifier si une session existe déjà (localStorage pour persistance sur mobile)
-  var saved;
-  try { saved = localStorage.getItem('dg_access'); } catch(e) { saved = null; }
+  var saved = localStorage.getItem('dg_access');
   if (saved === 'full' || saved === 'limited') {
     currentAccess = saved;
     applyAccess(currentAccess);
@@ -9840,12 +9839,12 @@ function submitLogin() {
   var inp = document.getElementById('loginInput');
   var errEl = document.getElementById('loginError');
   if (!inp) return;
-  var code = inp.value.trim();
+  var code = inp.value.trim().toUpperCase();
   var access = ACCESS_CODES[code];
   if (access) {
     // Succès
     currentAccess = access;
-    try { localStorage.setItem('dg_access', access); } catch(e) {}
+    localStorage.setItem('dg_access', access);
     errEl.textContent = '';
     inp.style.borderColor = '#16a34a';
     inp.style.background = '#f0fdf4';
