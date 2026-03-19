@@ -9829,12 +9829,16 @@ function submitLogin() {
   alert('Button clicked!'); // Test si le JS s'exécute
   try {
     var inp = document.getElementById('loginInput');
+    alert('Input found: ' + (inp ? 'YES' : 'NO'));
     var errEl = document.getElementById('loginError');
     if (!inp) return;
     var code = inp.value.trim().toUpperCase();
+    alert('Code entered: ' + code);
     var access = ACCESS_CODES[code];
+    alert('Access level: ' + (access || 'NOT FOUND'));
     if (access) {
       // Succès
+      alert('Access granted! Loading...');
       currentAccess = access;
       try {
         localStorage.setItem('dg_access', access);
@@ -9857,6 +9861,7 @@ function submitLogin() {
       inp.focus();
     }
   } catch(e) {
+    alert('ERROR: ' + e.message);
     console.log('submitLogin error:', e);
   }
 }
