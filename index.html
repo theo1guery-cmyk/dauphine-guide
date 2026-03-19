@@ -10352,6 +10352,10 @@ function newsDateShort() {
   return now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
 }
 
+function newsKey(type) {
+  return 'dauphine_news_' + type;
+}
+
 function newsTodayKey(type) {
   var now = new Date();
   return newsKey(type) + '_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
