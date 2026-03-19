@@ -2472,6 +2472,54 @@ aside.sidebar {
 }
 .notes-fluide-btn:disabled { opacity: .5; cursor: not-allowed; }
 
+/* ════ RÉSUMER / EXPLAIN / PLANNING IA BUTTONS ════ */
+.notes-resume-btn {
+  padding: 5px 11px; border-radius: 8px;
+  border: 1.5px solid #16a34a;
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #14532d;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer; font-family: 'Figtree', sans-serif;
+  transition: all .17s; white-space: nowrap;
+}
+.notes-resume-btn:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff; border-color: #15803d;
+}
+.notes-resume-btn:disabled { opacity: .5; cursor: not-allowed; }
+.card-explain-btn {
+  position: absolute; bottom: 10px; right: 10px;
+  padding: 5px 10px; border-radius: 7px;
+  border: 1.5px solid #7c3aed;
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  color: #4c1d95;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer; font-family: 'Figtree', sans-serif;
+  transition: all .17s;
+}
+.card-explain-btn:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff; border-color: #6d28d9;
+}
+.planning-ia-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: var(--rs);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid #7c3aed;
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  color: #4c1d95; font-family: 'Figtree', sans-serif;
+  transition: all .15s; margin-top: 12px;
+}
+.planning-ia-btn:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff; border-color: #6d28d9;
+}
+.ia-result-content { font-size: 13px; line-height: 1.75; color: var(--text-main); }
+.ia-result-content h1,.ia-result-content h2,.ia-result-content h3 { margin: 12px 0 6px; font-size: 14px; }
+.ia-result-content ul,.ia-result-content ol { padding-left: 18px; margin: 4px 0 8px; }
+.ia-result-content li { margin-bottom: 3px; }
+.ia-result-content strong { color: var(--text-main); }
+
 
 @keyframes glossaireIn {
   from { opacity:0; transform:translateY(12px) scale(.97); }
@@ -3735,9 +3783,10 @@ aside.sidebar {
             <div class="card-text" id="cQ">Qu'est-ce que la règle de droit ?</div>
             <div class="card-hint">Clique pour voir la réponse →</div><div id="sm2Label" style="font-size: 10px; color: rgb(156, 163, 175); margin-top: 6px; font-weight: 600; letter-spacing: 0.04em; display: none;"></div>
           </div>
-          <div class="card-face card-back">
+          <div class="card-face card-back" style="position:relative">
             <div class="card-cat" id="cCatB">Droit</div>
             <div class="card-text" id="cR">Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.</div>
+            <button class="card-explain-btn" onclick="event.stopPropagation();explainCard()" title="Expliquer cette notion">💡 Expliquer</button>
           </div>
         </div>
       </div>
@@ -4158,6 +4207,9 @@ aside.sidebar {
       <div class="cdc"><div class="cdc-ic">🌱</div><div><h4>Enjeux Écologiques</h4><p>12 mai 2026</p></div><div class="cdc-days" id="cdE">56<small>jours</small></div></div>
       <div class="cdc"><div class="cdc-ic">🎓</div><div><h4>Fin des cours S2</h4><p>Juin 2026</p></div><div class="cdc-days" id="cdS">95<small>jours</small></div></div>
     </div>
+    <div style="text-align:center;margin-top:4px">
+      <button class="planning-ia-btn" onclick="planningIASuggestions()">🤖 Suggestions de révision IA</button>
+    </div>
   </div>
 
 <!-- MODAL AJOUT CRENEAU (unifié) -->
@@ -4353,6 +4405,7 @@ aside.sidebar {
             <button class="note-pdf-btn" onclick="exportNoteAsPDF()" title="Exporter en PDF">📄 PDF</button>
             <button class="notes-gen-btn" id="notesGenBtn" onclick="generateFlashcardsFromNote()" title="Générer des flashcards depuis cette note">✨ Générer flashcards</button>
             <button class="notes-fluide-btn" id="notesFluideBtn" onclick="fluidifierNote()" title="Corriger et mettre en forme la note">✍️ Fluidifier</button>
+            <button class="notes-resume-btn" id="notesResumeBtn" onclick="resumeNote()" title="Générer une fiche de révision condensée">📝 Résumer</button>
             <button class="notes-fluide-btn" id="notesCpBtn" onclick="cpFromNote()" title="Générer un cas pratique depuis cette note" style="background:linear-gradient(135deg,#003d7a,#0057ad);color:#fff;border-color:#003d7a">⚖️ Cas pratique</button>
             <button class="notes-del-btn" onclick="deleteCurrentNote()">🗑</button>
             <span class="notes-save-badge" id="noteSaveBadge">✓ Sauvegarde</span>
@@ -5687,6 +5740,57 @@ aside.sidebar {
         <button class="rev-modal-cancel" onclick="document.getElementById('fluideStep1').style.display='';document.getElementById('fluideStep2').style.display='none'">← Retour</button>
         <button class="rev-modal-save" onclick="fluideApply()">✍️ Remplacer ma note</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- RÉSUMER MODAL -->
+<div class="rev-modal-bg" id="resumeModalBg" onclick="if(event.target===this)resumeClose()">
+  <div class="rev-modal" style="max-width:600px">
+    <h3>📝 <em>Fiche de révision</em> condensée</h3>
+    <div id="resumeLoading" style="display:none;text-align:center;padding:20px">
+      <div class="notes-gen-spinner"></div>
+      <div style="font-size:13px;color:var(--g600);margin-top:8px">Génération de la fiche en cours…</div>
+    </div>
+    <div id="resumeContent" style="display:none">
+      <div id="resumeResult" class="ia-result-content" style="background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:14px;max-height:420px;overflow-y:auto;margin-bottom:12px"></div>
+      <div class="rev-modal-actions">
+        <button class="rev-modal-cancel" onclick="resumeClose()">Fermer</button>
+        <button class="rev-modal-save" onclick="resumeCopy()">📋 Copier</button>
+        <button class="rev-modal-save" onclick="resumeSaveAsNote()" style="background:linear-gradient(135deg,#16a34a,#15803d);border-color:#15803d">💾 Sauvegarder comme note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPLIQUER FLASHCARD MODAL -->
+<div class="rev-modal-bg" id="explainModalBg" onclick="if(event.target===this)explainClose()">
+  <div class="rev-modal" style="max-width:520px">
+    <h3>💡 <em>Explication détaillée</em></h3>
+    <div id="explainQuestion" style="font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:12px;padding:10px 12px;background:var(--blue-pale);border-radius:8px;border:1.5px solid var(--blue-light)"></div>
+    <div id="explainLoading" style="display:none;text-align:center;padding:20px">
+      <div class="notes-gen-spinner"></div>
+      <div style="font-size:13px;color:var(--g600);margin-top:8px">Groq explique la notion…</div>
+    </div>
+    <div id="explainResult" class="ia-result-content" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:14px;max-height:360px;overflow-y:auto;margin-bottom:12px"></div>
+    <div class="rev-modal-actions">
+      <button class="rev-modal-cancel" onclick="explainClose()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUGGESTIONS PLANNING IA MODAL -->
+<div class="rev-modal-bg" id="planningIAModalBg" onclick="if(event.target===this)planningIAClose()">
+  <div class="rev-modal" style="max-width:640px">
+    <h3>📅 <em>Plan de révision</em> personnalisé</h3>
+    <div id="planningIALoading" style="display:none;text-align:center;padding:24px">
+      <div class="notes-gen-spinner"></div>
+      <div style="font-size:13px;color:var(--g600);margin-top:8px">Groq analyse tes examens et tes notes…</div>
+    </div>
+    <div id="planningIAResult" class="ia-result-content" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:14px;max-height:460px;overflow-y:auto;margin-bottom:12px"></div>
+    <div class="rev-modal-actions">
+      <button class="rev-modal-cancel" onclick="planningIAClose()">Fermer</button>
+      <button class="rev-modal-save" id="planningIACopyBtn" onclick="planningIACopy()" style="display:none">📋 Copier</button>
     </div>
   </div>
 </div>
@@ -10469,6 +10573,211 @@ async function fluideGroq() {
 
 function fluideClose() {
   document.getElementById('fluideModalBg').classList.remove('open');
+}
+
+// ════ RÉSUMER NOTE ════
+async function resumeNote() {
+  if (!activeNoteId) { toast('Ouvre une note d\'abord', '⚠️'); return; }
+  var note = notes.find(function(n){ return n.id === activeNoteId; });
+  if (!note) return;
+  var content = '';
+  var ta = document.getElementById('noteTextarea');
+  if (ta) content = ta.value || '';
+  if (!content.trim()) content = note.content || '';
+  content = content.trim();
+  if (content.length < 30) { toast('Note trop courte pour être résumée', '⚠️'); return; }
+
+  var bg = document.getElementById('resumeModalBg');
+  bg.classList.add('open');
+  document.getElementById('resumeLoading').style.display = 'block';
+  document.getElementById('resumeContent').style.display = 'none';
+
+  var prompt = 'Tu es un expert en prise de notes étudiantes. Génère une fiche de révision condensée depuis cette note de cours.\n\n'
+    + 'FORMAT REQUIS (Markdown) :\n'
+    + '## 📌 Concepts clés\n(Liste des 5-8 notions essentielles avec définitions courtes)\n\n'
+    + '## 🗝️ Points à retenir\n(3-5 bullet points des idées principales)\n\n'
+    + '## ❓ Questions d\'entraînement\n(2-3 questions pour tester la compréhension)\n\n'
+    + 'Sois concis, précis et utile pour un étudiant en L1 à Dauphine qui révise.\n\n'
+    + 'NOTE DE COURS :\n' + content.slice(0, 4000);
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+      body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 1500, temperature: 0.4,
+        messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { var ed = await res.json(); throw new Error(ed.error && ed.error.message ? ed.error.message : 'Erreur API ' + res.status); }
+    var data = await res.json();
+    var result = data.choices[0].message.content.trim();
+    window._resumeResult = result;
+    document.getElementById('resumeResult').innerHTML = markdownToHtml(result);
+    document.getElementById('resumeLoading').style.display = 'none';
+    document.getElementById('resumeContent').style.display = 'block';
+  } catch(e) {
+    document.getElementById('resumeLoading').style.display = 'none';
+    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    else if (e.message && e.message.indexOf('429') > -1) toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+    else toast('Erreur : ' + e.message, '❌');
+    resumeClose();
+  }
+}
+
+function resumeClose() {
+  document.getElementById('resumeModalBg').classList.remove('open');
+}
+
+function resumeCopy() {
+  if (!window._resumeResult) return;
+  navigator.clipboard.writeText(window._resumeResult).then(function() {
+    toast('Fiche copiée !', '📋');
+  }).catch(function() { toast('Impossible de copier', '⚠️'); });
+}
+
+function resumeSaveAsNote() {
+  if (!window._resumeResult || !activeNoteId) return;
+  var srcNote = notes.find(function(n){ return n.id === activeNoteId; });
+  var title = srcNote ? '📝 Fiche — ' + (srcNote.title || 'Sans titre') : '📝 Fiche de révision';
+  var sectionId = srcNote ? srcNote.sectionId : null;
+  if (!sectionId && noteSections.length) sectionId = noteSections[0].id;
+  if (!sectionId) { toast('Crée une section d\'abord', '⚠️'); return; }
+  var newNote = { id: Date.now(), sectionId: sectionId, title: title, content: window._resumeResult,
+    mat: srcNote ? srcNote.mat : '', created: Date.now(), updated: Date.now() };
+  notes.push(newNote);
+  saveNotes();
+  renderNotesList();
+  openNote(newNote.id);
+  resumeClose();
+  toast('Fiche sauvegardée comme nouvelle note !', '✅');
+}
+
+// ════ EXPLIQUER FLASHCARD ════
+async function explainCard() {
+  var d = getFilteredDeck();
+  if (!d.length) return;
+  var card = d[cardIdx % d.length];
+  var questionEl = document.getElementById('explainQuestion');
+  if (questionEl) questionEl.textContent = card.q;
+  document.getElementById('explainLoading').style.display = 'block';
+  document.getElementById('explainResult').style.display = 'none';
+  document.getElementById('explainModalBg').classList.add('open');
+
+  var prompt = 'Tu es un professeur universitaire expert en ' + (card.cat || 'droit et économie') + ' à Paris-Dauphine.\n\n'
+    + 'Un étudiant en L1 a cette flashcard :\n'
+    + 'Question : ' + card.q + '\n'
+    + 'Réponse : ' + card.r + '\n\n'
+    + 'Explique cette notion de façon claire et pédagogique en 3 points :\n'
+    + '1. **Explication simple** : explique le concept en termes accessibles (2-3 phrases)\n'
+    + '2. **Exemple concret** : donne un exemple de la vie réelle ou tiré du cours\n'
+    + '3. **Pourquoi c\'est important** : explique l\'enjeu ou l\'utilité pour l\'examen\n\n'
+    + 'Sois précis, concis et motivant.';
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+      body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 800, temperature: 0.5,
+        messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { var ed = await res.json(); throw new Error(ed.error && ed.error.message ? ed.error.message : 'Erreur API ' + res.status); }
+    var data = await res.json();
+    var result = data.choices[0].message.content.trim();
+    document.getElementById('explainResult').innerHTML = markdownToHtml(result);
+    document.getElementById('explainLoading').style.display = 'none';
+    document.getElementById('explainResult').style.display = 'block';
+  } catch(e) {
+    document.getElementById('explainLoading').style.display = 'none';
+    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    else if (e.message && e.message.indexOf('429') > -1) toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+    else toast('Erreur : ' + e.message, '❌');
+    explainClose();
+  }
+}
+
+function explainClose() {
+  document.getElementById('explainModalBg').classList.remove('open');
+}
+
+// ════ SUGGESTIONS PLANNING IA ════
+async function planningIASuggestions() {
+  document.getElementById('planningIAModalBg').classList.add('open');
+  document.getElementById('planningIALoading').style.display = 'block';
+  document.getElementById('planningIAResult').style.display = 'none';
+  var copyBtn = document.getElementById('planningIACopyBtn');
+  if (copyBtn) copyBtn.style.display = 'none';
+
+  var today = new Date().toISOString().split('T')[0];
+
+  var upcomingExams = (typeof devoirs !== 'undefined' ? devoirs : [])
+    .filter(function(d){ return d.date >= today && !d.done; })
+    .sort(function(a,b){ return a.date > b.date ? 1 : -1; })
+    .slice(0, 10)
+    .map(function(d){ return '- ' + (d.mat || d.title) + ' (deadline : ' + d.date + ', priorité : ' + (d.prio || 'normale') + ')'; })
+    .join('\n');
+
+  var manualExams = (typeof manualEvents !== 'undefined' ? manualEvents : [])
+    .filter(function(e){ return e.date >= today && (e.slotType === 'exam' || e.slotType === 'revision'); })
+    .slice(0, 10)
+    .map(function(e){ return '- ' + e.summary + ' (' + e.slotType + ', le ' + e.date + ')'; })
+    .join('\n');
+
+  var notesCtx = (typeof notes !== 'undefined' ? notes : [])
+    .slice(0, 15)
+    .map(function(n){ return '- ' + (n.title || 'Sans titre') + (n.mat ? ' [' + n.mat + ']' : ''); })
+    .join('\n');
+
+  var hardCards = (typeof deck !== 'undefined' ? deck : [])
+    .filter(function(c){ return c.status === 'hard' || c.status === 'miss'; })
+    .slice(0, 8)
+    .map(function(c){ return '- ' + c.cat + ' : ' + c.q; })
+    .join('\n');
+
+  var prompt = 'Tu es un coach de révision expert pour des étudiants en L1 Droit-Économie à Paris-Dauphine.\n\n'
+    + 'Date d\'aujourd\'hui : ' + today + '\n\n'
+    + (upcomingExams ? 'DEVOIRS ET EXAMENS À VENIR :\n' + upcomingExams + '\n\n' : 'Aucun examen renseigné dans l\'agenda.\n\n')
+    + (manualExams   ? 'CRÉNEAUX PLANIFIÉS (examens/révisions) :\n' + manualExams + '\n\n' : '')
+    + (notesCtx      ? 'NOTES DE COURS DISPONIBLES :\n' + notesCtx + '\n\n' : 'Pas encore de notes créées.\n\n')
+    + (hardCards     ? 'FLASHCARDS DIFFICILES (à retravailler) :\n' + hardCards + '\n\n' : '')
+    + 'MISSION :\nCrée un plan de révision personnalisé et réaliste pour les 2 prochaines semaines.\n\n'
+    + 'FORMAT REQUIS (Markdown) :\n'
+    + '## 🎯 Priorités de révision\n(Les 3-4 matières à travailler en priorité avec justification)\n\n'
+    + '## 📅 Planning suggéré (14 jours)\n(Planning jour par jour avec créneaux et durées recommandés)\n\n'
+    + '## 💡 Conseils personnalisés\n(3-4 conseils pratiques adaptés à la situation)\n\n'
+    + 'Sois concret, réaliste et motivant.';
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+      body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 2000, temperature: 0.6,
+        messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { var ed = await res.json(); throw new Error(ed.error && ed.error.message ? ed.error.message : 'Erreur API ' + res.status); }
+    var data = await res.json();
+    var result = data.choices[0].message.content.trim();
+    window._planningIAResult = result;
+    document.getElementById('planningIAResult').innerHTML = markdownToHtml(result);
+    document.getElementById('planningIALoading').style.display = 'none';
+    document.getElementById('planningIAResult').style.display = 'block';
+    if (copyBtn) copyBtn.style.display = '';
+  } catch(e) {
+    document.getElementById('planningIALoading').style.display = 'none';
+    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    else if (e.message && e.message.indexOf('429') > -1) toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+    else toast('Erreur : ' + e.message, '❌');
+    planningIAClose();
+  }
+}
+
+function planningIAClose() {
+  document.getElementById('planningIAModalBg').classList.remove('open');
+}
+
+function planningIACopy() {
+  if (!window._planningIAResult) return;
+  navigator.clipboard.writeText(window._planningIAResult).then(function() {
+    toast('Planning copié !', '📋');
+  }).catch(function() { toast('Impossible de copier', '⚠️'); });
 }
 
 
