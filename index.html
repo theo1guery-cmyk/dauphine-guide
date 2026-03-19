@@ -6144,11 +6144,16 @@ function analyzeExamPriorities() {
     noCCMatieres.forEach(function(m) {
       var estimEl = document.getElementById('estimExam_' + m.id);
       var estimGrade = estimEl ? parseFloat(estimEl.value) : null;
-      if (estimGrade === null || isNaN(estimGrade)) {
-        toast('Rentre ton estimation d\'examen pour ' + m.nom, '⚠️');
-        throw new Error('Missing');
-      }
+      
+      // TOUS les ECTS comptent, qu'on ait une estimation ou non
       totalEcts += m.ects;
+      
+      // Rendre l'estimation optionnelle - seulement inclure si remplie
+      if (estimGrade === null || isNaN(estimGrade)) {
+        return; // Skip, pas d'estimation
+      }
+      
+      // Ajouter seulement si on a une estimation
       analysis.push({
         matiere: m.nom, id: m.id, sem: m.sem, ects: m.ects,
         ccGrade: 0, ccPct: 0, examPct: 100,
@@ -6162,12 +6167,21 @@ function analyzeExamPriorities() {
     analysis.forEach(function(a) {
       if (!a.hasCC) return;
       var otherWeightedSum = 0;
+      var otherTotalEcts = 0;
       analysis.forEach(function(other) {
-        if (other.id !== a.id) {
-          var gradeForOther = other.hasCC ? other.ccGrade : other.estimedExamGrade;
-          otherWeightedSum += gradeForOther * other.ects;
+        if (other.id !== a.id && other.hasCC) {
+          otherWeightedSum += other.ccGrade * other.ects;
+          otherTotalEcts += other.ects;
         }
       });
+      // Aussi compter les estimations des matières sans CC
+      analysis.forEach(function(other) {
+        if (other.id !== a.id && !other.hasCC && other.estimedExamGrade !== undefined) {
+          otherWeightedSum += other.estimedExamGrade * other.ects;
+          otherTotalEcts += other.ects;
+        }
+      });
+      
       var targetWeightedForThisMat = (targetGrade * totalEcts - otherWeightedSum);
       var matiereAvgForTarget = targetWeightedForThisMat / a.ects;
       var requiredExamGrade = (matiereAvgForTarget * 100 - a.ccGrade * a.ccPct) / a.examPct;
@@ -6189,20 +6203,25 @@ function analyzeExamPriorities() {
       return a.ccGrade - b.ccGrade;
     });
     var html = '<div style="margin:0">';
-    var avgCalc = analysis.reduce(function(sum, a) { return sum + ((a.hasCC ? a.ccGrade : a.estimedExamGrade) * a.ects); }, 0) / totalEcts;
+    var totalEctsInAnalysis = analysis.reduce(function(sum, a) { return sum + a.ects; }, 0);
+    var avgCalc = analysis.reduce(function(sum, a) { return sum + ((a.hasCC ? a.ccGrade : a.estimedExamGrade) * a.ects); }, 0) / totalEctsInAnalysis;
     html += '<div style="margin-bottom:16px;padding:12px;background:var(--blue) rgba(59,130,246,0.06);border-radius:8px;border-left:3px solid var(--blue)">';
     html += '<strong style="color:var(--blue)">📊 Situation (ECTS-pondérée):</strong><br>';
     html += 'Moyenne actuelle: <strong>' + avgCalc.toFixed(2) + '/20</strong> | Cible: <strong>' + targetGrade + '/20</strong> | Gap: <strong>' + (targetGrade - avgCalc).toFixed(2) + '</strong>';
     html += '</div><div style="margin-top:12px"><strong>Analyse par matière:</strong></div>';
     analysis.forEach(function(a) {
       if (a.hasCC) {
-        var scoreColor = a.realisticTarget > 20 ? '#ef4444' : a.realisticTarget < 0 ? '#22c55e' : a.realisticTarget > 15 ? '#f59e0b' : a.realisticTarget > 12 ? '#f59e0b' : '#22c55e';
-        var advice = a.realisticTarget > 20 ? '⚠️ Impossible.' : a.realisticTarget < 0 ? '👍 CC suffit!' : a.realisticTarget > 15 ? 'Focus fondamentaux!' : a.realisticTarget > 12 ? 'Gain: +' + a.delta.toFixed(1) : '👍 Réalisable!';
+        var scoreColor = a.requiredExamGrade > 20 ? '#ef4444' : a.requiredExamGrade < 0 ? '#22c55e' : a.requiredExamGrade > 15 ? '#f59e0b' : a.requiredExamGrade > 12 ? '#f59e0b' : '#22c55e';
+        var advice = a.requiredExamGrade > 20 ? '⚠️ Impossible.' : a.requiredExamGrade < 0 ? '👍 CC suffit!' : a.requiredExamGrade > 15 ? 'Sérieux!' : a.requiredExamGrade > 12 ? 'Objectif: +' + (a.requiredExamGrade - a.ccGrade).toFixed(1) : '✅ Léger!';
         html += '<div style="margin:8px 0;padding:10px;background:var(--g50);border-left:3px solid ' + scoreColor + '">';
         html += '<strong>' + a.matiere + '</strong> (' + a.ects + ' ECTS)<br>';
         html += '📌 CC: ' + a.ccGrade.toFixed(1) + '/20 — ' + a.difficultyLabel + '<br>';
-        html += '🎯 Exam: <strong style="color:' + scoreColor + '">' + a.realisticTarget.toFixed(1) + '/20</strong><br>';
-        html += '💡 ' + advice;
+        html += '🎯 <strong style="color:' + scoreColor + '">Minimum exam: ' + (a.requiredExamGrade < 0 ? 0 : a.requiredExamGrade > 20 ? '20+' : a.requiredExamGrade.toFixed(1)) + '/20</strong><br>';
+        if (a.requiredExamGrade !== a.realisticTarget) {
+          html += '💡 Réaliste: ' + a.realisticTarget.toFixed(1) + '/20 (' + advice + ')';
+        } else {
+          html += '💡 ' + advice;
+        }
         html += '</div>';
       } else {
         html += '<div style="margin:8px 0;padding:10px;background:var(--g50);border-left:3px solid #06b6d4">';
@@ -6211,6 +6230,22 @@ function analyzeExamPriorities() {
         html += '</div>';
       }
     });
+    
+    // Afficher les matières sans CC qui n'ont pas d'estimation
+    var noCCMatieres = selectedMatieres.filter(function(m) { return m.cc === 0; });
+    var notEstimated = noCCMatieres.filter(function(m) {
+      return !analysis.some(function(a) { return a.id === m.id; });
+    });
+    
+    if (notEstimated.length > 0) {
+      html += '<div style="margin-top:16px;padding:12px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);border-radius:8px">';
+      html += '<strong style="color:var(--text-main)">⚠️ Matières non estimées (non incluses dans le calcul):</strong><br>';
+      notEstimated.forEach(function(m) {
+        html += '<div style="font-size:12px;margin:6px 0;color:var(--text-sub)">• ' + m.nom + '<br><em style="color:#999">Rentre ton estimation pour l\'inclure</em></div>';
+      });
+      html += '</div>';
+    }
+    
     html += '</div>';
     if (result) {
       result.innerHTML = html;
