@@ -9799,9 +9799,9 @@ if (document.readyState === 'loading') {
 // Pour changer les codes : modifie ACCESS_CODES ci-dessous
 // ════════════════════════════════════════
 var ACCESS_CODES = {
-  'DAUPHINE2025': 'full',    // ← Code accès complet (Drive inclus)
-  'VISITEUR2025': 'limited', // ← Code accès limité (sans Drive)
-  'DAUPHINE26':   'prank'    // ← 😈
+  '.pjf+NI^,rxqWzB?E%bK': 'full',    // ← Code accès complet (Drive inclus)
+  'VISITEUR2025':         'limited', // ← Code accès limité (sans Drive)
+  'DAUPHINE26':           'prank'    // ← 😈
 };
 
 var currentAccess = null;
@@ -9826,29 +9826,38 @@ function initLogin() {
 }
 
 function submitLogin() {
-  var inp = document.getElementById('loginInput');
-  var errEl = document.getElementById('loginError');
-  if (!inp) return;
-  var code = inp.value.trim().toUpperCase();
-  var access = ACCESS_CODES[code];
-  if (access) {
-    // Succès
-    currentAccess = access;
-    localStorage.setItem('dg_access', access);
-    errEl.textContent = '';
-    inp.style.borderColor = '#16a34a';
-    inp.style.background = '#f0fdf4';
-    setTimeout(function() {
-      applyAccess(access);
-      hideLoginScreen();
-    }, 400);
-  } else {
-    // Erreur
-    inp.classList.add('error');
-    errEl.textContent = 'Code incorrect — réessaie.';
-    setTimeout(function() { inp.classList.remove('error'); }, 400);
-    inp.value = '';
-    inp.focus();
+  alert('Button clicked!'); // Test si le JS s'exécute
+  try {
+    var inp = document.getElementById('loginInput');
+    var errEl = document.getElementById('loginError');
+    if (!inp) return;
+    var code = inp.value.trim().toUpperCase();
+    var access = ACCESS_CODES[code];
+    if (access) {
+      // Succès
+      currentAccess = access;
+      try {
+        localStorage.setItem('dg_access', access);
+      } catch(e) {
+        console.log('localStorage failed:', e);
+      }
+      errEl.textContent = '';
+      inp.style.borderColor = '#16a34a';
+      inp.style.background = '#f0fdf4';
+      setTimeout(function() {
+        applyAccess(access);
+        hideLoginScreen();
+      }, 400);
+    } else {
+      // Erreur
+      inp.classList.add('error');
+      errEl.textContent = 'Code incorrect — réessaie.';
+      setTimeout(function() { inp.classList.remove('error'); }, 400);
+      inp.value = '';
+      inp.focus();
+    }
+  } catch(e) {
+    console.log('submitLogin error:', e);
   }
 }
 
