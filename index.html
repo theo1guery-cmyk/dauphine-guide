@@ -3902,7 +3902,7 @@ aside.sidebar {
   </div>
 
   <!-- Input + Valider -->
-  <input id="ap-input" type="text" placeholder="Ta réponse…" style="width: 100%; max-width: 600px; box-sizing: border-box; border-width: 2px; border-style: solid; border-image: initial; border-radius: 10px; padding: 13px 16px; font-size: 15px; font-family: Figtree, sans-serif; color: rgb(17, 24, 39); outline: none; margin-bottom: 10px; transition: border-color 0.2s;">
+  <textarea id="ap-input" rows="3" placeholder="Ta réponse…" style="width: 100%; max-width: 600px; box-sizing: border-box; border: 2px solid #e5e7eb; border-radius: 10px; padding: 13px 16px; font-size: 15px; font-family: Figtree, sans-serif; color: rgb(17, 24, 39); outline: none; margin-bottom: 10px; transition: border-color 0.2s; resize: vertical; line-height: 1.5; overflow-y: auto;"></textarea>
   <button id="ap-btn-valider" style="width: 100%; max-width: 600px; padding: 13px; background: linear-gradient(135deg, rgb(47, 68, 135), rgb(26, 86, 196)); color: rgb(255, 255, 255); border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: Figtree, sans-serif; margin-bottom: 12px;">
     Valider →
   </button>
@@ -3996,6 +3996,7 @@ aside.sidebar {
         ap.ok++;
         fb.style.cssText = 'display:block;border-radius:12px;padding:14px 16px;margin-bottom:10px;background:#f0fdf4;border:1.5px solid #bbf7d0;max-width:600px';
         fb.innerHTML = '<strong style="color:#166534">✓ Correct !</strong>';
+        addExplain();
         addNext();
       } else {
         ap.ko++;
@@ -4013,8 +4014,21 @@ aside.sidebar {
           next();
         });
         g('ap-actions').appendChild(jb);
+        addExplain();
         addNext();
       }
+    }
+
+    function addExplain() {
+      if (g('ap-actions').querySelector('.apeb')) return;
+      var eb = document.createElement('button');
+      eb.className = 'apeb';
+      eb.textContent = '💡 Expliquer';
+      eb.style.cssText = 'padding:10px 18px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);border:1.5px solid #7c3aed;border-radius:10px;color:#4c1d95;font-size:13px;font-weight:700;cursor:pointer;font-family:"Figtree",sans-serif;margin-right:8px;margin-bottom:8px;transition:all .17s';
+      eb.addEventListener('mouseover', function() { eb.style.background = 'linear-gradient(135deg,#7c3aed,#6d28d9)'; eb.style.color = '#fff'; });
+      eb.addEventListener('mouseout', function() { eb.style.background = 'linear-gradient(135deg,#ede9fe,#ddd6fe)'; eb.style.color = '#4c1d95'; });
+      eb.addEventListener('click', function() { if (typeof explainCard === 'function') explainCard(ap.cur); });
+      g('ap-actions').appendChild(eb);
     }
 
     function addNext() {
@@ -4072,7 +4086,7 @@ aside.sidebar {
 
     // Boutons
     g('ap-btn-valider').addEventListener('click', submit);
-    g('ap-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') submit(); });
+    g('ap-input').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } });
     g('ap-btn-restart').addEventListener('click', function() { buildFilters(); start(); });
 
     // Reset button
@@ -10652,10 +10666,15 @@ function resumeSaveAsNote() {
 }
 
 // ════ EXPLIQUER FLASHCARD ════
-async function explainCard() {
-  var d = getFilteredDeck();
-  if (!d.length) return;
-  var card = d[cardIdx % d.length];
+async function explainCard(overrideCard) {
+  var card;
+  if (overrideCard) {
+    card = overrideCard;
+  } else {
+    var d = getFilteredDeck();
+    if (!d.length) return;
+    card = d[cardIdx % d.length];
+  }
   var questionEl = document.getElementById('explainQuestion');
   if (questionEl) questionEl.textContent = card.q;
   document.getElementById('explainLoading').style.display = 'block';
