@@ -4590,7 +4590,7 @@ aside.sidebar {
           <div class="news-panel-title">🗞️ News de la semaine</div>
           <div class="news-panel-sub">Principales actualités juridiques &amp; économiques</div>
         </div>
-        <button class="news-gen-btn" id="newsGenBtn-semaine" onclick="generateNewsGroq('semaine')">✨ Générer</button>
+        <button class="news-gen-btn" id="newsGenBtn-semaine" onclick="openNewsModal('semaine')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-semaine">
         <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">🗞️</div><div>Clique sur <strong>Générer</strong> pour obtenir les actus de la semaine via Claude</div></div>
@@ -4603,7 +4603,7 @@ aside.sidebar {
           <div class="news-panel-title">📅 News du jour</div>
           <div class="news-panel-sub">Actualités fraîches du jour</div>
         </div>
-        <button class="news-gen-btn" id="newsGenBtn-jour" onclick="generateNewsGroq('jour')">✨ Générer</button>
+        <button class="news-gen-btn" id="newsGenBtn-jour" onclick="openNewsModal('jour')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-jour">
         <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">📅</div><div>Clique sur <strong>Générer</strong> pour obtenir les actus du jour via Claude</div></div>
@@ -4616,7 +4616,7 @@ aside.sidebar {
           <div class="news-panel-title">🏛️ Droit constitutionnel</div>
           <div class="news-panel-sub">Décisions, QPC, réformes institutionnelles</div>
         </div>
-        <button class="news-gen-btn" id="newsGenBtn-constit" onclick="generateNewsGroq('constit')">✨ Générer</button>
+        <button class="news-gen-btn" id="newsGenBtn-constit" onclick="openNewsModal('constit')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-constit">
         <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">🏛️</div><div>Clique sur <strong>Générer</strong> pour obtenir l'actu constitutionnelle via Claude</div></div>
@@ -4629,7 +4629,7 @@ aside.sidebar {
           <div class="news-panel-title">📈 Économie</div>
           <div class="news-panel-sub">Macro, BCE, marchés, politique budgétaire</div>
         </div>
-        <button class="news-gen-btn" id="newsGenBtn-eco" onclick="generateNewsGroq('eco')">✨ Générer</button>
+        <button class="news-gen-btn" id="newsGenBtn-eco" onclick="openNewsModal('eco')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-eco">
         <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">📈</div><div>Clique sur <strong>Générer</strong> pour obtenir l'actu économique via Claude</div></div>
@@ -10338,272 +10338,6 @@ function switchNewsTab(type, btn) {
   if (panel) panel.classList.add('active');
 }
 
-// ─── NEWS GEMINI ───
-function newsDateStr() {
-  var now    = new Date();
-  var days   = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
-  var months = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
-  return days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-}
-
-function newsDateShort() {
-  var now    = new Date();
-  var months = ['jan','fev','mar','avr','mai','jun','jul','aout','sep','oct','nov','dec'];
-  return now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-}
-
-function newsKey(type) {
-  return 'dauphine_news_' + type;
-}
-
-function newsTodayKey(type) {
-  var now = new Date();
-  return newsKey(type) + '_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
-}
-
-function clearNewsCache() {
-  var now = new Date();
-  ['semaine','jour','constit','eco'].forEach(function(type) {
-    var todayKey = newsKey(type) + '_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
-    try { localStorage.removeItem(todayKey); } catch(e) {}
-  });
-  clearNews();
-  toast('Cache du jour efface — tu peux regenerer les actus', '🗑️');
-}
-
-async function generateNewsGroq(type) {
-  var btn = document.getElementById('newsGenBtn-' + type);
-
-  // Verifier cache du jour
-  var todayKey = newsTodayKey(type);
-  try {
-    var cached = JSON.parse(localStorage.getItem(todayKey));
-    if (cached && cached.items && cached.items.length) {
-      try { localStorage.setItem(newsKey(type), JSON.stringify({date: cached.date, items: cached.items})); } catch(e) {}
-      switchNewsTab(type, document.querySelector('.news-tab[data-tab="' + type + '"]'));
-      renderNewsPanel(type, cached.items, cached.date);
-      toast('News deja generees aujourd\'hui', '📰');
-      return;
-    }
-  } catch(e) {}
-
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recherche en cours...'; }
-
-  var dateStr = newsDateStr();
-  var config  = NEWS_PROMPTS[type];
-  var prompt  = config.prompt(dateStr);
-
-  try {
-    var res = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_API_KEY,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          tools: [{ google_search: {} }],
-          generationConfig: { temperature: 0.3, maxOutputTokens: 4000 }
-        })
-      }
-    );
-
-    if (!res.ok) {
-      var errData = await res.json();
-      var msg = errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status;
-      throw new Error(msg);
-    }
-
-    var data = await res.json();
-    var raw  = data.candidates[0].content.parts[0].text.trim();
-    console.log('Gemini raw response:', raw.substring(0, 800)); // Debug complet
-    
-    var clean = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
-    clean = clean.replace(/^\s*[\w\s]*\n/m, ''); // Enlever premiere ligne si texte
-
-    // Extraire le JSON robustement - chercher le premier [ d'abord, puis {
-    var jsonStart = clean.indexOf('[');
-    if (jsonStart === -1) jsonStart = clean.indexOf('{');
-    
-    console.log('JSON search - start:', jsonStart, 'length:', clean.length);
-    
-    if (jsonStart === -1) {
-      console.error('❌ No JSON start found. Clean text:', clean.substring(0, 500));
-      throw new Error('Pas de JSON trouve dans la reponse');
-    }
-    
-    // Chercher la fin du JSON - compter les crochets/accolades open/close
-    function findJsonEnd(str, startIdx) {
-      var depth = 0;
-      var inString = false;
-      var escapeNext = false;
-      
-      for (var i = startIdx; i < str.length; i++) {
-        var ch = str[i];
-        
-        if (escapeNext) {
-          escapeNext = false;
-          continue;
-        }
-        
-        if (ch === '\\') {
-          escapeNext = true;
-          continue;
-        }
-        
-        if (ch === '"') {
-          inString = !inString;
-          continue;
-        }
-        
-        if (inString) continue;
-        
-        if (ch === '{' || ch === '[') depth++;
-        if (ch === '}' || ch === ']') depth--;
-        
-        if (depth === 0 && i > startIdx) return i; // Fin complète
-      }
-      
-      return -1; // JSON pas fermé correctement
-    }
-    
-    var jsonEnd = findJsonEnd(clean, jsonStart);
-    console.log('JSON end found at:', jsonEnd);
-    
-    var items = null;
-    try {
-      var jsonStr;
-      
-      if (jsonEnd === -1) {
-        // Reponse tronquee - fermer le JSON automatiquement
-        console.log('Response appears truncated, auto-closing JSON...');
-        var firstChar = clean[jsonStart];
-        var closeChar = firstChar === '[' ? ']' : '}';
-        
-        // Compter les niveaux ouverts
-        var depth = 0;
-        for (var i = jsonStart; i < clean.length; i++) {
-          var ch = clean[i];
-          if (ch === '"') {
-            // Chercher la fin de la string
-            i++;
-            while (i < clean.length && clean[i] !== '"') {
-              if (clean[i] === '\\') i++;
-              i++;
-            }
-            continue;
-          }
-          if (ch === '{' || ch === '[') depth++;
-          if (ch === '}' || ch === ']') depth--;
-        }
-        
-        // Ajouter les caracteres de fermeture manquants
-        jsonStr = clean.substring(jsonStart);
-        for (var j = 1; j < depth; j++) jsonStr += '}';
-        jsonStr += closeChar;
-        console.log('Auto-closed JSON, closing with ' + depth + ' chars');
-      } else {
-        jsonStr = clean.substring(jsonStart, jsonEnd + 1);
-      }
-      
-      console.log('Trying to parse (len=' + jsonStr.length + '):', jsonStr.substring(0, 150) + '...');
-      items = JSON.parse(jsonStr);
-      console.log('✓ JSON parsed successfully, items count:', items.length);
-    } catch(e1) {
-      console.error('Parse failed:', e1.message);
-      console.log('Attempting progressive parsing...');
-      
-      // Essai: retirer progressivement de la fin
-      var startPos = jsonStart;
-      for (var i = clean.length - 1; i > jsonStart + 50; i--) {
-        try {
-          var testStr = clean.substring(jsonStart, i);
-          // Essayer de fermer
-          var firstChar = clean[jsonStart];
-          var closeChar = firstChar === '[' ? ']' : '}';
-          testStr += closeChar;
-          
-          items = JSON.parse(testStr);
-          console.log('✓ JSON parsed with substring up to pos ' + i);
-          break;
-        } catch(e2) {}
-      }
-    }
-    
-    if (!items) throw new Error('Impossible d\'extraire JSON valide');
-
-    // Si c'est un objet avec une clé contenant le tableau, l'extraire
-    if (!Array.isArray(items)) {
-      if (typeof items === 'object' && items !== null) {
-        // Chercher une clé qui contient un tableau (news, items, results, etc.)
-        for (var key in items) {
-          if (Array.isArray(items[key])) {
-            console.log('Found array in key:', key);
-            items = items[key];
-            break;
-          }
-        }
-      }
-    }
-
-    if (!Array.isArray(items) || !items[0]) {
-      console.error('Invalid items structure:', items);
-      throw new Error('Format JSON invalide - attendu un tableau d\'actualites');
-    }
-
-    // Vérifier que les items ont au moins 'titre'
-    if (!items[0].titre && !items[0].title && !items[0].headline) {
-      console.error('Items missing title field:', items[0]);
-      throw new Error('Format JSON invalide - chaque actualite doit avoir un titre');
-    }
-
-    var dateShort = newsDateShort();
-    try { localStorage.setItem(todayKey, JSON.stringify({date: dateShort, items: items})); } catch(e) {}
-    try { localStorage.setItem(newsKey(type), JSON.stringify({date: dateShort, items: items})); } catch(e) {}
-
-    switchNewsTab(type, document.querySelector('.news-tab[data-tab="' + type + '"]'));
-    renderNewsPanel(type, items, dateShort);
-    renderHomeNewsCarousel();
-    toast(items.length + ' actus trouvees ! 📰', '✅');
-
-  } catch(e) {
-    console.error('Gemini news error:', e);
-    if (e.message && e.message.indexOf('401') > -1) {
-      toast('Cle API invalide — verifie GEMINI_API_KEY', '❌');
-    } else if (e.message && e.message.indexOf('429') > -1) {
-      toast('Limite Gemini atteinte — reessaie plus tard', '⚠️');
-    } else {
-      toast('Erreur : ' + e.message, '❌');
-    }
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '✨ Generer'; }
-  }
-}
-
-function autoGenerateNewsIfNeeded() {
-  ['semaine','jour','constit','eco'].forEach(function(type) {
-    var todayKey = newsTodayKey(type);
-    try {
-      var cached = JSON.parse(localStorage.getItem(todayKey));
-      if (cached && cached.items && cached.items.length) {
-        try { localStorage.setItem(newsKey(type), JSON.stringify({date: cached.date, items: cached.items})); } catch(e) {}
-        renderNewsPanel(type, cached.items, cached.date);
-      }
-    } catch(e) {}
-  });
-}
-
-var _newsPageInit = false;
-setTimeout(function() {
-  var origSP = showPage;
-  showPage = function(pageId, btn) {
-    origSP(pageId, btn);
-    if (pageId === 'news' && !_newsPageInit) {
-      _newsPageInit = true;
-      autoGenerateNewsIfNeeded();
-    }
-  };
-}, 500);
-
 function openNewsModal(type) {
   _newsType = type;
   var now    = new Date();
@@ -10643,7 +10377,6 @@ function renderNewsPanel(type, items, dateStr) {
   listEl.innerHTML = '<div class="news-panel-actions">'
     + '<div class="news-panel-count">Généré le ' + dateStr + ' · ' + items.length + ' articles</div>'
     + '<button class="news-clear-btn" onclick="clearNewsTab(\'' + type + '\')">🗑️ Effacer</button>'
-    + '<button class="news-clear-btn" onclick="clearNewsCache()" style="background:var(--g100);color:var(--g600);margin-left:6px">🔄 Réinitialiser le cache</button>'
     + '</div>'
     + items.map(function(n, i) {
       var lien = n.lien && n.lien.startsWith('http')
