@@ -10432,12 +10432,45 @@ async function generateNewsGroq(type) {
 
     var data = await res.json();
     var raw  = data.candidates[0].content.parts[0].text.trim();
-    var clean = raw.replace(/```json|```/g, '').trim();
+    console.log('Gemini raw response:', raw.substring(0, 800)); // Debug complet
+    
+    var clean = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+    clean = clean.replace(/^\s*[\w\s]*\n/m, ''); // Enlever premiere ligne si texte
 
-    // Extraire le JSON meme si Gemini ajoute du texte autour
-    var match = clean.match(/\[[\s\S]*\]/);
-    if (!match) throw new Error('Pas de JSON trouve dans la reponse');
-    var items = JSON.parse(match[0]);
+    // Extraire le JSON robustement - chercher le premier [ et le dernier ]
+    var jsonStart = clean.indexOf('{');
+    if (jsonStart === -1) jsonStart = clean.indexOf('[');
+    var jsonEnd = clean.lastIndexOf(']');
+    if (jsonEnd === -1) jsonEnd = clean.lastIndexOf('}');
+    
+    console.log('JSON search - start:', jsonStart, 'end:', jsonEnd, 'length:', clean.length);
+    
+    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
+      console.error('❌ JSON extraction failed. Clean text:', clean.substring(0, 500));
+      throw new Error('Pas de JSON trouve dans la reponse');
+    }
+    
+    var items = null;
+    // Essai 1: substring exact du premier { ou [ au dernier } ou ]
+    try {
+      var jsonStr = clean.substring(jsonStart, jsonEnd + 1);
+      console.log('Trying to parse:', jsonStr.substring(0, 200) + '...');
+      items = JSON.parse(jsonStr);
+      console.log('✓ JSON parsed successfully, items count:', items.length);
+    } catch(e1) {
+      console.warn('Essai 1 failed:', e1.message);
+      // Essai 2: retirer progressivement de la fin
+      for (var i = jsonEnd; i > jsonStart + 10; i--) {
+        try {
+          var jsonStr = clean.substring(jsonStart, i);
+          items = JSON.parse(jsonStr);
+          console.log('✓ JSON parsed at position ' + i + ', items count:', items.length);
+          break;
+        } catch(e2) {}
+      }
+    }
+    
+    if (!items) throw new Error('Impossible d\'extraire JSON valide');
 
     if (!Array.isArray(items) || !items[0] || !items[0].titre) throw new Error('Format JSON invalide');
 
