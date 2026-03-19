@@ -10898,7 +10898,7 @@ async function planningIAGenerate() {
     + '## 💡 Conseils personnalisés\n(3-4 conseils pratiques adaptés à la situation)\n\n'
     + 'Sois concret, réaliste et motivant.\n\n'
     + 'IMPORTANT : À la toute fin de ta réponse, ajoute exactement ce bloc JSON (max ' + maxSessions + ' créneaux, durée ' + sessionDuration + ' min, UNIQUEMENT les week-ends et soirées ≥18h30 sauf si déjà à court de créneaux) :\n'
-    + 'SESSIONS_JSON:[{"date":"AAAA-MM-JJ","time":"HH:MM","end":"HH:MM","summary":"Révision Matière"},...]';
+    + 'SESSIONS_JSON:[{"date":"YYYY-MM-DD","time":"HH:MM","end":"HH:MM","summary":"Révision Matière"},...]';
 
   try {
     var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -10911,14 +10911,14 @@ async function planningIAGenerate() {
     var data = await res.json();
     var raw = data.choices[0].message.content.trim();
 
-    // Extract JSON sessions block (greedy + optional whitespace to handle AI formatting variations)
-    var sessionsMatch = raw.match(/SESSIONS_JSON:\s*(\[[\s\S]*\])/);
+    // Extract JSON sessions block — handle optional markdown code fence wrapping (```json ... ```)
+    var sessionsMatch = raw.match(/SESSIONS_JSON:\s*(?:```(?:json)?\s*)?(\[[\s\S]*\])(?:\s*```)?/);
     window._planningIASessions = [];
     if (sessionsMatch) {
       try { window._planningIASessions = JSON.parse(sessionsMatch[1]); } catch(pe) { window._planningIASessions = []; }
     }
     // Strip the JSON block from the displayed markdown
-    var result = raw.replace(/SESSIONS_JSON:\s*\[[\s\S]*\]/, '').trimEnd();
+    var result = raw.replace(/SESSIONS_JSON:\s*(?:```(?:json)?\s*)?\[[\s\S]*\](?:\s*```)?/, '').trimEnd();
 
     window._planningIAResult = result;
     document.getElementById('planningIAResult').innerHTML = markdownToHtml(result);
