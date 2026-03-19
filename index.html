@@ -42,6 +42,7 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:'Figtree',sans-serif;background:var(--bg-page);color:var(--text-main);line-height:1.6;overflow-x:hidden;transition:background .3s,color .3s}
+input,textarea,select{background:var(--bg-card,#fff);color:var(--text-main,#111827);border-color:var(--border-col,#e2e6ec)}
 [data-theme="dark"] nav{background:rgba(20,23,32,.93)}
 [data-theme="dark"] .sim-table-wrap,[data-theme="dark"] .sim-result,[data-theme="dark"] .flash-gen,
 [data-theme="dark"] .flash-deck,[data-theme="dark"] .mat-card,[data-theme="dark"] .faq-item,
@@ -1188,11 +1189,11 @@ html{scroll-behavior:smooth}
 .login-title{font-family:var(--font-serif,serif);font-size:24px;color:#111827;margin-bottom:4px;letter-spacing:-.02em}
 .login-sub{font-size:13px;color:#9ba3b0;margin-bottom:28px;line-height:1.5}
 .login-input{
-  width:100%;border:1.5px solid #e2e6ec;border-radius:10px;
+  width:100%;border:1.5px solid var(--border-col,#e2e6ec);border-radius:10px;
   padding:12px 16px;font-size:16px;font-family:'Figtree',sans-serif;
-  text-align:center;letter-spacing:.15em;color:#111827;
+  text-align:center;letter-spacing:.15em;color:var(--text-main,#111827);
   box-sizing:border-box;transition:border-color .15s;outline:none;
-  background:#f9fafb
+  background:var(--bg-card,#f9fafb)
 }
 .login-input:focus{border-color:#0057ad;background:#fff}
 .login-input.error{border-color:#ef4444;background:#fef2f2;animation:shake .3s ease}
@@ -3661,11 +3662,11 @@ aside.sidebar {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
       <div>
         <label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:6px">📊 Moyenne cible au semestre</label>
-        <input type="number" id="targetGrade" placeholder="Ex: 12" min="0" max="20" step="0.5" value="12" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
+        <input type="number" id="targetGrade" placeholder="Ex: 12" min="0" max="20" step="0.5" value="12" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;background:var(--bg-card,#fff);color:var(--text-main,#111827)" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
       </div>
       <div>
         <label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:6px">📅 Semestre à analyser</label>
-        <select id="analyseSem" onchange="updateNoCCFields()" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
+        <select id="analyseSem" onchange="updateNoCCFields()" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;background:var(--bg-card,#fff);color:var(--text-main,#111827)" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'">
           <option value="1">Semestre 1</option>
           <option value="2">Semestre 2</option>
           <option value="both">S1 + S2</option>
@@ -3753,7 +3754,7 @@ aside.sidebar {
               <em>Le prompt apparaîtra ici...</em>
             </div>
             <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📥 Colle le JSON retourné par Claude</label>
-            <textarea id="flashJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;},...]" style="width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:Figtree,sans-serif;resize:vertical;min-height:80px;color:var(--g900);transition:border-color .15s"></textarea>
+            <textarea id="flashJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;},...]" style="width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:Figtree,sans-serif;resize:vertical;min-height:80px;color:var(--text-main,#111827);background:var(--bg-card,#fff);transition:border-color .15s"></textarea>
             <button class="flash-btn" onclick="importFlashJSON()" style="margin-top:8px">✨ Importer les flashcards</button>
           </div>
         </details>
@@ -3913,7 +3914,7 @@ aside.sidebar {
   </div>
 
   <!-- Input + Valider -->
-  <textarea id="ap-input" rows="3" placeholder="Ta réponse…" style="width: 100%; max-width: 600px; box-sizing: border-box; border: 2px solid #e5e7eb; border-radius: 10px; padding: 13px 16px; font-size: 15px; font-family: Figtree, sans-serif; color: rgb(17, 24, 39); outline: none; margin-bottom: 10px; transition: border-color 0.2s; resize: vertical; line-height: 1.5; overflow-y: auto;"></textarea>
+  <textarea id="ap-input" rows="3" placeholder="Ta réponse…" style="width: 100%; max-width: 600px; box-sizing: border-box; border: 2px solid #e5e7eb; border-radius: 10px; padding: 13px 16px; font-size: 15px; font-family: Figtree, sans-serif; color: var(--text-main,#111827); background: var(--bg-card,#fff); outline: none; margin-bottom: 10px; transition: border-color 0.2s; resize: vertical; line-height: 1.5; overflow-y: auto;"></textarea>
   <button id="ap-btn-valider" style="width: 100%; max-width: 600px; padding: 13px; background: linear-gradient(135deg, rgb(47, 68, 135), rgb(26, 86, 196)); color: rgb(255, 255, 255); border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: Figtree, sans-serif; margin-bottom: 12px;">
     Valider →
   </button>
@@ -3923,7 +3924,7 @@ aside.sidebar {
 
   <!-- Retaper -->
   <input id="ap-retype" type="text" placeholder="Retape la bonne réponse…" style="display:none;width:100%;max-width:600px;box-sizing:border-box;border:2px solid #fca5a5;
-           border-radius:10px;padding:12px 14px;font-size:14px;font-family:&#39;Figtree&#39;,sans-serif;outline:none;margin-bottom:10px">
+           border-radius:10px;padding:12px 14px;font-size:14px;font-family:&#39;Figtree&#39;,sans-serif;outline:none;margin-bottom:10px;background:var(--bg-card,#fff);color:var(--text-main,#111827)">
 
   <!-- Actions -->
   <div id="ap-actions" style="max-width:600px"></div>
@@ -4972,7 +4973,7 @@ aside.sidebar {
       </div>
       <div style="margin-top:16px">
         <label class="cp-label" style="display:block;margin-bottom:6px">📄 Coller un cours (optionnel)</label>
-        <textarea id="cpCours" placeholder="Colle ici ton cours, tes notes ou un extrait de cours — Groq s'en servira pour créer un cas pratique ancré dans ce que tu as vraiment étudié..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:100px;color:var(--g900);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'"></textarea>
+        <textarea id="cpCours" placeholder="Colle ici ton cours, tes notes ou un extrait de cours — Groq s'en servira pour créer un cas pratique ancré dans ce que tu as vraiment étudié..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:100px;color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'"></textarea>
         <p style="font-size:11px;color:var(--g400);margin-top:4px">Si vide, Groq génère un cas pratique générique sur le thème choisi.</p>
       </div>
       <button class="cp-gen-btn" onclick="openCpModal()" style="margin-top:16px">⚖️ Générer le cas pratique</button>
@@ -5022,7 +5023,7 @@ aside.sidebar {
 
     <div id="cpStep2" style="display:none">
       <p style="font-size:13px;color:var(--g600);margin-bottom:8px">✅ Prompt copié ! Colle la réponse de Claude :</p>
-      <textarea id="cpResultInput" placeholder="Colle ici le cas pratique généré par Claude..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:160px;color:var(--g900);outline:none"></textarea>
+      <textarea id="cpResultInput" placeholder="Colle ici le cas pratique généré par Claude..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:160px;color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none"></textarea>
       <div class="rev-modal-actions" style="margin-top:10px">
         <button class="rev-modal-cancel" onclick="document.getElementById('cpStep1').style.display='';document.getElementById('cpStep2').style.display='none'">← Retour</button>
         <button class="rev-modal-save" onclick="importCasPratique()">⚖️ Afficher le cas pratique</button>
@@ -5738,7 +5739,7 @@ aside.sidebar {
       <p style="font-size:13px;color:var(--g600);margin-bottom:8px">
         ✅ Prompt copié ! Colle maintenant la réponse de Claude :
       </p>
-      <textarea id="fluideResultInput" placeholder="Colle ici la note corrigée et mise en forme..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:140px;color:var(--g900);outline:none"></textarea>
+      <textarea id="fluideResultInput" placeholder="Colle ici la note corrigée et mise en forme..." style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:140px;color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none"></textarea>
       <div class="rev-modal-actions" style="margin-top:10px">
         <button class="rev-modal-cancel" onclick="document.getElementById('fluideStep1').style.display='';document.getElementById('fluideStep2').style.display='none'">← Retour</button>
         <button class="rev-modal-save" onclick="fluideApply()">✍️ Remplacer ma note</button>
@@ -5791,7 +5792,7 @@ aside.sidebar {
       <div style="margin-bottom:12px">
         <label style="font-size:12px;font-weight:700;color:var(--g700);display:block;margin-bottom:6px">⏱️ Combien d'heures de travail estimes-tu nécessaires au total ?</label>
         <div style="display:flex;align-items:center;gap:8px">
-          <input type="number" id="planningIAHours" min="1" max="200" value="10" style="width:80px;padding:8px 10px;border:1.5px solid var(--g200);border-radius:8px;font-size:14px;font-weight:600;font-family:'Figtree',sans-serif;color:var(--g900);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'" />
+          <input type="number" id="planningIAHours" min="1" max="200" value="10" style="width:80px;padding:8px 10px;border:1.5px solid var(--g200);border-radius:8px;font-size:14px;font-weight:600;font-family:'Figtree',sans-serif;color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--blue-mid)'" onblur="this.style.borderColor='var(--g200)'" />
           <span style="font-size:13px;color:var(--g600)">heures de révision au total</span>
         </div>
         <p style="font-size:11px;color:var(--g400);margin:5px 0 0">Ex : 5h pour un devoir rapide, 20h+ pour des examens importants</p>
@@ -5844,7 +5845,7 @@ aside.sidebar {
       <p style="font-size:13px;color:var(--g600);margin-bottom:8px">
         ✅ Prompt copié ! Colle maintenant le JSON retourné par Claude :
       </p>
-      <textarea id="notesGenJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;}]" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:100px;color:var(--g900);outline:none"></textarea>
+      <textarea id="notesGenJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;}]" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:10px;padding:10px 12px;font-size:12px;font-family:Figtree,sans-serif;resize:vertical;min-height:100px;color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none"></textarea>
       <div class="rev-modal-actions" style="margin-top:10px">
         <button class="rev-modal-cancel" onclick="document.getElementById('notesGenStep1').style.display='';document.getElementById('notesGenStep2').style.display='none'">← Retour</button>
         <button class="rev-modal-save" onclick="notesGenImport()">✨ Importer les flashcards</button>
@@ -5966,7 +5967,7 @@ aside.sidebar {
   <div style="padding:10px 12px;border-bottom:1px solid var(--g100);flex-shrink:0">
     <input id="glossaireSearch" type="text" placeholder="🔍 Rechercher un terme..." oninput="filterGlossaire(this.value)" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);
         border-radius:8px;padding:7px 10px;font-size:12px;
-        font-family:&#39;Figtree&#39;,sans-serif;color:var(--g900);outline:none" onfocus="this.style.borderColor=&#39;var(--blue-mid)&#39;" onblur="this.style.borderColor=&#39;var(--g200)&#39;">
+        font-family:&#39;Figtree&#39;,sans-serif;color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none" onfocus="this.style.borderColor=&#39;var(--blue-mid)&#39;" onblur="this.style.borderColor=&#39;var(--g200)&#39;">
   </div>
   <div id="glossaireList" style="overflow-y:auto;flex:1;padding:8px 0"></div>
 </div>
@@ -5999,7 +6000,7 @@ aside.sidebar {
       <textarea id="newsJsonInput" placeholder="[{&quot;titre&quot;:&quot;...&quot;,&quot;resume&quot;:&quot;...&quot;,&quot;lien&quot;:&quot;https://...&quot;},...]" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);
         border-radius:10px;padding:10px 12px;font-size:12px;
         font-family:&#39;Figtree&#39;,sans-serif;resize:vertical;min-height:120px;
-        color:var(--g900);outline:none" onfocus="this.style.borderColor=&#39;var(--blue-mid)&#39;" onblur="this.style.borderColor=&#39;var(--g200)&#39;"></textarea>
+        color:var(--text-main,#111827);background:var(--bg-card,#fff);outline:none" onfocus="this.style.borderColor=&#39;var(--blue-mid)&#39;" onblur="this.style.borderColor=&#39;var(--g200)&#39;"></textarea>
       <div class="rev-modal-actions" style="margin-top:10px">
         <button class="rev-modal-cancel" onclick="document.getElementById(&#39;newsStep1&#39;).style.display=&#39;&#39;;document.getElementById(&#39;newsStep2&#39;).style.display=&#39;none&#39;">← Retour</button>
         <button class="rev-modal-save" onclick="importNews()">📰 Afficher les news</button>
@@ -6425,7 +6426,7 @@ function updateNoCCFields() {
     var fieldId = 'estimExam_' + m.id;
     var div = document.createElement('div');
     div.innerHTML = '<label style="display:block;font-size:12px;font-weight:500;color:var(--text-sub);margin-bottom:4px">' + m.emoji + ' ' + m.nom.slice(0, 20) + '</label>'
-      + '<input type="number" id="' + fieldId + '" placeholder="Ex: 14" min="0" max="20" step="0.5" value="" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:6px;padding:6px 8px;font-size:12px;outline:none" onfocus="this.style.borderColor=\'var(--blue-mid)\'" onblur="this.style.borderColor=\'var(--g200)\'">';
+      + '<input type="number" id="' + fieldId + '" placeholder="Ex: 14" min="0" max="20" step="0.5" value="" style="width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:6px;padding:6px 8px;font-size:12px;outline:none;background:var(--bg-card,#fff);color:var(--text-main,#111827)" onfocus="this.style.borderColor=\'var(--blue-mid)\'" onblur="this.style.borderColor=\'var(--g200)\'">';
     container.appendChild(div);
   });
 }
