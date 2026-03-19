@@ -9808,8 +9808,7 @@ var currentAccess = null;
 
 function initLogin() {
   // Vérifier si une session existe déjà (localStorage pour persistance sur mobile)
-  var saved;
-  try { saved = localStorage.getItem('dg_access'); } catch(e) { saved = null; }
+  var saved = localStorage.getItem('dg_access');
   if (saved === 'full' || saved === 'limited') {
     currentAccess = saved;
     applyAccess(currentAccess);
@@ -9835,7 +9834,7 @@ function submitLogin() {
   if (access) {
     // Succès
     currentAccess = access;
-    try { localStorage.setItem('dg_access', access); } catch(e) {}
+    localStorage.setItem('dg_access', access);
     errEl.textContent = '';
     inp.style.borderColor = '#16a34a';
     inp.style.background = '#f0fdf4';
