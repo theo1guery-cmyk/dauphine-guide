@@ -3297,7 +3297,7 @@ aside.sidebar {
     <div class="login-logo">D</div>
     <div class="login-title">DauphineGuide</div>
     <div class="login-sub">Guide L1 Droit-Éco · Cursus Juridique<br>Entre ton code d'accès pour continuer</div>
-    <input class="login-input" id="loginInput" type="password" placeholder="••••••••" maxlength="20" autocomplete="off" onkeydown="if(event.key===&#39;Enter&#39;)submitLogin()">
+    <input class="login-input" id="loginInput" type="password" placeholder="••••••••" maxlength="20" autocomplete="off" autocapitalize="none" onkeydown="if(event.key===&#39;Enter&#39;)submitLogin()">
     <button class="login-btn" onclick="submitLogin()">Accéder →</button>
     <div class="login-error" id="loginError"></div>
     <div class="login-footer">Site non officiel · Paris-Dauphine PSL · 2025-2026</div>
@@ -9808,7 +9808,8 @@ var currentAccess = null;
 
 function initLogin() {
   // Vérifier si une session existe déjà (localStorage pour persistance sur mobile)
-  var saved = localStorage.getItem('dg_access');
+  var saved;
+  try { saved = localStorage.getItem('dg_access'); } catch(e) { saved = null; }
   if (saved === 'full' || saved === 'limited') {
     currentAccess = saved;
     applyAccess(currentAccess);
@@ -9834,7 +9835,7 @@ function submitLogin() {
   if (access) {
     // Succès
     currentAccess = access;
-    localStorage.setItem('dg_access', access);
+    try { localStorage.setItem('dg_access', access); } catch(e) {}
     errEl.textContent = '';
     inp.style.borderColor = '#16a34a';
     inp.style.background = '#f0fdf4';
