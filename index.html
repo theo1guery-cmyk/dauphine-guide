@@ -5805,6 +5805,7 @@ aside.sidebar {
     <div class="rev-modal-actions">
       <button class="rev-modal-cancel" onclick="planningIAClose()">Fermer</button>
       <button class="rev-modal-save" id="planningIACopyBtn" onclick="planningIACopy()" style="display:none">📋 Copier</button>
+      <button class="rev-modal-save" id="planningIAAddBtn" onclick="planningIAAddToPlanning()" style="display:none;background:var(--purple,#a855f7);border-color:var(--purple,#a855f7)">📅 Ajouter au planning</button>
     </div>
   </div>
 </div>
@@ -10762,23 +10763,37 @@ async function planningIASuggestions() {
     + '## 🎯 Priorités de révision\n(Les 3-4 matières à travailler en priorité avec justification)\n\n'
     + '## 📅 Planning suggéré (14 jours)\n(Planning jour par jour avec créneaux et durées recommandés)\n\n'
     + '## 💡 Conseils personnalisés\n(3-4 conseils pratiques adaptés à la situation)\n\n'
-    + 'Sois concret, réaliste et motivant.';
+    + 'Sois concret, réaliste et motivant.\n\n'
+    + 'IMPORTANT : À la toute fin de ta réponse, ajoute exactement ce bloc (remplace les valeurs par les vraies séances suggérées, maximum 14 créneaux, durée typique 1h30) :\n'
+    + 'SESSIONS_JSON:[{"date":"AAAA-MM-JJ","time":"HH:MM","end":"HH:MM","summary":"Révision Matière"},...]';
 
   try {
     var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-      body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 2000, temperature: 0.6,
+      body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 2500, temperature: 0.6,
         messages: [{ role: 'user', content: prompt }] })
     });
     if (!res.ok) { var ed = await res.json(); throw new Error(ed.error && ed.error.message ? ed.error.message : 'Erreur API ' + res.status); }
     var data = await res.json();
-    var result = data.choices[0].message.content.trim();
+    var raw = data.choices[0].message.content.trim();
+
+    // Extract JSON sessions block
+    var sessionsMatch = raw.match(/SESSIONS_JSON:(\[[\s\S]*?\])/);
+    window._planningIASessions = [];
+    if (sessionsMatch) {
+      try { window._planningIASessions = JSON.parse(sessionsMatch[1]); } catch(pe) { window._planningIASessions = []; }
+    }
+    // Strip the JSON block from the displayed markdown
+    var result = raw.replace(/SESSIONS_JSON:\[[\s\S]*?\]/, '').trimEnd();
+
     window._planningIAResult = result;
     document.getElementById('planningIAResult').innerHTML = markdownToHtml(result);
     document.getElementById('planningIALoading').style.display = 'none';
     document.getElementById('planningIAResult').style.display = 'block';
     if (copyBtn) copyBtn.style.display = '';
+    var addBtn = document.getElementById('planningIAAddBtn');
+    if (addBtn) addBtn.style.display = window._planningIASessions.length ? '' : 'none';
   } catch(e) {
     document.getElementById('planningIALoading').style.display = 'none';
     if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
@@ -10797,6 +10812,45 @@ function planningIACopy() {
   navigator.clipboard.writeText(window._planningIAResult).then(function() {
     toast('Planning copié !', '📋');
   }).catch(function() { toast('Impossible de copier', '⚠️'); });
+}
+
+function planningIAAddToPlanning() {
+  var sessions = window._planningIASessions;
+  if (!sessions || !sessions.length) { toast('Aucune séance à importer.', '⚠️'); return; }
+  var added = 0;
+  sessions.forEach(function(s) {
+    if (!s.date || !s.time || !s.summary) return;
+    // Basic date/time validation
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s.date)) return;
+    if (!/^\d{2}:\d{2}$/.test(s.time)) return;
+    var end = s.end && /^\d{2}:\d{2}$/.test(s.end) ? s.end : (function() {
+      var sp = s.time.split(':');
+      var m = parseInt(sp[0]) * 60 + parseInt(sp[1]) + 90;
+      return (Math.floor(m / 60) < 10 ? '0' : '') + Math.floor(m / 60) + ':' + (m % 60 < 10 ? '0' : '') + (m % 60);
+    })();
+    manualEvents.push({
+      manualId: Date.now() + added,
+      date: s.date,
+      time: s.time,
+      end: end,
+      summary: s.summary,
+      location: '',
+      color: '#f3e8ff',
+      border: '#a855f7',
+      slotType: 'revision',
+      cat: 'autre'
+    });
+    added++;
+  });
+  if (added > 0) {
+    saveManualEvents();
+    renderWeek();
+    renderAgenda();
+    planningIAClose();
+    toast(added + ' séance' + (added > 1 ? 's' : '') + ' de révision ajoutée' + (added > 1 ? 's' : '') + ' au planning !', '📅');
+  } else {
+    toast('Aucune séance valide à importer.', '⚠️');
+  }
 }
 
 
