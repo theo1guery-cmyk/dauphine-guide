@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dauphine-guide-v1';
+const CACHE_NAME = 'dauphine-guide-v2';
 const urlsToCache = [
   './',
   './index.html',
