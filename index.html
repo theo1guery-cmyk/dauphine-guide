@@ -10472,7 +10472,30 @@ async function generateNewsGroq(type) {
     
     if (!items) throw new Error('Impossible d\'extraire JSON valide');
 
-    if (!Array.isArray(items) || !items[0] || !items[0].titre) throw new Error('Format JSON invalide');
+    // Si c'est un objet avec une clé contenant le tableau, l'extraire
+    if (!Array.isArray(items)) {
+      if (typeof items === 'object' && items !== null) {
+        // Chercher une clé qui contient un tableau (news, items, results, etc.)
+        for (var key in items) {
+          if (Array.isArray(items[key])) {
+            console.log('Found array in key:', key);
+            items = items[key];
+            break;
+          }
+        }
+      }
+    }
+
+    if (!Array.isArray(items) || !items[0]) {
+      console.error('Invalid items structure:', items);
+      throw new Error('Format JSON invalide - attendu un tableau d\'actualites');
+    }
+
+    // Vérifier que les items ont au moins 'titre'
+    if (!items[0].titre && !items[0].title && !items[0].headline) {
+      console.error('Items missing title field:', items[0]);
+      throw new Error('Format JSON invalide - chaque actualite doit avoir un titre');
+    }
 
     var dateShort = newsDateShort();
     try { localStorage.setItem(todayKey, JSON.stringify({date: dateShort, items: items})); } catch(e) {}
