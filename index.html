@@ -9799,9 +9799,9 @@ if (document.readyState === 'loading') {
 // Pour changer les codes : modifie ACCESS_CODES ci-dessous
 // ════════════════════════════════════════
 var ACCESS_CODES = {
-  '.pjf+NI^,rxqWzB?E%bK': 'full',    // ← Code accès complet (Drive inclus)
-  'visiteur2025':          'limited', // ← Code accès limité (sans Drive)
-  'dauphine26':            'prank'    // ← 😈
+  'DAUPHINE2025': 'full',    // ← Code accès complet (Drive inclus)
+  'VISITEUR2025': 'limited', // ← Code accès limité (sans Drive)
+  'DAUPHINE26':   'prank'    // ← 😈
 };
 
 var currentAccess = null;
@@ -9830,7 +9830,7 @@ function submitLogin() {
   var inp = document.getElementById('loginInput');
   var errEl = document.getElementById('loginError');
   if (!inp) return;
-  var code = inp.value.trim();
+  var code = inp.value.trim().toUpperCase();
   var access = ACCESS_CODES[code];
   if (access) {
     // Succès
