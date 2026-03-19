@@ -6252,17 +6252,13 @@ function analyzeExamPriorities() {
       html += '<strong style="color:var(--blue)">🎯 Stratégie pragmatique pour attendre ' + targetGrade + '/20 :</strong><br>';
       html += '<em style="color:var(--text-sub);font-size:13px">Focus sur les matières où tu peux progresser (CC modéré):</em><br>';
       strategy.forEach(function(m, idx) {
-        var progressBar = '';
-        var barLength = 15;
-        var filledLength = Math.round((m.realisticTarget / 20) * barLength);
-        for (var i = 0; i < barLength; i++) {
-          progressBar += i < filledLength ? '█' : '░';
-        }
         var color = m.realisticTarget > 16 ? '#f59e0b' : m.realisticTarget > 12 ? '#06b6d4' : '#22c55e';
+        var pct = Math.round((m.realisticTarget / 20) * 100);
+        var progressBar = '<span style="display:inline-block;vertical-align:middle;width:90px;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-left:6px"><span style="display:block;height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px"></span></span>';
         html += '<div style="margin:10px 0;padding:8px;background:var(--g50);border-radius:6px;border-left:3px solid ' + color + '">';
         html += '<strong>' + (idx + 1) + '. ' + m.matiere + '</strong> (' + m.ects + ' ECTS)<br>';
         html += '📌 CC: ' + m.ccGrade.toFixed(1) + '/20 — ' + m.difficultyLabel + '<br>';
-        html += '🎯 Viser: <strong style="color:' + color + '">' + m.realisticTarget.toFixed(1) + '/20</strong> ' + progressBar + '<br>';
+        html += '🎯 Viser: <strong style="color:' + color + '">' + m.realisticTarget.toFixed(1) + '/20</strong>' + progressBar + '<br>';
         html += '➕ Gain: ' + (m.realisticTarget - m.ccGrade).toFixed(1) + ' points / Réaliste: ' + (m.ccGrade < 10 ? '+1.5 max' : m.ccGrade < 12 ? '+2.5 max' : '+4 max');
         html += '</div>';
       });
