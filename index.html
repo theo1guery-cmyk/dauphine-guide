@@ -6463,7 +6463,9 @@ async function generateFlashcardsGroq() {
     + "Retourne directement ceci:\n"
     + "[{\"cat\":\"" + matiere + "\",\"q\":\"Q1?\",\"r\":\"R1.\"},{\"cat\":\"" + matiere + "\",\"q\":\"Q2?\",\"r\":\"R2.\"}]\n\n"
     + "Matiere: " + matiere + "\n"
-    + "Genere 8 flashcards avec ce format JSON UNIQUEMENT.\n\n"
+    + "⚠️ GENERE UN MAXIMUM DE FLASHCARDS (au minimum 15-20) pour couvrir ENTIEREMENT le cours.\n"
+    + "Chaque concept, définition, théorème, exemple important DOIT avoir au moins une flashcard.\n"
+    + "Vise la couverture COMPLÈTE du contenu, pas juste les points majeurs.\n\n"
     + "COURS:\n" + text.slice(0, 3000);
 
   try {
@@ -6475,7 +6477,7 @@ async function generateFlashcardsGroq() {
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        max_tokens: 1200,
+        max_tokens: 2000,
         temperature: 0.3,
         messages: [{ role: 'user', content: prompt }]
       })
