@@ -10565,12 +10565,12 @@ function fluidifierNote() {
   // Build prompt — strict instruction to keep ALL content, only fix typos + add structure
   var prompt = 'Tu es un assistant de prise de notes étudiant. Voici une note de cours tapée rapidement avec des fautes de frappe.\n\n'
     + 'Ta mission STRICTE :\n'
-    + '1. CORRIGER uniquement les fautes d\'orthographe et de frappe — ne change AUCUN mot, ne reformule RIEN, ne résume RIEN, ne supprime RIEN\n'
-    + '2. TITRES : analyse d\'abord si la note contient déjà des titres ou sous-titres (mots en majuscules, lignes courtes isolées, numérotations comme I. II. 1. 2. etc.)\n'
-    + '   - Si OUI : mets-les en évidence en Markdown (# pour les titres principaux, ## pour les sous-titres) sans en ajouter de nouveaux\n'
-    + '   - Si NON : ajoute des titres (# Titre) et sous-titres (## Sous-titre) là où c\'est logique selon le contenu\n'
-    + '3. CONSERVER absolument tout le contenu original mot pour mot\n'
-    + '4. Retourner UNIQUEMENT le texte corrigé et structuré en Markdown, sans commentaire, sans explication\n\n'
+    + '1. CORRIGER ABSOLUMENT toutes les fautes d\'orthographe, de frappe, d\'accords — chaque mot doit être parfait et clair\n'
+    + '2. TITRES : détecte les titres et sous-titres EXISTANTS (mots en majuscules, lignes courtes isolées, numérotations comme I. II. 1. 2. etc.)\n'
+    + '   - Mets-les en évidence en Markdown (# pour les titres, ## pour les sous-titres) SANS en ajouter de nouveaux\n'
+    + '3. FLUIDITÉ : ajoute ÉVENTUELLEMENT quelques connecteurs basiques (cependant, donc, ainsi, en effet, de plus, par ailleurs) si le texte manque de liaison — MINIMUM absolu, juste pour la clarté\n'
+    + '4. CONSERVER absolument tout le contenu original mot pour mot — AUCUN changement du fond, des termes ou de la structure\n'
+    + '5. Retourner UNIQUEMENT le texte corrigé et structuré en Markdown, sans commentaire, sans explication\n\n'
     + 'NOTE DE COURS :\n' + content;
 
   window._fluidePrompt = prompt;
