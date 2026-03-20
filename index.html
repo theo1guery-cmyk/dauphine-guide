@@ -9529,7 +9529,9 @@ function generateFlashcardsFromNote() {
   // Build prompt
   var prompt = 'Tu es un assistant pédagogique pour L1 Droit-Éco Paris-Dauphine.\n\n'
     + 'Matière : ' + mat + '\n\n'
-    + 'Génère entre 6 et 10 flashcards pédagogiques à partir de la note de cours ci-dessous.\n\n'
+    + '⚠️ GENERE UN MAXIMUM DE FLASHCARDS (au minimum 15-20) pour couvrir ENTIEREMENT le cours.\n'
+    + 'Chaque concept, définition, théorème, exemple important DOIT avoir au moins une flashcard.\n'
+    + 'Vise la couverture COMPLÈTE du contenu, pas juste les points majeurs.\n\n'
     + 'RÈGLE ABSOLUE : retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans backticks, sans aucun texte avant ou après.\n'
     + 'Format exact : [{"cat":"' + mat + '","q":"Question ?","r":"Réponse concise."}]\n'
     + 'Les questions testent la compréhension, pas la mémoire. Écris en français.\n\n'
