@@ -6459,13 +6459,15 @@ async function generateFlashcardsGroq() {
   btn.textContent = '⏳ Generation en cours...';
   if (load) load.style.display = 'block';
 
-  var prompt = "SEULEMENT DU JSON VALIDE. PAS UN SEUL MOT AVANT OU APRES.\n"
-    + "Retourne directement ceci:\n"
+  var prompt = "🚨 FORMAT JSON UNIQUEMENT. PAS UN SEUL MOT AVANT OU APRES. REPONSE = JSON VALIDE UNIQUEMENT.\n\n"
+    + "Retourne directement ceci (et RIEN d'autre):\n"
     + "[{\"cat\":\"" + matiere + "\",\"q\":\"Q1?\",\"r\":\"R1.\"},{\"cat\":\"" + matiere + "\",\"q\":\"Q2?\",\"r\":\"R2.\"}]\n\n"
     + "Matiere: " + matiere + "\n"
     + "⚠️ GENERE UN MAXIMUM DE FLASHCARDS (au minimum 15-20) pour couvrir ENTIEREMENT le cours.\n"
     + "Chaque concept, définition, théorème, exemple important DOIT avoir au moins une flashcard.\n"
     + "Vise la couverture COMPLÈTE du contenu, pas juste les points majeurs.\n\n"
+    + "📋 FORMAT STRICT JSON UNIQUEMENT - AUCUN TEXTE, AUCUN MARKDOWN, AUCUN COMMENTAIRE:\n"
+    + "[{\"cat\":\"...\",\"q\":\"...\",\"r\":\"...\"},{\"cat\":\"...\",\"q\":\"...\",\"r\":\"...\"}]\n\n"
     + "COURS:\n" + text.slice(0, 3000);
 
   try {
