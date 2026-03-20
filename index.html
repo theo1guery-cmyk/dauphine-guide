@@ -10563,14 +10563,17 @@ function fluidifierNote() {
   if (content.length < 10) { toast('Note trop courte', '⚠️'); return; }
 
   // Build prompt — strict instruction to keep ALL content, only fix typos + add structure
-  var prompt = 'Tu es un assistant de prise de notes étudiant. Voici une note de cours tapée rapidement avec des fautes de frappe.\n\n'
-    + 'Ta mission STRICTE :\n'
-    + '1. CORRIGER ABSOLUMENT toutes les fautes d\'orthographe, de frappe, d\'accords — chaque mot doit être parfait et clair\n'
-    + '2. TITRES : détecte les titres et sous-titres EXISTANTS (mots en majuscules, lignes courtes isolées, numérotations comme I. II. 1. 2. etc.)\n'
-    + '   - Mets-les en évidence en Markdown (# pour les titres, ## pour les sous-titres) SANS en ajouter de nouveaux\n'
-    + '3. FLUIDITÉ : ajoute ÉVENTUELLEMENT quelques connecteurs basiques (cependant, donc, ainsi, en effet, de plus, par ailleurs) si le texte manque de liaison — MINIMUM absolu, juste pour la clarté\n'
-    + '4. CONSERVER absolument tout le contenu original mot pour mot — AUCUN changement du fond, des termes ou de la structure\n'
-    + '5. Retourner UNIQUEMENT le texte corrigé et structuré en Markdown, sans commentaire, sans explication\n\n'
+  var prompt = 'Tu es un assistant de prise de notes étudiant. Voici une note de cours tapée rapidement avec des fautes de frappe illisibles.\n\n'
+    + 'Ta mission ABSOLUE (rien d\'autre) :\n'
+    + '1. 🔧 CORRIGER TOUS LES MOTS ILLISIBLES :\n'
+    + '   - Les mots avec lettres manquantes, doublées ou mal placées → utilise le CONTEXTE pour deviner le mot exact que l\'étudiant voulait écrire\n'
+    + '   - Typos : tps → tous, sur → sûr, tt → tout, bcp → beaucoup, cad → c\'est-à-dire, pq → pourquoi, etc.\n'
+    + '   - Chaque mot doit être parfaitement lisible et orthographié\n'
+    + '2. 📗 TITRES : détecte les titres EXISTANTS UNIQUEMENT (mots en majuscules, lignes courtes isolées, I. II. 1. 2.) → mets-les en Markdown # et ## SANS en ajouter\n'
+    + '3. 🧩 FLUIDIFIER LE TEXTE ENTIER : ajoute des connecteurs minimalistes (donc, ainsi, cependant, de plus, par ailleurs) pour que tout soit fluide\n'
+    + '   - Si déjà fludifié : traite seulement le NOUVEAU contenu ajouté\n'
+    + '4. 🚫 INTERDICTION ABSOLUE : NE SUPPRIME RIEN — pas un mot, pas une phrase. Tout doit être conservé, corrigé et fludifié\n'
+    + '5. Output : UNIQUEMENT le texte corrigé + fludifié en Markdown, sans explications\n\n'
     + 'NOTE DE COURS :\n' + content;
 
   window._fluidePrompt = prompt;
