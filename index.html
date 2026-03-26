@@ -7772,15 +7772,18 @@ async function generateFlashcardsGroq() {
   btn.textContent = '⏳ Generation en cours...';
   if (load) load.style.display = 'block';
 
-  var prompt = "🚨 FORMAT JSON UNIQUEMENT. PAS UN SEUL MOT AVANT OU APRES. REPONSE = JSON VALIDE UNIQUEMENT.\n\n"
-    + "Retourne directement ceci (et RIEN d'autre):\n"
-    + "[{\"cat\":\"" + matiere + "\",\"q\":\"Q1?\",\"r\":\"R1.\"},{\"cat\":\"" + matiere + "\",\"q\":\"Q2?\",\"r\":\"R2.\"}]\n\n"
+  var prompt = "🚨 RETOURNE UNIQUEMENT DU JSON VALIDE. AUCUN TEXTE AVANT OU APRES. PAS DE MARKDOWN.\n\n"
+    + "FORMAT STRICT - Copie ce format EXACTEMENT:\n"
+    + "[{\"cat\":\"" + matiere + "\",\"q\":\"Question1?\",\"r\":\"Reponse1\"},{\"cat\":\"" + matiere + "\",\"q\":\"Question2?\",\"r\":\"Reponse2\"}]\n\n"
     + "Matiere: " + matiere + "\n"
-    + "⚠️ GENERE UN MAXIMUM DE FLASHCARDS (au minimum 15-20) pour couvrir ENTIEREMENT le cours.\n"
-    + "Chaque concept, définition, théorème, exemple important DOIT avoir au moins une flashcard.\n"
-    + "Vise la couverture COMPLÈTE du contenu, pas juste les points majeurs.\n\n"
-    + "📋 FORMAT STRICT JSON UNIQUEMENT - AUCUN TEXTE, AUCUN MARKDOWN, AUCUN COMMENTAIRE:\n"
-    + "[{\"cat\":\"...\",\"q\":\"...\",\"r\":\"...\"},{\"cat\":\"...\",\"q\":\"...\",\"r\":\"...\"}]\n\n"
+    + "⚠️ GENERE 15-20 FLASHCARDS MINIMUM pour couvrir ENTIEREMENT le cours.\n"
+    + "Chaque concept, definition, theoreme, exemple important DOIT avoir une flashcard.\n\n"
+    + "📋 REPONSE = ARRAY JSON UNIQUEMENT - ZERO TEXTE SUPPLEMENTAIRE:\n"
+    + "- Pas de ```json\n"
+    + "- Pas de bonjour/au revoir\n"
+    + "- Pas de markdown\n"
+    + "- Pas d'explications\n"
+    + "- JUSTE L'ARRAY JSON\n\n"
     + "COURS:\n" + text.slice(0, 3000);
 
   try {
@@ -7809,7 +7812,13 @@ async function generateFlashcardsGroq() {
     
     // Nettoyage agressif
     raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
-    raw = raw.replace(/^\s*[\w\s]*\n/m, ''); // Supprimer première ligne si texte
+    raw = raw.replace(/^[^[\n]*\n/m, ''); // Supprimer tout avant le [
+    
+    // Supprimer tout emoji ou texte après le dernier ]
+    var bracketEnd = raw.lastIndexOf(']');
+    if (bracketEnd > -1) {
+      raw = raw.substring(0, bracketEnd + 1);
+    }
     
     // Extraction robuste du JSON (cherche [ ... ])
     var jsonStart = raw.indexOf('[');
@@ -7852,10 +7861,6 @@ async function generateFlashcardsGroq() {
     if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
 
     console.log('Extracted JSON:', clean); // Debug
-    
-    var cards = JSON.parse(clean);
-
-    if (!Array.isArray(cards) || !cards[0] || !cards[0].q) throw new Error('Format JSON invalide');
 
     cards = cards.map(function(c) { return { cat: matiere, q: c.q, r: c.r, status: 'none' }; });
     deck  = cards.concat(deck);
