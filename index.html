@@ -11189,6 +11189,7 @@ function submitLogin() {
 function applyAccess(access) {
   if (access === 'full') {
     document.body.classList.remove('access-limited');
+    hideLoginScreen();
   } else if (access === 'prank') {
     hideLoginScreen();
     var ps = document.getElementById('prankScreen');
