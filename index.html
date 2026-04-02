@@ -4118,7 +4118,7 @@ aside.sidebar {
 
 <!-- LOGIN SCREEN -->
 <div id="prankScreen"><div class="prank-msg">MATHILDE TROU DU CUL</div></div>
-<div id="loginScreen" style="display: flex;">
+<div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">D</div>
     <div class="login-title">DauphineGuide</div>
@@ -11207,12 +11207,10 @@ function applyAccess(access) {
 function hideLoginScreen() {
   var screen = document.getElementById('loginScreen');
   if (!screen) return;
+  screen.style.display = 'none';
   screen.classList.add('fade-out');
-  setTimeout(function() {
-    screen.style.display = 'none';
-    // Rafraîchir tous les widgets de la page d'accueil après connexion
-    setTimeout(function() { updateHomeStats(); }, 100);
-  }, 500);
+  // Rafraîchir tous les widgets de la page d'accueil après connexion
+  setTimeout(function() { updateHomeStats(); }, 100);
 }
 
 // Lancer au chargement de la page
