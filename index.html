@@ -685,9 +685,35 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 [data-theme="dark"] .profil-stat,.profil-notif-row{background:var(--g50);border-color:var(--border-col)}
 [data-theme="dark"] .profil-field input,[data-theme="dark"] .profil-field select{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
 
-/* ============================
-   CONFETTIS
-   ============================ */
+/* ════ BACKGROUND CUSTOMIZER ════ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:4000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg-card,#fff);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,.2);padding:24px}
+#bgPreview{background-size:cover;background-position:center;transition:filter .3s,background 0.3s}
+#bgPreview.has-image{filter:blur(8px);background:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,.25)),var(--bg-preview)}
+[data-theme="dark"] #bgPreview.has-image{filter:blur(8px);background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),var(--bg-preview)}
+:root:has(#bgCustomizerModal){--bg-with-blur:var(--bg-preview)}
+body{
+  background-attachment:fixed;
+  background-size:cover;
+  background-position:center;
+  transition:background .4s ease
+}
+body.has-custom-bg{
+  filter:blur(var(--bg-blur-px,8px));
+}
+body.has-custom-bg::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,var(--bg-overlay-alpha,.25));
+  pointer-events:none;
+  z-index:-1;
+  transition:background .3s
+}
+[data-theme="dark"] body.has-custom-bg::before{background:rgba(0,0,0,var(--bg-overlay-alpha,.35))}
+
+/* ════ CONFETTIS ════ */
 .confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:9998}
 
 /* ============================
@@ -4188,12 +4214,68 @@ aside.sidebar {
         <span id="sidebarThemeIcon">🌙</span>
         <span id="sidebarThemeLabel">Mode sombre</span>
       </button>
+      <button class="sidebar-dark-btn" onclick="openBackgroundCustomizer()" title="Personnaliser le fond">
+        <span>🎨</span>
+        <span>Fond d'écran</span>
+      </button>
       <button class="sidebar-profil-btn" onclick="openProfil();return false;" title="Théo — Mon profil" id="sidebarProfilBtn">
         👤
       </button>
     </div>
   </div>
 </aside>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+
+<!-- BACKGROUND CUSTOMIZER MODAL -->
+<div class="modal-overlay" id="bgCustomizerModal" style="display:none">
+  <div class="modal" style="max-width:520px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 style="font-size:18px;font-weight:700;margin:0">🎨 Personnaliser le fond</h3>
+      <button onclick="closeBgCustomizer()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--g400)">✕</button>
+    </div>
+
+    <!-- PREVIEW -->
+    <div id="bgPreview" style="margin-bottom:20px;border-radius:12px;overflow:hidden;height:200px;background:var(--g100);border:1px solid var(--g200);position:relative;display:flex;align-items:center;justify-content:center;color:var(--g400);font-size:14px;font-weight:600">
+      Aperçu du fond
+    </div>
+
+    <!-- STEPS -->
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:10px">📤 Importer une image</label>
+      <input type="file" id="bgImageInput" accept="image/jpeg,image/png" style="width:100%;padding:10px;border:1.5px dashed var(--blue);border-radius:8px;cursor:pointer" onchange="previewBackground()">
+      <div style="font-size:11px;color:var(--g400);margin-top:6px">JPG ou PNG — Taille max 5MB</div>
+    </div>
+
+    <!-- BLUR INTENSITÉ -->
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">🌫️ Intensité du flou</label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="range" id="bgBlurIntensity" min="0" max="20" value="8" style="flex:1;cursor:pointer" oninput="previewBackground()">
+        <span id="bgBlurValue" style="min-width:30px;text-align:right;font-weight:600;color:var(--blue)">8px</span>
+      </div>
+    </div>
+
+    <!-- OVERLAY INTENSITÉ -->
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">🎭 Overlay de lisibilité</label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="range" id="bgOverlayIntensity" min="0" max="100" value="25" style="flex:1;cursor:pointer" oninput="previewBackground()">
+        <span id="bgOverlayValue" style="min-width:40px;text-align:right;font-weight:600;color:var(--blue)">25%</span>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px">
+      <button onclick="resetBackground()" style="padding:12px;background:var(--g100);color:var(--text-main);border:1px solid var(--g200);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+        🔄 Réinitialiser
+      </button>
+      <button onclick="applyBackground()" style="padding:12px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+        ✅ Appliquer
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ MAIN CONTENT ═══ -->
 <main class="main-content">
@@ -11574,6 +11656,186 @@ if (document.readyState === 'loading') {
 } else {
   initLogin();
 }
+
+// ════ BACKGROUND CUSTOMIZER ════
+var bgCustomizerDB = null;
+
+function initBackgroundDB() {
+  return new Promise(function(resolve) {
+    var req = indexedDB.open('DauphineGuideDB', 1);
+    req.onupgradeneeded = function(e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains('backgrounds')) {
+        db.createObjectStore('backgrounds');
+      }
+    };
+    req.onsuccess = function(e) {
+      bgCustomizerDB = e.target.result;
+      loadBackground();
+      resolve();
+    };
+  });
+}
+
+function openBackgroundCustomizer() {
+  document.getElementById('bgCustomizerModal').style.display = 'flex';
+}
+
+function closeBgCustomizer() {
+  document.getElementById('bgCustomizerModal').style.display = 'none';
+}
+
+function previewBackground() {
+  var file = document.getElementById('bgImageInput').files[0];
+  var blur = document.getElementById('bgBlurIntensity').value;
+  var overlay = document.getElementById('bgOverlayIntensity').value;
+  var preview = document.getElementById('bgPreview');
+
+  document.getElementById('bgBlurValue').textContent = blur + 'px';
+  document.getElementById('bgOverlayValue').textContent = overlay + '%';
+
+  if (file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      preview.style.backgroundImage = 'url(' + e.target.result + ')';
+      preview.classList.add('has-image');
+      preview.style.filter = 'blur(' + blur + 'px)';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function compressImage(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var maxWidth = 1920;
+      var maxHeight = 1080;
+      var width = img.width;
+      var height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(function(blob) {
+        if (blob.size > 500 * 1024) {
+          canvas.toBlob(function(compressedBlob) {
+            callback(compressedBlob);
+          }, 'image/jpeg', 0.7);
+        } else {
+          callback(blob);
+        }
+      }, 'image/jpeg', 0.85);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyBackground() {
+  var file = document.getElementById('bgImageInput').files[0];
+  var blur = document.getElementById('bgBlurIntensity').value;
+  var overlay = document.getElementById('bgOverlayIntensity').value;
+
+  if (!file) {
+    alert('⚠️ Choisis d\'abord une image!');
+    return;
+  }
+
+  // Validate file
+  if (!file.type.match('image/(jpeg|png)')) {
+    alert('⚠️ Accepte uniquement JPG ou PNG');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert('⚠️ Fichier trop volumineux (max 5MB)');
+    return;
+  }
+
+  // Compress
+  compressImage(file, function(compressedBlob) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var bgData = {
+        image: e.target.result,
+        blur: parseInt(blur),
+        overlay: parseInt(overlay)
+      };
+
+      // Save to IndexedDB
+      var tx = bgCustomizerDB.transaction('backgrounds', 'readwrite');
+      var store = tx.objectStore('backgrounds');
+      store.put(bgData, 'current');
+
+      // Apply immediately
+      applyBgToDOM(bgData);
+
+      closeBgCustomizer();
+      alert('✅ Fond d\'écran appliqué!');
+    };
+    reader.readAsDataURL(compressedBlob);
+  });
+}
+
+function applyBgToDOM(bgData) {
+  document.body.style.backgroundImage = 'url(' + bgData.image + ')';
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundPosition = 'center';
+  document.body.style.backgroundAttachment = 'fixed';
+  document.body.classList.add('has-custom-bg');
+
+  document.documentElement.style.setProperty('--bg-blur-px', bgData.blur + 'px');
+  document.documentElement.style.setProperty('--bg-overlay-alpha', bgData.overlay / 100);
+}
+
+function loadBackground() {
+  if (!bgCustomizerDB) return;
+  var tx = bgCustomizerDB.transaction('backgrounds', 'readonly');
+  var store = tx.objectStore('backgrounds');
+  var req = store.get('current');
+
+  req.onsuccess = function() {
+    if (req.result) {
+      applyBgToDOM(req.result);
+    }
+  };
+}
+
+function resetBackground() {
+  if (!bgCustomizerDB) return;
+  var tx = bgCustomizerDB.transaction('backgrounds', 'readwrite');
+  var store = tx.objectStore('backgrounds');
+  store.delete('current');
+
+  document.body.style.backgroundImage = 'none';
+  document.body.classList.remove('has-custom-bg');
+  document.getElementById('bgImageInput').value = '';
+  document.getElementById('bgPreview').style.backgroundImage = 'none';
+  document.getElementById('bgPreview').classList.remove('has-image');
+  document.getElementById('bgBlurIntensity').value = '8';
+  document.getElementById('bgOverlayIntensity').value = '25';
+
+  alert('🔄 Fond d\'écran réinitialisé');
+}
+
+// Initialize
+initBackgroundDB();
 
 // ════ STAGE SECTION - INTERACTIVE TAB & ANALYZER ════
 function switchStageTab(tabName) {
