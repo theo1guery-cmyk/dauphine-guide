@@ -696,7 +696,7 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 body{
   background-attachment:fixed !important;
   background-size:cover;
-  background-position:calc(var(--bg-pos-x,50) * 1%) calc(var(--bg-pos-y,50) * 1%);
+  background-position:var(--bg-pos-x, 50%) var(--bg-pos-y, 50%);
   transition:background .4s ease;
   min-height:100vh;
   overflow-y:scroll
@@ -11719,8 +11719,8 @@ function previewBackground() {
 
   // Update preview element styles
   preview.style.backgroundPosition = posX + '% ' + posY + '%';
-  document.documentElement.style.setProperty('--bg-pos-x', posX);
-  document.documentElement.style.setProperty('--bg-pos-y', posY);
+  document.documentElement.style.setProperty('--bg-pos-x', posX + '%');
+  document.documentElement.style.setProperty('--bg-pos-y', posY + '%');
 
   if (file) {
     var reader = new FileReader();
@@ -11834,8 +11834,8 @@ function applyBgToDOM(bgData) {
 
   document.documentElement.style.setProperty('--bg-blur-px', bgData.blur + 'px');
   document.documentElement.style.setProperty('--bg-overlay-alpha', bgData.overlay / 100);
-  document.documentElement.style.setProperty('--bg-pos-x', bgData.posX || 50);
-  document.documentElement.style.setProperty('--bg-pos-y', bgData.posY || 50);
+  document.documentElement.style.setProperty('--bg-pos-x', (bgData.posX || 50) + '%');
+  document.documentElement.style.setProperty('--bg-pos-y', (bgData.posY || 50) + '%');
 }
 
 function loadBackground() {
