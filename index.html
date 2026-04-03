@@ -890,12 +890,12 @@ html{scroll-behavior:smooth}
 .rev-conflict.show{display:block}
 
 /* ════ AGENDA DEVOIRS ════ */
-.agenda-section{padding:64px 0;background:#fff}
-[data-theme="dark"] .agenda-section{background:var(--bg-main)}
+.agenda-section{padding:64px 0;background:transparent}
+[data-theme="dark"] .agenda-section{background:transparent}
 .agenda-layout{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start}
 @media(max-width:860px){.agenda-layout{grid-template-columns:1fr}}
 .agenda-list{display:flex;flex-direction:column;gap:10px}
-.devoir-card{background:#fff;border:1.5px solid var(--g100);border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;transition:all .2s;position:relative}
+.devoir-card{background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;transition:all .2s;position:relative}
 [data-theme="dark"] .devoir-card{background:var(--bg-card);border-color:var(--border-col)}
 .devoir-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.07);transform:translateY(-1px)}
 .devoir-card.done{opacity:.55}
@@ -923,7 +923,7 @@ html{scroll-behavior:smooth}
 .agenda-empty{text-align:center;padding:40px 20px;color:var(--g400);font-size:13px}
 .agenda-empty div{font-size:32px;margin-bottom:10px}
 /* Add devoir form */
-.add-devoir-card{background:var(--g50);border:2px dashed var(--g200);border-radius:14px;padding:20px;transition:border-color .2s}
+.add-devoir-card{background:rgba(255,255,255,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:2px dashed rgba(255,255,255,.5);border-radius:14px;padding:20px;transition:border-color .2s}
 [data-theme="dark"] .add-devoir-card{background:var(--bg-card);border-color:var(--border-col)}
 .add-devoir-card h4{font-size:14px;font-weight:700;color:var(--g700);margin:0 0 14px;display:flex;align-items:center;gap:7px}
 .add-devoir-btn{width:100%;padding:10px;background:linear-gradient(135deg,#2f4487,#1a56c4);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .17s;margin-top:4px}
@@ -933,7 +933,7 @@ html{scroll-behavior:smooth}
 [data-theme="dark"] .agenda-filter{background:var(--bg-card)}
 .agenda-filter.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 .agenda-stats{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.agenda-stat{flex:1;min-width:80px;background:var(--g50);border-radius:10px;padding:12px 14px;text-align:center;border:1px solid var(--g100)}
+.agenda-stat{flex:1;min-width:80px;background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:10px;padding:12px 14px;text-align:center;border:1px solid rgba(255,255,255,.5)}
 [data-theme="dark"] .agenda-stat{background:var(--bg-card);border-color:var(--border-col)}
 .agenda-stat-num{font-size:22px;font-weight:800;color:var(--g900);font-variant-numeric:tabular-nums}
 .agenda-stat-lbl{font-size:10px;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
@@ -1179,7 +1179,7 @@ html{scroll-behavior:smooth}
 
 /* ════ AGENDA EXAM COUNTDOWN ════ */
 .agenda-exam-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:14px 16px;
-  background:linear-gradient(135deg,#fef3c7,#fff7ed);border:1.5px solid #fcd34d;
+  background:rgba(254,243,199,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1.5px solid #fcd34d;
   border-radius:12px}
 .exam-cd-item{display:flex;align-items:center;gap:8px;flex:1;min-width:160px;
   background:#fff;border-radius:8px;padding:8px 12px;border:1px solid #fde68a}
@@ -1417,11 +1417,8 @@ section.hero{padding-top:0!important;min-height:380px}
 /* ════ HOME UNIVERSE — one continuous surface ════ */
 .home-universe {
   position: relative;
-  /* single gradient top-to-bottom covering hero + cards */
-  background:
-    linear-gradient(155deg, #003d7a 0%, #0057ad 30%, #002d60 65%, #001030 100%);
+  background: transparent;
   overflow: hidden;
-  /* remove old hero background so it sits on this */
 }
 
 /* Canvas particles — full height */
@@ -3332,10 +3329,10 @@ aside.sidebar {
 
 
   #page-chat {
-    --bg:       #002d6e;
-    --bg2:      #002558;
-    --surface:  #003d7a;
-    --surface2: #0047a0;
+    --bg:       rgba(0,45,110,.80);
+    --bg2:      rgba(0,37,88,.85);
+    --surface:  rgba(0,61,122,.85);
+    --surface2: rgba(0,71,160,.88);
     --border:   rgba(255,255,255,0.10);
     --border2:  rgba(255,255,255,0.16);
     --accent:   #4d9fff;
