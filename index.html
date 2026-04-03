@@ -9694,7 +9694,9 @@ function ncFmtDate(dateStr){
 function renderNextCours(){
   var wrap = document.getElementById('nextCoursWrap');
   if(!wrap) return;
+  // BIEN tuer l'ancien timer
   if(ncTimer){ clearInterval(ncTimer); ncTimer=null; }
+  
   var candidate = getNextCours();
   if(!candidate){
     wrap.innerHTML = '<div class="nc-none">Pas de cours programme prochainement &#127881;</div>';
@@ -9725,18 +9727,33 @@ function renderNextCours(){
     +'<div class="nc-time-lbl" id="ncLbl">'+(isOngoing?'restant':'dans')+'</div>'
     +'</div></div>';
   wrap.innerHTML = html;
-  wrap.classList.add('vis'); // always visible, no fade-in delay
+  wrap.classList.add('vis');
+  
+  // Créer UN SEUL timer qui recalcule à chaque fois
   ncTimer = setInterval(function(){
     var el = document.getElementById('ncTime');
-    if(!el){ clearInterval(ncTimer); return; }
+    var lbl = document.getElementById('ncLbl');
+    if(!el){ clearInterval(ncTimer); ncTimer=null; return; }
+    
+    // Recalculer à CHAQUE FOIS pour éviter des variables stale
+    var cand2 = getNextCours();
+    if(!cand2){ clearInterval(ncTimer); ncTimer=null; renderNextCours(); return; }
+    
+    var evt2 = cand2.ev;
     var now2 = new Date();
     var nowMin2 = now2.getHours()*60 + now2.getMinutes();
-    var isToday2 = e.date === fmt(now2);
-    var ongoing2 = isToday2 && nowMin2 >= candidate.startMin && nowMin2 < candidate.endMin;
-    var targetStr = e.date.replace(/-/g,'/') + ' ' + (ongoing2 ? (e.end||e.time) : e.time);
-    var targetDate = new Date(targetStr);
+    var isToday2 = evt2.date === fmt(now2);
+    var ongoing2 = isToday2 && nowMin2 >= cand2.startMin && nowMin2 < cand2.endMin;
+    
+    // Créer la date cible en parsant correctement
+    var parts = evt2.date.split('-');
+    var endTime = ongoing2 ? (evt2.end || evt2.time) : evt2.time;
+    var timeParts = endTime.split(':');
+    var targetDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]), parseInt(timeParts[0]), parseInt(timeParts[1]), 0);
+    
     var diffSec = Math.max(0, Math.round((targetDate - now2)/1000));
-    if(diffSec <= 0){ clearInterval(ncTimer); setTimeout(renderNextCours, 1500); return; }
+    if(diffSec <= 0){ clearInterval(ncTimer); ncTimer=null; setTimeout(renderNextCours, 1500); return; }
+    
     var hh = Math.floor(diffSec/3600);
     var mm = Math.floor((diffSec%3600)/60);
     var ss = diffSec%60;
@@ -9745,7 +9762,7 @@ function renderNextCours(){
       : mm>0
         ? mm+'min'+(ss<10?'0':'')+ss+'s'
         : ss+'s';
-    var lbl = document.getElementById('ncLbl');
+    
     if(lbl) lbl.textContent = ongoing2 ? 'restant' : 'dans';
   }, 1000);
 }
