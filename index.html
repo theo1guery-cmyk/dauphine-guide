@@ -4153,6 +4153,152 @@ aside.sidebar {
     to   { opacity:1; transform: none }
   }
 
+/* ══════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════ */
+.onb-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,10,30,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .4s;pointer-events:none}
+.onb-overlay.show{opacity:1;pointer-events:all}
+.onb-overlay.hidden{display:none!important}
+.onb-modal{background:rgba(255,255,255,.11);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.22);border-radius:28px;width:min(580px,94vw);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.onb-top{display:flex;align-items:center;padding:20px 24px 0;gap:14px}
+.onb-progress-wrap{flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden}
+.onb-progress-fill{height:100%;background:linear-gradient(90deg,#4d9fff,#a78bfa);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.onb-skip{background:none;border:none;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;font-family:'Figtree',sans-serif;white-space:nowrap;transition:color .2s;padding:2px 6px}
+.onb-skip:hover{color:#fff}
+.onb-slide{padding:28px 32px 12px;display:none;flex-direction:column;align-items:center;text-align:center}
+.onb-slide.active{display:flex;animation:onbSlideIn .38s ease forwards}
+.onb-slide.go-left{animation:onbSlideInLeft .38s ease forwards}
+@keyframes onbSlideIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes onbSlideInLeft{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.onb-anim{width:100%;height:170px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative;overflow:hidden;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+.onb-title{font-family:'Instrument Serif',serif;font-size:clamp(20px,3vw,25px);color:#fff;margin-bottom:9px;font-style:italic;line-height:1.2}
+.onb-desc{font-size:13px;color:rgba(255,255,255,.72);line-height:1.75;max-width:420px}
+.onb-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px 20px;border-top:1px solid rgba(255,255,255,.08);margin-top:14px}
+.onb-dots{display:flex;gap:5px;align-items:center}
+.onb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.28);cursor:pointer;transition:all .25s;border:none;padding:0}
+.onb-dot.active{background:#fff;width:18px;border-radius:4px}
+.onb-btns{display:flex;gap:8px}
+.onb-btn{padding:9px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Figtree',sans-serif;border:none}
+.onb-prev{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+.onb-prev:hover{background:rgba(255,255,255,.22)}
+.onb-next{background:#fff;color:#003d7a;min-width:110px}
+.onb-next:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+
+/* S1 — Welcome */
+.onb-logo{width:68px;height:68px;background:linear-gradient(135deg,#003d7a,#0057ad);border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:40px;font-style:italic;color:#fff;animation:onbLogoPop .6s cubic-bezier(.34,1.56,.64,1) .15s both;margin-bottom:10px}
+.onb-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.onb-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);opacity:0}
+.onb-tag.in{animation:onbTagIn .35s ease forwards}
+@keyframes onbLogoPop{from{opacity:0;transform:scale(.3) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes onbTagIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* S2 — Widgets */
+.onb-widgets{display:flex;gap:8px;width:100%;padding:0 10px}
+.onb-wg{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:11px 12px;flex:1;text-align:left;opacity:0;transform:translateY(14px)}
+.onb-wg.in{animation:onbWgIn .4s cubic-bezier(.34,1.4,.64,1) forwards}
+@keyframes onbWgIn{to{opacity:1;transform:none}}
+.onb-wg-ic{font-size:18px;margin-bottom:5px}
+.onb-wg-val{font-size:15px;font-weight:700;color:#fff}
+.onb-wg-lbl{font-size:10px;color:rgba(255,255,255,.48);margin-top:1px}
+
+/* S3 — Simulateur */
+.onb-sim-rows{display:flex;flex-direction:column;gap:5px;width:100%;padding:0 14px}
+.onb-sim-row{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.1);border-radius:8px;padding:7px 11px;font-size:12px;color:rgba(255,255,255,.85);opacity:0;transform:translateX(-10px)}
+.onb-sim-row.in{animation:onbRowIn .3s ease forwards}
+.onb-sim-note{font-weight:700;color:#4d9fff}
+.onb-sim-res{background:rgba(77,159,255,.22);border:1px solid rgba(77,159,255,.4);border-radius:10px;padding:7px 18px;font-family:'Instrument Serif',serif;font-size:26px;font-style:italic;color:#fff;margin-top:8px;opacity:0}
+.onb-sim-res.in{animation:onbFadeUp .4s ease forwards}
+@keyframes onbRowIn{to{opacity:1;transform:none}}
+@keyframes onbFadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* S4 — Flashcard */
+.onb-card-scene{width:200px;height:118px;perspective:900px;cursor:pointer}
+.onb-card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.onb-card-3d.flipped{transform:rotateY(180deg)}
+.onb-card-face{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;backface-visibility:hidden;text-align:center}
+.onb-cfront{background:linear-gradient(135deg,#003d7a,#0057ad)}
+.onb-cback{background:rgba(255,255,255,.92);transform:rotateY(180deg)}
+.onb-ccat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;opacity:.65}
+.onb-cfront .onb-ccat{color:rgba(255,255,255,.8)}
+.onb-cback .onb-ccat{color:#003d7a}
+.onb-cq{font-size:13px;font-weight:500;line-height:1.4}
+.onb-cfront .onb-cq{color:#fff}
+.onb-cback .onb-cq{color:#111827}
+.onb-flip-hint{font-size:11px;color:rgba(255,255,255,.45);margin-top:5px;animation:onbPulse 2s infinite}
+@keyframes onbPulse{0%,100%{opacity:.45}50%{opacity:.9}}
+
+/* S5 — Pomodoro */
+.onb-pomo-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.onb-pomo-ring{position:relative;width:100px;height:100px}
+.onb-pomo-svg{transform:rotate(-90deg);width:100px;height:100px}
+.onb-pbg{fill:none;stroke:rgba(255,255,255,.12);stroke-width:8}
+.onb-pfill{fill:none;stroke:#4d9fff;stroke-width:8;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1.2s ease}
+.onb-pfill.run{stroke-dashoffset:60}
+.onb-ptime{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.onb-plbls{display:flex;gap:8px}
+.onb-plbl{font-size:11px;color:rgba(255,255,255,.6);background:rgba(255,255,255,.1);border-radius:6px;padding:3px 10px}
+
+/* S6 — Planning */
+.onb-cal{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:0 6px;width:100%}
+.onb-cal-col{display:flex;flex-direction:column;gap:3px}
+.onb-cal-hd{font-size:9px;font-weight:600;color:rgba(255,255,255,.45);text-align:center;margin-bottom:2px;text-transform:uppercase}
+.onb-cal-ev{height:26px;border-radius:6px;font-size:9px;color:#fff;display:flex;align-items:center;padding:0 5px;font-weight:600;opacity:0;transform:scaleY(0);transform-origin:top}
+.onb-cal-ev.in{animation:onbEvIn .35s cubic-bezier(.34,1.4,.64,1) forwards}
+@keyframes onbEvIn{to{opacity:1;transform:scaleY(1)}}
+
+/* S7 — Notes */
+.onb-editor{background:rgba(0,0,0,.28);border-radius:12px;padding:12px 16px;width:100%;text-align:left;font-size:12px;line-height:1.9;min-height:110px;font-family:monospace}
+.onb-kw{color:#a78bfa}
+.onb-bold{color:#fff;font-weight:700}
+.onb-normal{color:rgba(255,255,255,.75)}
+.onb-cursor{display:inline-block;width:2px;height:13px;background:#fff;vertical-align:middle;margin-left:1px;animation:onbBlink .7s infinite}
+@keyframes onbBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* S8 — Chat */
+.onb-chat{display:flex;flex-direction:column;gap:8px;width:100%;padding:0 10px}
+.onb-bubble{max-width:78%;padding:9px 13px;border-radius:14px;font-size:12px;line-height:1.5;opacity:0;transform:translateY(8px)}
+.onb-them{background:rgba(255,255,255,.16);color:rgba(255,255,255,.9);align-self:flex-start;border-radius:4px 14px 14px 14px}
+.onb-me{background:rgba(0,61,122,.75);color:#fff;align-self:flex-end;border-radius:14px 4px 14px 14px}
+.onb-bubble.in{animation:onbBubIn .4s cubic-bezier(.34,1.3,.64,1) forwards}
+@keyframes onbBubIn{to{opacity:1;transform:none}}
+
+/* S9 — Campus */
+.onb-map{width:240px;height:140px;background:rgba(255,255,255,.07);border-radius:14px;border:1px solid rgba(255,255,255,.12);position:relative;overflow:hidden}
+.onb-map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:22px 22px}
+.onb-map-road{position:absolute;background:rgba(255,255,255,.15);border-radius:2px}
+.onb-pin{position:absolute;top:28%;left:50%;transform:translateX(-50%) translateY(-200%);font-size:30px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));animation:onbPinDrop .7s cubic-bezier(.34,1.56,.64,1) .3s forwards}
+.onb-pin-shadow{position:absolute;top:53%;left:50%;width:16px;height:6px;background:rgba(0,0,0,.3);border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:onbPinShadow .4s ease .9s forwards}
+@keyframes onbPinDrop{to{transform:translateX(-50%) translateY(0)}}
+@keyframes onbPinShadow{to{opacity:1}}
+
+/* S10 — Assos */
+.onb-fan{position:relative;width:220px;height:140px}
+.onb-fcard{position:absolute;width:120px;height:72px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:700;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25);top:50%;left:50%;opacity:0}
+.onb-fcard.fin0{animation:onbFan0 .5s cubic-bezier(.34,1.4,.64,1) .1s forwards}
+.onb-fcard.fin1{animation:onbFan1 .5s cubic-bezier(.34,1.4,.64,1) .25s forwards}
+.onb-fcard.fin2{animation:onbFan2 .5s cubic-bezier(.34,1.4,.64,1) .4s forwards}
+@keyframes onbFan0{to{opacity:1;transform:translate(-50%,-50%) rotate(-15deg) translate(-55px,8px)}}
+@keyframes onbFan1{to{opacity:1;transform:translate(-50%,-50%) rotate(0deg)}}
+@keyframes onbFan2{to{opacity:1;transform:translate(-50%,-50%) rotate(15deg) translate(55px,8px)}}
+
+/* S11 — Stage */
+.onb-tl{display:flex;flex-direction:column;gap:8px;width:100%;padding:0 12px}
+.onb-tl-item{display:flex;align-items:center;gap:10px;opacity:0;transform:translateX(-10px)}
+.onb-tl-item.in{animation:onbRowIn .35s ease forwards}
+.onb-tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.onb-tl-txt{font-size:12px;color:rgba(255,255,255,.8);flex:1;text-align:left}
+.onb-tl-bar{width:60px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;flex-shrink:0}
+.onb-tl-fill{height:100%;border-radius:2px;width:0;transition:width .8s ease}
+
+/* S12 — Finish */
+.onb-finish-ic{font-size:54px;animation:onbRocket .7s cubic-bezier(.34,1.56,.64,1) .1s both}
+@keyframes onbRocket{from{opacity:0;transform:translateY(28px) scale(.4)}to{opacity:1;transform:none}}
+.onb-conf-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.onb-conf-p{position:absolute;width:7px;height:7px;border-radius:2px;animation:onbConf linear forwards}
+@keyframes onbConf{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(180px) rotate(540deg)}}
+.onb-start-btn{margin-top:14px;padding:12px 32px;background:linear-gradient(135deg,#003d7a,#0057ad);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .2s;animation:onbPulse 2s infinite}
+.onb-start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,61,122,.5)}
+
 </style>
 </head>
 <body>
@@ -4172,6 +4318,203 @@ aside.sidebar {
 </div>
 
 <!-- MOBILE -->
+<!-- ══════════════ ONBOARDING OVERLAY ══════════════ -->
+<div id="onb-overlay" class="onb-overlay hidden">
+  <div class="onb-modal">
+    <div class="onb-top">
+      <div class="onb-progress-wrap"><div class="onb-progress-fill" id="onbProgressFill"></div></div>
+      <button class="onb-skip" onclick="closeOnboarding()">Passer ✕</button>
+    </div>
+
+    <!-- SLIDE 1 — Bienvenue -->
+    <div class="onb-slide active" id="onb-s0">
+      <div class="onb-anim">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="onb-logo" id="onbLogo">D</div>
+          <div class="onb-tags" id="onbTags">
+            <span class="onb-tag" style="animation-delay:.4s">🧮 Simulateur</span>
+            <span class="onb-tag" style="animation-delay:.55s">🃏 Flashcards IA</span>
+            <span class="onb-tag" style="animation-delay:.7s">💬 Chat</span>
+            <span class="onb-tag" style="animation-delay:.85s">📅 Planning</span>
+          </div>
+        </div>
+      </div>
+      <div class="onb-title">Bienvenue sur <em>DauphineGuide</em></div>
+      <div class="onb-desc">Le guide non-officiel des L1 Droit-Éco de Paris-Dauphine. Tout ce dont tu as besoin pour réussir ta L1, en un seul endroit.</div>
+    </div>
+
+    <!-- SLIDE 2 — Accueil -->
+    <div class="onb-slide" id="onb-s1">
+      <div class="onb-anim">
+        <div class="onb-widgets" id="onbWidgets">
+          <div class="onb-wg" id="onbWg0"><div class="onb-wg-ic">☀️</div><div class="onb-wg-val">13°</div><div class="onb-wg-lbl">Météo campus</div></div>
+          <div class="onb-wg" id="onbWg1"><div class="onb-wg-ic">📚</div><div class="onb-wg-val">Droit constit.</div><div class="onb-wg-lbl">Prochain cours</div></div>
+          <div class="onb-wg" id="onbWg2"><div class="onb-wg-ic">⏰</div><div class="onb-wg-val">10:15</div><div class="onb-wg-lbl">Dans 45 min</div></div>
+        </div>
+      </div>
+      <div class="onb-title">Ton <em>accueil</em> personnalisé</div>
+      <div class="onb-desc">Météo en temps réel, prochain cours, examens à venir, timer et bien plus — tout s'affiche dès que tu ouvres l'appli.</div>
+    </div>
+
+    <!-- SLIDE 3 — Simulateur -->
+    <div class="onb-slide" id="onb-s2">
+      <div class="onb-anim" style="flex-direction:column;gap:0">
+        <div class="onb-sim-rows" id="onbSimRows">
+          <div class="onb-sim-row"><span>Droit constitutionnel <span style="font-size:10px;opacity:.5">coef. 3</span></span><span class="onb-sim-note">13</span></div>
+          <div class="onb-sim-row"><span>Microéconomie <span style="font-size:10px;opacity:.5">coef. 3</span></span><span class="onb-sim-note">11</span></div>
+          <div class="onb-sim-row"><span>Mathématiques <span style="font-size:10px;opacity:.5">coef. 2</span></span><span class="onb-sim-note">14</span></div>
+        </div>
+        <div class="onb-sim-res" id="onbSimRes">Moyenne : <strong id="onbSimNum">0.0</strong> / 20</div>
+      </div>
+      <div class="onb-title">Simulateur de <em>moyenne</em></div>
+      <div class="onb-desc">Saisis tes notes, le simulateur calcule ta moyenne pondérée en temps réel avec les vrais coefficients Dauphine.</div>
+    </div>
+
+    <!-- SLIDE 4 — Flashcards -->
+    <div class="onb-slide" id="onb-s3">
+      <div class="onb-anim" style="flex-direction:column;gap:8px">
+        <div class="onb-card-scene" onclick="onbFlipCard(this)">
+          <div class="onb-card-3d" id="onbCard3d">
+            <div class="onb-card-face onb-cfront">
+              <div class="onb-ccat">Droit constitutionnel</div>
+              <div class="onb-cq">Qu'est-ce que la hiérarchie des normes ?</div>
+            </div>
+            <div class="onb-card-face onb-cback">
+              <div class="onb-ccat" style="color:#003d7a">Réponse</div>
+              <div class="onb-cq">Pyramide de Kelsen : Constitution > lois organiques > lois ordinaires > décrets…</div>
+            </div>
+          </div>
+        </div>
+        <div class="onb-flip-hint">👆 Clique pour retourner</div>
+      </div>
+      <div class="onb-title"><em>Flashcards</em> générées par IA</div>
+      <div class="onb-desc">Colle ton cours, l'IA génère automatiquement des flashcards. Système de révision espacée intégré pour mémoriser efficacement.</div>
+    </div>
+
+    <!-- SLIDE 5 — Pomodoro -->
+    <div class="onb-slide" id="onb-s4">
+      <div class="onb-anim" style="flex-direction:column;gap:10px">
+        <div class="onb-pomo-wrap">
+          <div class="onb-pomo-ring">
+            <svg class="onb-pomo-svg" viewBox="0 0 100 100">
+              <circle class="onb-pbg" cx="50" cy="50" r="40"/>
+              <circle class="onb-pfill" id="onbPomoFill" cx="50" cy="50" r="40"/>
+            </svg>
+            <div class="onb-ptime" id="onbPomoTime">25:00</div>
+          </div>
+          <div class="onb-plbls">
+            <span class="onb-plbl">🍅 Focus 25min</span>
+            <span class="onb-plbl">☕ Pause 5min</span>
+          </div>
+        </div>
+      </div>
+      <div class="onb-title">Timer <em>Pomodoro</em></div>
+      <div class="onb-desc">Technique de concentration par blocs de 25 minutes. Statistiques de sessions, historique et mode plein écran inclus.</div>
+    </div>
+
+    <!-- SLIDE 6 — Planning -->
+    <div class="onb-slide" id="onb-s5">
+      <div class="onb-anim">
+        <div class="onb-cal" id="onbCal">
+          <div class="onb-cal-col"><div class="onb-cal-hd">Lun</div><div class="onb-cal-ev" style="background:#003d7a">Droit constit.</div><div class="onb-cal-ev" style="background:#0057ad">TD Éco</div></div>
+          <div class="onb-cal-col"><div class="onb-cal-hd">Mar</div><div class="onb-cal-ev" style="background:#7c3aed">Maths</div><div class="onb-cal-ev" style="background:#003d7a">Droit pénal</div></div>
+          <div class="onb-cal-col"><div class="onb-cal-hd">Mer</div><div class="onb-cal-ev" style="background:#0057ad">Macro</div></div>
+          <div class="onb-cal-col"><div class="onb-cal-hd">Jeu</div><div class="onb-cal-ev" style="background:#7c3aed">Maths</div><div class="onb-cal-ev" style="background:#16a34a">Droit euro</div></div>
+          <div class="onb-cal-col"><div class="onb-cal-hd">Ven</div><div class="onb-cal-ev" style="background:#003d7a">Droit constit.</div><div class="onb-cal-ev" style="background:#dc2626">⚠️ CC Maths</div></div>
+        </div>
+      </div>
+      <div class="onb-title">Planning & <em>Agenda</em></div>
+      <div class="onb-desc">Emploi du temps ADE intégré, gestion des devoirs, deadlines et partiels. Compte à rebours automatique avant chaque examen.</div>
+    </div>
+
+    <!-- SLIDE 7 — Notes -->
+    <div class="onb-slide" id="onb-s6">
+      <div class="onb-anim">
+        <div class="onb-editor" id="onbEditor"><span class="onb-cursor" id="onbCursor"></span></div>
+      </div>
+      <div class="onb-title">Prise de <em>notes</em></div>
+      <div class="onb-desc">Éditeur Markdown avec aperçu live, organisation par matières. Tes notes sont sauvegardées automatiquement dans ton navigateur.</div>
+    </div>
+
+    <!-- SLIDE 8 — Chat -->
+    <div class="onb-slide" id="onb-s7">
+      <div class="onb-anim">
+        <div class="onb-chat" id="onbChat">
+          <div class="onb-bubble onb-them">Quelqu'un a le corrigé du TD de droit pénal ?</div>
+          <div class="onb-bubble onb-me">Oui je l'upload dans Échange de cours 📎</div>
+          <div class="onb-bubble onb-them">Merci ! Je vends aussi mon ticket WEI si besoin 🎫</div>
+        </div>
+      </div>
+      <div class="onb-title">Chat <em>étudiant</em></div>
+      <div class="onb-desc">Salons par promo, par matière, groupes privés. Et maintenant une section Achat/Vente pour échanger cours, fiches et tickets.</div>
+    </div>
+
+    <!-- SLIDE 9 — Campus -->
+    <div class="onb-slide" id="onb-s8">
+      <div class="onb-anim">
+        <div class="onb-map" id="onbMap">
+          <div class="onb-map-grid"></div>
+          <div class="onb-map-road" style="width:100%;height:8px;top:45%;left:0"></div>
+          <div class="onb-map-road" style="width:8px;height:100%;top:0;left:42%"></div>
+          <div class="onb-pin" id="onbPin">📍</div>
+          <div class="onb-pin-shadow" id="onbPinShadow"></div>
+        </div>
+      </div>
+      <div class="onb-title">Plan du <em>campus</em></div>
+      <div class="onb-desc">Trouve n'importe quelle salle, amphi ou bâtiment en quelques secondes. Campus Map interactif directement intégré.</div>
+    </div>
+
+    <!-- SLIDE 10 — Assos & Bons plans -->
+    <div class="onb-slide" id="onb-s9">
+      <div class="onb-anim">
+        <div class="onb-fan" id="onbFan">
+          <div class="onb-fcard fin0" style="background:linear-gradient(135deg,#003d7a,#0057ad)"><span style="font-size:18px">🏛️</span>BDE Dauphine</div>
+          <div class="onb-fcard fin1" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)"><span style="font-size:18px">🍔</span>Bons plans</div>
+          <div class="onb-fcard fin2" style="background:linear-gradient(135deg,#16a34a,#15803d)"><span style="font-size:18px">🎾</span>PSL Sport</div>
+        </div>
+      </div>
+      <div class="onb-title">Assos & <em>Bons plans</em></div>
+      <div class="onb-desc">Répertoire complet des assos Dauphine, bons plans testés autour du campus, PSL Sport et BU Dauphine — tout est là.</div>
+    </div>
+
+    <!-- SLIDE 11 — Stage & Ressources -->
+    <div class="onb-slide" id="onb-s10">
+      <div class="onb-anim">
+        <div class="onb-tl" id="onbTl">
+          <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#4d9fff"></div><div class="onb-tl-txt">Ressources pédagogiques</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#4d9fff" data-w="90"></div></div></div>
+          <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#a78bfa"></div><div class="onb-tl-txt">Mode Apprendre (IA)</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#a78bfa" data-w="75"></div></div></div>
+          <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#34d399"></div><div class="onb-tl-txt">Trouver mon stage</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#34d399" data-w="80"></div></div></div>
+          <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#fb923c"></div><div class="onb-tl-txt">News juridiques</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#fb923c" data-w="70"></div></div></div>
+        </div>
+      </div>
+      <div class="onb-title">Ressources & <em>Stage</em></div>
+      <div class="onb-desc">Fiches de révision, mode Apprendre par IA, guide complet pour trouver ton stage et actualités juridiques générées par IA.</div>
+    </div>
+
+    <!-- SLIDE 12 — C'est parti -->
+    <div class="onb-slide" id="onb-s11">
+      <div class="onb-anim" id="onbFinishAnim" style="flex-direction:column;gap:8px">
+        <div class="onb-conf-wrap" id="onbConfetti"></div>
+        <div class="onb-finish-ic">🚀</div>
+        <div style="font-size:14px;font-weight:700;color:#fff">Tout est prêt !</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6)">12 outils · 1 seule appli</div>
+      </div>
+      <div class="onb-title">C'est <em>parti</em> !</div>
+      <div class="onb-desc">Tu peux relancer ce guide à tout moment depuis la section FAQ. Bonne L1 à toi 🎓</div>
+      <button class="onb-start-btn" onclick="closeOnboarding()">Commencer →</button>
+    </div>
+
+    <div class="onb-nav">
+      <div class="onb-dots" id="onbDots"></div>
+      <div class="onb-btns">
+        <button class="onb-btn onb-prev" id="onbPrevBtn" onclick="onbNavigate(-1)">← Retour</button>
+        <button class="onb-btn onb-next" id="onbNextBtn" onclick="onbNavigate(1)">Suivant →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ══════════════ FIN ONBOARDING ══════════════ -->
+
 <button class="mobile-menu-btn" onclick="toggleSidebar()" id="mobileMenuBtn">☰</button>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -4216,6 +4559,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="bonsplans" onclick="showPage(&#39;bonsplans&#39;,this)"><span class="s-ic">💸</span> Bons plans</button>
     <div class="sidebar-section-label">Parcours professionnel</div>
     <button class="sidebar-item" data-page="stage" onclick="showPage(&#39;stage&#39;,this)"><span class="s-ic">💼</span> Trouver mon stage</button>
+    <button class="sidebar-item" data-page="faq" onclick="showPage('faq',this)"><span class="s-ic">❓</span> Guide & FAQ</button>
   </div>
   <div class="sidebar-footer">
     <div class="sidebar-footer-btns">
@@ -6990,6 +7334,70 @@ aside.sidebar {
   </div>
 </div>
 
+</div>
+<!-- FAQ & GUIDE -->
+<div class="page-section" id="page-faq">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">❓</div>
+      <div>
+        <div class="section-header-title">Guide & FAQ</div>
+        <div class="section-header-sub">Toutes les fonctionnalités · Aide</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-faq"></div>
+  </div>
+  <div class="wrap" style="padding-top:48px;padding-bottom:64px">
+
+    <!-- Relaunch onboarding -->
+    <div class="rev" style="margin-bottom:40px;text-align:center">
+      <div class="slbl">Découvrir l'application</div>
+      <div class="sh2" style="margin-bottom:16px">Le <em>guide interactif</em></div>
+      <p class="sdesc" style="margin:0 auto 24px">Revisite toutes les fonctionnalités de DauphineGuide en 2 minutes avec des animations interactives.</p>
+      <button onclick="openOnboarding()" style="display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .2s;box-shadow:0 4px 20px rgba(0,61,122,.25)">
+        🚀 Revoir le guide interactif
+      </button>
+    </div>
+
+    <!-- FAQ items -->
+    <div class="slbl" style="margin-bottom:16px">Questions fréquentes</div>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:800px">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">💾 Mes données sont-elles sauvegardées ?</div>
+        <div class="faq-a">Oui — notes, flashcards, devoirs et paramètres sont sauvegardés dans ton navigateur (localStorage). Le chat étudiant utilise Firebase pour la synchronisation temps réel.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">🧮 Comment fonctionne le simulateur de moyenne ?</div>
+        <div class="faq-a">Saisis tes notes dans le tableau, le simulateur calcule ta moyenne pondérée avec les vrais coefficients de ta formation. Tu peux simuler S1, S2 et l'annuel.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">🃏 Comment générer des flashcards par IA ?</div>
+        <div class="faq-a">Va dans Flashcards → Générer, colle ton cours dans la zone de texte, choisis la matière et clique sur Générer. L'IA crée automatiquement des paires question/réponse.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">💬 Comment rejoindre un groupe privé dans le chat ?</div>
+        <div class="faq-a">Dans le Chat étudiant, clique sur "🔑 Rejoindre avec un code" en bas de la sidebar et entre le code fourni par l'admin du groupe.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">🌙 Comment activer le mode sombre ?</div>
+        <div class="faq-a">Clique sur le bouton "Mode sombre" en bas à gauche de la sidebar. Le thème est sauvegardé automatiquement.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">🖼️ Comment changer le fond d'écran ?</div>
+        <div class="faq-a">Clique sur "Fond d'écran" en bas de la sidebar, choisis une image ou colle une URL, puis clique sur Appliquer.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">📅 L'emploi du temps est-il mis à jour automatiquement ?</div>
+        <div class="faq-a">L'emploi du temps est exporté depuis ADE. La date d'export est indiquée en bas de page. Pour la dernière version, contacte le créateur du site.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">📱 Puis-je installer l'app sur mon téléphone ?</div>
+        <div class="faq-a">Oui ! DauphineGuide est une PWA. Sur Safari (iOS) : partage → "Sur l'écran d'accueil". Sur Chrome (Android) : menu → "Ajouter à l'écran d'accueil".</div>
+      </div>
+
+    </div>
+  </div>
 </div>
 </main>
 </div><!-- end layout -->
@@ -15948,6 +16356,277 @@ window.clearSalon = function() {
     resetMessages(true);
   }
 };
+</script>
+
+<script>
+/* ══════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════ */
+var onbIndex = 0;
+var onbTotal = 12;
+var onbAnimTimers = [];
+
+function initOnboarding() {
+  if (!localStorage.getItem('onb_done_v1')) openOnboarding();
+}
+
+function openOnboarding() {
+  onbIndex = 0;
+  var el = document.getElementById('onb-overlay');
+  el.classList.remove('hidden');
+  setTimeout(function(){ el.classList.add('show'); }, 10);
+  onbBuildDots();
+  onbGoTo(0, false);
+}
+
+function closeOnboarding() {
+  var el = document.getElementById('onb-overlay');
+  el.classList.remove('show');
+  setTimeout(function(){ el.classList.add('hidden'); }, 400);
+  localStorage.setItem('onb_done_v1', '1');
+}
+
+function onbBuildDots() {
+  var c = document.getElementById('onbDots');
+  c.innerHTML = '';
+  for (var i = 0; i < onbTotal; i++) {
+    var d = document.createElement('button');
+    d.className = 'onb-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('data-i', i);
+    d.onclick = (function(idx){ return function(){ onbGoTo(idx, true); }; })(i);
+    c.appendChild(d);
+  }
+}
+
+function onbNavigate(dir) {
+  var next = onbIndex + dir;
+  if (next < 0 || next >= onbTotal) return;
+  onbGoTo(next, true, dir < 0);
+}
+
+function onbGoTo(idx, animate, goLeft) {
+  onbAnimTimers.forEach(clearTimeout);
+  onbAnimTimers = [];
+
+  // Hide current
+  var cur = document.getElementById('onb-s' + onbIndex);
+  if (cur) cur.classList.remove('active', 'go-left');
+
+  onbIndex = idx;
+
+  // Show new
+  var slide = document.getElementById('onb-s' + idx);
+  if (!slide) return;
+  slide.classList.remove('active', 'go-left');
+  if (animate && goLeft) slide.classList.add('go-left');
+  void slide.offsetWidth;
+  slide.classList.add('active');
+
+  // Progress bar
+  document.getElementById('onbProgressFill').style.width = ((idx + 1) / onbTotal * 100) + '%';
+
+  // Dots
+  document.querySelectorAll('.onb-dot').forEach(function(d, i){ d.classList.toggle('active', i === idx); });
+
+  // Buttons
+  document.getElementById('onbPrevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
+  var nextBtn = document.getElementById('onbNextBtn');
+  if (idx === onbTotal - 1) { nextBtn.style.display = 'none'; } else { nextBtn.style.display = ''; nextBtn.textContent = idx === onbTotal - 2 ? 'Terminer 🎉' : 'Suivant →'; }
+
+  // Trigger animation
+  onbAnimTimers.push(setTimeout(function(){ onbPlaySlide(idx); }, 80));
+}
+
+function onbPlaySlide(idx) {
+  if (idx === 0) onbPlayWelcome();
+  else if (idx === 1) onbPlayWidgets();
+  else if (idx === 2) onbPlaySim();
+  else if (idx === 3) onbPlayCard();
+  else if (idx === 4) onbPlayPomo();
+  else if (idx === 5) onbPlayCal();
+  else if (idx === 6) onbPlayNotes();
+  else if (idx === 7) onbPlayChat();
+  else if (idx === 8) onbPlayMap();
+  else if (idx === 9) onbPlayFan();
+  else if (idx === 10) onbPlayTl();
+  else if (idx === 11) onbPlayFinish();
+}
+
+/* S1 — Welcome */
+function onbPlayWelcome() {
+  document.querySelectorAll('#onb-s0 .onb-tag').forEach(function(t){ t.classList.add('in'); });
+}
+
+/* S2 — Widgets */
+function onbPlayWidgets() {
+  [0,1,2].forEach(function(i){
+    onbAnimTimers.push(setTimeout(function(){
+      var w = document.getElementById('onbWg' + i);
+      if (w) { w.classList.remove('in'); void w.offsetWidth; w.style.animationDelay = '0s'; w.classList.add('in'); }
+    }, i * 180));
+  });
+}
+
+/* S3 — Simulateur */
+function onbPlaySim() {
+  var rows = document.querySelectorAll('#onb-s2 .onb-sim-row');
+  rows.forEach(function(r){ r.classList.remove('in'); });
+  var res = document.getElementById('onbSimRes');
+  res.classList.remove('in');
+  rows.forEach(function(r, i){
+    onbAnimTimers.push(setTimeout(function(){ r.classList.add('in'); }, i * 200));
+  });
+  onbAnimTimers.push(setTimeout(function(){
+    res.classList.add('in');
+    var el = document.getElementById('onbSimNum');
+    var start = 0, end = 12.5, dur = 600, startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var p = Math.min((ts - startTime) / dur, 1);
+      el.textContent = (start + (end - start) * p).toFixed(1);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }, 750));
+}
+
+/* S4 — Flashcard */
+function onbPlayCard() {
+  var c = document.getElementById('onbCard3d');
+  if (c) { c.classList.remove('flipped'); onbAnimTimers.push(setTimeout(function(){ c.classList.add('flipped'); }, 1200)); }
+}
+function onbFlipCard(scene) {
+  var c = scene.querySelector('.onb-card-3d');
+  if (c) c.classList.toggle('flipped');
+}
+
+/* S5 — Pomodoro */
+function onbPlayPomo() {
+  var fill = document.getElementById('onbPomoFill');
+  var timeEl = document.getElementById('onbPomoTime');
+  if (fill) { fill.classList.remove('run'); void fill.offsetWidth; onbAnimTimers.push(setTimeout(function(){ fill.classList.add('run'); }, 100)); }
+  if (timeEl) {
+    var s = 25 * 60, target = 22 * 60 + 15;
+    var t = setInterval(function(){
+      s -= 5;
+      var m = Math.floor(s / 60), sec = s % 60;
+      timeEl.textContent = m + ':' + (sec < 10 ? '0' : '') + sec;
+      if (s <= target) clearInterval(t);
+    }, 80);
+    onbAnimTimers.push(t);
+  }
+}
+
+/* S6 — Planning */
+function onbPlayCal() {
+  var evs = document.querySelectorAll('#onb-s5 .onb-cal-ev');
+  evs.forEach(function(e){ e.classList.remove('in'); });
+  evs.forEach(function(e, i){ onbAnimTimers.push(setTimeout(function(){ e.classList.add('in'); }, i * 120)); });
+}
+
+/* S7 — Notes typewriter */
+function onbPlayNotes() {
+  var ed = document.getElementById('onbEditor');
+  if (!ed) return;
+  var lines = [
+    {type:'kw', text:'# Droit Constitutionnel — Séance 3'},
+    {type:'normal', text:''},
+    {type:'bold', text:'## La hiérarchie des normes'},
+    {type:'normal', text:''},
+    {type:'normal', text:'> Théorie développée par '},
+    {type:'bold', text:'Hans Kelsen'},
+    {type:'normal', text:' (1881–1973)'},
+    {type:'normal', text:''},
+    {type:'kw', text:'**Constitution** → Lois → Décrets → Arrêtés'},
+  ];
+  ed.innerHTML = '<span class="onb-cursor" id="onbCursor"></span>';
+  var cursor = document.getElementById('onbCursor');
+  var fullText = '# Droit Constitutionnel — S3\n\n## La hiérarchie des normes\n\n> Théorie de **Hans Kelsen**\n\n`Constitution` > Lois > Décrets';
+  var i = 0;
+  function typeChar() {
+    if (i >= fullText.length) return;
+    var ch = fullText[i++];
+    var span = document.createElement('span');
+    if (ch === '#') span.className = 'onb-kw';
+    else if (ch === '*' || ch === '`') span.className = 'onb-kw';
+    else span.className = 'onb-normal';
+    span.textContent = ch === '\n' ? '' : ch;
+    if (ch === '\n') { ed.insertBefore(document.createElement('br'), cursor); }
+    else ed.insertBefore(span, cursor);
+    onbAnimTimers.push(setTimeout(typeChar, 38));
+  }
+  onbAnimTimers.push(setTimeout(typeChar, 200));
+}
+
+/* S8 — Chat */
+function onbPlayChat() {
+  var bs = document.querySelectorAll('#onb-s7 .onb-bubble');
+  bs.forEach(function(b){ b.classList.remove('in'); });
+  bs.forEach(function(b, i){ onbAnimTimers.push(setTimeout(function(){ b.classList.add('in'); }, i * 400)); });
+}
+
+/* S9 — Campus pin */
+function onbPlayMap() {
+  var pin = document.getElementById('onbPin');
+  var shadow = document.getElementById('onbPinShadow');
+  if (pin) { pin.style.animation = 'none'; void pin.offsetWidth; pin.style.animation = ''; }
+  if (shadow) { shadow.style.animation = 'none'; void shadow.offsetWidth; shadow.style.animation = ''; }
+}
+
+/* S10 — Assos fan */
+function onbPlayFan() {
+  var cards = document.querySelectorAll('#onb-s9 .onb-fcard');
+  cards.forEach(function(c){
+    c.style.animation = 'none';
+    c.style.opacity = '0';
+    void c.offsetWidth;
+    c.style.animation = '';
+  });
+}
+
+/* S11 — Timeline */
+function onbPlayTl() {
+  var items = document.querySelectorAll('#onb-s10 .onb-tl-item');
+  items.forEach(function(it){ it.classList.remove('in'); });
+  items.forEach(function(it, i){
+    onbAnimTimers.push(setTimeout(function(){
+      it.classList.add('in');
+      var fill = it.querySelector('.onb-tl-fill');
+      if (fill) { onbAnimTimers.push(setTimeout(function(){ fill.style.width = fill.getAttribute('data-w') + '%'; }, 200)); }
+    }, i * 220));
+  });
+}
+
+/* S12 — Finish confetti */
+function onbPlayFinish() {
+  var wrap = document.getElementById('onbConfetti');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  var colors = ['#4d9fff','#a78bfa','#34d399','#fb923c','#f472b6','#fbbf24'];
+  for (var i = 0; i < 30; i++) {
+    (function(idx){
+      onbAnimTimers.push(setTimeout(function(){
+        var p = document.createElement('div');
+        p.className = 'onb-conf-p';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = '-10px';
+        p.style.background = colors[idx % colors.length];
+        p.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
+        p.style.animationDelay = '0s';
+        wrap.appendChild(p);
+        setTimeout(function(){ if (p.parentNode) p.parentNode.removeChild(p); }, 1600);
+      }, idx * 60));
+    })(i);
+  }
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(initOnboarding, 800);
+});
+
+// Expose for FAQ button
+window.openOnboarding = openOnboarding;
 </script>
 
 </body></html>
