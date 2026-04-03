@@ -1246,7 +1246,7 @@ html{scroll-behavior:smooth}
 .login-btn:hover{background:#0057ad}
 .login-error{font-size:12px;color:#ef4444;margin-top:10px;min-height:18px;transition:opacity .2s}
 .login-footer{font-size:11px;color:#d1d5db;margin-top:20px}
-@media(max-width:480px){
+@media(max-width:768px){
   .login-card{padding:28px 20px;border-radius:14px}
   .login-title{font-size:20px}
   #loginScreen{align-items:center;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;height:100vh;height:100dvh}
@@ -11605,6 +11605,16 @@ function initLogin() {
     var inp = document.getElementById('loginInput');
     if (inp) inp.focus();
   }, 300);
+  // Fix clavier virtuel sur Safari/Chrome mobile : ajuster la hauteur quand le clavier apparaît
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', function() {
+      var scr = document.getElementById('loginScreen');
+      if (!scr || scr.style.display === 'none') return;
+      scr.style.height = window.visualViewport.height + 'px';
+      var btn = scr.querySelector('.login-btn');
+      if (btn) setTimeout(function(){ btn.scrollIntoView({block:'nearest'}); }, 50);
+    });
+  }
 }
 
 function submitLogin() {
