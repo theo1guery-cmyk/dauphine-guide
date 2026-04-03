@@ -6092,7 +6092,7 @@ aside.sidebar {
       <div class="section-header-ic">💼</div>
       <div>
         <div class="section-header-title">Trouver mon stage</div>
-        <div class="section-header-sub">Ressources Dauphine · Conseils pratiques</div>
+        <div class="section-header-sub">Ressources Dauphine · Conseils + IA</div>
       </div>
     </div>
     <div class="section-header-date" id="sh-date-page-stage">Mardi 17 mars 2026</div>
@@ -6101,235 +6101,285 @@ aside.sidebar {
 <div class="wrap">
   <div class="rev" style="margin-bottom:24px">
     <div class="slbl">Parcours professionnel</div>
-    <div class="sh2">Trouver <em>ton premier stage</em></div>
-    <p class="sdesc">Ressources officielles Dauphine + conseils pour réussir ta recherche et rédiger CV et lettre de motivation.</p>
+    <div class="sh2">Stage en <em>mode interactif</em></div>
+    <p class="sdesc">Explorez les ressources, obtenez des conseils adaptés, et utilisez l'IA pour analyser votre CV et lettre de motivation.</p>
   </div>
 
-  <!-- OBLIGATION REGLEMENTAIRE -->
-  <div class="rev" style="margin-bottom:40px;padding:24px;border-radius:12px;background:#fff7ed;border:2px solid #f97316;border-left:6px solid #f97316">
-    <h3 style="font-size:18px;font-weight:700;color:#c2410c;margin-bottom:12px">⚠️ Obligation réglementaire L1 → L2</h3>
-    <div style="font-size:13px;line-height:1.8;color:var(--text-sub)">
-      <p><strong>Pour valider ta L2 et poursuivre en L3 :</strong> Tu DOIS réaliser avant le jury de fin d'année :</p>
-      <ul style="margin:12px 0;padding-left:20px">
-        <li><strong>4 semaines consécutives minimum (140 heures)</strong> de stage ou CDD/I/intérim/auto-entrepreneuriat</li>
-        <li>OU un contrat de travail à temps partiel sur l'année (120 heures auprès du même employeur)</li>
-      </ul>
-      <div style="background:#fff;padding:10px;border-left:3px solid #f97316;margin-top:12px;font-size:12px">
-        <strong>Pas de rapport de stage :</strong> Tu devras juste remplir un questionnaire.
-      </div>
-    </div>
+  <!-- TABS NAVIGATION -->
+  <div style="display:flex;gap:8px;margin-bottom:24px;border-bottom:2px solid var(--g200);flex-wrap:wrap" id="stage-tabs">
+    <button class="tab-btn stage-tab-btn" data-tab="essentials" style="padding:12px 20px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;border-bottom:3px solid var(--blue);color:var(--blue);margin-bottom:-2px" onclick="switchStageTab('essentials')">📋 Essentiels</button>
+    <button class="tab-btn stage-tab-btn" data-tab="resources" style="padding:12px 20px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;border-bottom:3px solid transparent;color:var(--text-sub);margin-bottom:-2px" onclick="switchStageTab('resources')">🔍 Ressources</button>
+    <button class="tab-btn stage-tab-btn" data-tab="cv-letter" style="padding:12px 20px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;border-bottom:3px solid transparent;color:var(--text-sub);margin-bottom:-2px" onclick="switchStageTab('cv-letter')">📄 CV & Lettre</button>
+    <button class="tab-btn stage-tab-btn" data-tab="analyzer" style="padding:12px 20px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;border-bottom:3px solid transparent;color:var(--text-sub);margin-bottom:-2px" onclick="switchStageTab('analyzer')">🤖 Analyse IA</button>
   </div>
 
-  <!-- TIMELINE IMPORTANT -->
-  <div class="rev" style="margin-bottom:40px;padding:24px;border-radius:12px;background:#dbeafe;border:1px solid #3b82f6">
-    <h3 style="font-size:18px;font-weight:700;color:#1e40af;margin-bottom:16px">📅 Timeline critique — À connaître absolument</h3>
-    <div style="display:grid;gap:12px;font-size:13px">
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #3b82f6">
-        <strong style="color:#1e40af">🎯 MAINTENANT</strong><br/>
-        <span style="font-size:12px;color:var(--text-sub)">Commence tes recherches et candidatures (durée moyenne = 3 mois)</span>
-      </div>
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #3b82f6">
-        <strong style="color:#1e40af">🗓️ À partir du 18 mai 2026</strong><br/>
-        <span style="font-size:12px;color:var(--text-sub)">Début possible du stage (après tes examens du S2)</span>
-      </div>
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #ef4444">
-        <strong style="color:#991b1b">⚠️ Semaine du 22 juin 2026</strong><br/>
-        <span style="font-size:12px;color:var(--text-sub)">Rattrapages si nécessaire — tu DOIS y aller même pendant ton stage</span>
-      </div>
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #3b82f6">
-        <strong style="color:#1e40af">📝 Convention</strong><br/>
-        <span style="font-size:12px;color:var(--text-sub)">Compter ~1 mois pour validation pédagogique et administrative</span>
+  <!-- TAB: ESSENTIALS -->
+  <div id="stage-tab-essentials" class="stage-tab-content" style="display:block">
+    <!-- OBLIGATION -->
+    <div class="rev" style="margin-bottom:20px;padding:24px;border-radius:12px;background:#fff7ed;border:2px solid #f97316;border-left:6px solid #f97316">
+      <h3 style="font-size:18px;font-weight:700;color:#c2410c;margin-bottom:12px">⚠️ Obligation réglementaire L1 → L2</h3>
+      <div style="font-size:13px;line-height:1.8;color:var(--text-sub)">
+        <p><strong>Pour valider ta L2 et poursuivre en L3 :</strong></p>
+        <ul style="margin:12px 0;padding-left:20px">
+          <li><strong>4 semaines consécutives minimum (140 heures)</strong> de stage ou CDD/I/intérim/auto-entrepreneuriat</li>
+          <li>OU un contrat de travail à temps partiel sur l'année (120 heures auprès du même employeur)</li>
+        </ul>
       </div>
     </div>
-  </div>
 
-  <!-- DAUPHINE CAREER CENTER -->
-  <div class="rev" style="margin-bottom:40px;padding:24px;border-radius:12px;background:#f0fdf4;border:2px solid #16a34a;border-left:6px solid #16a34a">
-    <h3 style="font-size:18px;font-weight:700;color:#166534;margin-bottom:16px">🎯 Dauphine Career Center — Tes ressources officielles</h3>
-    <div style="font-size:13px;line-height:1.8;color:var(--text-sub);margin-bottom:16px">
-      <p><strong style="color:#166534">Le Career Center peut t'aider avec :</strong></p>
-      <ul style="margin:8px 0;padding-left:20px">
-        <li>✅ Relectures de CV</li>
-        <li>✅ Relectures de lettres de motivation</li>
-        <li>✅ Questions sur tes recherches de stage</li>
-        <li>✅ Ateliers, conférences, événements</li>
-        <li>✅ Conseils sur ton projet professionnel</li>
-      </ul>
+    <!-- TIMELINE -->
+    <div class="rev" style="margin-bottom:20px;padding:24px;border-radius:12px;background:#dbeafe;border:1px solid #3b82f6">
+      <h3 style="font-size:18px;font-weight:700;color:#1e40af;margin-bottom:16px">📅 Timeline — À connaître absolument</h3>
+      <div style="display:grid;gap:12px;font-size:12px">
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #3b82f6">
+          <strong style="color:#1e40af">🎯 MAINTENANT</strong> — Lance tes recherches (durée moyenne = 3 mois)
+        </div>
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #3b82f6">
+          <strong style="color:#1e40af">🗓️ À partir du 18 mai 2026</strong> — Début possible du stage (après S2)
+        </div>
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #ef4444">
+          <strong style="color:#991b1b">⚠️ Semaine du 22 juin 2026</strong> — Rattrapages si nécessaire
+        </div>
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:4px solid #3b82f6">
+          <strong style="color:#1e40af">📝 Convention</strong> — Compter ~1 mois pour validation
+        </div>
+      </div>
     </div>
-    <div style="display:grid;gap:12px;margin-top:16px">
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:3px solid #16a34a;font-size:12px">
-        <strong style="color:#166534">📍 Sur place</strong><br/>
-        <strong>Bureau P019 — Career Center</strong><br/>
-        Cour intérieure, 1ère porte à gauche (Services aux Étudiants)<br/>
-        Rendez-vous sur <a href="https://dauphine.jobteaser.com/" target="_blank" style="color:#16a34a;font-weight:600">JobTeaser</a>
-      </div>
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:3px solid #16a34a;font-size:12px">
-        <strong style="color:#166534">💻 À distance (Teams)</strong><br/>
-        Créneaux de 30 min sur <a href="https://dauphine.jobteaser.com/" target="_blank" style="color:#16a34a;font-weight:600">JobTeaser</a>
-      </div>
-      <div style="padding:12px;background:#fff;border-radius:8px;border-left:3px solid #16a34a;font-size:12px">
-        <strong style="color:#166534">✉️ Contact direct</strong><br/>
-        career.center@dauphine.psl.eu<br/>
-        mounia.benhaj@dauphine.psl.eu
+
+    <!-- CAREER CENTER -->
+    <div class="rev" style="padding:24px;border-radius:12px;background:#f0fdf4;border:2px solid #16a34a;border-left:6px solid #16a34a">
+      <h3 style="font-size:18px;font-weight:700;color:#166534;margin-bottom:16px">🎯 Dauphine Career Center</h3>
+      <div style="display:grid;gap:12px;font-size:12px;line-height:1.6">
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:3px solid #16a34a">
+          <strong style="color:#166534">📍 Sur place</strong><br/>
+          Bureau P019 — Cour intérieure, 1ère porte à gauche<br/>
+          Rendez-vous sur <a href="https://dauphine.jobteaser.com/" target="_blank" style="color:#16a34a;font-weight:600">JobTeaser</a>
+        </div>
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:3px solid #16a34a">
+          <strong style="color:#166534">💻 Teams (à distance)</strong><br/>
+          Créneaux 30 min sur JobTeaser
+        </div>
+        <div style="padding:12px;background:#fff;border-radius:8px;border-left:3px solid #16a34a">
+          <strong style="color:#166534">✉️ Contact</strong><br/>
+          career.center@dauphine.psl.edu
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- CV - STRUCTURE DETAILLEE -->
-  <div class="rev" style="margin-bottom:40px;padding:24px;border-radius:12px;background:#fff;border:1px solid var(--g200)">
-    <h3 style="font-size:18px;font-weight:700;color:var(--text-main);margin-bottom:16px">📄 Rédiger ton CV — Structure des 7 rubriques</h3>
-    
-    <div style="margin-bottom:16px;padding:12px;background:var(--blue-light);border-radius:8px;font-size:12px;color:var(--blue)">
-      <strong>Format :</strong> 1 page exactement | Verbes d'action | 1 CV par poste | Sans photo (sauf demande)
-    </div>
-
-    <div style="display:grid;gap:12px;font-size:12px;line-height:1.7">
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">1️⃣ Informations personnelles</strong><br/>
-        Prénom + NOM | Âge (ex: 20 ans) | Tel | Email (@dauphine.eu de préférence) | Pas d'adresse postale
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">2️⃣ Titre et accroche (optionnel mais impactant)</strong><br/>
-        Ex: <em>"Étudiant L1 LSO | Passionné par le droit des affaires et l'ESG"</em>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">3️⃣ Formation (du plus récent au Bac)</strong><br/>
-        <span style="font-size:11px">2024–2025 | L1 Paris Dauphine LSO<br/>2024 | Baccalauréat Scientifique – Mention Bien</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">4️⃣ Expériences professionnelles (du plus récent)</strong><br/>
-        <span style="font-size:11px"><strong>Été 2025</strong> | Stage - Auxiliaire d'été | BNP | Accueil client, opérations courantes</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">5️⃣ Langues & Informatique</strong><br/>
-        <span style="font-size:11px"><strong>Langues :</strong> Anglais B2 | Mandarin Débutant (CECRL)<br/><strong>Logiciels :</strong> Word, Excel, Python (niveau…)</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">6️⃣ Engagements associatifs & humanitaires</strong><br/>
-        <span style="font-size:11px">Membre XXX Association | Soutien scolaire jeunes 12-15 ans | Budget gestion, collecte de fonds</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid var(--blue)">
-        <strong style="color:var(--text-main)">7️⃣ Centres d'intérêt</strong><br/>
-        <span style="font-size:11px">Tennis (compétition), Lecture, Podcasts entrepreneurship, Voyage (Japon, Australie)</span>
+  <!-- TAB: RESOURCES -->
+  <div id="stage-tab-resources" class="stage-tab-content" style="display:none">
+    <div class="rev" style="margin-bottom:24px;padding:24px;border-radius:12px;background:#fff;border:1px solid var(--g200)">
+      <h3 style="font-size:18px;font-weight:700;color:var(--text-main);margin-bottom:16px">🔍 Où trouver ton stage</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;font-size:12px">
+        <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
+          <strong style="color:var(--blue)">🌐 JobTeaser Dauphine</strong><br/>
+          <a href="https://dauphine.jobteaser.com/" target="_blank" style="color:var(--blue);text-decoration:underline;font-size:11px">dauphine.jobteaser.com</a>
+        </div>
+        <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
+          <strong>💼 Job boards</strong><br/>
+          Indeed, LinkedIn, Welcome to the Jungle
+        </div>
+        <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
+          <strong>⚖️ Spécialisés Droit</strong><br/>
+          Pointal (cabinets d'avocats)
+        </div>
+        <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
+          <strong>📧 Candidatures spontanées</strong><br/>
+          Les plus efficaces !
+        </div>
+        <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
+          <strong>👥 Réseaux</strong><br/>
+          Alumni, LinkedIn, événements
+        </div>
       </div>
     </div>
 
-    <div style="margin-top:16px;padding:12px 14px;background:#fee2e2;border-radius:8px;font-size:12px;color:#991b1b;border-left:3px solid #ef4444">
-      ❌ <strong>À éviter :</strong> Trop de couleurs | Fautes d'orthographe | Infos personnelles inutiles | Trous temporels inexpliqués | CV générique
-    </div>
-  </div>
-
-  <!-- LETTRE MOTIVATION - STRUCTURE -->
-  <div class="rev" style="margin-bottom:40px;padding:24px;border-radius:12px;background:#fff;border:1px solid var(--g200)">
-    <h3 style="font-size:18px;font-weight:700;color:var(--text-main);margin-bottom:16px">💌 Lettre de motivation — Structure YOU-ME-WE</h3>
-    
-    <div style="margin-bottom:16px;padding:12px;background:var(--blue-light);border-radius:8px;font-size:12px;color:var(--blue)">
-      <strong>Format :</strong> 1 page | 1 lettre par candidature (adaptée) | Professionnel | Bien relue
-    </div>
-
-    <div style="display:grid;gap:12px;font-size:12px;line-height:1.7;margin-bottom:16px">
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid #10b981">
-        <strong style="color:var(--text-main)">📍 Entête (en haut à droite)</strong><br/>
-        Ton nom | Email | Tél | Date<br/>
-        + Coordonnées responsable RH / entreprise
+    <!-- CONVENTION ACCORDION -->
+    <div class="rev" style="margin-bottom:20px">
+      <div style="padding:16px;background:var(--g100);border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-left:4px solid var(--blue)" onclick="toggleAccordion(this)">
+        <strong style="font-size:14px;color:var(--text-main)">📋 La convention de stage — Processus</strong>
+        <span style="font-size:18px;color:var(--text-sub)">+</span>
       </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid #10b981">
-        <strong style="color:var(--text-main)">1️⃣ Introduction (Objet + 2 lignes)</strong><br/>
-        <span style="font-size:11px;font-style:italic">"Étudiant en L1 Licence LSO Dauphine, je vous présente ma candidature pour le stage d'Auxiliaire d'été à l'agence BNP de..."</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid #10b981">
-        <strong style="color:var(--text-main)">2️⃣ Paragraphe YOU (Pourquoi l'offre ?)</strong><br/>
-        <span style="font-size:11px">Expliquez l'attrait pour l'entreprise, la mission, vos motivations. Inscrivez votre candidature dans un objectif long terme.</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid #10b981">
-        <strong style="color:var(--text-main)">3️⃣ Paragraphe ME (Vos compétences)</strong><br/>
-        <span style="font-size:11px">Détaillez 1-2 expériences pertinentes qui montrent votre compétence clé pour ce stage.</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid #10b981">
-        <strong style="color:var(--text-main)">4️⃣ Paragraphe WE (Vos qualités)</strong><br/>
-        <span style="font-size:11px">Montrez vos atouts, votre désir d'apprendre et de progresser au sein de l'équipe.</span>
-      </div>
-
-      <div style="padding:12px;background:var(--g50);border-radius:8px;border-left:3px solid #10b981">
-        <strong style="color:var(--text-main)">5️⃣ Conclusion + Formule de politesse</strong><br/>
-        <span style="font-size:11px">"Je vous prie d'agréer, Madame, l'expression de mes salutations distinguées."</span>
-      </div>
-    </div>
-
-    <div style="padding:12px 14px;background:#fef3c7;border-radius:8px;font-size:12px;color:#92400e;border-left:3px solid #eab308">
-      ⚠️ <strong>À éviter :</strong> Généralités | Parler uniquement de soi | Répéter le CV | Ne pas adapter à l'entreprise | Oublier la signature
-    </div>
-  </div>
-
-  <!-- LA CONVENTION -->
-  <div class="rev" style="margin-bottom:40px;padding:24px;border-radius:12px;background:#fff;border:1px solid var(--g200)">
-    <h3 style="font-size:18px;font-weight:700;color:var(--text-main);margin-bottom:16px">📋 La convention de stage — Démarches indispensables</h3>
-    
-    <div style="padding:12px;background:#fee2e2;border-radius:8px;font-size:12px;color:#991b1b;margin-bottom:16px;border-left:3px solid #ef4444">
-      <strong>⚠️ SANS CONVENTION SIGNÉE = PAS DE STAGE POSSIBLE</strong>
-    </div>
-
-    <div style="display:grid;gap:10px;font-size:12px;line-height:1.6">
-      <div style="padding:10px;background:var(--g50);border-radius:6px">
-        <strong>1️⃣ Remplir Esupstage</strong><br/>
-        Entrer infos fournies par l'employeur + désigner tuteur pédagogique (Paul Lagneau-Ymonet pour L1)
-      </div>
-      <div style="padding:10px;background:var(--g50);border-radius:6px">
-        <strong>2️⃣ Signer electroniquement</strong><br/>
-        Via parapheur e-signature (toi en 1er, puis l'entreprise via lien auto-généré)
-      </div>
-      <div style="padding:10px;background:var(--g50);border-radius:6px">
-        <strong>3️⃣ Infos à demander à l'employeur</strong><br/>
-        Email signataire (représentant légal) | Email tuteur stage | Dates exactes | Volume horaire/semaine | Gratification (obligatoire si &gt;2mois)
-      </div>
-      <div style="padding:10px;background:var(--g50);border-radius:6px">
-        <strong>4️⃣ Problème ?</strong><br/>
-        Contact: experiencepro.lso@dauphine.psl.eu
+      <div style="display:none;padding:16px;background:#fff;border:1px solid var(--g200);border-top:none;border-radius:0 0 8px 8px">
+        <div style="font-size:12px;line-height:1.8;color:var(--text-sub)">
+          <p><strong style="color:var(--text-main);display:block;margin-bottom:12px">⚠️ SANS CONVENTION SIGNÉE = PAS DE STAGE POSSIBLE</strong></p>
+          <ol style="padding-left:20px;margin:0">
+            <li style="margin-bottom:10px"><strong>Remplir Esupstage</strong> — Entrer infos fournies par l'employeur + désigner tuteur pédagogique (Paul Lagneau-Ymonet pour L1)</li>
+            <li style="margin-bottom:10px"><strong>Signer électroniquement</strong> — Via parapheur e-signature (toi en 1er, puis l'entreprise)</li>
+            <li style="margin-bottom:10px"><strong>Infos à demander</strong> — Email signataire | Email tuteur stage | Dates exactes | Volume horaire/semaine | Gratification</li>
+            <li><strong>Problème ?</strong> — Contact: experiencepro.lso@dauphine.psl.edu</li>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- OÙ TROUVER STAGE -->
-  <div class="rev" style="padding:24px;border-radius:12px;background:#fff;border:1px solid var(--g200)">
-    <h3 style="font-size:18px;font-weight:700;color:var(--text-main);margin-bottom:16px">🔍 Où trouver ton stage — Ressources</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;font-size:12px">
-      <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
-        <strong style="color:var(--blue)">🌐 JobTeaser Dauphine</strong><br/>
-        <a href="https://dauphine.jobteaser.com/" target="_blank" style="color:var(--blue);text-decoration:underline;font-size:11px">dauphine.jobteaser.com</a><br/>
-        Offres officielles + IdéeStages + RDV Career Center
+  <!-- TAB: CV & LETTRE -->
+  <div id="stage-tab-cv-letter" class="stage-tab-content" style="display:none">
+    <!-- CV ACCORDION -->
+    <div class="rev" style="margin-bottom:20px">
+      <div style="padding:16px;background:var(--g100);border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-left:4px solid var(--orange)" onclick="toggleAccordion(this)">
+        <strong style="font-size:14px;color:var(--text-main)">📄 Rédiger un bon CV — 7 rubriques</strong>
+        <span style="font-size:18px;color:var(--text-sub)">+</span>
       </div>
-      <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
-        <strong>💼 Job boards généralistes</strong><br/>
-        Indeed, LinkedIn, Welcome to the Jungle, Glassdoor, StaffMe
+      <div style="display:none;padding:16px;background:#fff;border:1px solid var(--g200);border-top:none;border-radius:0 0 8px 8px">
+        <div style="font-size:12px;line-height:1.8;color:var(--text-sub)">
+          <div style="margin-bottom:12px;padding:12px;background:var(--blue-light);border-radius:6px;color:var(--blue)"><strong>Format :</strong> 1 page | Verbes d'action | 1 CV par poste</div>
+          
+          <div style="display:grid;gap:10px">
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>1️⃣ Infos personnelles</strong> —  Prénom + NOM | Âge | Email (@dauphine) | Tél
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>2️⃣ Titre/accroche</strong> — Ex: "Étudiant L1 LSO | Passionné droit des affaires"
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>3️⃣ Formation</strong> — 2024–2025 | L1 Paris Dauphine | 2024 | Bac Mention Bien
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>4️⃣ Expériences</strong> — Du plus récent | Verbes d'action | Impact quantifié
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>5️⃣ Langues/IT</strong> — Anglais B2 | Python | Excel | (CECRL pour langues)
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>6️⃣ Engagements</strong> — Associatif | Humanitaire | Budget/collecte
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid var(--orange);border-radius:4px">
+              <strong>7️⃣ Centres d'intérêt</strong> — Tennis | Lecture | Podcasts | Voyage
+            </div>
+          </div>
+
+          <div style="margin-top:12px;padding:10px;background:#fee2e2;border-radius:6px;color:#991b1b;border-left:3px solid #ef4444;font-size:11px">
+            ❌ <strong>À éviter :</strong> Fautes | Trop de couleurs | Trous temporels | CV générique
+          </div>
+        </div>
       </div>
-      <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
-        <strong>⚖️ Spécialisés Droit/Éco</strong><br/>
-        Pointal (cabinets d'avocats), Jurisprudence, sites carrière des cabinets
+    </div>
+
+    <!-- LETTRE ACCORDION -->
+    <div class="rev" style="margin-bottom:20px">
+      <div style="padding:16px;background:var(--g100);border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-left:4px solid #10b981" onclick="toggleAccordion(this)">
+        <strong style="font-size:14px;color:var(--text-main)">💌 Lettre de motivation — Structure YOU-ME-WE</strong>
+        <span style="font-size:18px;color:var(--text-sub)">+</span>
       </div>
-      <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
-        <strong>🔗 Réseaux Dauphine</strong><br/>
-        Bureau des stages, Assos, Alumni, Événements networking
-      </div>
-      <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
-        <strong>📧 Candidatures spontanées</strong><br/>
-        <span style="font-size:11px">Les plus efficaces ! Contacte RH / responsables directement</span>
-      </div>
-      <div style="padding:14px;background:var(--g50);border-radius:8px;border:1px solid var(--g200)">
-        <strong>👥 Networking</strong><br/>
-        LinkedIn, événements, alumni = goldmine pour stages
+      <div style="display:none;padding:16px;background:#fff;border:1px solid var(--g200);border-top:none;border-radius:0 0 8px 8px">
+        <div style="font-size:12px;line-height:1.8;color:var(--text-sub)">
+          <div style="margin-bottom:12px;padding:12px;background:var(--green-light);border-radius:6px;color:#166534"><strong>Format :</strong> 1 page | Adaptée pour chaque candidature</div>
+          
+          <div style="display:grid;gap:10px">
+            <div style="padding:10px;background:var(--g50);border-left:3px solid #10b981;border-radius:4px">
+              <strong>📍 Entête</strong> — Ton nom | Email (@dauphine) | Tél | Date + Coordonnées employeur
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid #10b981;border-radius:4px">
+              <strong>1️⃣ Objet + Intro</strong> — "Candidature stage L1 — [Entreprise]"
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid #10b981;border-radius:4px">
+              <strong>2️⃣ YOU (Pourquoi?)</strong> — Attrait pour l'entreprise, la mission, vos motivations
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid #10b981;border-radius:4px">
+              <strong>3️⃣ ME (Mes compétences)</strong> — 1-2 expériences pertinentes qui vous rendent bon pour le job
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid #10b981;border-radius:4px">
+              <strong>4️⃣ WE (Vos qualités)</strong> — Vos atouts + désir d'apprendre + progresser ensemble
+            </div>
+            <div style="padding:10px;background:var(--g50);border-left:3px solid #10b981;border-radius:4px">
+              <strong>5️⃣ Fermeture</strong> — "Je prie d'agréer, Madame/Monsieur, mes salutations distinguées"
+            </div>
+          </div>
+
+          <div style="margin-top:12px;padding:10px;background:#fef3c7;border-radius:6px;color:#92400e;border-left:3px solid #eab308;font-size:11px">
+            ⚠️ <strong>À éviter :</strong> Généralités | Générique | Oublier signature
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- TAB: ANALYZER IA -->
+  <div id="stage-tab-analyzer" class="stage-tab-content" style="display:none">
+    <div class="rev" style="padding:24px;border-radius:12px;background:#f5f3ff;border:2px solid #8b5cf6;border-left:6px solid #8b5cf6">
+      <h3 style="font-size:18px;font-weight:700;color:#6d28d9;margin-bottom:8px">🤖 Analyseur IA — CV & Lettre de Motivation</h3>
+      <p style="font-size:12px;color:var(--text-sub);margin:0">L'IA (Groq) analyse votre CV et lettre en fonction de votre profil ET de l'entreprise visée pour des conseils hyper-pertinents.</p>
+    </div>
+
+    <div style="margin-top:24px">
+      <!-- STEP 1: QUESTIONNAIRE -->
+      <div id="stage-analyzer-form" style="">
+        <h3 style="font-size:16px;font-weight:700;color:var(--text-main);margin-bottom:16px">◆ Étape 1 — Parlez-nous de vous et de votre candidature</h3>
+        
+        <div style="display:grid;gap:16px">
+          <!-- LEVEL -->
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">Quel est ton niveau?</label>
+            <select id="stageAnalyzerLevel" style="width:100%;padding:10px;border:1px solid var(--g200);border-radius:6px;font-size:12px">
+              <option value="">-- Sélectionne --</option>
+              <option value="L1 LSO">L1 LSO (Licence Droit-Éco)</option>
+              <option value="L2 LSO">L2 LSO</option>
+              <option value="L3 LSO">L3 LSO</option>
+              <option value="Master">Master (M1/M2)</option>
+            </select>
+          </div>
+
+          <!-- PROFILE -->
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">Décris brièvement ton profil (compétences clés, experiences, atouts)</label>
+            <textarea id="stageAnalyzerProfile" placeholder="Ex: Expérience en gestion de projet, bon en Excel et Python, passionné par le droit des affaires..." style="width:100%;padding:12px;border:1px solid var(--g200);border-radius:6px;font-size:12px;min-height:80px;font-family:inherit"></textarea>
+          </div>
+
+          <!-- COMPANY -->
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">L'entreprise / le secteur visé?</label>
+            <input id="stageAnalyzerCompany" type="text" placeholder="Ex: BNP Paribas · M&A | Startup Fintech | Cabinet d'avocats | Conseil..." style="width:100%;padding:10px;border:1px solid var(--g200);border-radius:6px;font-size:12px">
+          </div>
+
+          <!-- POSITION -->
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">Le poste / la mission recherchée?</label>
+            <input id="stageAnalyzerPosition" type="text" placeholder="Ex: Auxiliaire d'été | Stage Compliance | Stage M&A | Junior Consultant..." style="width:100%;padding:10px;border:1px solid var(--g200);border-radius:6px;font-size:12px">
+          </div>
+
+          <!-- CV TEXT -->
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">Colle ton CV (ou un extrait)</label>
+            <textarea id="stageAnalyzerCv" placeholder="Colle le texte de ton CV..." style="width:100%;padding:12px;border:1px solid var(--g200);border-radius:6px;font-size:12px;min-height:100px;font-family:monospace"></textarea>
+          </div>
+
+          <!-- LETTER TEXT -->
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">Colle ta lettre (ou un extrait / brouillon)</label>
+            <textarea id="stageAnalyzerLetter" placeholder="Colle ta lettre de motivation..." style="width:100%;padding:12px;border:1px solid var(--g200);border-radius:6px;font-size:12px;min-height:100px;font-family:monospace"></textarea>
+          </div>
+
+          <!-- SUBMIT BUTTON -->
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <button onclick="analyzeDocumentsWithGroq()" style="flex:1;padding:12px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+              Analyser avec l'IA
+            </button>
+            <button onclick="clearStageAnalyzer()" style="flex:1;padding:12px;background:var(--g100);color:var(--text-main);border:1px solid var(--g200);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+              Effacer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: RESULTS -->
+      <div id="stage-analyzer-results" style="display:none;margin-top:24px">
+        <div style="padding:16px;background:var(--g50);border-radius:8px;margin-bottom:16px;border-left:4px solid var(--blue)">
+          <strong style="color:var(--text-main);font-size:13px">✨ Analyse IA complétée</strong>
+        </div>
+        <div id="stageAnalyzerOutput" style="padding:16px;background:#fff;border:1px solid var(--g200);border-radius:8px;font-size:12px;line-height:1.8;color:var(--text-sub);white-space:pre-wrap;font-family:monospace"></div>
+        <button onclick="
+          document.getElementById('stage-analyzer-form').style.display='block';
+          document.getElementById('stage-analyzer-results').style.display='none'
+        " style="margin-top:16px;padding:10px 16px;background:var(--g100);color:var(--text-main);border:1px solid var(--g200);border-radius:8px;font-size:12px;cursor:pointer">
+          ← Retour au questionnaire
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 </div>
@@ -11525,7 +11575,121 @@ if (document.readyState === 'loading') {
   initLogin();
 }
 
+// ════ STAGE SECTION - INTERACTIVE TAB & ANALYZER ════
+function switchStageTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.stage-tab-content').forEach(function(tab) {
+    tab.style.display = 'none';
+  });
+  // Remove active button styling
+  document.querySelectorAll('.stage-tab-btn').forEach(function(btn) {
+    btn.style.borderBottomColor = 'transparent';
+    btn.style.color = 'var(--text-sub)';
+  });
+  // Show selected tab
+  var tabEl = document.getElementById('stage-tab-' + tabName);
+  if (tabEl) tabEl.style.display = 'block';
+  // Highlight button
+  var btn = document.querySelector('[data-tab="' + tabName + '"]');
+  if (btn) {
+    btn.style.borderBottomColor = 'var(--blue)';
+    btn.style.color = 'var(--blue)';
+  }
+}
 
+function toggleAccordion(headerEl) {
+  var contentEl = headerEl.nextElementSibling;
+  if (!contentEl) return;
+  var isOpen = contentEl.style.display !== 'none';
+  contentEl.style.display = isOpen ? 'none' : 'block';
+  var spanEl = headerEl.querySelector('span');
+  if (spanEl) spanEl.textContent = isOpen ? '+' : '−';
+}
+
+function analyzeDocumentsWithGroq() {
+  var level = document.getElementById('stageAnalyzerLevel').value;
+  var profile = document.getElementById('stageAnalyzerProfile').value;
+  var company = document.getElementById('stageAnalyzerCompany').value;
+  var position = document.getElementById('stageAnalyzerPosition').value;
+  var cvText = document.getElementById('stageAnalyzerCv').value;
+  var letterText = document.getElementById('stageAnalyzerLetter').value;
+
+  if (!level || !profile || !company || !position || !cvText || !letterText) {
+    alert('⚠️ Remplis tous les champs avant d\'analyser!');
+    return;
+  }
+
+  var formDiv = document.getElementById('stage-analyzer-form');
+  var resultsDiv = document.getElementById('stage-analyzer-results');
+  var outputDiv = document.getElementById('stageAnalyzerOutput');
+
+  formDiv.style.display = 'none';
+  resultsDiv.style.display = 'block';
+  outputDiv.textContent = '⏳ Analyse en cours... Patiente un moment...';
+
+  var prompt = `Tu es un expert en recrutement et carrière pour les étudiants Dauphine en droit et économie.
+
+PROFIL DE L'ÉTUDIANT:
+- Niveau: ${level}
+- Profil: ${profile}
+- Entreprise/secteur visé: ${company}
+- Poste recherché: ${position}
+
+CV FOURNI:
+${cvText}
+
+LETTRE DE MOTIVATION FOURNIE:
+${letterText}
+
+ANALYSE DEMANDÉE:
+1. Analyse critique du CV: forces, faiblesses, points à améliorer
+2. Analyse critique de la lettre: cohérence, pertinence, impact
+3. RECOMMANDATIONS PRÉCISES: quels points de son profil mettre davantage en avant en fonction de l'entreprise visée et du poste
+4. Suggestions d'amélioration du CV et lettre pour cette candidature spécifique
+5. Points clés à développer lors de l'entretien
+
+Sois constructif, précis, et donne des conseils actionnables. Focalise-toi sur le FIT candidat<->entreprise.`;
+
+  (async function() {
+    try {
+      var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + GROQ_API_KEY
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          max_tokens: 3000,
+          temperature: 0.7,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) {
+        var errData = await res.json();
+        throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
+      }
+
+      var data = await res.json();
+      var analysis = data.choices[0].message.content.trim();
+      outputDiv.textContent = analysis;
+    } catch (e) {
+      outputDiv.textContent = '❌ Erreur lors de l\'analyse: ' + e.message;
+    }
+  })();
+}
+
+function clearStageAnalyzer() {
+  document.getElementById('stageAnalyzerLevel').value = '';
+  document.getElementById('stageAnalyzerProfile').value = '';
+  document.getElementById('stageAnalyzerCompany').value = '';
+  document.getElementById('stageAnalyzerPosition').value = '';
+  document.getElementById('stageAnalyzerCv').value = '';
+  document.getElementById('stageAnalyzerLetter').value = '';
+  document.getElementById('stage-analyzer-form').style.display = 'block';
+  document.getElementById('stage-analyzer-results').style.display = 'none';
+}
 
 // ════ SIDEBAR NAVIGATION ════
 function showPage(pageId, btn) {
