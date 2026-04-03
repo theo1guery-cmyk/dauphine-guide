@@ -6369,7 +6369,7 @@ aside.sidebar {
         <div style="padding:16px;background:var(--g50);border-radius:8px;margin-bottom:16px;border-left:4px solid var(--blue)">
           <strong style="color:var(--text-main);font-size:13px">✨ Analyse IA complétée</strong>
         </div>
-        <div id="stageAnalyzerOutput" style="padding:16px;background:#fff;border:1px solid var(--g200);border-radius:8px;font-size:12px;line-height:1.8;color:var(--text-sub);white-space:pre-wrap;font-family:monospace"></div>
+        <div id="stageAnalyzerOutput" style="padding:20px;background:#fff;border:1px solid var(--g200);border-radius:12px;font-size:13px;line-height:1.9;color:var(--text-main)"></div>
         <button onclick="
           document.getElementById('stage-analyzer-form').style.display='block';
           document.getElementById('stage-analyzer-results').style.display='none'
@@ -11625,7 +11625,7 @@ function analyzeDocumentsWithGroq() {
 
   formDiv.style.display = 'none';
   resultsDiv.style.display = 'block';
-  outputDiv.textContent = '⏳ Analyse en cours... Patiente un moment...';
+  outputDiv.innerHTML = '<div style="text-align:center;padding:40px;color:var(--blue)"><div style="font-size:24px;margin-bottom:12px">⏳</div><strong>Analyse en cours...</strong><div style="font-size:12px;color:var(--text-sub);margin-top:8px">Patiente un moment pendant que Groq analyse ton profil...</div></div>';
 
   var prompt = `Tu es un expert en recrutement et carrière pour les étudiants Dauphine en droit et économie.
 
@@ -11673,11 +11673,86 @@ Sois constructif, précis, et donne des conseils actionnables. Focalise-toi sur 
 
       var data = await res.json();
       var analysis = data.choices[0].message.content.trim();
-      outputDiv.textContent = analysis;
+      
+      // Format the output beautifully
+      var formattedOutput = formatAnalysisOutput(analysis);
+      outputDiv.innerHTML = formattedOutput;
     } catch (e) {
-      outputDiv.textContent = '❌ Erreur lors de l\'analyse: ' + e.message;
+      outputDiv.innerHTML = '<div style="padding:20px;background:#fee2e2;border-radius:8px;border-left:4px solid #ef4444;color:#991b1b"><strong>❌ Erreur lors de l\'analyse</strong><div style="font-size:12px;margin-top:8px">' + e.message + '</div></div>';
     }
   })();
+}
+
+function formatAnalysisOutput(text) {
+  var html = '';
+  var lines = text.split('\n');
+  var inSection = false;
+  var sectionEmoji = {
+    'Analyse du CV': '📄',
+    'Analyse de la lettre': '💌',
+    'Recommandations': '🎯',
+    'Suggestions': '✨',
+    'Points clés': '🔑',
+    'CV': '📄',
+    'Lettre': '💌',
+    'Forces': '✅',
+    'Faiblesses': '⚠️',
+    'Améliorations': '🔧'
+  };
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+
+    // Detect section headers
+    if (line.match(/^(#{1,3}|\*\*|###|==|--)/)) {
+      line = line.replace(/^#+\s*/, '').replace(/\*\*/g, '').replace(/^(==|--)+/, '');
+      var emoji = '📌';
+      for (var key in sectionEmoji) {
+        if (line.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
+          emoji = sectionEmoji[key];
+          break;
+        }
+      }
+      html += '<div style="margin-top:16px;margin-bottom:12px;padding:12px 14px;background:linear-gradient(135deg, var(--blue-light) 0%, #e0e9ff 100%);border-left:4px solid var(--blue);border-radius:6px"><strong style="font-size:14px;color:var(--blue)">' + emoji + ' ' + line + '</strong></div>';
+    }
+    // Lists and bullets
+    else if (line.match(/^[-*•]\s/) || line.match(/^\d+\.\s/)) {
+      line = line.replace(/^[-*•]\s/, '').replace(/^\d+\.\s/, '');
+      html += '<div style="margin-left:16px;margin-bottom:8px;padding:8px 12px;background:var(--g50);border-radius:6px;border-left:3px solid var(--text-sub);font-size:12px">• ' + highlightKeywords(line) + '</div>';
+    }
+    // Bold text
+    else if (line.match(/^\*\*.*\*\*$/)) {
+      line = line.replace(/\*\*/g, '');
+      html += '<div style="margin-bottom:10px;padding:10px 12px;background:#fff7ed;border-left:3px solid var(--orange);border-radius:6px;font-weight:600;font-size:13px;color:var(--text-main)">' + highlightKeywords(line) + '</div>';
+    }
+    // Regular paragraph
+    else {
+      html += '<div style="margin-bottom:10px;line-height:1.7;font-size:13px;color:var(--text-main)">' + highlightKeywords(line) + '</div>';
+    }
+  }
+
+  // Wrap in container
+  return '<div style="display:grid;gap:8px">' + html + '</div>';
+}
+
+function highlightKeywords(text) {
+  // Highlight important keywords
+  var keywords = [
+    { word: 'Forces', color: '#16a34a', bg: '#f0fdf4' },
+    { word: 'Faiblesses', color: '#ef4444', bg: '#fee2e2' },
+    { word: 'À améliorer', color: '#ea580c', bg: '#fff7ed' },
+    { word: 'suggestion', color: '#0891b2', bg: '#ecf9fc' },
+    { word: 'Conseil', color: '#6d28d9', bg: '#f5f3ff' },
+    { word: 'Important', color: '#991b1b', bg: '#fef2f2' },
+    { word: 'Recommandé', color: '#7c2d12', bg: '#fed7aa' }
+  ];
+
+  for (var k = 0; k < keywords.length; k++) {
+    var regex = new RegExp('\\b' + keywords[k].word + '\\b', 'gi');
+    text = text.replace(regex, '<span style="padding:2px 6px;background:' + keywords[k].bg + ';color:' + keywords[k].color + ';border-radius:3px;font-weight:600;font-size:12px">' + keywords[k].word + '</span>');
+  }
+  return text;
 }
 
 function clearStageAnalyzer() {
