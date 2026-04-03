@@ -40,7 +40,7 @@
   --sh:0 4px 16px rgba(0,0,0,.3),0 1px 4px rgba(0,0,0,.2);
   --shs:0 1px 3px rgba(0,0,0,.2)
 }
-html,body{height:100%;overflow:hidden;scroll-behavior:smooth}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{font-family:'Figtree',sans-serif;background:var(--bg-page);color:var(--text-main);line-height:1.6;transition:background .3s,color .3s}
 input,textarea,select{background:var(--bg-card,#fff);color:var(--text-main,#111827);border-color:var(--border-col,#e2e6ec)}
 [data-theme="dark"] nav{background:rgba(20,23,32,.93)}
@@ -1354,7 +1354,7 @@ html{scroll-behavior:smooth}
 .sidebar-dark-btn:hover{background:rgba(255,255,255,.12);color:#fff}
 
 /* MAIN CONTENT */
-.main-content{margin-left:var(--sidebar-w);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden}
+.main-content{margin-left:var(--sidebar-w);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:none}
 
 /* PAGE SECTIONS */
 .page-section{display:none}
