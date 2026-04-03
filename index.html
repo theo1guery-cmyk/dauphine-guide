@@ -1170,10 +1170,11 @@ html{scroll-behavior:smooth}
 #loginScreen{
   position:fixed;inset:0;z-index:999999;
   background:linear-gradient(155deg,#003d7a 0%,#0057ad 55%,#1a7ad4 100%);
-  display:none;align-items:center;justify-content:center;padding:20px;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:1;pointer-events:auto;
   transition:opacity .5s ease
 }
-#loginScreen.fade-out{opacity:0;pointer-events:none;display:none}
+#loginScreen.fade-out{display:none!important;opacity:0;pointer-events:none!important;z-index:-1}
 .login-card{
   background:#fff;border-radius:20px;padding:40px 36px;
   width:100%;max-width:380px;text-align:center;
@@ -3307,6 +3308,7 @@ aside.sidebar {
     --bubble-other: #1a2d5a;
   }
   #page-chat { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); height: calc(100vh - 62px); display: flex; overflow: hidden; }
+  #page-chat:not(.active) { display: none !important; pointer-events: none !important; }
 
   /* ══ INTÉGRATION DANS L'APPLI PRINCIPALE ══
      Pour intégrer dans ta grosse appli :
@@ -11207,8 +11209,10 @@ function applyAccess(access) {
 function hideLoginScreen() {
   var screen = document.getElementById('loginScreen');
   if (!screen) return;
-  screen.style.display = 'none';
   screen.classList.add('fade-out');
+  screen.style.display = 'none';
+  screen.style.pointerEvents = 'none';
+  screen.style.zIndex = '-1';
   // Rafraîchir tous les widgets de la page d'accueil après connexion
   setTimeout(function() { updateHomeStats(); }, 100);
 }
