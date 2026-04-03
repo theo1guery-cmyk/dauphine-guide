@@ -9588,10 +9588,37 @@ function parseIcs(text){
     else if(key==='DTSTART'){
       var v=line.slice(line.lastIndexOf(':')+1).trim();
       if(v.length>=8){cur.date=v.slice(0,4)+'-'+v.slice(4,6)+'-'+v.slice(6,8);}
-      cur.time=(v.length>=13)?v.slice(9,11)+':'+v.slice(11,13):'00:00';
+      // Gestion du fuseau horaire pour les heures
+      var timeStr = (v.length>=13)?v.slice(9,11)+':'+v.slice(11,13):'00:00';
+      // Si le format est UTC (finit par Z), convertir vers heure locale
+      if(v.endsWith('Z')){
+        var isUTC = true;
+        var dateTime = v.slice(0,4)+'-'+v.slice(4,6)+'-'+v.slice(6,8)+'T'+timeStr;
+        try{
+          var utcDate = new Date(dateTime + 'Z');
+          var hours = String(utcDate.getHours()).padStart(2,'0');
+          var minutes = String(utcDate.getMinutes()).padStart(2,'0');
+          timeStr = hours + ':' + minutes;
+        }catch(e){}
+      }
+      cur.time = timeStr;
     }else if(key==='DTEND'){
       var v2=line.slice(line.lastIndexOf(':')+1).trim();
-      if(v2.length>=13)cur.endTime=v2.slice(9,11)+':'+v2.slice(11,13);
+      if(v2.length>=13){
+        var endTimeStr = v2.slice(9,11)+':'+v2.slice(11,13);
+        // Même gestion pour l'heure de fin
+        if(v2.endsWith('Z')){
+          try{
+            var dateStr = line.slice(0,line.indexOf(':')).indexOf('DTSTART') >= 0 ? 
+              (cur.date || new Date().toISOString().slice(0,10)) : cur.date;
+            var utcDate2 = new Date(dateStr+'T'+endTimeStr+'Z');
+            var hours2 = String(utcDate2.getHours()).padStart(2,'0');
+            var minutes2 = String(utcDate2.getMinutes()).padStart(2,'0');
+            endTimeStr = hours2 + ':' + minutes2;
+          }catch(e){}
+        }
+        cur.endTime = endTimeStr;
+      }
     }
   }
   events.sort(function(a,b){return(a.date+a.time).localeCompare(b.date+b.time);});
