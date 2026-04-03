@@ -686,9 +686,11 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 [data-theme="dark"] .profil-field input,[data-theme="dark"] .profil-field select{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
 
 /* ════ BACKGROUND CUSTOMIZER ════ */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:4000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);z-index:4000;align-items:center;justify-content:center;padding:20px;animation:fadeInOverlay .25s ease-out}
+@keyframes fadeInOverlay{from{opacity:0;backdrop-filter:blur(0px);}to{opacity:1;backdrop-filter:blur(2px)}}
 .modal-overlay.open{display:flex}
-.modal{background:var(--bg-card,#fff);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,.2);padding:24px}
+.modal{background:var(--bg-card,#fff);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 32px 96px rgba(0,0,0,.28),0 12px 32px rgba(0,0,0,.15);padding:24px;animation:slideUpModal .3s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:4001}
+@keyframes slideUpModal{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1}}
 #bgPreview{background-size:cover;background-position:center;transition:filter .3s;background-attachment:fixed}
 #bgPreview.has-image{filter:blur(8px)}
 [data-theme="dark"] #bgPreview.has-image{filter:blur(8px)}
@@ -698,8 +700,8 @@ body{
   background-size:cover;
   background-position:var(--bg-pos-x, 50%) var(--bg-pos-y, 50%);
   transition:background .4s ease;
-  min-height:100vh;
-  overflow-y:scroll
+  overflow-y:auto;
+  height:auto
 }
 body.has-custom-bg{
   filter:blur(var(--bg-blur-px,8px));
