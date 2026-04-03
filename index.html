@@ -689,15 +689,17 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:4000;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
 .modal{background:var(--bg-card,#fff);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,.2);padding:24px}
-#bgPreview{background-size:cover;background-position:center;transition:filter .3s,background 0.3s}
-#bgPreview.has-image{filter:blur(8px);background:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,.25)),var(--bg-preview)}
-[data-theme="dark"] #bgPreview.has-image{filter:blur(8px);background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),var(--bg-preview)}
+#bgPreview{background-size:cover;background-position:center;transition:filter .3s;background-attachment:fixed}
+#bgPreview.has-image{filter:blur(8px)}
+[data-theme="dark"] #bgPreview.has-image{filter:blur(8px)}
 :root:has(#bgCustomizerModal){--bg-with-blur:var(--bg-preview)}
 body{
-  background-attachment:fixed;
+  background-attachment:fixed !important;
   background-size:cover;
-  background-position:center;
-  transition:background .4s ease
+  background-position:calc(var(--bg-pos-x,50) * 1%) calc(var(--bg-pos-y,50) * 1%);
+  transition:background .4s ease;
+  min-height:100vh;
+  overflow-y:scroll
 }
 body.has-custom-bg{
   filter:blur(var(--bg-blur-px,8px));
@@ -4253,6 +4255,23 @@ aside.sidebar {
       <div style="display:flex;align-items:center;gap:12px">
         <input type="range" id="bgBlurIntensity" min="0" max="20" value="8" style="flex:1;cursor:pointer" oninput="previewBackground()">
         <span id="bgBlurValue" style="min-width:30px;text-align:right;font-weight:600;color:var(--blue)">8px</span>
+      </div>
+    </div>
+
+    <!-- POSITIONING -->
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">📍 Position horizontale</label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="range" id="bgPosX" min="0" max="100" value="50" style="flex:1;cursor:pointer" oninput="previewBackground()">
+        <span id="bgPosXValue" style="min-width:40px;text-align:right;font-weight:600;color:var(--blue)">50%</span>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--text-main);margin-bottom:8px">📍 Position verticale</label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="range" id="bgPosY" min="0" max="100" value="50" style="flex:1;cursor:pointer" oninput="previewBackground()">
+        <span id="bgPosYValue" style="min-width:40px;text-align:right;font-weight:600;color:var(--blue)">50%</span>
       </div>
     </div>
 
@@ -11689,10 +11708,19 @@ function previewBackground() {
   var file = document.getElementById('bgImageInput').files[0];
   var blur = document.getElementById('bgBlurIntensity').value;
   var overlay = document.getElementById('bgOverlayIntensity').value;
+  var posX = document.getElementById('bgPosX').value;
+  var posY = document.getElementById('bgPosY').value;
   var preview = document.getElementById('bgPreview');
 
   document.getElementById('bgBlurValue').textContent = blur + 'px';
   document.getElementById('bgOverlayValue').textContent = overlay + '%';
+  document.getElementById('bgPosXValue').textContent = posX + '%';
+  document.getElementById('bgPosYValue').textContent = posY + '%';
+
+  // Update preview element styles
+  preview.style.backgroundPosition = posX + '% ' + posY + '%';
+  document.documentElement.style.setProperty('--bg-pos-x', posX);
+  document.documentElement.style.setProperty('--bg-pos-y', posY);
 
   if (file) {
     var reader = new FileReader();
@@ -11751,6 +11779,8 @@ function applyBackground() {
   var file = document.getElementById('bgImageInput').files[0];
   var blur = document.getElementById('bgBlurIntensity').value;
   var overlay = document.getElementById('bgOverlayIntensity').value;
+  var posX = document.getElementById('bgPosX').value;
+  var posY = document.getElementById('bgPosY').value;
 
   if (!file) {
     alert('⚠️ Choisis d\'abord une image!');
@@ -11775,7 +11805,9 @@ function applyBackground() {
       var bgData = {
         image: e.target.result,
         blur: parseInt(blur),
-        overlay: parseInt(overlay)
+        overlay: parseInt(overlay),
+        posX: parseInt(posX),
+        posY: parseInt(posY)
       };
 
       // Save to IndexedDB
@@ -11796,12 +11828,14 @@ function applyBackground() {
 function applyBgToDOM(bgData) {
   document.body.style.backgroundImage = 'url(' + bgData.image + ')';
   document.body.style.backgroundSize = 'cover';
-  document.body.style.backgroundPosition = 'center';
+  document.body.style.backgroundPosition = (bgData.posX || 50) + '% ' + (bgData.posY || 50) + '%';
   document.body.style.backgroundAttachment = 'fixed';
   document.body.classList.add('has-custom-bg');
 
   document.documentElement.style.setProperty('--bg-blur-px', bgData.blur + 'px');
   document.documentElement.style.setProperty('--bg-overlay-alpha', bgData.overlay / 100);
+  document.documentElement.style.setProperty('--bg-pos-x', bgData.posX || 50);
+  document.documentElement.style.setProperty('--bg-pos-y', bgData.posY || 50);
 }
 
 function loadBackground() {
@@ -11830,6 +11864,8 @@ function resetBackground() {
   document.getElementById('bgPreview').classList.remove('has-image');
   document.getElementById('bgBlurIntensity').value = '8';
   document.getElementById('bgOverlayIntensity').value = '25';
+  document.getElementById('bgPosX').value = '50';
+  document.getElementById('bgPosY').value = '50';
 
   alert('🔄 Fond d\'écran réinitialisé');
 }
