@@ -11274,6 +11274,7 @@ function showPage(pageId, btn) {
     setTimeout(function() {
       wkOff = 0; // reset to current week
       renderWeek();
+      renderNextCours(); // ← Mettre à jour le compteur du prochain cours
       // Scroll to today's column
       setTimeout(function() {
         var todayCol = document.querySelector('.wdh.tod');
