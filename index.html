@@ -523,85 +523,83 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 #morphOverlay{position:fixed;inset:0;background:linear-gradient(155deg,#000c1a 0%,#001a3a 40%,#003d7a 100%);z-index:999998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease;overflow:hidden;perspective:1200px}
 #morphOverlay.active{opacity:1;pointer-events:auto}
 #morphOverlay.fade-out{opacity:0;pointer-events:none;transition:opacity .8s ease}
-/* Fond particules */
-.morph-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.morph-particle{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(77,159,255,.4);animation:morphFloat 4s ease-in-out infinite}
-@keyframes morphFloat{0%,100%{transform:translateY(0) scale(1);opacity:.3}50%{transform:translateY(-40px) scale(1.5);opacity:.7}}
-/* Halo lumineux central */
-.morph-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,87,173,.4) 0%,rgba(0,61,122,.15) 40%,transparent 70%);filter:blur(40px);animation:morphGlowPulse 2s ease-in-out infinite;pointer-events:none}
-@keyframes morphGlowPulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:.9}}
+
+/* Particules ambiantes */
+.m-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.m-dot{position:absolute;border-radius:50%;background:rgba(77,159,255,.35);animation:mDotFloat linear infinite}
+@keyframes mDotFloat{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translateY(-100vh) scale(.5);opacity:0}}
+
+/* Halo central */
+.m-glow{position:absolute;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(0,87,173,.5) 0%,transparent 70%);filter:blur(50px);opacity:.4;pointer-events:none;transition:all .6s ease}
+.m-glow.intense{width:600px;height:600px;opacity:.8;filter:blur(70px)}
+.m-glow.supernova{width:2000px;height:2000px;opacity:1;filter:blur(30px);background:radial-gradient(circle,rgba(255,255,255,.9) 0%,rgba(77,159,255,.4) 30%,transparent 60%);transition:all .5s ease}
+
 /* Scène */
-.morph-scene{position:relative;width:500px;height:500px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d}
-/* Logo principal */
-.morph-logo{width:120px;height:120px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.05));border:2px solid rgba(255,255,255,.3);border-radius:28px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif,serif);font-size:62px;font-style:italic;color:#fff;z-index:10;position:relative;box-shadow:0 0 60px rgba(0,87,173,.5),0 0 120px rgba(0,87,173,.2),inset 0 1px 0 rgba(255,255,255,.2);text-shadow:0 0 30px rgba(255,255,255,.5);transform-style:preserve-3d;backface-visibility:hidden}
-/* Phase 1 — Logo entre en scène */
-.morph-logo.phase-enter{animation:morphLogoEnter 1.6s cubic-bezier(.16,1,.3,1) forwards}
-@keyframes morphLogoEnter{
-  0%{opacity:0;transform:perspective(800px) rotateY(-180deg) rotateX(15deg) scale(.2);filter:blur(10px)}
-  30%{opacity:1;filter:blur(0)}
-  60%{transform:perspective(800px) rotateY(20deg) rotateX(-5deg) scale(1.08)}
-  80%{transform:perspective(800px) rotateY(-8deg) rotateX(2deg) scale(.98)}
-  100%{transform:perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)}
+.m-scene{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+
+/* Logo */
+.m-logo{width:110px;height:110px;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.04));border:2px solid rgba(255,255,255,.3);border-radius:26px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif,serif);font-size:58px;font-style:italic;color:#fff;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;box-shadow:0 0 40px rgba(0,87,173,.4),0 0 80px rgba(0,87,173,.15),inset 0 1px 0 rgba(255,255,255,.2);text-shadow:0 0 20px rgba(255,255,255,.4);cursor:default;transition:transform .3s ease,box-shadow .3s ease}
+.m-logo.idle{animation:mLogoIdle 3s ease-in-out infinite}
+@keyframes mLogoIdle{0%,100%{transform:translate(-50%,-50%) scale(1) perspective(800px) rotateY(0deg)}25%{transform:translate(-50%,-50%) scale(1.02) perspective(800px) rotateY(3deg)}75%{transform:translate(-50%,-50%) scale(.98) perspective(800px) rotateY(-3deg)}}
+.m-logo.hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 60px rgba(77,159,255,.6),0 0 120px rgba(0,87,173,.3);border-color:rgba(255,255,255,.5)}
+.m-logo.pressed{transform:translate(-50%,-50%) scale(.92);transition:transform .1s ease}
+.m-logo.spin{animation:mLogoSpin 1.5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes mLogoSpin{
+  0%{transform:translate(-50%,-50%) scale(1) perspective(800px) rotateY(0deg)}
+  30%{transform:translate(-50%,-50%) scale(1.2) perspective(800px) rotateY(200deg);box-shadow:0 0 100px rgba(77,159,255,.8)}
+  60%{transform:translate(-50%,-50%) scale(1.3) perspective(800px) rotateY(500deg);box-shadow:0 0 150px rgba(255,255,255,.6)}
+  100%{transform:translate(-50%,-50%) scale(1.4) perspective(800px) rotateY(720deg);box-shadow:0 0 200px rgba(255,255,255,1);filter:brightness(3)}
 }
-/* Phase 1b — Logo tourne en continu */
-.morph-logo.phase-spin{animation:morphLogoSpin 2s cubic-bezier(.45,.05,.55,.95) forwards}
-@keyframes morphLogoSpin{
-  0%{transform:perspective(800px) rotateY(0deg) scale(1)}
-  50%{transform:perspective(800px) rotateY(180deg) scale(1.1);box-shadow:0 0 80px rgba(77,159,255,.7),0 0 160px rgba(0,87,173,.4)}
-  100%{transform:perspective(800px) rotateY(360deg) scale(1)}
-}
-/* Phase 2 — Logo cracke */
-.morph-logo.phase-crack{animation:morphLogoCrack .6s cubic-bezier(.55,.06,.68,.19) forwards}
-@keyframes morphLogoCrack{
-  0%{transform:scale(1);opacity:1;filter:brightness(1)}
-  40%{transform:scale(1.15);filter:brightness(2)}
-  100%{transform:scale(0);opacity:0;filter:brightness(3)}
-}
-/* Lignes de crack */
-.morph-crack-line{position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 8px rgba(255,255,255,.8);pointer-events:none;z-index:20;opacity:0}
-.morph-crack-line.show{animation:morphCrackShow .3s ease forwards}
-@keyframes morphCrackShow{0%{opacity:0;transform:scaleX(0)}50%{opacity:1}100%{opacity:0;transform:scaleX(1)}}
+.m-logo.explode{animation:mLogoExplode .4s ease forwards}
+@keyframes mLogoExplode{0%{transform:translate(-50%,-50%) scale(1.4);opacity:1;filter:brightness(3)}100%{transform:translate(-50%,-50%) scale(0);opacity:0;filter:brightness(5)}}
+
+/* Hint texte */
+.m-hint{position:absolute;left:50%;bottom:calc(50% - 100px);transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.4);font-family:'Figtree',sans-serif;letter-spacing:.05em;opacity:0;transition:opacity .8s ease;white-space:nowrap}
+.m-hint.show{opacity:1}
+
+/* Faux curseur */
+.m-cursor{position:absolute;z-index:50;pointer-events:none;opacity:0;transition:opacity .4s ease;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.m-cursor.show{opacity:1}
+.m-cursor svg{width:24px;height:24px}
+.m-cursor.clicking svg{animation:mCursorClick .15s ease forwards}
+@keyframes mCursorClick{0%{transform:scale(1)}50%{transform:scale(.85) rotate(-5deg)}100%{transform:scale(1)}}
+
+/* Ripple au clic */
+.m-ripple{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.7);pointer-events:none;z-index:15;animation:mRipple .8s ease-out forwards}
+@keyframes mRipple{0%{width:0;height:0;opacity:1}100%{width:300px;height:300px;opacity:0;margin-left:-150px;margin-top:-150px}}
+
 /* Fragments */
-.morph-shard{position:absolute;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;z-index:5;opacity:0;transform-style:preserve-3d;transition:all .8s cubic-bezier(.34,1.56,.64,1)}
-.morph-shard-inner{width:100%;height:100%;border-radius:inherit;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,.6);font-weight:700;font-family:'Figtree',sans-serif;letter-spacing:.02em;text-transform:uppercase;overflow:hidden;position:relative}
-.morph-shard-inner::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.15);border-radius:inherit}
-.morph-shard .morph-shard-emoji{font-size:24px;display:block;filter:drop-shadow(0 0 8px rgba(255,255,255,.4))}
-/* Explosion des fragments */
-.morph-shard.phase-explode{animation:morphShardExplode .7s cubic-bezier(.16,1,.3,1) forwards}
-@keyframes morphShardExplode{
-  0%{opacity:0;transform:translate(0,0) scale(0) rotate(0deg);filter:brightness(3) blur(4px)}
-  40%{opacity:1;filter:brightness(1.5) blur(0)}
-  100%{opacity:1;transform:var(--explode-to) scale(1) rotate(var(--explode-rot));filter:brightness(1)}
-}
-/* Spiral retour */
-.morph-shard.phase-spiral{transition:all 1s cubic-bezier(.34,1.56,.64,1)}
-/* Glow sur les fragments */
-.morph-shard-glow{position:absolute;inset:-8px;border-radius:20px;background:radial-gradient(circle,var(--shard-color,.3) 0%,transparent 70%);opacity:0;animation:morphShardGlow 1.5s ease-in-out infinite;pointer-events:none}
-@keyframes morphShardGlow{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.1)}}
+.m-shard{position:absolute;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;opacity:0;z-index:5;left:50%;top:50%;margin-left:-27px;margin-top:-27px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.18);box-shadow:0 0 20px var(--sc,rgba(77,159,255,.3));transition:all .9s cubic-bezier(.34,1.56,.64,1)}
+.m-shard-emoji{font-size:24px;filter:drop-shadow(0 0 10px rgba(255,255,255,.5))}
+.m-shard-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:rgba(255,255,255,.5);font-family:'Figtree',sans-serif;white-space:nowrap;font-weight:600;letter-spacing:.04em;opacity:0;transition:opacity .4s ease .3s}
+.m-shard.placed .m-shard-label{opacity:1}
+
+/* Rings (ondes de choc) */
+.m-ring{position:absolute;left:50%;top:50%;border:2px solid rgba(255,255,255,.5);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:12;animation:mRingExpand .9s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes mRingExpand{0%{width:0;height:0;opacity:1;border-width:3px}100%{width:600px;height:600px;opacity:0;border-width:1px}}
+
 /* Lignes de connexion */
-.morph-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(77,159,255,.4),transparent);transform-origin:left center;opacity:0;pointer-events:none;z-index:3}
-.morph-line.show{animation:morphLineShow .6s ease forwards}
-@keyframes morphLineShow{0%{opacity:0;transform:scaleX(0)}50%{opacity:1}100%{opacity:.3;transform:scaleX(1)}}
-/* Flash d'impact */
-.morph-impact{position:absolute;width:100%;height:100%;pointer-events:none;z-index:30}
-.morph-impact-ring{position:absolute;left:50%;top:50%;width:0;height:0;border:2px solid rgba(255,255,255,.6);border-radius:50%;transform:translate(-50%,-50%);animation:morphRingExpand .8s cubic-bezier(.16,1,.3,1) forwards;pointer-events:none}
-@keyframes morphRingExpand{0%{width:0;height:0;opacity:1;border-width:3px}100%{width:500px;height:500px;opacity:0;border-width:1px}}
+.m-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(77,159,255,.5),transparent);transform-origin:left center;opacity:0;pointer-events:none;z-index:3}
+.m-line.show{animation:mLineIn .5s ease forwards}
+@keyframes mLineIn{0%{opacity:0;transform:scaleX(0)}100%{opacity:.35;transform:scaleX(1)}}
+
 /* Texte final */
-.morph-text{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);text-align:center;z-index:15;opacity:0;white-space:nowrap}
-.morph-text.show{animation:morphTextIn .8s cubic-bezier(.16,1,.3,1) forwards}
-@keyframes morphTextIn{0%{opacity:0;transform:translateX(-50%) translateY(20px) scale(.9)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
-.morph-text h2{font-family:var(--font-serif,serif);font-size:28px;color:#fff;margin:0;text-shadow:0 0 30px rgba(77,159,255,.5)}
-.morph-text p{font-size:13px;color:rgba(255,255,255,.5);margin:6px 0 0}
-/* Zoom final */
-#morphOverlay.phase-zoom{transition:transform 1s cubic-bezier(.55,.06,.68,.19),opacity 1s ease .2s;transform:scale(3);opacity:0}
+.m-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:20;opacity:0;pointer-events:none}
+.m-title.show{animation:mTitleIn .8s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes mTitleIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.m-title h2{font-family:var(--font-serif,serif);font-size:32px;color:#fff;margin:0 0 6px;text-shadow:0 0 40px rgba(77,159,255,.6);white-space:nowrap}
+.m-title p{font-size:13px;color:rgba(255,255,255,.45);margin:0}
+
+/* Zoom out final */
+#morphOverlay.phase-zoom{transition:transform 1.2s cubic-bezier(.55,.06,.68,.19),opacity .8s ease .4s;transform:scale(4);opacity:0}
+
 @media(max-width:600px){
-  .morph-scene{width:340px;height:340px}
-  .morph-logo{width:90px;height:90px;font-size:48px;border-radius:22px}
-  .morph-shard{width:44px;height:44px;border-radius:12px}
-  .morph-shard .morph-shard-emoji{font-size:20px}
-  .morph-glow{width:200px;height:200px}
-  .morph-text h2{font-size:22px}
-  .morph-text{bottom:40px}
+  .m-logo{width:85px;height:85px;font-size:44px;border-radius:20px}
+  .m-shard{width:44px;height:44px;border-radius:12px;margin-left:-22px;margin-top:-22px}
+  .m-shard-emoji{font-size:20px}
+  .m-title h2{font-size:24px}
+  .m-hint{font-size:11px;bottom:calc(50% - 80px)}
+  .m-glow{width:180px;height:180px}
 }
 
 /* ============================
@@ -4415,12 +4413,17 @@ aside.sidebar {
 
 <!-- ══════════════ MORPH ANIMATION ══════════════ -->
 <div id="morphOverlay">
-  <div class="morph-particles" id="morphParticles"></div>
-  <div class="morph-glow"></div>
-  <div class="morph-scene" id="morphScene">
-    <div class="morph-logo" id="morphLogo">D</div>
+  <div class="m-particles" id="mParticles"></div>
+  <div class="m-glow" id="mGlow"></div>
+  <div class="m-scene" id="mScene">
+    <div class="m-logo idle" id="mLogo">D</div>
+    <div class="m-hint" id="mHint"></div>
   </div>
-  <div class="morph-text" id="morphText">
+  <!-- Faux curseur SVG -->
+  <div class="m-cursor" id="mCursor">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M5 3l14 8-6.5 1.5L11 19z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="m-title" id="mTitle">
     <h2>Bienvenue sur <em>DauphineGuide</em></h2>
     <p>Ton guide L1 Droit-Éco · Paris-Dauphine PSL</p>
   </div>
@@ -12210,220 +12213,237 @@ function hideLoginScreen() {
   setTimeout(function() { updateHomeStats(); }, 100);
 }
 
-// ─── MORPH ANIMATION (Logo explose en sections) ───
+// ─── MORPH ANIMATION (Curseur clique sur le logo) ───
 function startMorphAnimation() {
   window._orbitalRunning = true;
   var overlay = document.getElementById('morphOverlay');
-  var scene = document.getElementById('morphScene');
-  var logo = document.getElementById('morphLogo');
+  var scene = document.getElementById('mScene');
+  var logo = document.getElementById('mLogo');
+  var cursor = document.getElementById('mCursor');
+  var glow = document.getElementById('mGlow');
+  var hint = document.getElementById('mHint');
+  var title = document.getElementById('mTitle');
+  var particlesEl = document.getElementById('mParticles');
   if (!overlay || !scene || !logo) return;
 
   var sections = [
-    {e:'🏠',l:'Accueil',c:'rgba(0,87,173,.4)'},
-    {e:'🧮',l:'Simulateur',c:'rgba(0,150,136,.4)'},
-    {e:'🃏',l:'Flashcards',c:'rgba(156,39,176,.4)'},
-    {e:'📅',l:'Planning',c:'rgba(255,152,0,.4)'},
-    {e:'💬',l:'Chat',c:'rgba(33,150,243,.4)'},
-    {e:'🗺️',l:'Campus',c:'rgba(76,175,80,.4)'},
-    {e:'📚',l:'Ressources',c:'rgba(121,85,72,.4)'},
-    {e:'🏛️',l:'Assos',c:'rgba(63,81,181,.4)'},
-    {e:'💸',l:'Bons plans',c:'rgba(255,193,7,.4)'},
-    {e:'💼',l:'Stage',c:'rgba(96,125,139,.4)'},
-    {e:'⏱️',l:'Pomodoro',c:'rgba(244,67,54,.4)'},
-    {e:'📰',l:'News',c:'rgba(0,188,212,.4)'}
+    {e:'🏠',l:'Accueil',c:'rgba(0,87,173,.35)'},
+    {e:'🧮',l:'Simulateur',c:'rgba(0,150,136,.35)'},
+    {e:'🃏',l:'Flashcards',c:'rgba(156,39,176,.35)'},
+    {e:'📅',l:'Planning',c:'rgba(255,152,0,.35)'},
+    {e:'💬',l:'Chat',c:'rgba(33,150,243,.35)'},
+    {e:'🗺️',l:'Campus',c:'rgba(76,175,80,.35)'},
+    {e:'📚',l:'Ressources',c:'rgba(121,85,72,.35)'},
+    {e:'🏛️',l:'Assos',c:'rgba(63,81,181,.35)'},
+    {e:'💸',l:'Bons plans',c:'rgba(255,193,7,.35)'},
+    {e:'💼',l:'Stage',c:'rgba(96,125,139,.35)'},
+    {e:'⏱️',l:'Pomodoro',c:'rgba(244,67,54,.35)'},
+    {e:'📰',l:'News',c:'rgba(0,188,212,.35)'}
   ];
   var total = sections.length;
   var isMobile = window.innerWidth < 600;
-  var cx = scene.offsetWidth / 2;
-  var cy = scene.offsetHeight / 2;
-  var shardSize = isMobile ? 44 : 52;
-  var half = shardSize / 2;
 
-  // Générer les particules de fond
-  var particlesEl = document.getElementById('morphParticles');
+  // Reset
+  overlay.classList.remove('fade-out', 'phase-zoom');
+  overlay.classList.add('active');
+  logo.className = 'm-logo idle';
+  logo.style.display = 'flex';
+  logo.style.opacity = '1';
+  cursor.classList.remove('show', 'clicking');
+  if (glow) { glow.className = 'm-glow'; }
+  if (hint) { hint.classList.remove('show'); hint.textContent = ''; }
+  if (title) title.classList.remove('show');
+  scene.querySelectorAll('.m-shard,.m-ring,.m-ripple,.m-line').forEach(function(e){ e.remove(); });
+
+  // Particules de fond
   particlesEl.innerHTML = '';
-  for (var p = 0; p < 40; p++) {
+  for (var p = 0; p < 50; p++) {
     var dot = document.createElement('div');
-    dot.className = 'morph-particle';
+    dot.className = 'm-dot';
     dot.style.left = Math.random() * 100 + '%';
-    dot.style.top = Math.random() * 100 + '%';
-    dot.style.animationDelay = (Math.random() * 4) + 's';
-    dot.style.animationDuration = (3 + Math.random() * 3) + 's';
-    dot.style.width = dot.style.height = (2 + Math.random() * 3) + 'px';
+    dot.style.top = (80 + Math.random() * 30) + '%';
+    dot.style.animationDuration = (5 + Math.random() * 8) + 's';
+    dot.style.animationDelay = (Math.random() * 6) + 's';
+    dot.style.width = dot.style.height = (2 + Math.random() * 4) + 'px';
     particlesEl.appendChild(dot);
   }
 
-  // Nettoyer les anciens fragments
-  scene.querySelectorAll('.morph-shard,.morph-crack-line,.morph-impact,.morph-line').forEach(function(e){ e.remove(); });
+  // Positions centrales
+  var vw = window.innerWidth;
+  var vh = window.innerHeight;
+  var cx = vw / 2;
+  var cy = vh / 2;
 
-  // Afficher
-  overlay.classList.add('active');
-  overlay.classList.remove('fade-out', 'phase-zoom');
-
-  // ═══ PHASE 1 : Logo entre en scène + rotation 3D (0 → 1.6s) ═══
-  logo.className = 'morph-logo phase-enter';
-  logo.style.display = 'flex';
-
-  // ═══ PHASE 1b : Rotation complète (1.6s → 3.6s) ═══
+  // PHASE 1 (0.8s) : Curseur apparaît en bas à droite
+  var cursorStartX = cx + 200;
+  var cursorStartY = cy + 180;
   setTimeout(function() {
-    logo.classList.remove('phase-enter');
-    logo.classList.add('phase-spin');
-  }, 1600);
+    cursor.style.left = cursorStartX + 'px';
+    cursor.style.top = cursorStartY + 'px';
+    cursor.style.transition = 'none';
+    cursor.classList.add('show');
+  }, 800);
 
-  // ═══ PHASE 2 : Crack lines + logo disparaît (3.6s → 4.2s) ═══
+  // PHASE 2 (1.3s) : Curseur se déplace vers le logo
   setTimeout(function() {
-    // Lignes de crack sur le logo
-    var cracks = [
-      {w:60,h:2,x:cx-30,y:cy-10,rot:-25},
-      {w:50,h:2,x:cx-15,y:cy+5,rot:35},
-      {w:45,h:2,x:cx-20,y:cy-2,rot:-60},
-      {w:55,h:2,x:cx-25,y:cy+12,rot:15}
-    ];
-    cracks.forEach(function(c, i) {
-      var line = document.createElement('div');
-      line.className = 'morph-crack-line';
-      line.style.width = c.w + 'px';
-      line.style.height = c.h + 'px';
-      line.style.left = c.x + 'px';
-      line.style.top = c.y + 'px';
-      line.style.transform = 'rotate(' + c.rot + 'deg)';
-      line.style.animationDelay = (i * 0.06) + 's';
-      scene.appendChild(line);
-      setTimeout(function(){ line.classList.add('show'); }, i * 60);
-    });
+    cursor.style.transition = 'left 1.2s cubic-bezier(.25,.1,.25,1), top 1.2s cubic-bezier(.25,.1,.25,1)';
+    cursor.style.left = (cx + 8) + 'px';
+    cursor.style.top = (cy + 8) + 'px';
+  }, 1300);
 
-    // Logo explose après les cracks
-    setTimeout(function() {
-      logo.classList.remove('phase-spin');
-      logo.classList.add('phase-crack');
-    }, 250);
-  }, 3600);
+  // PHASE 3 (2.3s) : Curseur survole le logo -> hover
+  setTimeout(function() {
+    logo.classList.remove('idle');
+    logo.classList.add('hover');
+    if (hint) {
+      hint.textContent = 'Clique pour découvrir';
+      hint.classList.add('show');
+    }
+  }, 2300);
 
-  // ═══ PHASE 3 : Fragments explosent depuis le centre (4.1s → 5.0s) ═══
+  // PHASE 4 (3s) : CLIC !
+  setTimeout(function() {
+    cursor.classList.add('clicking');
+    logo.classList.remove('hover');
+    logo.classList.add('pressed');
+    if (hint) hint.classList.remove('show');
+
+    var ripple = document.createElement('div');
+    ripple.className = 'm-ripple';
+    ripple.style.left = '50%';
+    ripple.style.top = '50%';
+    scene.appendChild(ripple);
+    setTimeout(function(){ ripple.remove(); }, 800);
+  }, 3000);
+
+  // PHASE 5 (3.2s) : Logo spin accéléré
+  setTimeout(function() {
+    cursor.classList.remove('clicking');
+    cursor.classList.remove('show');
+    logo.classList.remove('pressed');
+    logo.classList.add('spin');
+    if (glow) glow.classList.add('intense');
+  }, 3200);
+
+  // PHASE 6 (4.7s) : EXPLOSION
   var shardEls = [];
   setTimeout(function() {
-    // Impact ring
-    var impact = document.createElement('div');
-    impact.className = 'morph-impact';
+    logo.classList.remove('spin');
+    logo.classList.add('explode');
+    if (glow) glow.classList.add('supernova');
+
     for (var r = 0; r < 3; r++) {
-      var ring = document.createElement('div');
-      ring.className = 'morph-impact-ring';
-      ring.style.animationDelay = (r * 0.15) + 's';
-      impact.appendChild(ring);
+      (function(delay) {
+        setTimeout(function() {
+          var ring = document.createElement('div');
+          ring.className = 'm-ring';
+          scene.appendChild(ring);
+          setTimeout(function(){ ring.remove(); }, 1000);
+        }, delay);
+      })(r * 120);
     }
-    scene.appendChild(impact);
-    setTimeout(function(){ impact.remove(); }, 1200);
 
     sections.forEach(function(sec, i) {
       var shard = document.createElement('div');
-      shard.className = 'morph-shard';
-      shard.style.setProperty('--shard-color', sec.c);
-      shard.style.left = (cx - half) + 'px';
-      shard.style.top = (cy - half) + 'px';
+      shard.className = 'm-shard';
+      shard.style.setProperty('--sc', sec.c);
 
-      // Direction d'explosion
-      var angle = (i / total) * Math.PI * 2 - Math.PI / 2;
-      var dist = isMobile ? 100 + Math.random() * 40 : 140 + Math.random() * 60;
-      var tx = Math.cos(angle) * dist;
-      var ty = Math.sin(angle) * dist;
-      var rot = -180 + Math.random() * 360;
-      shard.style.setProperty('--explode-to', 'translate(' + tx + 'px,' + ty + 'px)');
-      shard.style.setProperty('--explode-rot', rot + 'deg');
-
-      // Contenu
-      var inner = document.createElement('div');
-      inner.className = 'morph-shard-inner';
       var emoji = document.createElement('span');
-      emoji.className = 'morph-shard-emoji';
+      emoji.className = 'm-shard-emoji';
       emoji.textContent = sec.e;
-      inner.appendChild(emoji);
-      shard.appendChild(inner);
+      shard.appendChild(emoji);
 
-      // Glow
-      var glow = document.createElement('div');
-      glow.className = 'morph-shard-glow';
-      glow.style.animationDelay = (Math.random() * 1) + 's';
-      shard.appendChild(glow);
+      var label = document.createElement('div');
+      label.className = 'm-shard-label';
+      label.textContent = sec.l;
+      shard.appendChild(label);
 
       scene.appendChild(shard);
-      shardEls.push({el: shard, index: i, angle: angle});
+      shardEls.push(shard);
 
-      // Déclencher l'explosion avec un léger décalage
+      var angle = (i / total) * Math.PI * 2 - Math.PI / 2;
+      var dist = isMobile ? 200 + Math.random() * 80 : 300 + Math.random() * 120;
+      var tx = Math.cos(angle) * dist;
+      var ty = Math.sin(angle) * dist;
+      var rot = (-180 + Math.random() * 360);
+
       setTimeout(function() {
-        shard.classList.add('phase-explode');
-      }, i * 50);
+        shard.style.opacity = '1';
+        shard.style.transform = 'translate(' + tx + 'px,' + ty + 'px) rotate(' + rot + 'deg) scale(1.2)';
+        shard.style.transition = 'all .7s cubic-bezier(.16,1,.3,1)';
+      }, 50 + i * 40);
     });
-  }, 4100);
+  }, 4700);
 
-  // ═══ PHASE 4 : Spiral — les fragments reviennent en cercle (5.3s → 6.5s) ═══
+  // PHASE 7 (5.8s) : Fragments reviennent en cercle constellation
   setTimeout(function() {
-    var spiralRadius = isMobile ? 115 : 160;
-    shardEls.forEach(function(item, i) {
-      var el = item.el;
-      el.classList.remove('phase-explode');
-      el.classList.add('phase-spiral');
+    if (glow) { glow.classList.remove('supernova'); glow.classList.remove('intense'); }
+    var radius = isMobile ? 100 : 155;
+    shardEls.forEach(function(shard, i) {
       var a = (i / total) * Math.PI * 2 - Math.PI / 2;
-      var sx = cx - half + Math.cos(a) * spiralRadius;
-      var sy = cy - half + Math.sin(a) * spiralRadius;
+      var fx = Math.cos(a) * radius;
+      var fy = Math.sin(a) * radius;
       setTimeout(function() {
-        el.style.left = sx + 'px';
-        el.style.top = sy + 'px';
-        el.style.transform = 'rotate(0deg) scale(1)';
-        el.style.opacity = '1';
+        shard.style.transition = 'all 1s cubic-bezier(.34,1.56,.64,1)';
+        shard.style.transform = 'translate(calc(-50% + ' + fx + 'px), calc(-50% + ' + fy + 'px)) rotate(0deg) scale(1)';
+        shard.style.left = '50%';
+        shard.style.top = '50%';
+        shard.classList.add('placed');
       }, i * 60);
     });
 
-    // Lignes de connexion entre les fragments
+    // Lignes de connexion
     setTimeout(function() {
-      var spiralRadius2 = isMobile ? 115 : 160;
+      var radius2 = isMobile ? 100 : 155;
       for (var i = 0; i < total; i++) {
-        var a1 = (i / total) * Math.PI * 2 - Math.PI / 2;
-        var a2 = ((i + 1) % total / total) * Math.PI * 2 - Math.PI / 2;
-        var x1 = cx + Math.cos(a1) * spiralRadius2;
-        var y1 = cy + Math.sin(a1) * spiralRadius2;
-        var x2 = cx + Math.cos(a2) * spiralRadius2;
-        var y2 = cy + Math.sin(a2) * spiralRadius2;
-        var dx = x2 - x1;
-        var dy = y2 - y1;
-        var len = Math.sqrt(dx * dx + dy * dy);
-        var ang = Math.atan2(dy, dx) * 180 / Math.PI;
-        var line = document.createElement('div');
-        line.className = 'morph-line';
-        line.style.width = len + 'px';
-        line.style.left = x1 + 'px';
-        line.style.top = y1 + 'px';
-        line.style.transform = 'rotate(' + ang + 'deg)';
-        line.style.animationDelay = (i * 0.05) + 's';
-        scene.appendChild(line);
-        setTimeout(function(l){ l.classList.add('show'); }.bind(null, line), i * 50);
+        (function(idx) {
+          var a1 = (idx / total) * Math.PI * 2 - Math.PI / 2;
+          var a2 = ((idx + 1) % total / total) * Math.PI * 2 - Math.PI / 2;
+          var x1 = cx + Math.cos(a1) * radius2;
+          var y1 = cy + Math.sin(a1) * radius2;
+          var x2 = cx + Math.cos(a2) * radius2;
+          var y2 = cy + Math.sin(a2) * radius2;
+          var dx = x2 - x1;
+          var dy = y2 - y1;
+          var len = Math.sqrt(dx * dx + dy * dy);
+          var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+          var line = document.createElement('div');
+          line.className = 'm-line';
+          line.style.width = len + 'px';
+          line.style.left = x1 + 'px';
+          line.style.top = y1 + 'px';
+          line.style.transform = 'rotate(' + ang + 'deg)';
+          scene.appendChild(line);
+          setTimeout(function(){ line.classList.add('show'); }, idx * 40);
+        })(i);
       }
-    }, total * 60 + 200);
-  }, 5300);
+    }, total * 60 + 300);
+  }, 5800);
 
-  // ═══ PHASE 5 : Texte "Bienvenue" (6.8s) ═══
+  // PHASE 8 (7.5s) : Texte Bienvenue
   setTimeout(function() {
-    var text = document.getElementById('morphText');
-    if (text) text.classList.add('show');
-  }, 6800);
+    if (title) title.classList.add('show');
+  }, 7500);
 
-  // ═══ PHASE 6 : Zoom final → révéler le site (8s) ═══
+  // PHASE 9 (9s) : Zoom -> site
   setTimeout(function() {
     overlay.classList.add('phase-zoom');
     setTimeout(function() {
       overlay.classList.remove('active', 'phase-zoom');
       overlay.style.display = 'none';
-      // Reset pour potentiel re-use
-      logo.className = 'morph-logo';
+      logo.className = 'm-logo';
       logo.style.display = 'flex';
-      var text = document.getElementById('morphText');
-      if (text) text.classList.remove('show');
-      scene.querySelectorAll('.morph-shard,.morph-crack-line,.morph-impact,.morph-line').forEach(function(e){ e.remove(); });
+      logo.style.opacity = '1';
+      if (title) title.classList.remove('show');
+      if (glow) glow.className = 'm-glow';
+      scene.querySelectorAll('.m-shard,.m-ring,.m-ripple,.m-line').forEach(function(e){ e.remove(); });
       particlesEl.innerHTML = '';
       window._orbitalRunning = false;
       if (typeof initOnboarding === 'function') initOnboarding();
-    }, 1200);
-  }, 8000);
+    }, 1300);
+  }, 9000);
 }
+
 
 // Lancer au chargement de la page
 if (document.readyState === 'loading') {
