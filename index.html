@@ -16371,7 +16371,10 @@ function initOnboarding() {
 }
 
 function openOnboarding() {
+  onbAnimTimers.forEach(clearTimeout);
+  onbAnimTimers = [];
   onbIndex = 0;
+  document.querySelectorAll('.onb-slide').forEach(function(s){ s.classList.remove('active','go-left'); });
   var el = document.getElementById('onb-overlay');
   el.classList.remove('hidden');
   setTimeout(function(){ el.classList.add('show'); }, 10);
