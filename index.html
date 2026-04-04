@@ -505,16 +505,38 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 [data-theme="dark"] .pdf-btn{background:var(--bg-card);border-color:var(--border-col);color:var(--g600)}
 
 /* ============================
-   SPLASH SCREEN
+   SPLASH SCREEN (rapide, avant le code)
    ============================ */
-#splashScreen{position:fixed;inset:0;background:#2f4487;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:40px;transition:opacity .6s ease}
+#splashScreen{position:fixed;inset:0;background:linear-gradient(155deg,#001a3a 0%,#003d7a 50%,#0057ad 100%);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px;transition:opacity .6s ease}
 #splashScreen.fade-out{opacity:0;pointer-events:none}
-.splash-logo{width:72px;height:72px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif,serif);font-size:38px;font-style:italic;color:#fff;animation:splashPulse 1.5s ease-in-out infinite}
-@keyframes splashPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.85}}
-.splash-title{font-family:var(--font-serif,serif);font-size:28px;color:#fff;letter-spacing:-.02em}
-.splash-sub{font-size:12px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em}
-.splash-bar-wrap{width:280px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
-.splash-bar{height:100%;background:rgba(255,255,255,.85);border-radius:2px;width:0%;transition:width .05s linear}
+.splash-logo{width:80px;height:80px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif,serif);font-size:42px;font-style:italic;color:#fff;animation:splashSpin3D 1.8s cubic-bezier(.25,.46,.45,.94) forwards;perspective:600px}
+@keyframes splashSpin3D{0%{transform:perspective(600px) rotateY(-90deg) scale(.6);opacity:0}40%{transform:perspective(600px) rotateY(20deg) scale(1.05);opacity:1}60%{transform:perspective(600px) rotateY(-8deg) scale(1)}100%{transform:perspective(600px) rotateY(0deg) scale(1);opacity:1}}
+.splash-title{font-family:var(--font-serif,serif);font-size:28px;color:#fff;letter-spacing:-.02em;opacity:0;animation:splashFadeUp .6s ease .4s forwards}
+.splash-sub{font-size:12px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;opacity:0;animation:splashFadeUp .5s ease .7s forwards}
+@keyframes splashFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.splash-bar-wrap{width:200px;height:2px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;opacity:0;animation:splashFadeUp .4s ease .9s forwards}
+.splash-bar{height:100%;background:rgba(255,255,255,.8);border-radius:2px;width:0%;transition:width .05s linear}
+
+/* ============================
+   ORBITAL ANIMATION (après le code)
+   ============================ */
+#orbitalOverlay{position:fixed;inset:0;background:linear-gradient(155deg,#001a3a 0%,#003d7a 50%,#0057ad 100%);z-index:999998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s ease}
+#orbitalOverlay.active{opacity:1;pointer-events:auto}
+#orbitalOverlay.fade-out{opacity:0;pointer-events:none}
+.orb-scene{position:relative;width:380px;height:380px;display:flex;align-items:center;justify-content:center}
+.orb-logo{width:90px;height:90px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif,serif);font-size:46px;font-style:italic;color:#fff;z-index:2;opacity:0;transform:perspective(600px) rotateY(-180deg) scale(.3);animation:orbLogoIn .9s cubic-bezier(.25,.46,.45,.94) forwards}
+@keyframes orbLogoIn{0%{opacity:0;transform:perspective(600px) rotateY(-180deg) scale(.3)}50%{opacity:1;transform:perspective(600px) rotateY(15deg) scale(1.08)}75%{transform:perspective(600px) rotateY(-5deg) scale(1)}100%{opacity:1;transform:perspective(600px) rotateY(0deg) scale(1)}}
+.orb-title{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--font-serif,serif);font-size:26px;color:#fff;opacity:0;animation:orbTitleIn .6s ease .6s forwards}
+@keyframes orbTitleIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.orb-icon{position:absolute;width:48px;height:48px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;z-index:1;transition:all .5s cubic-bezier(.25,.46,.45,.94)}
+.orb-icon.orbit{animation:orbIconOrbit 1.2s cubic-bezier(.25,.46,.45,.94) forwards}
+@keyframes orbIconOrbit{0%{opacity:0;transform:scale(0) rotate(-180deg)}40%{opacity:1;transform:scale(1.15) rotate(-20deg)}70%{transform:scale(.95) rotate(5deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
+.orb-icon.settle{transition:all .7s cubic-bezier(.34,1.56,.64,1)}
+.orb-trail{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);pointer-events:none;animation:orbTrailFade .6s ease forwards}
+@keyframes orbTrailFade{from{opacity:.6;transform:scale(1)}to{opacity:0;transform:scale(0)}}
+.orb-flash{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.3) 0%,transparent 70%);opacity:0;animation:orbFlash .8s ease forwards;pointer-events:none}
+@keyframes orbFlash{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+@media(max-width:600px){.orb-scene{width:280px;height:280px}.orb-logo{width:70px;height:70px;font-size:36px;border-radius:16px}.orb-icon{width:40px;height:40px;font-size:18px;border-radius:11px}.orb-title{font-size:22px;bottom:-50px}}
 
 /* ============================
    EXAM MODE
@@ -4303,6 +4325,14 @@ aside.sidebar {
 </head>
 <body>
 
+<!-- SPLASH SCREEN (rapide, avant le code) -->
+<div id="splashScreen">
+  <div class="splash-logo">D</div>
+  <div class="splash-title">DauphineGuide</div>
+  <div class="splash-sub">Guide L1 Droit-Éco</div>
+  <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+</div>
+
 <!-- LOGIN SCREEN -->
 <div id="prankScreen"><div class="prank-msg">MATHILDE TROU DU CUL</div></div>
 <div id="loginScreen">
@@ -4314,6 +4344,14 @@ aside.sidebar {
     <button class="login-btn" onclick="submitLogin()">Accéder →</button>
     <div class="login-error" id="loginError"></div>
     <div class="login-footer">Site non officiel · Paris-Dauphine PSL · 2025-2026</div>
+  </div>
+</div>
+
+<!-- ══════════════ ORBITAL ANIMATION ══════════════ -->
+<div id="orbitalOverlay">
+  <div class="orb-scene" id="orbScene">
+    <div class="orb-logo">D</div>
+    <div class="orb-title"><em>DauphineGuide</em></div>
   </div>
 </div>
 
@@ -10464,7 +10502,10 @@ function parseIcs(text){
 // Patch renderWeek to use getActiveEvents
 
 // Init
-(function(){loadUserEvents();initOnboarding();})();
+(function(){loadUserEvents();
+  // N'init l'onboarding que si pas en cours d'animation orbitale
+  if (!window._orbitalRunning) initOnboarding();
+})();
 
 
 // ════ ENHANCED SCROLL REVEAL ════
@@ -12054,6 +12095,7 @@ function submitLogin() {
       setTimeout(function() {
         applyAccess(access);
         hideLoginScreen();
+        startOrbitalAnimation();
       }, 400);
     } else {
       // Erreur
@@ -12095,6 +12137,127 @@ function hideLoginScreen() {
   screen.style.zIndex = '-1';
   // Rafraîchir tous les widgets de la page d'accueil après connexion
   setTimeout(function() { updateHomeStats(); }, 100);
+}
+
+// ─── ORBITAL ANIMATION (Construction Orbitale) ───
+function startOrbitalAnimation() {
+  window._orbitalRunning = true;
+  var overlay = document.getElementById('orbitalOverlay');
+  var scene = document.getElementById('orbScene');
+  if (!overlay || !scene) { return; }
+
+  // Les icônes des sections avec leurs emojis
+  var icons = [
+    {e:'🏠',l:'Accueil'},{e:'🧮',l:'Simulateur'},{e:'🃏',l:'Flashcards'},
+    {e:'📅',l:'Planning'},{e:'💬',l:'Chat'},{e:'🗺️',l:'Campus'},
+    {e:'📚',l:'Ressources'},{e:'🏛️',l:'Assos'},{e:'💸',l:'Bons plans'},
+    {e:'💼',l:'Stage'},{e:'⏱️',l:'Pomodoro'},{e:'📰',l:'News'}
+  ];
+  var total = icons.length;
+  var isMobile = window.innerWidth < 600;
+  var radius = isMobile ? 110 : 150;
+
+  // Nettoyer la scène (garder le logo et le titre)
+  var oldIcons = scene.querySelectorAll('.orb-icon,.orb-trail,.orb-flash');
+  oldIcons.forEach(function(el){ el.remove(); });
+
+  // Afficher l'overlay
+  overlay.classList.add('active');
+
+  // Phase 1 : les icônes apparaissent en orbite autour du logo (décalées dans le temps)
+  var iconEls = [];
+  icons.forEach(function(ic, i) {
+    var el = document.createElement('div');
+    el.className = 'orb-icon';
+    el.textContent = ic.e;
+    el.title = ic.l;
+
+    // Position initiale : aléatoire loin du centre
+    var startAngle = (Math.random() * 360) * Math.PI / 180;
+    var startDist = radius * 2.5 + Math.random() * 80;
+    el.style.left = (scene.offsetWidth/2 - 24 + Math.cos(startAngle) * startDist) + 'px';
+    el.style.top = (scene.offsetHeight/2 - 24 + Math.sin(startAngle) * startDist) + 'px';
+
+    scene.appendChild(el);
+    iconEls.push({el: el, index: i});
+
+    // Animer l'arrivée en orbite avec un délai progressif
+    setTimeout(function() {
+      el.classList.add('orbit');
+      // Position orbitale
+      var angle = (i / total) * Math.PI * 2 - Math.PI/2;
+      var ox = scene.offsetWidth/2 - 24 + Math.cos(angle) * radius;
+      var oy = scene.offsetHeight/2 - 24 + Math.sin(angle) * radius;
+      el.style.left = ox + 'px';
+      el.style.top = oy + 'px';
+    }, 900 + i * 120);
+  });
+
+  // Phase 2 : rotation orbitale (les icônes tournent autour du logo)
+  var rotStart = 900 + total * 120 + 200;
+  var rotDuration = 1800;
+  var rotFrames = 60;
+  var rotStep = 0;
+
+  setTimeout(function() {
+    var rotInterval = setInterval(function() {
+      rotStep++;
+      var progress = rotStep / rotFrames;
+      var rotAngle = progress * Math.PI * 1.2; // ~216° de rotation
+      iconEls.forEach(function(item) {
+        var baseAngle = (item.index / total) * Math.PI * 2 - Math.PI/2;
+        var currentAngle = baseAngle + rotAngle;
+        // Réduire progressivement le rayon
+        var currentRadius = radius * (1 - progress * 0.15);
+        var ox = scene.offsetWidth/2 - 24 + Math.cos(currentAngle) * currentRadius;
+        var oy = scene.offsetHeight/2 - 24 + Math.sin(currentAngle) * currentRadius;
+        item.el.style.left = ox + 'px';
+        item.el.style.top = oy + 'px';
+
+        // Trainées lumineuses
+        if (rotStep % 4 === 0) {
+          var trail = document.createElement('div');
+          trail.className = 'orb-trail';
+          trail.style.left = (ox + 21) + 'px';
+          trail.style.top = (oy + 21) + 'px';
+          scene.appendChild(trail);
+          setTimeout(function(){ trail.remove(); }, 600);
+        }
+      });
+      if (rotStep >= rotFrames) clearInterval(rotInterval);
+    }, rotDuration / rotFrames);
+  }, rotStart);
+
+  // Phase 3 : flash + les icônes se posent en grille
+  var settleStart = rotStart + rotDuration + 300;
+  setTimeout(function() {
+    // Flash lumineux
+    var flash = document.createElement('div');
+    flash.className = 'orb-flash';
+    scene.appendChild(flash);
+    setTimeout(function(){ flash.remove(); }, 800);
+
+    // Texte de bienvenue
+    var titleEl = scene.querySelector('.orb-title');
+    if (titleEl) {
+      titleEl.style.animation = 'none';
+      titleEl.style.opacity = '1';
+      titleEl.innerHTML = 'Bienvenue sur <em>DauphineGuide</em>';
+    }
+  }, settleStart);
+
+  // Phase 4 : fade out et afficher le site
+  var endTime = settleStart + 1200;
+  setTimeout(function() {
+    overlay.classList.add('fade-out');
+    setTimeout(function() {
+      overlay.classList.remove('active', 'fade-out');
+      overlay.style.display = 'none';
+      window._orbitalRunning = false;
+      // Lancer l'onboarding si première visite
+      if (typeof initOnboarding === 'function') initOnboarding();
+    }, 600);
+  }, endTime);
 }
 
 // Lancer au chargement de la page
@@ -16623,9 +16786,9 @@ function onbPlayFinish() {
   }
 }
 
-// Init on load
+// Init on load — seulement si pas d'animation orbitale en cours
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(initOnboarding, 800);
+  setTimeout(function(){ if (!window._orbitalRunning) initOnboarding(); }, 800);
 });
 
 // Expose for FAQ button
