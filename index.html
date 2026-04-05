@@ -1114,6 +1114,9 @@ html{scroll-behavior:smooth}
 .draw-sheet-rename{float:right;opacity:0;font-size:11px;padding:1px 4px;border-radius:3px;transition:opacity .1s;margin-right:4px}
 .draw-sheet-item:hover .draw-sheet-rename{opacity:.6}
 .draw-sheet-rename:hover{opacity:1!important;background:#dbeafe;color:#1d4ed8}
+.draw-sheet-dup{float:right;opacity:0;font-size:11px;padding:1px 4px;border-radius:3px;transition:opacity .1s;margin-right:4px}
+.draw-sheet-item:hover .draw-sheet-dup{opacity:.6}
+.draw-sheet-dup:hover{opacity:1!important;background:#dcfce7;color:#166534}
 /* Canvas area */
 .draw-canvas-area{flex:1;display:flex;flex-direction:column;min-width:0}
 .draw-toolbar{display:flex;align-items:center;gap:5px;padding:7px 12px;background:var(--bg-card);border-bottom:1px solid var(--g100);flex-wrap:wrap}
@@ -1127,6 +1130,7 @@ html{scroll-behavior:smooth}
 .dt-size{width:22px;height:22px;border-radius:5px;border:1px solid var(--g200);background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
 .dt-size.on,.dt-size:hover{background:var(--g200)}
 .dt-spacer{flex:1}
+.draw-autosave{font-size:11px;color:var(--text-sub);opacity:.72;min-width:96px;text-align:right}
 .draw-canvas-wrap{flex:1;overflow:auto;position:relative;background:#f8f9fa;cursor:crosshair}
 [data-theme="dark"] .draw-canvas-wrap{background:#1a1f2e}
 #drawCanvas{display:block;width:100%;height:auto;min-height:100%;touch-action:none}
@@ -6095,6 +6099,8 @@ aside.sidebar {
         <div class="dt-spacer"></div>
         <button class="dt-btn" onclick="dsClear()" style="color:#dc2626;border-color:#fecaca">⌫ Effacer</button>
         <button class="dt-btn" onclick="dsExport()">↓ PNG</button>
+        <button class="dt-btn" onclick="dsExportSubjectPDF()">📄 PDF matière</button>
+        <span class="draw-autosave" id="dsAutosave"></span>
       </div>
       <div class="draw-canvas-wrap" id="dsCanvasWrap">
         <canvas id="drawCanvas"></canvas>
@@ -17861,6 +17867,7 @@ function dsEscapeHTML(str) {
 
 function dsScheduleSave() {
   clearTimeout(DS._saveTimer);
+  dsSetAutosave('Sauvegarde...', true);
   DS._saveTimer = setTimeout(dsSave, 900);
 }
 
@@ -18050,9 +18057,26 @@ function dsResizeCanvas(forceHeight, preserveCurrent) {
   if (!wrap || !canvas) return;
   var targetW = Math.max(360, Math.round(wrap.clientWidth));
   var targetH = Math.max(Math.round(wrap.clientHeight), forceHeight || sheet.height || 1200);
+
+  function paintActiveSheet() {
+    var ctx = canvas.getContext('2d');
+    if (sheet.data) {
+      var img = new Image();
+      img.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        dsRenderTextBoxes();
+      };
+      img.src = sheet.data;
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      dsRenderTextBoxes();
+    }
+  }
+
   if (canvas.width === targetW && canvas.height === targetH && !preserveCurrent) {
     if (layer) { layer.style.width = targetW + 'px'; layer.style.height = targetH + 'px'; }
-    dsRenderTextBoxes();
+    paintActiveSheet();
     return;
   }
 
@@ -18074,19 +18098,7 @@ function dsResizeCanvas(forceHeight, preserveCurrent) {
     return;
   }
 
-  if (sheet.data) {
-    var img = new Image();
-    img.onload = function() {
-      var ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      dsRenderTextBoxes();
-    };
-    img.src = sheet.data;
-  } else {
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-    dsRenderTextBoxes();
-  }
+  paintActiveSheet();
 }
 
 function dsEnsureInfiniteCanvas(requiredY) {
@@ -18108,6 +18120,7 @@ function dsLoadSheet(id) {
   dsRenderSubjectOptions(sheet.subject || DS.subjects[0]);
   dsResizeCanvas(sheet.height || null, false);
   dsRenderSheets();
+  dsSetAutosave('');
   dsStatus('Feuille chargée');
 }
 
@@ -18125,6 +18138,7 @@ function dsSave() {
   sheet.texts = dsCollectTextsFromDOM();
   DS.dirty = false;
   dsPersist();
+  dsSetAutosave('Sauvegardé ✓');
   dsStatus('Sauvegardé ✓');
   dsRenderSheets();
 }
@@ -18266,6 +18280,12 @@ function dsRenderSheets() {
       rename.textContent = '✎';
       rename.addEventListener('click', function(e){ e.stopPropagation(); dsRenameSheet(s.id); });
 
+      var dup = document.createElement('span');
+      dup.className = 'draw-sheet-dup';
+      dup.textContent = '⧉';
+      dup.title = 'Dupliquer';
+      dup.addEventListener('click', function(e){ e.stopPropagation(); dsDuplicateSheet(s.id); });
+
       var title = document.createElement('div');
       title.textContent = s.name;
       var tag = document.createElement('div');
@@ -18274,6 +18294,7 @@ function dsRenderSheets() {
 
       div.appendChild(del);
       div.appendChild(rename);
+      div.appendChild(dup);
       div.appendChild(title);
       div.appendChild(tag);
       div.addEventListener('click', function() { dsLoadSheet(s.id); });
@@ -18379,6 +18400,29 @@ function dsDeleteSheet(id) {
   dsPersist();
   dsRenderSheets();
   dsLoadSheet(DS.activeId);
+}
+
+function dsDuplicateSheet(id) {
+  if (DS.dirty) dsSave();
+  var src = DS.sheets.find(function(s){ return s.id === id; });
+  if (!src) return;
+  var copyTexts = [];
+  try { copyTexts = JSON.parse(JSON.stringify(src.texts || [])); } catch (_) { copyTexts = []; }
+  var copy = {
+    id: Date.now() + Math.floor(Math.random() * 10000),
+    name: (src.name || 'Feuille') + ' (copie)',
+    subject: src.subject || (DS.subjects[0] || 'Général'),
+    data: src.data || '',
+    texts: copyTexts,
+    height: src.height || 1200
+  };
+  DS.sheets.push(copy);
+  DS.activeId = copy.id;
+  DS.dirty = false;
+  dsPersist();
+  dsRenderSheets();
+  dsLoadSheet(copy.id);
+  dsStatus('Feuille dupliquée ✓');
 }
 
 /* ── Tools ── */
@@ -18491,6 +18535,35 @@ function dsWrapText(ctx, text, x, y, maxW, lineH) {
   if (line) ctx.fillText(line, x, cy);
 }
 
+function dsGetBoundsFromCanvasPixels(canvas) {
+  if (!canvas || !canvas.width || !canvas.height) return null;
+  var w = canvas.width;
+  var h = canvas.height;
+  var img = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+  var minX = w, minY = h, maxX = -1, maxY = -1;
+
+  for (var y = 0; y < h; y += 2) {
+    for (var x = 0; x < w; x += 2) {
+      var a = img[(y * w + x) * 4 + 3];
+      if (a > 8) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  if (maxX < 0 || maxY < 0) return null;
+  var pad = 20;
+  return {
+    x: Math.max(0, Math.floor(minX - pad)),
+    y: Math.max(0, Math.floor(minY - pad)),
+    w: Math.min(w, Math.ceil(maxX - minX + pad * 2)),
+    h: Math.min(h, Math.ceil(maxY - minY + pad * 2))
+  };
+}
+
 function dsExport() {
   var canvas = document.getElementById('drawCanvas');
   var sheet  = dsGetActiveSheet();
@@ -18534,9 +18607,140 @@ function dsExport() {
   dsStatus('Export PNG recadré ✓');
 }
 
+function dsBuildSheetExportCanvas(sheet) {
+  return new Promise(function(resolve) {
+    var liveCanvas = document.getElementById('drawCanvas');
+    var baseW = liveCanvas ? liveCanvas.width : 1200;
+    var baseH = Math.max(sheet.height || 1200, liveCanvas ? liveCanvas.height : 1200);
+
+    function renderWithImage(img) {
+      var w = img ? img.width : baseW;
+      var h = img ? img.height : baseH;
+      var tmp = document.createElement('canvas');
+      tmp.width = Math.max(360, w);
+      tmp.height = Math.max(600, h);
+      var tctx = tmp.getContext('2d');
+
+      tctx.clearRect(0, 0, tmp.width, tmp.height);
+      if (img) tctx.drawImage(img, 0, 0, tmp.width, tmp.height);
+
+      tctx.textBaseline = 'top';
+      tctx.font = '16px Figtree, sans-serif';
+      (sheet.texts || []).forEach(function(t) {
+        var plain = String((t.html || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim());
+        if (!plain) return;
+        var x = t.x || 0;
+        var y = t.y || 0;
+        var tw = t.w || 220;
+        var th = t.h || 100;
+        tctx.fillStyle = 'rgba(255,255,255,.88)';
+        tctx.fillRect(x, y, tw, th);
+        tctx.fillStyle = '#111827';
+        dsWrapText(tctx, plain, x + 10, y + 28, Math.max(80, tw - 20), 20);
+      });
+
+      var b = dsGetBoundsFromCanvasPixels(tmp);
+      if (!b) { resolve(null); return; }
+
+      var out = document.createElement('canvas');
+      out.width = b.w;
+      out.height = b.h;
+      out.getContext('2d').drawImage(tmp, b.x, b.y, b.w, b.h, 0, 0, b.w, b.h);
+      resolve({
+        name: sheet.name || 'Feuille',
+        subject: sheet.subject || 'Général',
+        dataURL: out.toDataURL('image/png')
+      });
+    }
+
+    if (sheet.data) {
+      var img = new Image();
+      img.onload = function() { renderWithImage(img); };
+      img.onerror = function() { renderWithImage(null); };
+      img.src = sheet.data;
+    } else {
+      renderWithImage(null);
+    }
+  });
+}
+
+function dsExportSubjectPDF() {
+  if (DS.dirty) dsSave();
+  var sel = document.getElementById('dsSubjectSelect');
+  var active = dsGetActiveSheet();
+  var subject = (sel && sel.value) ? sel.value : (active ? active.subject : (DS.subjects[0] || 'Général'));
+  var sheets = DS.sheets.filter(function(s){ return (s.subject || 'Général') === subject; });
+
+  if (!sheets.length) {
+    alert('Aucune feuille pour cette matière.');
+    return;
+  }
+
+  dsSetAutosave('Préparation PDF...', true);
+  dsStatus('Préparation du PDF...');
+
+  Promise.all(sheets.map(dsBuildSheetExportCanvas)).then(function(items) {
+    items = items.filter(Boolean);
+    if (!items.length) {
+      dsSetAutosave('');
+      alert('Impossible d\'exporter: feuilles vides.');
+      return;
+    }
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+      + '<title>Dessin - ' + dsEscapeHTML(subject) + '</title>'
+      + '<style>'
+      + 'body{font-family:Figtree,Arial,sans-serif;padding:24px;color:#111827}'
+      + '.head{margin-bottom:18px;border-bottom:2px solid #e5e7eb;padding-bottom:10px}'
+      + '.t{font-size:21px;font-weight:800;color:#0f172a}'
+      + '.s{font-size:12px;color:#6b7280;margin-top:4px}'
+      + '.page{page-break-after:always;margin-top:16px}'
+      + '.n{font-size:14px;font-weight:700;margin-bottom:8px}'
+      + 'img{max-width:100%;height:auto;border:1px solid #e5e7eb;border-radius:8px}'
+      + '@media print{body{padding:12px}.page{break-inside:avoid}}'
+      + '</style></head><body>'
+      + '<div class="head"><div class="t">Dessin libre · ' + dsEscapeHTML(subject) + '</div>'
+      + '<div class="s">' + new Date().toLocaleDateString('fr-FR') + ' · DauphineGuide</div></div>';
+
+    items.forEach(function(it) {
+      html += '<div class="page"><div class="n">' + dsEscapeHTML(it.name) + '</div>'
+        + '<img src="' + it.dataURL + '" alt="' + dsEscapeHTML(it.name) + '"></div>';
+    });
+
+    html += '</body></html>';
+
+    var w = window.open('', '_blank');
+    if (!w) {
+      dsSetAutosave('');
+      alert('Popup bloquée: autorise les popups pour exporter en PDF.');
+      return;
+    }
+    w.document.write(html);
+    w.document.close();
+    setTimeout(function(){ w.print(); }, 450);
+    dsSetAutosave('PDF prêt ✓');
+    dsStatus('PDF matière prêt ✓');
+  }).catch(function() {
+    dsSetAutosave('');
+    alert('Erreur pendant la préparation du PDF.');
+  });
+}
+
 function dsStatus(msg) {
   var el = document.getElementById('dsStatus');
   if (el) { el.textContent = msg; clearTimeout(DS._stTimer); DS._stTimer = setTimeout(function(){ el.textContent=''; }, 2000); }
+}
+
+function dsSetAutosave(msg, keep) {
+  var el = document.getElementById('dsAutosave');
+  if (!el) return;
+  clearTimeout(DS._autoSaveUiTimer);
+  el.textContent = msg || '';
+  if (msg && !keep) {
+    DS._autoSaveUiTimer = setTimeout(function(){
+      if (el.textContent === msg) el.textContent = '';
+    }, 1700);
+  }
 }
 
 /* Init on notes page open */
