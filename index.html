@@ -9727,240 +9727,6 @@ function exportPDF(mode){
     +'<p>'+cards.length+' cartes exportées le '+new Date().toLocaleDateString('fr-FR')+'</p>'
     +'<table><thead><tr><th>Matière</th><th>Question</th><th>Réponse</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table>'
-    +'<script>
-
-/* ══════════════════════════════════════════
-   SECTION DESSIN — Feuilles indépendantes
-   ══════════════════════════════════════════ */
-var DS = {
-  open: false,
-  sheets: [],        // [{id, name, data}]
-  activeId: null,
-  tool: 'pen',
-  color: '#111827',
-  size: 2,
-  drawing: false,
-  lastX: 0, lastY: 0,
-  dirty: false
-};
-
-/* ── Init ── */
-function dsInit() {
-  try { DS.sheets = JSON.parse(localStorage.getItem('dg_draw_sheets') || '[]'); } catch(e) { DS.sheets = []; }
-  if (!DS.sheets.length) DS.sheets = [{ id: Date.now(), name: 'Feuille 1', data: '' }];
-  DS.activeId = DS.sheets[0].id;
-  dsRenderSheets();
-  dsInitCanvas();
-}
-
-/* ── Toggle panel ── */
-function dsToggle() {
-  DS.open = !DS.open;
-  var body  = document.getElementById('dsSectionBody');
-  var arrow = document.getElementById('dsArrow');
-  if (DS.open) {
-    body.classList.add('open');
-    arrow.classList.add('open');
-    setTimeout(function() { dsResizeCanvas(); dsLoadSheet(DS.activeId); }, 50);
-  } else {
-    dsSave();
-    body.classList.remove('open');
-    arrow.classList.remove('open');
-  }
-}
-
-/* ── Canvas setup ── */
-function dsInitCanvas() {
-  var canvas = document.getElementById('drawCanvas');
-  if (!canvas) return;
-
-  function getPos(e) {
-    var r = canvas.getBoundingClientRect();
-    var sx = canvas.width  / r.width;
-    var sy = canvas.height / r.height;
-    return {
-      x: (e.clientX - r.left) * sx,
-      y: (e.clientY - r.top)  * sy,
-      p: Math.min(1, Math.max(0.1, e.pressure || 0.5))
-    };
-  }
-
-  canvas.addEventListener('pointerdown', function(e) {
-    e.preventDefault();
-    canvas.setPointerCapture(e.pointerId);
-    DS.drawing = true;
-    var p = getPos(e);
-    DS.lastX = p.x; DS.lastY = p.y;
-  });
-
-  canvas.addEventListener('pointermove', function(e) {
-    if (!DS.drawing) return;
-    e.preventDefault();
-    var p   = getPos(e);
-    var ctx = canvas.getContext('2d');
-    if (DS.tool === 'eraser') {
-      var es = DS.size * 6;
-      ctx.clearRect(p.x - es/2, p.y - es/2, es, es);
-    } else {
-      var lw = DS.tool === 'marker' ? DS.size * 3 : Math.max(0.8, DS.size * p.p);
-      ctx.globalAlpha  = DS.tool === 'marker' ? 0.4 : 1;
-      ctx.strokeStyle  = DS.color;
-      ctx.lineWidth    = lw;
-      ctx.lineCap      = 'round';
-      ctx.lineJoin     = 'round';
-      ctx.beginPath();
-      ctx.moveTo(DS.lastX, DS.lastY);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
-      ctx.globalAlpha  = 1;
-    }
-    DS.lastX = p.x; DS.lastY = p.y;
-    DS.dirty = true;
-    clearTimeout(DS._saveTimer);
-    DS._saveTimer = setTimeout(dsSave, 1200);
-  });
-
-  function endDraw() {
-    DS.drawing = false;
-  }
-  canvas.addEventListener('pointerup',     endDraw);
-  canvas.addEventListener('pointercancel', endDraw);
-  canvas.addEventListener('pointerleave',  endDraw);
-}
-
-function dsResizeCanvas() {
-  var wrap   = document.getElementById('dsCanvasWrap');
-  var canvas = document.getElementById('drawCanvas');
-  if (!wrap || !canvas) return;
-  var r = wrap.getBoundingClientRect();
-  if (r.width < 10) return;
-  // Save current content, resize, restore
-  var oldData = DS.dirty || !DS._canvasSnapshot ? null : DS._canvasSnapshot;
-  canvas.width  = Math.round(r.width);
-  canvas.height = Math.round(r.height);
-  var ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
-  if (sheet && sheet.data) {
-    var img = new Image();
-    img.onload = function() { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
-    img.src = sheet.data;
-  }
-}
-
-/* ── Load/save sheet ── */
-function dsLoadSheet(id) {
-  if (DS.dirty) dsSave();
-  DS.activeId = id;
-  DS.dirty = false;
-  var canvas = document.getElementById('drawCanvas');
-  if (!canvas) return;
-  dsResizeCanvas();
-  var sheet = DS.sheets.find(function(s){ return s.id === id; });
-  dsStatus('Feuille chargée');
-}
-
-function dsSave() {
-  var canvas = document.getElementById('drawCanvas');
-  if (!canvas || !DS.activeId) return;
-  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
-  if (!sheet) return;
-  sheet.data = canvas.toDataURL('image/jpeg', 0.75);
-  DS.dirty = false;
-  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
-  dsStatus('Sauvegardé ✓');
-  dsRenderSheets();
-}
-
-/* ── Sheets list ── */
-function dsRenderSheets() {
-  var list = document.getElementById('dsSheetList');
-  if (!list) return;
-  list.innerHTML = '';
-  DS.sheets.forEach(function(s) {
-    var div = document.createElement('div');
-    div.className = 'draw-sheet-item' + (s.id === DS.activeId ? ' active' : '');
-    div.innerHTML = '<span>' + s.name + '</span><span class="draw-sheet-del" onclick="event.stopPropagation();dsDeleteSheet(' + s.id + ')">✕</span>';
-    div.addEventListener('click', function() { dsLoadSheet(s.id); dsRenderSheets(); });
-    list.appendChild(div);
-  });
-}
-
-function dsNewSheet() {
-  dsSave();
-  var n = DS.sheets.length + 1;
-  var name = prompt('Nom de la feuille :', 'Feuille ' + n);
-  if (!name) name = 'Feuille ' + n;
-  var sheet = { id: Date.now(), name: name, data: '' };
-  DS.sheets.push(sheet);
-  DS.activeId = sheet.id;
-  DS.dirty = false;
-  dsRenderSheets();
-  dsResizeCanvas();
-}
-
-function dsDeleteSheet(id) {
-  if (DS.sheets.length <= 1) { alert('Impossible de supprimer la dernière feuille.'); return; }
-  if (!confirm('Supprimer cette feuille ?')) return;
-  DS.sheets = DS.sheets.filter(function(s){ return s.id !== id; });
-  if (DS.activeId === id) DS.activeId = DS.sheets[0].id;
-  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
-  dsRenderSheets();
-  dsResizeCanvas();
-}
-
-/* ── Tools ── */
-function dsSetTool(tool, btn) {
-  DS.tool = tool;
-  document.querySelectorAll('#dsToolbar .dt-btn').forEach(function(b){ b.classList.remove('on'); });
-  if (btn) btn.classList.add('on');
-}
-
-function dsSetColor(color, el) {
-  DS.color = color;
-  document.querySelectorAll('#dsToolbar .dt-swatch').forEach(function(s){ s.classList.remove('on'); });
-  if (el) el.classList.add('on');
-}
-
-function dsSetSize(size, el) {
-  DS.size = size;
-  document.querySelectorAll('#dsToolbar .dt-size').forEach(function(s){ s.classList.remove('on'); });
-  if (el) el.classList.add('on');
-}
-
-function dsClear() {
-  if (!confirm('Effacer toute la feuille ?')) return;
-  var canvas = document.getElementById('drawCanvas');
-  var ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  DS.dirty = true;
-  dsSave();
-}
-
-function dsExport() {
-  var canvas = document.getElementById('drawCanvas');
-  var sheet  = DS.sheets.find(function(s){ return s.id === DS.activeId; });
-  var name   = sheet ? sheet.name : 'dessin';
-  var a = document.createElement('a');
-  a.download = name + '.png';
-  a.href = canvas.toDataURL('image/png');
-  a.click();
-}
-
-function dsStatus(msg) {
-  var el = document.getElementById('dsStatus');
-  if (el) { el.textContent = msg; clearTimeout(DS._stTimer); DS._stTimer = setTimeout(function(){ el.textContent=''; }, 2000); }
-}
-
-/* Init on notes page open */
-document.addEventListener('DOMContentLoaded', function() {
-  if (document.getElementById('drawCanvas')) dsInit();
-});
-
-</script>
-</body></html>';
 
   var w=window.open('','_blank');
   w.document.write(html);
@@ -18031,4 +17797,237 @@ function beClear(idx) {
 })();
 </script>
 
+
+<script>
+/* ══════════════════════════════════════════
+   SECTION DESSIN — Feuilles indépendantes
+   ══════════════════════════════════════════ */
+var DS = {
+  open: false,
+  sheets: [],        // [{id, name, data}]
+  activeId: null,
+  tool: 'pen',
+  color: '#111827',
+  size: 2,
+  drawing: false,
+  lastX: 0, lastY: 0,
+  dirty: false
+};
+
+/* ── Init ── */
+function dsInit() {
+  try { DS.sheets = JSON.parse(localStorage.getItem('dg_draw_sheets') || '[]'); } catch(e) { DS.sheets = []; }
+  if (!DS.sheets.length) DS.sheets = [{ id: Date.now(), name: 'Feuille 1', data: '' }];
+  DS.activeId = DS.sheets[0].id;
+  dsRenderSheets();
+  dsInitCanvas();
+}
+
+/* ── Toggle panel ── */
+function dsToggle() {
+  DS.open = !DS.open;
+  var body  = document.getElementById('dsSectionBody');
+  var arrow = document.getElementById('dsArrow');
+  if (DS.open) {
+    body.classList.add('open');
+    arrow.classList.add('open');
+    setTimeout(function() { dsResizeCanvas(); dsLoadSheet(DS.activeId); }, 50);
+  } else {
+    dsSave();
+    body.classList.remove('open');
+    arrow.classList.remove('open');
+  }
+}
+
+/* ── Canvas setup ── */
+function dsInitCanvas() {
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas) return;
+
+  function getPos(e) {
+    var r = canvas.getBoundingClientRect();
+    var sx = canvas.width  / r.width;
+    var sy = canvas.height / r.height;
+    return {
+      x: (e.clientX - r.left) * sx,
+      y: (e.clientY - r.top)  * sy,
+      p: Math.min(1, Math.max(0.1, e.pressure || 0.5))
+    };
+  }
+
+  canvas.addEventListener('pointerdown', function(e) {
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    DS.drawing = true;
+    var p = getPos(e);
+    DS.lastX = p.x; DS.lastY = p.y;
+  });
+
+  canvas.addEventListener('pointermove', function(e) {
+    if (!DS.drawing) return;
+    e.preventDefault();
+    var p   = getPos(e);
+    var ctx = canvas.getContext('2d');
+    if (DS.tool === 'eraser') {
+      var es = DS.size * 6;
+      ctx.clearRect(p.x - es/2, p.y - es/2, es, es);
+    } else {
+      var lw = DS.tool === 'marker' ? DS.size * 3 : Math.max(0.8, DS.size * p.p);
+      ctx.globalAlpha  = DS.tool === 'marker' ? 0.4 : 1;
+      ctx.strokeStyle  = DS.color;
+      ctx.lineWidth    = lw;
+      ctx.lineCap      = 'round';
+      ctx.lineJoin     = 'round';
+      ctx.beginPath();
+      ctx.moveTo(DS.lastX, DS.lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.globalAlpha  = 1;
+    }
+    DS.lastX = p.x; DS.lastY = p.y;
+    DS.dirty = true;
+    clearTimeout(DS._saveTimer);
+    DS._saveTimer = setTimeout(dsSave, 1200);
+  });
+
+  function endDraw() {
+    DS.drawing = false;
+  }
+  canvas.addEventListener('pointerup',     endDraw);
+  canvas.addEventListener('pointercancel', endDraw);
+  canvas.addEventListener('pointerleave',  endDraw);
+}
+
+function dsResizeCanvas() {
+  var wrap   = document.getElementById('dsCanvasWrap');
+  var canvas = document.getElementById('drawCanvas');
+  if (!wrap || !canvas) return;
+  var r = wrap.getBoundingClientRect();
+  if (r.width < 10) return;
+  // Save current content, resize, restore
+  var oldData = DS.dirty || !DS._canvasSnapshot ? null : DS._canvasSnapshot;
+  canvas.width  = Math.round(r.width);
+  canvas.height = Math.round(r.height);
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  if (sheet && sheet.data) {
+    var img = new Image();
+    img.onload = function() { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+    img.src = sheet.data;
+  }
+}
+
+/* ── Load/save sheet ── */
+function dsLoadSheet(id) {
+  if (DS.dirty) dsSave();
+  DS.activeId = id;
+  DS.dirty = false;
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas) return;
+  dsResizeCanvas();
+  var sheet = DS.sheets.find(function(s){ return s.id === id; });
+  dsStatus('Feuille chargée');
+}
+
+function dsSave() {
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas || !DS.activeId) return;
+  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  if (!sheet) return;
+  sheet.data = canvas.toDataURL('image/jpeg', 0.75);
+  DS.dirty = false;
+  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+  dsStatus('Sauvegardé ✓');
+  dsRenderSheets();
+}
+
+/* ── Sheets list ── */
+function dsRenderSheets() {
+  var list = document.getElementById('dsSheetList');
+  if (!list) return;
+  list.innerHTML = '';
+  DS.sheets.forEach(function(s) {
+    var div = document.createElement('div');
+    div.className = 'draw-sheet-item' + (s.id === DS.activeId ? ' active' : '');
+    div.innerHTML = '<span>' + s.name + '</span><span class="draw-sheet-del" onclick="event.stopPropagation();dsDeleteSheet(' + s.id + ')">✕</span>';
+    div.addEventListener('click', function() { dsLoadSheet(s.id); dsRenderSheets(); });
+    list.appendChild(div);
+  });
+}
+
+function dsNewSheet() {
+  dsSave();
+  var n = DS.sheets.length + 1;
+  var name = prompt('Nom de la feuille :', 'Feuille ' + n);
+  if (!name) name = 'Feuille ' + n;
+  var sheet = { id: Date.now(), name: name, data: '' };
+  DS.sheets.push(sheet);
+  DS.activeId = sheet.id;
+  DS.dirty = false;
+  dsRenderSheets();
+  dsResizeCanvas();
+}
+
+function dsDeleteSheet(id) {
+  if (DS.sheets.length <= 1) { alert('Impossible de supprimer la dernière feuille.'); return; }
+  if (!confirm('Supprimer cette feuille ?')) return;
+  DS.sheets = DS.sheets.filter(function(s){ return s.id !== id; });
+  if (DS.activeId === id) DS.activeId = DS.sheets[0].id;
+  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+  dsRenderSheets();
+  dsResizeCanvas();
+}
+
+/* ── Tools ── */
+function dsSetTool(tool, btn) {
+  DS.tool = tool;
+  document.querySelectorAll('#dsToolbar .dt-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+}
+
+function dsSetColor(color, el) {
+  DS.color = color;
+  document.querySelectorAll('#dsToolbar .dt-swatch').forEach(function(s){ s.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+
+function dsSetSize(size, el) {
+  DS.size = size;
+  document.querySelectorAll('#dsToolbar .dt-size').forEach(function(s){ s.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+
+function dsClear() {
+  if (!confirm('Effacer toute la feuille ?')) return;
+  var canvas = document.getElementById('drawCanvas');
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  DS.dirty = true;
+  dsSave();
+}
+
+function dsExport() {
+  var canvas = document.getElementById('drawCanvas');
+  var sheet  = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  var name   = sheet ? sheet.name : 'dessin';
+  var a = document.createElement('a');
+  a.download = name + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function dsStatus(msg) {
+  var el = document.getElementById('dsStatus');
+  if (el) { el.textContent = msg; clearTimeout(DS._stTimer); DS._stTimer = setTimeout(function(){ el.textContent=''; }, 2000); }
+}
+
+/* Init on notes page open */
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('drawCanvas')) dsInit();
+});
+
+</script>
 </body></html>
