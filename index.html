@@ -1087,19 +1087,25 @@ html{scroll-behavior:smooth}
 [data-theme="dark"] .draw-section-body{border-color:var(--border-col)}
 .draw-section-body.open{display:flex;height:520px}
 /* Sheets sidebar */
-.draw-sheets{width:160px;flex-shrink:0;border-right:1px solid var(--g100);display:flex;flex-direction:column;background:var(--g50)}
+.draw-sheets{width:210px;flex-shrink:0;border-right:1px solid var(--g100);display:flex;flex-direction:column;background:var(--g50)}
 [data-theme="dark"] .draw-sheets{background:#1a1f2e;border-color:var(--border-col)}
 .draw-sheets-title{font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:.08em;padding:12px 14px 6px}
+.draw-subject-select{margin:0 10px 10px;width:calc(100% - 20px);padding:7px 9px;border-radius:7px;border:1px solid var(--g200);background:var(--bg-card);color:var(--text-main);font-size:12px;font-family:'Figtree',sans-serif}
 .draw-sheet-item{padding:8px 14px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;border-radius:6px;margin:1px 6px;transition:all .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .draw-sheet-item:hover{background:var(--g100);color:var(--text-main)}
 [data-theme="dark"] .draw-sheet-item:hover{background:rgba(255,255,255,.06)}
 .draw-sheet-item.active{background:var(--blue-light);color:var(--blue-mid);font-weight:700}
 [data-theme="dark"] .draw-sheet-item.active{background:rgba(77,159,255,.15);color:#4d9fff}
+.draw-sheet-sub{display:inline-block;margin-top:3px;font-size:10px;font-weight:700;color:var(--blue-mid);background:var(--blue-light);border-radius:100px;padding:1px 7px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.draw-subject-head{font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px 4px}
 .draw-sheet-new{margin:6px;padding:7px 14px;font-size:12px;font-weight:700;border:1.5px dashed var(--g300);border-radius:6px;color:var(--text-sub);cursor:pointer;text-align:center;transition:all .12s}
 .draw-sheet-new:hover{border-color:var(--blue-mid);color:var(--blue-mid)}
 .draw-sheet-del{float:right;opacity:0;font-size:11px;padding:1px 4px;border-radius:3px;transition:opacity .1s}
 .draw-sheet-item:hover .draw-sheet-del{opacity:.5}
 .draw-sheet-del:hover{opacity:1!important;background:#fecaca;color:#dc2626}
+.draw-sheet-rename{float:right;opacity:0;font-size:11px;padding:1px 4px;border-radius:3px;transition:opacity .1s;margin-right:4px}
+.draw-sheet-item:hover .draw-sheet-rename{opacity:.6}
+.draw-sheet-rename:hover{opacity:1!important;background:#dbeafe;color:#1d4ed8}
 /* Canvas area */
 .draw-canvas-area{flex:1;display:flex;flex-direction:column;min-width:0}
 .draw-toolbar{display:flex;align-items:center;gap:5px;padding:7px 12px;background:var(--bg-card);border-bottom:1px solid var(--g100);flex-wrap:wrap}
@@ -1113,9 +1119,18 @@ html{scroll-behavior:smooth}
 .dt-size{width:22px;height:22px;border-radius:5px;border:1px solid var(--g200);background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
 .dt-size.on,.dt-size:hover{background:var(--g200)}
 .dt-spacer{flex:1}
-.draw-canvas-wrap{flex:1;overflow:hidden;position:relative;background:#f8f9fa;cursor:crosshair}
+.draw-canvas-wrap{flex:1;overflow:auto;position:relative;background:#f8f9fa;cursor:crosshair}
 [data-theme="dark"] .draw-canvas-wrap{background:#1a1f2e}
-#drawCanvas{display:block;width:100%;height:100%;touch-action:none}
+#drawCanvas{display:block;width:100%;height:auto;min-height:100%;touch-action:none}
+.draw-text-layer{position:absolute;left:0;top:0;pointer-events:none;z-index:3}
+.draw-text-box{position:absolute;background:rgba(255,255,255,.92);border:1px solid #dbeafe;border-radius:8px;min-width:140px;min-height:70px;box-shadow:0 2px 8px rgba(0,0,0,.08);pointer-events:auto;overflow:auto;resize:both}
+[data-theme="dark"] .draw-text-box{background:rgba(20,23,32,.92);border-color:rgba(77,159,255,.45)}
+.draw-text-actions{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;background:rgba(59,130,246,.1);border-bottom:1px solid rgba(59,130,246,.2)}
+[data-theme="dark"] .draw-text-actions{background:rgba(77,159,255,.15);border-color:rgba(77,159,255,.25)}
+.draw-text-handle{cursor:grab;font-size:12px;color:var(--text-sub);font-weight:700;user-select:none}
+.draw-text-del{border:none;background:transparent;color:#dc2626;cursor:pointer;font-size:12px;padding:1px 4px;border-radius:4px}
+.draw-text-del:hover{background:#fee2e2}
+.draw-text-content{padding:8px 9px;font-size:14px;line-height:1.45;color:var(--text-main);outline:none;min-height:42px}
 .draw-status{position:absolute;bottom:8px;right:12px;font-size:11px;color:var(--text-sub);pointer-events:none;opacity:.6}
 
 .notes-layout{display:grid;grid-template-columns:240px 1fr;gap:0;border:1.5px solid var(--g100);border-radius:16px;overflow:hidden;min-height:520px;background:#fff}
@@ -6038,6 +6053,7 @@ aside.sidebar {
     <!-- Sheets list -->
     <div class="draw-sheets" id="dsSheets">
       <div class="draw-sheets-title">Feuilles</div>
+      <select id="dsSubjectSelect" class="draw-subject-select" onchange="dsUpdateActiveSubject(this.value)"></select>
       <div id="dsSheetList"></div>
       <div class="draw-sheet-new" onclick="dsNewSheet()">+ Nouvelle feuille</div>
     </div>
@@ -6058,12 +6074,15 @@ aside.sidebar {
         <div class="dt-size on" id="dsSize-2" onclick="dsSetSize(2,this)" title="Fin"><div style="width:3px;height:3px;border-radius:50%;background:currentColor;margin:auto"></div></div>
         <div class="dt-size" id="dsSize-5" onclick="dsSetSize(5,this)" title="Moyen"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;margin:auto"></div></div>
         <div class="dt-size" id="dsSize-12" onclick="dsSetSize(12,this)" title="Épais"><div style="width:11px;height:11px;border-radius:50%;background:currentColor;margin:auto"></div></div>
+        <div class="dt-sep"></div>
+        <button class="dt-btn" onclick="dsAddTextBox()">T Texte</button>
         <div class="dt-spacer"></div>
         <button class="dt-btn" onclick="dsClear()" style="color:#dc2626;border-color:#fecaca">⌫ Effacer</button>
         <button class="dt-btn" onclick="dsExport()">↓ PNG</button>
       </div>
       <div class="draw-canvas-wrap" id="dsCanvasWrap">
         <canvas id="drawCanvas"></canvas>
+        <div class="draw-text-layer" id="dsTextLayer"></div>
         <div class="draw-status" id="dsStatus"></div>
       </div>
     </div>
@@ -17804,23 +17823,105 @@ function beClear(idx) {
    ══════════════════════════════════════════ */
 var DS = {
   open: false,
-  sheets: [],        // [{id, name, data}]
+  sheets: [],        // [{id, name, subject, data, texts, height}]
   activeId: null,
   tool: 'pen',
   color: '#111827',
   size: 2,
   drawing: false,
   lastX: 0, lastY: 0,
-  dirty: false
+  dirty: false,
+  subjects: []
 };
+
+function dsEscapeHTML(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function dsScheduleSave() {
+  clearTimeout(DS._saveTimer);
+  DS._saveTimer = setTimeout(dsSave, 900);
+}
+
+function dsPersist() {
+  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+}
+
+function dsGetActiveSheet() {
+  return DS.sheets.find(function(s){ return s.id === DS.activeId; }) || null;
+}
+
+function dsEnsureSheetSchema(sheet) {
+  if (!sheet.subject) sheet.subject = (DS.subjects[0] || 'Général');
+  if (!Array.isArray(sheet.texts)) sheet.texts = [];
+  if (!sheet.height || sheet.height < 600) sheet.height = 1200;
+  if (typeof sheet.name !== 'string' || !sheet.name.trim()) sheet.name = 'Feuille';
+  if (typeof sheet.data !== 'string') sheet.data = '';
+  return sheet;
+}
+
+function dsGetSubjectsFromSimulator() {
+  if (Array.isArray(window.MATIERES) && window.MATIERES.length) {
+    var out = [];
+    var seen = Object.create(null);
+    window.MATIERES.forEach(function(m) {
+      if (!m || !m.nom || m.coef <= 0) return;
+      var name = String(m.nom).trim();
+      if (!seen[name]) {
+        seen[name] = true;
+        out.push(name);
+      }
+    });
+    if (out.length) return out;
+  }
+  return ['Général'];
+}
+
+function dsRenderSubjectOptions(selected) {
+  var sel = document.getElementById('dsSubjectSelect');
+  if (!sel) return;
+  sel.innerHTML = '';
+  DS.subjects.forEach(function(sub) {
+    var opt = document.createElement('option');
+    opt.value = sub;
+    opt.textContent = sub;
+    sel.appendChild(opt);
+  });
+  var finalValue = selected || DS.subjects[0] || 'Général';
+  if (!DS.subjects.includes(finalValue)) {
+    var extra = document.createElement('option');
+    extra.value = finalValue;
+    extra.textContent = finalValue;
+    sel.appendChild(extra);
+  }
+  sel.value = finalValue;
+}
 
 /* ── Init ── */
 function dsInit() {
+  DS.subjects = dsGetSubjectsFromSimulator();
+  dsRenderSubjectOptions(DS.subjects[0]);
   try { DS.sheets = JSON.parse(localStorage.getItem('dg_draw_sheets') || '[]'); } catch(e) { DS.sheets = []; }
-  if (!DS.sheets.length) DS.sheets = [{ id: Date.now(), name: 'Feuille 1', data: '' }];
+  DS.sheets = (Array.isArray(DS.sheets) ? DS.sheets : []).map(dsEnsureSheetSchema);
+  if (!DS.sheets.length) {
+    DS.sheets = [{ id: Date.now(), name: 'Feuille 1', subject: DS.subjects[0], data: '', texts: [], height: 1200 }];
+  }
   DS.activeId = DS.sheets[0].id;
   dsRenderSheets();
   dsInitCanvas();
+  dsLoadSheet(DS.activeId);
+  if (!DS._resizeBound) {
+    window.addEventListener('resize', function(){
+      if (!DS.open) return;
+      dsResizeCanvas(null, true);
+    });
+    DS._resizeBound = true;
+  }
 }
 
 /* ── Toggle panel ── */
@@ -17831,7 +17932,7 @@ function dsToggle() {
   if (DS.open) {
     body.classList.add('open');
     arrow.classList.add('open');
-    setTimeout(function() { dsResizeCanvas(); dsLoadSheet(DS.activeId); }, 50);
+    setTimeout(function() { dsLoadSheet(DS.activeId); }, 50);
   } else {
     dsSave();
     body.classList.remove('open');
@@ -17842,7 +17943,8 @@ function dsToggle() {
 /* ── Canvas setup ── */
 function dsInitCanvas() {
   var canvas = document.getElementById('drawCanvas');
-  if (!canvas) return;
+  if (!canvas || DS._canvasBound) return;
+  DS._canvasBound = true;
 
   function getPos(e) {
     var r = canvas.getBoundingClientRect();
@@ -17861,33 +17963,20 @@ function dsInitCanvas() {
     DS.drawing = true;
     var p = getPos(e);
     DS.lastX = p.x; DS.lastY = p.y;
+    dsDrawSegment(p, p);
+    DS.dirty = true;
+    dsScheduleSave();
   });
 
   canvas.addEventListener('pointermove', function(e) {
     if (!DS.drawing) return;
     e.preventDefault();
-    var p   = getPos(e);
-    var ctx = canvas.getContext('2d');
-    if (DS.tool === 'eraser') {
-      var es = DS.size * 6;
-      ctx.clearRect(p.x - es/2, p.y - es/2, es, es);
-    } else {
-      var lw = DS.tool === 'marker' ? DS.size * 3 : Math.max(0.8, DS.size * p.p);
-      ctx.globalAlpha  = DS.tool === 'marker' ? 0.4 : 1;
-      ctx.strokeStyle  = DS.color;
-      ctx.lineWidth    = lw;
-      ctx.lineCap      = 'round';
-      ctx.lineJoin     = 'round';
-      ctx.beginPath();
-      ctx.moveTo(DS.lastX, DS.lastY);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
-      ctx.globalAlpha  = 1;
-    }
+    var p = getPos(e);
+    dsDrawSegment({x: DS.lastX, y: DS.lastY, p: p.p}, p);
     DS.lastX = p.x; DS.lastY = p.y;
     DS.dirty = true;
-    clearTimeout(DS._saveTimer);
-    DS._saveTimer = setTimeout(dsSave, 1200);
+    dsEnsureInfiniteCanvas(p.y + DS.size * 10);
+    dsScheduleSave();
   });
 
   function endDraw() {
@@ -17898,25 +17987,85 @@ function dsInitCanvas() {
   canvas.addEventListener('pointerleave',  endDraw);
 }
 
-function dsResizeCanvas() {
+function dsDrawSegment(a, b) {
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if (DS.tool === 'eraser') {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.strokeStyle = 'rgba(0,0,0,1)';
+    ctx.lineWidth = Math.max(4, DS.size * 8);
+  } else {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = DS.color;
+    ctx.globalAlpha = DS.tool === 'marker' ? 0.35 : 1;
+    ctx.lineWidth = DS.tool === 'marker' ? DS.size * 3.2 : Math.max(1, DS.size * (b.p || 1));
+  }
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function dsResizeCanvas(forceHeight, preserveCurrent) {
   var wrap   = document.getElementById('dsCanvasWrap');
   var canvas = document.getElementById('drawCanvas');
+  var layer  = document.getElementById('dsTextLayer');
+  var sheet  = dsGetActiveSheet();
+  if (!sheet) return;
   if (!wrap || !canvas) return;
-  var r = wrap.getBoundingClientRect();
-  if (r.width < 10) return;
-  // Save current content, resize, restore
-  var oldData = DS.dirty || !DS._canvasSnapshot ? null : DS._canvasSnapshot;
-  canvas.width  = Math.round(r.width);
-  canvas.height = Math.round(r.height);
-  var ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
-  if (sheet && sheet.data) {
-    var img = new Image();
-    img.onload = function() { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
-    img.src = sheet.data;
+  var targetW = Math.max(360, Math.round(wrap.clientWidth));
+  var targetH = Math.max(Math.round(wrap.clientHeight), forceHeight || sheet.height || 1200);
+  if (canvas.width === targetW && canvas.height === targetH && !preserveCurrent) {
+    if (layer) { layer.style.width = targetW + 'px'; layer.style.height = targetH + 'px'; }
+    dsRenderTextBoxes();
+    return;
   }
+
+  var backup = null;
+  if (preserveCurrent && canvas.width > 0 && canvas.height > 0) {
+    backup = document.createElement('canvas');
+    backup.width = canvas.width;
+    backup.height = canvas.height;
+    backup.getContext('2d').drawImage(canvas, 0, 0);
+  }
+
+  canvas.width = targetW;
+  canvas.height = targetH;
+  if (layer) { layer.style.width = targetW + 'px'; layer.style.height = targetH + 'px'; }
+
+  if (backup) {
+    canvas.getContext('2d').drawImage(backup, 0, 0, backup.width, backup.height, 0, 0, targetW, targetH);
+    dsRenderTextBoxes();
+    return;
+  }
+
+  if (sheet.data) {
+    var img = new Image();
+    img.onload = function() {
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      dsRenderTextBoxes();
+    };
+    img.src = sheet.data;
+  } else {
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    dsRenderTextBoxes();
+  }
+}
+
+function dsEnsureInfiniteCanvas(requiredY) {
+  var canvas = document.getElementById('drawCanvas');
+  var sheet = dsGetActiveSheet();
+  if (!canvas || !sheet) return;
+  if (requiredY < canvas.height - 120) return;
+  sheet.height = canvas.height + 800;
+  dsResizeCanvas(sheet.height, true);
 }
 
 /* ── Load/save sheet ── */
@@ -17924,23 +18073,131 @@ function dsLoadSheet(id) {
   if (DS.dirty) dsSave();
   DS.activeId = id;
   DS.dirty = false;
-  var canvas = document.getElementById('drawCanvas');
-  if (!canvas) return;
-  dsResizeCanvas();
-  var sheet = DS.sheets.find(function(s){ return s.id === id; });
+  var sheet = dsGetActiveSheet();
+  if (!sheet) return;
+  dsRenderSubjectOptions(sheet.subject || DS.subjects[0]);
+  dsResizeCanvas(sheet.height || null, false);
+  dsRenderSheets();
   dsStatus('Feuille chargée');
 }
 
 function dsSave() {
   var canvas = document.getElementById('drawCanvas');
-  if (!canvas || !DS.activeId) return;
-  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  if (!DS.activeId) return;
+  var sheet = dsGetActiveSheet();
   if (!sheet) return;
-  sheet.data = canvas.toDataURL('image/jpeg', 0.75);
+  if (canvas && canvas.width > 1 && canvas.height > 1) {
+    try {
+      sheet.data = canvas.toDataURL('image/png');
+      sheet.height = canvas.height;
+    } catch (_) {}
+  }
+  sheet.texts = dsCollectTextsFromDOM();
   DS.dirty = false;
-  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+  dsPersist();
   dsStatus('Sauvegardé ✓');
   dsRenderSheets();
+}
+
+function dsCollectTextsFromDOM() {
+  var layer = document.getElementById('dsTextLayer');
+  if (!layer) return [];
+  return Array.from(layer.querySelectorAll('.draw-text-box')).map(function(box){
+    var content = box.querySelector('.draw-text-content');
+    return {
+      id: box.getAttribute('data-id'),
+      x: Math.round(parseFloat(box.style.left) || 0),
+      y: Math.round(parseFloat(box.style.top) || 0),
+      w: Math.round(parseFloat(box.style.width) || box.offsetWidth || 220),
+      h: Math.round(parseFloat(box.style.height) || box.offsetHeight || 100),
+      html: content ? content.innerHTML : ''
+    };
+  });
+}
+
+function dsRenderTextBoxes() {
+  var layer = document.getElementById('dsTextLayer');
+  var sheet = dsGetActiveSheet();
+  if (!layer || !sheet) return;
+  layer.innerHTML = '';
+  (sheet.texts || []).forEach(function(t){
+    var box = document.createElement('div');
+    box.className = 'draw-text-box';
+    box.setAttribute('data-id', t.id);
+    box.style.left = (t.x || 20) + 'px';
+    box.style.top = (t.y || 20) + 'px';
+    box.style.width = (t.w || 240) + 'px';
+    box.style.height = (t.h || 110) + 'px';
+
+    var actions = document.createElement('div');
+    actions.className = 'draw-text-actions';
+    var handle = document.createElement('span');
+    handle.className = 'draw-text-handle';
+    handle.textContent = '⠿ déplacer';
+    var del = document.createElement('button');
+    del.className = 'draw-text-del';
+    del.textContent = '✕';
+    del.addEventListener('click', function(e){
+      e.stopPropagation();
+      sheet.texts = (sheet.texts || []).filter(function(x){ return x.id !== t.id; });
+      DS.dirty = true;
+      dsRenderTextBoxes();
+      dsScheduleSave();
+    });
+    actions.appendChild(handle);
+    actions.appendChild(del);
+
+    var content = document.createElement('div');
+    content.className = 'draw-text-content';
+    content.contentEditable = 'true';
+    content.innerHTML = t.html || '';
+    content.addEventListener('input', function(){
+      DS.dirty = true;
+      dsScheduleSave();
+    });
+
+    if (typeof ResizeObserver !== 'undefined') {
+      var ro = new ResizeObserver(function(){
+        DS.dirty = true;
+        dsEnsureInfiniteCanvas((parseFloat(box.style.top) || 0) + box.offsetHeight + 80);
+        dsScheduleSave();
+      });
+      ro.observe(box);
+    }
+
+    var drag = null;
+    handle.addEventListener('pointerdown', function(e){
+      e.preventDefault();
+      var r = box.getBoundingClientRect();
+      drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+      handle.setPointerCapture(e.pointerId);
+    });
+    handle.addEventListener('pointermove', function(e){
+      if (!drag) return;
+      var wrapR = document.getElementById('dsCanvasWrap').getBoundingClientRect();
+      var nx = Math.max(0, e.clientX - wrapR.left + document.getElementById('dsCanvasWrap').scrollLeft - drag.dx);
+      var ny = Math.max(0, e.clientY - wrapR.top + document.getElementById('dsCanvasWrap').scrollTop - drag.dy);
+      box.style.left = Math.round(nx) + 'px';
+      box.style.top = Math.round(ny) + 'px';
+      dsEnsureInfiniteCanvas(ny + box.offsetHeight + 80);
+      DS.dirty = true;
+    });
+    handle.addEventListener('pointerup', function(){
+      drag = null;
+      dsScheduleSave();
+    });
+    handle.addEventListener('pointercancel', function(){ drag = null; });
+
+    box.addEventListener('pointerup', function(){
+      DS.dirty = true;
+      dsEnsureInfiniteCanvas((parseFloat(box.style.top) || 0) + box.offsetHeight + 80);
+      dsScheduleSave();
+    });
+
+    box.appendChild(actions);
+    box.appendChild(content);
+    layer.appendChild(box);
+  });
 }
 
 /* ── Sheets list ── */
@@ -17948,36 +18205,107 @@ function dsRenderSheets() {
   var list = document.getElementById('dsSheetList');
   if (!list) return;
   list.innerHTML = '';
-  DS.sheets.forEach(function(s) {
-    var div = document.createElement('div');
-    div.className = 'draw-sheet-item' + (s.id === DS.activeId ? ' active' : '');
-    div.innerHTML = '<span>' + s.name + '</span><span class="draw-sheet-del" onclick="event.stopPropagation();dsDeleteSheet(' + s.id + ')">✕</span>';
-    div.addEventListener('click', function() { dsLoadSheet(s.id); dsRenderSheets(); });
-    list.appendChild(div);
+  var grouped = {};
+  DS.sheets.forEach(function(s){
+    var sub = s.subject || 'Général';
+    if (!grouped[sub]) grouped[sub] = [];
+    grouped[sub].push(s);
+  });
+
+  var orderedSubjects = DS.subjects.slice();
+  Object.keys(grouped).forEach(function(k){ if (!orderedSubjects.includes(k)) orderedSubjects.push(k); });
+
+  orderedSubjects.forEach(function(sub){
+    if (!grouped[sub] || !grouped[sub].length) return;
+    var head = document.createElement('div');
+    head.className = 'draw-subject-head';
+    head.textContent = sub;
+    list.appendChild(head);
+
+    grouped[sub].forEach(function(s) {
+      var div = document.createElement('div');
+      div.className = 'draw-sheet-item' + (s.id === DS.activeId ? ' active' : '');
+
+      var del = document.createElement('span');
+      del.className = 'draw-sheet-del';
+      del.textContent = '✕';
+      del.addEventListener('click', function(e){ e.stopPropagation(); dsDeleteSheet(s.id); });
+
+      var rename = document.createElement('span');
+      rename.className = 'draw-sheet-rename';
+      rename.textContent = '✎';
+      rename.addEventListener('click', function(e){ e.stopPropagation(); dsRenameSheet(s.id); });
+
+      var title = document.createElement('div');
+      title.textContent = s.name;
+      var tag = document.createElement('div');
+      tag.className = 'draw-sheet-sub';
+      tag.textContent = s.subject || 'Général';
+
+      div.appendChild(del);
+      div.appendChild(rename);
+      div.appendChild(title);
+      div.appendChild(tag);
+      div.addEventListener('click', function() { dsLoadSheet(s.id); });
+      list.appendChild(div);
+    });
   });
 }
 
 function dsNewSheet() {
-  dsSave();
+  try { dsSave(); } catch (_) {}
   var n = DS.sheets.length + 1;
   var name = prompt('Nom de la feuille :', 'Feuille ' + n);
   if (!name) name = 'Feuille ' + n;
-  var sheet = { id: Date.now(), name: name, data: '' };
+  var subjectEl = document.getElementById('dsSubjectSelect');
+  var subject = subjectEl ? subjectEl.value : (DS.subjects[0] || 'Général');
+  var sheet = { id: Date.now(), name: name.trim(), subject: subject, data: '', texts: [], height: 1200 };
   DS.sheets.push(sheet);
   DS.activeId = sheet.id;
   DS.dirty = false;
+  dsPersist();
   dsRenderSheets();
-  dsResizeCanvas();
+  dsResizeCanvas(sheet.height, false);
+  dsRenderTextBoxes();
+  dsStatus('Nouvelle feuille créée ✓');
+}
+
+function dsRenameSheet(id) {
+  var sheet = DS.sheets.find(function(s){ return s.id === id; });
+  if (!sheet) return;
+  var next = prompt('Nouveau nom de la feuille :', sheet.name || 'Feuille');
+  if (next === null) return;
+  next = String(next).trim();
+  if (!next) {
+    alert('Le nom ne peut pas être vide.');
+    return;
+  }
+  sheet.name = next;
+  DS.dirty = true;
+  dsPersist();
+  dsRenderSheets();
+  dsStatus('Nom de la feuille mis à jour');
+}
+
+function dsUpdateActiveSubject(subject) {
+  var sheet = dsGetActiveSheet();
+  if (!sheet) return;
+  sheet.subject = subject || 'Général';
+  DS.dirty = true;
+  dsPersist();
+  dsRenderSheets();
+  dsStatus('Matière mise à jour');
 }
 
 function dsDeleteSheet(id) {
+  if (DS.dirty) dsSave();
   if (DS.sheets.length <= 1) { alert('Impossible de supprimer la dernière feuille.'); return; }
   if (!confirm('Supprimer cette feuille ?')) return;
   DS.sheets = DS.sheets.filter(function(s){ return s.id !== id; });
   if (DS.activeId === id) DS.activeId = DS.sheets[0].id;
-  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+  dsPersist();
   dsRenderSheets();
-  dsResizeCanvas();
+  dsLoadSheet(DS.activeId);
 }
 
 /* ── Tools ── */
@@ -18002,21 +18330,135 @@ function dsSetSize(size, el) {
 function dsClear() {
   if (!confirm('Effacer toute la feuille ?')) return;
   var canvas = document.getElementById('drawCanvas');
+  var sheet = dsGetActiveSheet();
   var ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (sheet) sheet.texts = [];
+  dsRenderTextBoxes();
   DS.dirty = true;
   dsSave();
 }
 
+function dsAddTextBox() {
+  var sheet = dsGetActiveSheet();
+  if (!sheet) return;
+  if (!Array.isArray(sheet.texts)) sheet.texts = [];
+  var y = 30 + sheet.texts.length * 26;
+  var txt = {
+    id: 't' + Date.now() + '_' + Math.floor(Math.random()*9999),
+    x: 24,
+    y: y,
+    w: 260,
+    h: 120,
+    html: 'Zone de texte'
+  };
+  sheet.texts.push(txt);
+  dsEnsureInfiniteCanvas(txt.y + txt.h + 80);
+  dsRenderTextBoxes();
+  DS.dirty = true;
+  dsScheduleSave();
+}
+
+function dsGetContentBounds() {
+  var canvas = document.getElementById('drawCanvas');
+  var sheet = dsGetActiveSheet();
+  if (!canvas || !sheet) return null;
+
+  var w = canvas.width;
+  var h = canvas.height;
+  var img = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+  var minX = w, minY = h, maxX = -1, maxY = -1;
+
+  for (var y = 0; y < h; y += 2) {
+    for (var x = 0; x < w; x += 2) {
+      var a = img[(y * w + x) * 4 + 3];
+      if (a > 8) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  (sheet.texts || []).forEach(function(t){
+    var plain = (String((t.html || '')).replace(/<[^>]*>/g, '').trim());
+    if (!plain) return;
+    minX = Math.min(minX, t.x || 0);
+    minY = Math.min(minY, t.y || 0);
+    maxX = Math.max(maxX, (t.x || 0) + (t.w || 0));
+    maxY = Math.max(maxY, (t.y || 0) + (t.h || 0));
+  });
+
+  if (maxX < 0 || maxY < 0) return null;
+
+  var pad = 20;
+  return {
+    x: Math.max(0, Math.floor(minX - pad)),
+    y: Math.max(0, Math.floor(minY - pad)),
+    w: Math.min(w, Math.ceil(maxX - minX + pad * 2)),
+    h: Math.min(h, Math.ceil(maxY - minY + pad * 2))
+  };
+}
+
+function dsWrapText(ctx, text, x, y, maxW, lineH) {
+  var words = text.split(/\s+/);
+  var line = '';
+  var cy = y;
+  for (var i = 0; i < words.length; i++) {
+    var test = line ? (line + ' ' + words[i]) : words[i];
+    if (ctx.measureText(test).width > maxW && line) {
+      ctx.fillText(line, x, cy);
+      line = words[i];
+      cy += lineH;
+    } else {
+      line = test;
+    }
+  }
+  if (line) ctx.fillText(line, x, cy);
+}
+
 function dsExport() {
   var canvas = document.getElementById('drawCanvas');
-  var sheet  = DS.sheets.find(function(s){ return s.id === DS.activeId; });
-  var name   = sheet ? sheet.name : 'dessin';
+  var sheet  = dsGetActiveSheet();
+  if (!canvas || !sheet) return;
+  sheet.texts = dsCollectTextsFromDOM();
+  dsPersist();
+
+  var bounds = dsGetContentBounds();
+  if (!bounds) {
+    alert('La feuille est vide.');
+    return;
+  }
+
+  var out = document.createElement('canvas');
+  out.width = bounds.w;
+  out.height = bounds.h;
+  var octx = out.getContext('2d');
+  octx.clearRect(0, 0, out.width, out.height);
+  octx.drawImage(canvas, bounds.x, bounds.y, bounds.w, bounds.h, 0, 0, bounds.w, bounds.h);
+
+  octx.fillStyle = '#111827';
+  octx.font = '16px Figtree, sans-serif';
+  octx.textBaseline = 'top';
+  (sheet.texts || []).forEach(function(t){
+    var plain = String((t.html || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim());
+    if (!plain) return;
+    var tx = (t.x || 0) - bounds.x + 10;
+    var ty = (t.y || 0) - bounds.y + 28;
+    var tw = Math.max(80, (t.w || 220) - 20);
+    octx.fillStyle = 'rgba(255,255,255,.88)';
+    octx.fillRect((t.x || 0) - bounds.x, (t.y || 0) - bounds.y, t.w || 220, t.h || 100);
+    octx.fillStyle = '#111827';
+    dsWrapText(octx, plain, tx, ty, tw, 20);
+  });
+
+  var name   = sheet.name ? sheet.name : 'dessin';
   var a = document.createElement('a');
   a.download = name + '.png';
-  a.href = canvas.toDataURL('image/png');
+  a.href = out.toDataURL('image/png');
   a.click();
+  dsStatus('Export PNG recadré ✓');
 }
 
 function dsStatus(msg) {
