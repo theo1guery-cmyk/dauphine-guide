@@ -599,8 +599,8 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 /* Traînée de particules */
 .m-trail{position:fixed;border-radius:50%;pointer-events:none;z-index:9999998;transform:translate(-50%,-50%);transition:opacity .35s ease,transform .35s ease}
 /* Ghost content preview (aperçu fantôme dans les ondes) */
-.m-preview{position:fixed;z-index:9999998;pointer-events:none;background:rgba(255,255,255,.07);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;min-width:160px;max-width:200px;font-family:Figtree,sans-serif}
-.m-preview.show{opacity:1;transform:translateY(0)}
+.m-preview{position:fixed;z-index:9999998;pointer-events:none;background:rgba(10,20,50,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:14px 18px;opacity:0;transform:translateY(8px) scale(.97);transition:opacity .3s ease,transform .3s cubic-bezier(.23,1,.32,1);min-width:240px;max-width:300px;font-family:Figtree,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,.35),0 0 0 1px rgba(77,159,255,.15)}
+.m-preview.show{opacity:1;transform:translateY(0) scale(1)}
 .m-preview-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .m-preview-body{font-size:12px;color:rgba(255,255,255,.75);line-height:1.4}
 /* 3D Tilt — cartes hoverable */
@@ -12451,48 +12451,7 @@ function startMorphAnimation() {
       },20+i*30);
     });
 
-    /* ── TRAILS pendant l'explosion (RAF) ── */
-    var trailFrame=0;
-    var trailRAF;
-    function runTrails(){
-      trailFrame++;
-      if(trailFrame%2===0){ /* 1 frame sur 2 → ~30fps */
-        shards.forEach(function(shard){
-          if(!shard.parentNode) return;
-          var r=shard.getBoundingClientRect();
-          if(r.width===0||r.height===0) return;
-          var x=r.left+r.width/2, y=r.top+r.height/2;
-          /* Ne pas spawner si le shard est encore au centre (pas encore bougé) */
-          if(Math.abs(x-cx)<10 && Math.abs(y-cy)<10) return;
-          var color=shard.style.getPropertyValue('--sc')||'rgba(77,159,255,.8)';
-          /* spawn 2-3 particules par shard par frame */
-          var count=2+Math.floor(Math.random()*2);
-          for(var p=0;p<count;p++){
-            var sz=(3+Math.random()*5)+'px';
-            var ox=(Math.random()-.5)*12, oy=(Math.random()-.5)*12;
-            var trail=document.createElement('div');
-            trail.className='m-trail';
-            trail.style.left=(x+ox)+'px'; trail.style.top=(y+oy)+'px';
-            trail.style.width=sz; trail.style.height=sz;
-            trail.style.background=color;
-            trail.style.boxShadow='0 0 6px '+color;
-            trail.style.opacity=String(.7+Math.random()*.3);
-            document.body.appendChild(trail);
-            (function(t){
-              setTimeout(function(){ t.style.opacity='0'; t.style.transform='translate(-50%,-50%) scale(0)'; },80);
-              setTimeout(function(){ if(t.parentNode) t.remove(); },450);
-            })(trail);
-          }
-        });
-      }
-      trailRAF=requestAnimationFrame(runTrails);
-    }
-    trailRAF=requestAnimationFrame(runTrails);
-
-    /* Arrêt des trails quand la construction commence */
-    setTimeout(function(){
-      cancelAnimationFrame(trailRAF);
-    },1200); /* 4.65+1.2=5.85s → juste avant la construction */
+    /* (trails déplacés vers la phase de vol sidebar) */
   },4650);
 
   /* ══ CONSTRUCTION SIDEBAR ══ */
@@ -12529,6 +12488,37 @@ function startMorphAnimation() {
         shard.style.transform='translate(-50%,-50%) rotate(0deg) scale(.45)';
         shard.style.opacity='.7';
 
+        /* ── TRAILS pendant le vol vers la sidebar ── */
+        var flyTrailRAF;
+        var flyStart=performance.now();
+        var flyDuration=650;
+        var color=shard.style.getPropertyValue('--sc')||'rgba(77,159,255,.8)';
+        (function spawnFlyTrail(){
+          if(performance.now()-flyStart>flyDuration) return;
+          var r=shard.getBoundingClientRect();
+          if(r.width>0&&r.height>0){
+            var tx=r.left+r.width/2, ty=r.top+r.height/2;
+            var count=2+Math.floor(Math.random()*2);
+            for(var p=0;p<count;p++){
+              var sz=(3+Math.random()*6)+'px';
+              var ox=(Math.random()-.5)*10, oy=(Math.random()-.5)*10;
+              var t=document.createElement('div');
+              t.className='m-trail';
+              t.style.left=(tx+ox)+'px'; t.style.top=(ty+oy)+'px';
+              t.style.width=sz; t.style.height=sz;
+              t.style.background=color;
+              t.style.boxShadow='0 0 8px '+color;
+              t.style.opacity=String(.7+Math.random()*.3);
+              document.body.appendChild(t);
+              (function(el){
+                setTimeout(function(){ el.style.opacity='0'; el.style.transform='translate(-50%,-50%) scale(0)'; },100);
+                setTimeout(function(){ if(el.parentNode) el.remove(); },500);
+              })(t);
+            }
+          }
+          flyTrailRAF=requestAnimationFrame(spawnFlyTrail);
+        })();
+
         setTimeout(function(){
           shard.remove();
           gi.style.opacity='1'; gi.style.transform='translateX(0)';
@@ -12551,23 +12541,25 @@ function startMorphAnimation() {
           if(pdata && !isMobile){
             var prev=document.createElement('div');
             prev.className='m-preview';
-            /* Positionner à 62% de l'écran en x, centré en y sur l'onde */
-            var px=sbW+(vw-sbW)*0.55;
-            var py=destY-50;
-            /* Garder dans l'écran */
-            py=Math.max(20, Math.min(vh-120, py));
+            /* Centré horizontalement dans la zone content */
+            var px=sbW+(vw-sbW)*0.5 - 110;
+            var py=destY-65;
+            py=Math.max(20, Math.min(vh-160, py));
             prev.style.left=px+'px';
             prev.style.top=py+'px';
+            prev.style.minWidth='240px';
+            prev.style.maxWidth='300px';
+            prev.style.padding='14px 18px';
             prev.innerHTML='<div class="m-preview-title">'+pdata.title+'</div><div class="m-preview-body">'+pdata.html+'</div>';
             document.body.appendChild(prev);
-            /* Apparition à ~200ms (quand l'onde arrive) */
-            setTimeout(function(){ prev.classList.add('show'); },200);
-            /* Disparition à 650ms */
+            /* Apparition quand l'onde arrive (~180ms) */
+            setTimeout(function(){ prev.classList.add('show'); },180);
+            /* Reste visible 1.4s puis disparaît */
             setTimeout(function(){
               prev.style.opacity='0';
-              prev.style.transform='translateY(-6px)';
-              setTimeout(function(){ if(prev.parentNode) prev.remove(); },300);
-            },680);
+              prev.style.transform='translateY(-8px) scale(.97)';
+              setTimeout(function(){ if(prev.parentNode) prev.remove(); },350);
+            },1450);
           }
 
           arrivedCount++;
