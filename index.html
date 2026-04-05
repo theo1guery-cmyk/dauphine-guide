@@ -13369,6 +13369,8 @@ function showPage(pageId, btn) {
 
   document.getElementById('sidebar').classList.remove('open');
   window.scrollTo(0, 0);
+  var mc = document.querySelector('.main-content');
+  if (mc) mc.scrollTop = 0;
 
   if (pageId === 'planning') {
     setTimeout(function() {
