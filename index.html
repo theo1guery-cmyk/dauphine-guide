@@ -5141,35 +5141,67 @@ aside.sidebar {
         <button class="wg-banner-btn primary" onclick="wgShowInstructions()">⚙️ Configurer</button>
       </div>
     </div>
-    <!-- Modal instructions widget -->
-    <div id="wgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:none;align-items:center;justify-content:center">
-      <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:500px;width:90%;position:relative;box-shadow:0 32px 64px rgba(0,0,0,.4)">
-        <button onclick="document.getElementById('wgModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-sub)">✕</button>
-        <div style="font-size:24px;margin-bottom:8px">🖥️ Widget fond d'écran</div>
-        <p style="color:var(--text-sub);font-size:13px;margin-bottom:24px;line-height:1.6">Ton prochain cours, l'heure en direct, le compte à rebours — sur ton bureau en permanence.</p>
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div style="background:var(--g50);border-radius:12px;padding:16px">
-            <div style="font-weight:700;font-size:13px;margin-bottom:8px">🪟 Windows — Lively Wallpaper</div>
-            <ol style="font-size:12px;color:var(--text-sub);line-height:2;padding-left:18px">
+    <!-- Modal widget -->
+    <div id="wgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center">
+      <div style="background:var(--bg-card);border-radius:20px;padding:28px;max-width:480px;width:90%;position:relative;box-shadow:0 32px 64px rgba(0,0,0,.4);max-height:90vh;overflow-y:auto">
+        <button onclick="document.getElementById('wgModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-sub)">✕</button>
+        <div style="font-size:22px;font-weight:700;margin-bottom:4px">🖥️ Widget fond d'écran</div>
+        <p style="color:var(--text-sub);font-size:12px;margin-bottom:20px;line-height:1.6">Petit widget style macOS qui s'affiche sur ton bureau en permanence.</p>
+
+        <!-- Choix du contenu -->
+        <div style="font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sub);margin-bottom:10px">Contenu du widget</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px" id="wgTypeGrid">
+          <button class="wg-type-btn on" data-type="cours" onclick="wgSelectType('cours',this)">
+            <div style="font-size:20px;margin-bottom:4px">📖</div>
+            <div style="font-weight:700;font-size:12px">Prochain cours</div>
+            <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Nom · heure · compte à rebours</div>
+          </button>
+          <button class="wg-type-btn" data-type="meteo" onclick="wgSelectType('meteo',this)">
+            <div style="font-size:20px;margin-bottom:4px">🌤️</div>
+            <div style="font-weight:700;font-size:12px">Météo</div>
+            <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Porte Dauphine · temps réel</div>
+          </button>
+          <button class="wg-type-btn" data-type="examen" onclick="wgSelectType('examen',this)">
+            <div style="font-size:20px;margin-bottom:4px">📝</div>
+            <div style="font-weight:700;font-size:12px">Prochain examen</div>
+            <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Agenda · countdown</div>
+          </button>
+          <button class="wg-type-btn" data-type="pomodoro" onclick="wgSelectType('pomodoro',this)">
+            <div style="font-size:20px;margin-bottom:4px">⏱️</div>
+            <div style="font-weight:700;font-size:12px">Pomodoro</div>
+            <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Timer · sessions</div>
+          </button>
+        </div>
+
+        <!-- Instructions -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+          <div style="background:var(--g50);border-radius:12px;padding:14px">
+            <div style="font-weight:700;font-size:12px;margin-bottom:6px">🪟 Windows — Lively Wallpaper</div>
+            <ol style="font-size:11px;color:var(--text-sub);line-height:2;padding-left:16px">
               <li>Télécharge <strong>Lively Wallpaper</strong> (gratuit, Microsoft Store)</li>
-              <li>Ouvre Lively → clique sur le <strong>+</strong></li>
-              <li>Colle ce lien : <code id="wgLink" style="background:var(--g100);padding:2px 6px;border-radius:4px;font-size:11px"></code></li>
-              <li>Clique sur <strong>OK</strong> et définis comme fond d'écran</li>
+              <li>Ouvre Lively → clique <strong>+</strong> → colle le lien ci-dessous</li>
             </ol>
           </div>
-          <div style="background:var(--g50);border-radius:12px;padding:16px">
-            <div style="font-weight:700;font-size:13px;margin-bottom:8px">🍎 Mac — Plash</div>
-            <ol style="font-size:12px;color:var(--text-sub);line-height:2;padding-left:18px">
+          <div style="background:var(--g50);border-radius:12px;padding:14px">
+            <div style="font-weight:700;font-size:12px;margin-bottom:6px">🍎 Mac — Plash</div>
+            <ol style="font-size:11px;color:var(--text-sub);line-height:2;padding-left:16px">
               <li>Télécharge <strong>Plash</strong> sur le Mac App Store (gratuit)</li>
-              <li>Ouvre Plash → <strong>Preferences</strong></li>
-              <li>Colle ce lien dans le champ URL : <code style="background:var(--g100);padding:2px 6px;border-radius:4px;font-size:11px" id="wgLink2"></code></li>
-              <li>Active <strong>Launch at login</strong> pour l'avoir toujours</li>
+              <li>Ouvre Plash → Preferences → colle le lien ci-dessous</li>
             </ol>
           </div>
         </div>
-        <button onclick="wgCopyLink()" style="margin-top:20px;width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copier le lien widget</button>
+
+        <div style="background:var(--g100);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--text-sub);word-break:break-all;margin-bottom:12px" id="wgLinkDisplay"></div>
+        <button onclick="wgCopyLink()" style="width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copier le lien</button>
       </div>
     </div>
+    <style>
+    .wg-type-btn{background:var(--g50);border:2px solid var(--g100);border-radius:12px;padding:12px 10px;cursor:pointer;text-align:center;font-family:inherit;color:var(--text-main);transition:all .15s}
+    .wg-type-btn:hover{border-color:var(--blue-mid);background:var(--blue-light)}
+    .wg-type-btn.on{border-color:var(--blue);background:var(--blue-light)}
+    [data-theme="dark"] .wg-type-btn{background:rgba(255,255,255,.04);border-color:var(--border-col)}
+    [data-theme="dark"] .wg-type-btn.on{border-color:#60a5fa;background:rgba(96,165,250,.12)}
+    </style>
 
     <!-- FOOTER -->
     <footer class="home-footer">
@@ -19393,18 +19425,32 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ════ WIDGET BANNER FUNCTIONS ════ */
+function wgGetType() {
+  return localStorage.getItem('dg_widget_type') || 'cours';
+}
 function wgGetLink() {
-  return window.location.href.split('?')[0] + '?widget';
+  var base = window.location.href.split('?')[0];
+  var type = wgGetType();
+  return base + '?widget&type=' + type;
 }
 function wgOpenPreview() {
   window.open(wgGetLink(), '_blank', 'width=1280,height=720');
 }
+function wgSelectType(type, btn) {
+  localStorage.setItem('dg_widget_type', type);
+  document.querySelectorAll('.wg-type-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  var el = document.getElementById('wgLinkDisplay');
+  if (el) el.textContent = wgGetLink();
+}
 function wgShowInstructions() {
-  var link = wgGetLink();
-  var el1 = document.getElementById('wgLink');
-  var el2 = document.getElementById('wgLink2');
-  if (el1) el1.textContent = link;
-  if (el2) el2.textContent = link;
+  // Restore saved selection
+  var saved = wgGetType();
+  document.querySelectorAll('.wg-type-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.type === saved);
+  });
+  var el = document.getElementById('wgLinkDisplay');
+  if (el) el.textContent = wgGetLink();
   var modal = document.getElementById('wgModal');
   if (modal) modal.style.display = 'flex';
 }
@@ -19426,6 +19472,7 @@ function wgCopyLink() {
 (function() {
   var params = new URLSearchParams(window.location.search);
   if (!params.has('widget')) return;
+  var WG_TYPE = params.get('type') || localStorage.getItem('dg_widget_type') || 'cours';
 
   document.addEventListener('DOMContentLoaded', function() {
     // Masque tout l'app sous le widget
@@ -19575,10 +19622,84 @@ function wgCopyLink() {
       }, 1000);
     }
 
-    renderCours();
+    // Démarre le bon renderer selon le type
     if (typeof loadManualEvents === 'function') loadManualEvents();
-    setTimeout(renderCours, 600);
-    setInterval(renderCours, 30000);
+    if (WG_TYPE === 'cours') {
+      renderCours();
+      setTimeout(renderCours, 600);
+      setInterval(renderCours, 30000);
+    } else if (WG_TYPE === 'meteo') {
+      renderMeteo();
+    } else if (WG_TYPE === 'examen') {
+      renderExamen();
+      setInterval(renderExamen, 60000);
+    } else if (WG_TYPE === 'pomodoro') {
+      renderPomodoro();
+      setInterval(renderPomodoro, 1000);
+    }
+  }
+
+  /* ── Renderer météo ── */
+  function renderMeteo() {
+    var body = document.getElementById('wgBody');
+    if (!body) return;
+    body.innerHTML = '<div class="wg-label">Météo · Porte Dauphine</div><div style="font-size:32px;margin:4px 0" id="wgMetIc">🌤️</div><div class="wg-cd"><div class="wg-cd-val" id="wgMetTmp" style="font-size:32px">–°</div></div><div class="wg-time" id="wgMetDesc" style="margin-top:4px">Chargement…</div>';
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=48.8726&longitude=2.2756&current=temperature_2m,weathercode&timezone=Europe/Paris')
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        var icons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+        var descs = {0:'Ensoleillé',1:'Peu nuageux',2:'Partiellement nuageux',3:'Couvert',45:'Brouillard',51:'Bruine légère',61:'Pluie légère',63:'Pluie',71:'Neige légère',80:'Averses',95:'Orage'};
+        var code = d.current.weathercode;
+        var ic = document.getElementById('wgMetIc'); if(ic) ic.textContent = icons[code]||'🌡️';
+        var tmp = document.getElementById('wgMetTmp'); if(tmp) tmp.textContent = Math.round(d.current.temperature_2m)+'°';
+        var desc = document.getElementById('wgMetDesc'); if(desc) desc.textContent = descs[code]||'';
+      }).catch(function(){ var desc = document.getElementById('wgMetDesc'); if(desc) desc.textContent = 'Indisponible'; });
+  }
+
+  /* ── Renderer examen ── */
+  function renderExamen() {
+    var body = document.getElementById('wgBody');
+    if (!body) return;
+    var devs = (typeof devoirs !== 'undefined') ? devoirs : [];
+    var now = new Date();
+    var todayStr = now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1)+'-'+(now.getDate()<10?'0':'')+now.getDate();
+    var exams = devs.filter(function(d){ return !d.done && d.date >= todayStr && (d.prio==='urgent'||d.type==='exam'||/exam|contr[ôo]le|partiel|ds\b/i.test(d.title||'')); })
+      .sort(function(a,b){ return (a.date||'').localeCompare(b.date||''); });
+    if (!exams.length) {
+      body.innerHTML = '<div class="wg-free"><div class="wg-free-ic">🎉</div><div class="wg-free-t">Aucun examen</div><div class="wg-free-s">Profite !</div></div>';
+      return;
+    }
+    var e = exams[0];
+    var d2 = new Date(e.date.replace(/-/g,'/'));
+    var diff = Math.max(0, Math.ceil((d2 - now) / 86400000));
+    var JOURS2 = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    var MOIS2  = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+    body.innerHTML = [
+      '<div><div class="wg-label">Prochain examen</div>',
+      '<div class="wg-title">'+(e.title||'Examen')+'</div>',
+      '<div class="wg-time">'+JOURS2[d2.getDay()]+' '+d2.getDate()+' '+MOIS2[d2.getMonth()]+'</div></div>',
+      '<div class="wg-cd"><div class="wg-cd-val">'+diff+'j</div><div class="wg-cd-lbl">restant'+(diff>1?'s':'')+'</div></div>',
+    ].join('');
+  }
+
+  /* ── Renderer pomodoro ── */
+  function renderPomodoro() {
+    var body = document.getElementById('wgBody');
+    if (!body) return;
+    // Lit l'état du pomodoro depuis localStorage
+    var state = null;
+    try { state = JSON.parse(localStorage.getItem('dg_pomo_state')||'null'); } catch(e){}
+    var running = state && state.running;
+    var remaining = state ? state.remaining : 1500;
+    var sessions = state ? (state.sessions||0) : 0;
+    var mm = Math.floor(remaining/60), ss = remaining%60;
+    var pad = function(n){ return String(n).padStart(2,'0'); };
+    body.innerHTML = [
+      '<div><div class="wg-label">'+(running?'En cours':'Pomodoro')+'</div>',
+      '<div class="wg-title">'+(running?'Session de travail':'Prêt')+'</div>',
+      '<div class="wg-time">'+sessions+' session'+(sessions>1?'s':'')+' aujourd\'hui</div></div>',
+      '<div class="wg-cd"><div class="wg-cd-val">'+pad(mm)+':'+pad(ss)+'</div><div class="wg-cd-lbl">'+(running?'restant':'pause')+'</div></div>',
+    ].join('');
   }
 })();
 
