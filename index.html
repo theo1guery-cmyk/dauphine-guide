@@ -17762,6 +17762,7 @@ var onbTotal = 12;
 var onbAnimTimers = [];
 
 function initOnboarding() {
+  if (new URLSearchParams(window.location.search).has('widget')) return;
   if (!localStorage.getItem('onb_done_v1')) openOnboarding();
 }
 
