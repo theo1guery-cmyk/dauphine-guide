@@ -520,87 +520,102 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 /* ============================
    MORPH ANIMATION (après le code)
    ============================ */
-#morphOverlay{position:fixed;inset:0;background:linear-gradient(155deg,#000c1a 0%,#001a3a 40%,#003d7a 100%);z-index:999998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease;overflow:hidden;perspective:1200px}
+#morphOverlay{position:fixed;inset:0;background:linear-gradient(155deg,#000c1a 0%,#001a3a 40%,#003d7a 100%);z-index:999998;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease;overflow:hidden}
 #morphOverlay.active{opacity:1;pointer-events:auto}
 #morphOverlay.fade-out{opacity:0;pointer-events:none;transition:opacity .8s ease}
 
-/* Particules ambiantes */
+/* Particules */
 .m-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .m-dot{position:absolute;border-radius:50%;background:rgba(77,159,255,.35);animation:mDotFloat linear infinite}
-@keyframes mDotFloat{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:.5}90%{opacity:.5}100%{transform:translateY(-100vh) scale(.5);opacity:0}}
+@keyframes mDotFloat{0%{transform:translateY(0);opacity:0}10%{opacity:.5}90%{opacity:.4}100%{transform:translateY(-100vh);opacity:0}}
 
-/* Halo central */
-.m-glow{position:absolute;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(0,87,173,.5) 0%,transparent 70%);filter:blur(50px);opacity:.4;pointer-events:none;transition:all .6s ease}
+/* Halo */
+.m-glow{position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(0,87,173,.5) 0%,transparent 70%);filter:blur(50px);opacity:.4;pointer-events:none;transition:all .6s ease}
 .m-glow.intense{width:600px;height:600px;opacity:.8;filter:blur(70px)}
-.m-glow.supernova{width:2000px;height:2000px;opacity:1;filter:blur(30px);background:radial-gradient(circle,rgba(255,255,255,.9) 0%,rgba(77,159,255,.4) 30%,transparent 60%);transition:all .5s ease}
+.m-glow.supernova{width:2000px;height:2000px;opacity:1;filter:blur(30px);background:radial-gradient(circle,rgba(255,255,255,.9) 0%,rgba(77,159,255,.4) 30%,transparent 60%);transition:all .45s ease}
 
 /* Scène */
-.m-scene{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.m-scene{position:relative;width:100%;height:100%}
 
 /* Logo */
 .m-logo{width:110px;height:110px;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.04));border:2px solid rgba(255,255,255,.3);border-radius:26px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif,serif);font-size:58px;font-style:italic;color:#fff;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;box-shadow:0 0 40px rgba(0,87,173,.4),0 0 80px rgba(0,87,173,.15),inset 0 1px 0 rgba(255,255,255,.2);text-shadow:0 0 20px rgba(255,255,255,.4);cursor:default;transition:transform .3s ease,box-shadow .3s ease}
 .m-logo.idle{animation:mLogoIdle 3s ease-in-out infinite}
 @keyframes mLogoIdle{0%,100%{transform:translate(-50%,-50%) scale(1) perspective(800px) rotateY(0deg)}25%{transform:translate(-50%,-50%) scale(1.02) perspective(800px) rotateY(3deg)}75%{transform:translate(-50%,-50%) scale(.98) perspective(800px) rotateY(-3deg)}}
-.m-logo.hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 60px rgba(77,159,255,.6),0 0 120px rgba(0,87,173,.3);border-color:rgba(255,255,255,.5)}
-.m-logo.pressed{transform:translate(-50%,-50%) scale(.92);transition:transform .1s ease}
-.m-logo.spin{animation:mLogoSpin 1.5s cubic-bezier(.4,0,.2,1) forwards}
+.m-logo.hover{transform:translate(-50%,-50%) scale(1.08)!important;animation:none!important;box-shadow:0 0 60px rgba(77,159,255,.6),0 0 120px rgba(0,87,173,.3);border-color:rgba(255,255,255,.5)}
+.m-logo.pressed{transform:translate(-50%,-50%) scale(.92)!important;animation:none!important;transition:transform .1s ease}
+.m-logo.spin{animation:mLogoSpin 1.5s cubic-bezier(.4,0,.2,1) forwards!important}
 @keyframes mLogoSpin{
   0%{transform:translate(-50%,-50%) scale(1) perspective(800px) rotateY(0deg)}
   30%{transform:translate(-50%,-50%) scale(1.2) perspective(800px) rotateY(200deg);box-shadow:0 0 100px rgba(77,159,255,.8)}
   60%{transform:translate(-50%,-50%) scale(1.3) perspective(800px) rotateY(500deg);box-shadow:0 0 150px rgba(255,255,255,.6)}
   100%{transform:translate(-50%,-50%) scale(1.4) perspective(800px) rotateY(720deg);box-shadow:0 0 200px rgba(255,255,255,1);filter:brightness(3)}
 }
-.m-logo.explode{animation:mLogoExplode .4s ease forwards}
+.m-logo.explode{animation:mLogoExplode .4s ease forwards!important}
 @keyframes mLogoExplode{0%{transform:translate(-50%,-50%) scale(1.4);opacity:1;filter:brightness(3)}100%{transform:translate(-50%,-50%) scale(0);opacity:0;filter:brightness(5)}}
 
-/* Hint texte */
-.m-hint{position:absolute;left:50%;bottom:calc(50% - 100px);transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.4);font-family:'Figtree',sans-serif;letter-spacing:.05em;opacity:0;transition:opacity .8s ease;white-space:nowrap}
+/* Hint */
+.m-hint{position:absolute;left:50%;bottom:calc(50% - 100px);transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.4);font-family:'Figtree',sans-serif;letter-spacing:.05em;opacity:0;transition:opacity .8s ease;white-space:nowrap;z-index:11}
 .m-hint.show{opacity:1}
 
-/* Faux curseur */
-.m-cursor{position:absolute;z-index:50;pointer-events:none;opacity:0;transition:opacity .4s ease;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+/* Curseur */
+.m-cursor{position:absolute;z-index:50;pointer-events:none;opacity:0;transition:opacity .4s ease;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
 .m-cursor.show{opacity:1}
-.m-cursor svg{width:24px;height:24px}
+.m-cursor svg{width:26px;height:26px}
 .m-cursor.clicking svg{animation:mCursorClick .15s ease forwards}
-@keyframes mCursorClick{0%{transform:scale(1)}50%{transform:scale(.85) rotate(-5deg)}100%{transform:scale(1)}}
+@keyframes mCursorClick{0%{transform:scale(1)}50%{transform:scale(.82) rotate(-6deg)}100%{transform:scale(1)}}
 
-/* Ripple au clic */
+/* Ripple */
 .m-ripple{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.7);pointer-events:none;z-index:15;animation:mRipple .8s ease-out forwards}
 @keyframes mRipple{0%{width:0;height:0;opacity:1}100%{width:300px;height:300px;opacity:0;margin-left:-150px;margin-top:-150px}}
 
-/* Fragments */
-.m-shard{position:absolute;width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;opacity:0;z-index:5;left:50%;top:50%;margin-left:-27px;margin-top:-27px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.18);box-shadow:0 0 20px var(--sc,rgba(77,159,255,.3));transition:all .9s cubic-bezier(.34,1.56,.64,1)}
-.m-shard-emoji{font-size:24px;filter:drop-shadow(0 0 10px rgba(255,255,255,.5))}
-.m-shard-label{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:rgba(255,255,255,.5);font-family:'Figtree',sans-serif;white-space:nowrap;font-weight:600;letter-spacing:.04em;opacity:0;transition:opacity .4s ease .3s}
-.m-shard.placed .m-shard-label{opacity:1}
+/* Fragments / shards */
+.m-shard{position:fixed;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;opacity:0;z-index:999999;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.2);box-shadow:0 0 18px var(--sc,rgba(77,159,255,.3));pointer-events:none}
+.m-shard-emoji{font-size:23px;filter:drop-shadow(0 0 8px rgba(255,255,255,.5));line-height:1}
 
-/* Rings (ondes de choc) */
+/* Ondes de choc */
 .m-ring{position:absolute;left:50%;top:50%;border:2px solid rgba(255,255,255,.5);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:12;animation:mRingExpand .9s cubic-bezier(.16,1,.3,1) forwards}
-@keyframes mRingExpand{0%{width:0;height:0;opacity:1;border-width:3px}100%{width:600px;height:600px;opacity:0;border-width:1px}}
+@keyframes mRingExpand{0%{width:0;height:0;opacity:1;border-width:3px}100%{width:700px;height:700px;opacity:0;border-width:1px}}
 
-/* Lignes de connexion */
-.m-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(77,159,255,.5),transparent);transform-origin:left center;opacity:0;pointer-events:none;z-index:3}
-.m-line.show{animation:mLineIn .5s ease forwards}
-@keyframes mLineIn{0%{opacity:0;transform:scaleX(0)}100%{opacity:.35;transform:scaleX(1)}}
+/* Barre de construction */
+.m-build{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);z-index:999999;text-align:center;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.m-build.show{opacity:1}
+.m-build-label{font-size:11px;color:rgba(255,255,255,.5);font-family:'Figtree',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.m-build-track{width:220px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.m-build-fill{height:100%;width:0%;background:linear-gradient(90deg,#0057ad,#4d9fff,#7ec8ff);border-radius:2px;transition:width .25s ease}
+.m-build-count{font-size:10px;color:rgba(255,255,255,.3);font-family:'Figtree',sans-serif;margin-top:6px;letter-spacing:.06em}
 
-/* Texte final */
-.m-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:20;opacity:0;pointer-events:none}
-.m-title.show{animation:mTitleIn .8s cubic-bezier(.16,1,.3,1) forwards}
-@keyframes mTitleIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-.m-title h2{font-family:var(--font-serif,serif);font-size:32px;color:#fff;margin:0 0 6px;text-shadow:0 0 40px rgba(77,159,255,.6);white-space:nowrap}
+/* Titre final */
+.m-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:20;opacity:0;pointer-events:none;white-space:nowrap}
+.m-title.show{animation:mTitleIn .9s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes mTitleIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.m-title h2{font-family:var(--font-serif,serif);font-size:34px;color:#fff;margin:0 0 8px;text-shadow:0 0 40px rgba(77,159,255,.7)}
 .m-title p{font-size:13px;color:rgba(255,255,255,.45);margin:0}
 
-/* Zoom out final */
-#morphOverlay.phase-zoom{transition:transform 1.2s cubic-bezier(.55,.06,.68,.19),opacity .8s ease .4s;transform:scale(4);opacity:0}
+/* Zoom final */
+#morphOverlay.phase-zoom{transition:transform 1.3s cubic-bezier(.55,.06,.68,.19),opacity .9s ease .4s;transform:scale(5);opacity:0}
+
+/* Sidebar item flash à l'arrivée d'une icône */
+.sidebar-item.sb-constructing{animation:sbConstruct .5s ease forwards}
+@keyframes sbConstruct{
+  0%{opacity:.15;transform:translateX(-8px)}
+  40%{background:rgba(77,159,255,.25);box-shadow:0 0 14px rgba(77,159,255,.4);transform:translateX(3px);opacity:1}
+  70%{background:rgba(77,159,255,.1);transform:translateX(-1px)}
+  100%{background:'';box-shadow:'';transform:translateX(0);opacity:1}
+}
+.sidebar-section-label.sb-constructing{animation:sbLabelIn .4s ease forwards}
+@keyframes sbLabelIn{0%{opacity:0;transform:translateX(-6px)}100%{opacity:1;transform:translateX(0)}}
 
 @media(max-width:600px){
   .m-logo{width:85px;height:85px;font-size:44px;border-radius:20px}
-  .m-shard{width:44px;height:44px;border-radius:12px;margin-left:-22px;margin-top:-22px}
+  .m-shard{width:44px;height:44px;border-radius:12px}
   .m-shard-emoji{font-size:20px}
   .m-title h2{font-size:24px}
   .m-hint{font-size:11px;bottom:calc(50% - 80px)}
   .m-glow{width:180px;height:180px}
+  .m-build{bottom:32px}
+  .m-build-track{width:160px}
 }
+
 
 /* ============================
    EXAM MODE
@@ -4419,9 +4434,13 @@ aside.sidebar {
     <div class="m-logo idle" id="mLogo">D</div>
     <div class="m-hint" id="mHint"></div>
   </div>
-  <!-- Faux curseur SVG -->
   <div class="m-cursor" id="mCursor">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M5 3l14 8-6.5 1.5L11 19z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M5 3l14 8-6.5 1.5L11 19z" fill="#fff" stroke="#111" stroke-width="1.2" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="m-build" id="mBuild">
+    <div class="m-build-label" id="mBuildLabel">Construction en cours…</div>
+    <div class="m-build-track"><div class="m-build-fill" id="mBuildFill"></div></div>
+    <div class="m-build-count" id="mBuildCount">0 / 12 sections</div>
   </div>
   <div class="m-title" id="mTitle">
     <h2>Bienvenue sur <em>DauphineGuide</em></h2>
@@ -12213,90 +12232,105 @@ function hideLoginScreen() {
   setTimeout(function() { updateHomeStats(); }, 100);
 }
 
-// ─── MORPH ANIMATION (Curseur clique sur le logo → construction sidebar) ───
+// ─── MORPH ANIMATION ─── Curseur → clic → explosion → construction sidebar ───
 function startMorphAnimation() {
   window._orbitalRunning = true;
-  var overlay = document.getElementById('morphOverlay');
-  var scene   = document.getElementById('mScene');
-  var logo    = document.getElementById('mLogo');
-  var cursor  = document.getElementById('mCursor');
-  var glow    = document.getElementById('mGlow');
-  var hint    = document.getElementById('mHint');
-  var title   = document.getElementById('mTitle');
-  var particlesEl = document.getElementById('mParticles');
-  if (!overlay || !scene || !logo) return;
 
+  var overlay  = document.getElementById('morphOverlay');
+  var scene    = document.getElementById('mScene');
+  var logo     = document.getElementById('mLogo');
+  var cursor   = document.getElementById('mCursor');
+  var glow     = document.getElementById('mGlow');
+  var hint     = document.getElementById('mHint');
+  var title    = document.getElementById('mTitle');
+  var build    = document.getElementById('mBuild');
+  var buildFill  = document.getElementById('mBuildFill');
+  var buildCount = document.getElementById('mBuildCount');
+  var buildLabel = document.getElementById('mBuildLabel');
+  var particles  = document.getElementById('mParticles');
+  if (!overlay || !logo) return;
+
+  /* Mapping sections → pages sidebar */
   var sections = [
-    {e:'🏠',l:'Accueil',    page:'home',       c:'rgba(0,87,173,.35)'},
-    {e:'🧮',l:'Simulateur', page:'simulateur', c:'rgba(0,150,136,.35)'},
-    {e:'🃏',l:'Flashcards', page:'flashcards', c:'rgba(156,39,176,.35)'},
-    {e:'📅',l:'Planning',   page:'planning',   c:'rgba(255,152,0,.35)'},
-    {e:'💬',l:'Chat',       page:'chat',       c:'rgba(33,150,243,.35)'},
-    {e:'🗺️',l:'Campus',    page:'campus',     c:'rgba(76,175,80,.35)'},
-    {e:'📚',l:'Ressources', page:'ressources', c:'rgba(121,85,72,.35)'},
-    {e:'🏛️',l:'Assos',     page:'assos',      c:'rgba(63,81,181,.35)'},
-    {e:'💸',l:'Bons plans', page:'bonsplans',  c:'rgba(255,193,7,.35)'},
-    {e:'💼',l:'Stage',      page:'stage',      c:'rgba(96,125,139,.35)'},
-    {e:'⏱️',l:'Pomodoro',  page:'pomodoro',   c:'rgba(244,67,54,.35)'},
-    {e:'📰',l:'News',       page:'news',       c:'rgba(0,188,212,.35)'}
+    {e:'🏠', l:'Accueil',    page:'home',       c:'rgba(0,87,173,.4)'},
+    {e:'🧮', l:'Simulateur', page:'simulateur', c:'rgba(0,150,136,.4)'},
+    {e:'🃏', l:'Flashcards', page:'flashcards', c:'rgba(156,39,176,.4)'},
+    {e:'📅', l:'Planning',   page:'planning',   c:'rgba(255,152,0,.4)'},
+    {e:'💬', l:'Chat',       page:'chat',       c:'rgba(33,150,243,.4)'},
+    {e:'🗺️', l:'Campus',    page:'campus',     c:'rgba(76,175,80,.4)'},
+    {e:'📚', l:'Ressources', page:'ressources', c:'rgba(121,85,72,.4)'},
+    {e:'🏛️', l:'Assos',     page:'assos',      c:'rgba(63,81,181,.4)'},
+    {e:'💸', l:'Bons plans', page:'bonsplans',  c:'rgba(255,193,7,.4)'},
+    {e:'💼', l:'Stage',      page:'stage',      c:'rgba(96,125,139,.4)'},
+    {e:'⏱️', l:'Pomodoro',  page:'pomodoro',   c:'rgba(244,67,54,.4)'},
+    {e:'📰', l:'News',       page:'news',       c:'rgba(0,188,212,.4)'}
   ];
   var total    = sections.length;
   var isMobile = window.innerWidth < 600;
   var vw = window.innerWidth;
   var vh = window.innerHeight;
-  var cx = vw / 2;
-  var cy = vh / 2;
+  var cx = vw / 2, cy = vh / 2;
 
-  /* ── reset ── */
+  /* ── Reset complet ── */
   overlay.classList.remove('fade-out','phase-zoom');
-  overlay.style.display = '';
-  overlay.style.background = '';
+  overlay.style.cssText = '';
   overlay.classList.add('active');
   logo.className = 'm-logo idle';
-  logo.style.opacity = '1';
-  cursor.classList.remove('show','clicking');
-  if (glow)  { glow.className = 'm-glow'; }
+  cursor.className = 'm-cursor';
+  if (glow)  glow.className = 'm-glow';
   if (hint)  { hint.classList.remove('show'); hint.textContent = ''; }
-  if (title) { title.classList.remove('show'); }
-  scene.querySelectorAll('.m-shard,.m-ring,.m-ripple,.m-line').forEach(function(e){ e.remove(); });
+  if (title) title.classList.remove('show');
+  if (build) { build.classList.remove('show'); }
+  if (buildFill)  buildFill.style.width = '0%';
+  if (buildCount) buildCount.textContent = '0 / ' + total + ' sections';
+  if (buildLabel) buildLabel.textContent = 'Construction en cours…';
+  scene.querySelectorAll('.m-shard,.m-ring,.m-ripple').forEach(function(e){ e.remove(); });
 
-  /* ── particules ambiantes ── */
-  particlesEl.innerHTML = '';
-  for (var p = 0; p < 50; p++) {
+  /* Mettre tous les sidebar items en état "non construit" */
+  var allSbItems = document.querySelectorAll('.sidebar-item, .sidebar-section-label');
+  allSbItems.forEach(function(el) {
+    el.style.opacity = '0.08';
+    el.style.transition = 'none';
+  });
+
+  /* ── Particules de fond ── */
+  particles.innerHTML = '';
+  for (var p = 0; p < 55; p++) {
     var dot = document.createElement('div');
     dot.className = 'm-dot';
-    dot.style.left = Math.random() * 100 + '%';
-    dot.style.top  = (80 + Math.random() * 30) + '%';
-    dot.style.animationDuration = (5 + Math.random() * 8) + 's';
-    dot.style.animationDelay   = (Math.random() * 6) + 's';
-    var sz = (2 + Math.random() * 4) + 'px';
+    dot.style.left = (Math.random() * 110 - 5) + '%';
+    dot.style.top  = (70 + Math.random() * 35) + '%';
+    dot.style.animationDuration = (6 + Math.random() * 9) + 's';
+    dot.style.animationDelay   = (Math.random() * 8) + 's';
+    var sz = (1.5 + Math.random() * 3.5) + 'px';
     dot.style.width = dot.style.height = sz;
-    particlesEl.appendChild(dot);
+    dot.style.opacity = '0';
+    particles.appendChild(dot);
   }
 
   /* ════ PHASE 1 (0.8s) : curseur apparaît ════ */
   setTimeout(function() {
-    cursor.style.left = (cx + 200) + 'px';
-    cursor.style.top  = (cy + 180) + 'px';
+    cursor.style.left = (cx + 210) + 'px';
+    cursor.style.top  = (cy + 170) + 'px';
     cursor.style.transition = 'none';
     cursor.classList.add('show');
   }, 800);
 
-  /* ════ PHASE 2 (1.3s) : curseur glisse vers le logo ════ */
+  /* ════ PHASE 2 (1.4s) : curseur glisse vers le logo ════ */
   setTimeout(function() {
-    cursor.style.transition = 'left 1.2s cubic-bezier(.25,.1,.25,1), top 1.2s cubic-bezier(.25,.1,.25,1)';
-    cursor.style.left = (cx + 8) + 'px';
-    cursor.style.top  = (cy + 8) + 'px';
-  }, 1300);
+    cursor.style.transition = 'left 1.3s cubic-bezier(.25,.1,.25,1), top 1.3s cubic-bezier(.25,.1,.25,1)';
+    cursor.style.left = (cx + 10) + 'px';
+    cursor.style.top  = (cy + 10) + 'px';
+  }, 1400);
 
-  /* ════ PHASE 3 (2.3s) : hover → logo réagit ════ */
+  /* ════ PHASE 3 (2.5s) : hover ════ */
   setTimeout(function() {
     logo.classList.remove('idle');
     logo.classList.add('hover');
     if (hint) { hint.textContent = 'Clique pour découvrir'; hint.classList.add('show'); }
-  }, 2300);
+  }, 2500);
 
-  /* ════ PHASE 4 (3s) : CLIC ════ */
+  /* ════ PHASE 4 (3.1s) : CLIC ! ════ */
   setTimeout(function() {
     cursor.classList.add('clicking');
     logo.classList.remove('hover');
@@ -12304,159 +12338,205 @@ function startMorphAnimation() {
     if (hint) hint.classList.remove('show');
     var ripple = document.createElement('div');
     ripple.className = 'm-ripple';
-    ripple.style.left = '50%'; ripple.style.top = '50%';
+    ripple.style.left = cx + 'px'; ripple.style.top = cy + 'px';
     scene.appendChild(ripple);
-    setTimeout(function(){ ripple.remove(); }, 800);
-  }, 3000);
+    setTimeout(function(){ ripple.remove(); }, 900);
+  }, 3100);
 
-  /* ════ PHASE 5 (3.2s) : logo spin ════ */
+  /* ════ PHASE 5 (3.35s) : spin ════ */
   setTimeout(function() {
     cursor.classList.remove('clicking','show');
     logo.classList.remove('pressed');
     logo.classList.add('spin');
     if (glow) glow.classList.add('intense');
-  }, 3200);
+  }, 3350);
 
-  /* ════ PHASE 6 (4.7s) : EXPLOSION ════ */
-  var shardEls = [];
+  /* ════ PHASE 6 (4.85s) : EXPLOSION ════ */
+  var shards = [];
   setTimeout(function() {
     logo.classList.remove('spin');
     logo.classList.add('explode');
     if (glow) glow.classList.add('supernova');
 
-    /* 3 ondes de choc */
+    /* Ondes de choc */
     for (var r = 0; r < 3; r++) {
       (function(d){ setTimeout(function(){
         var ring = document.createElement('div');
         ring.className = 'm-ring';
         scene.appendChild(ring);
         setTimeout(function(){ ring.remove(); }, 1000);
-      }, d); })(r * 120);
+      }, d); })(r * 130);
     }
 
-    /* création des fragments */
+    /* Création et explosion des fragments */
     sections.forEach(function(sec, i) {
       var shard = document.createElement('div');
       shard.className = 'm-shard';
       shard.style.setProperty('--sc', sec.c);
+      shard.style.left = cx + 'px';
+      shard.style.top  = cy + 'px';
+      shard.style.transform = 'translate(-50%,-50%) scale(0)';
+      shard.style.opacity = '0';
+      shard.style.transition = 'none';
+
       var em = document.createElement('span');
-      em.className = 'm-shard-emoji'; em.textContent = sec.e;
+      em.className = 'm-shard-emoji';
+      em.textContent = sec.e;
       shard.appendChild(em);
-      var lb = document.createElement('div');
-      lb.className = 'm-shard-label'; lb.textContent = sec.l;
-      shard.appendChild(lb);
-      scene.appendChild(shard);
-      shardEls.push(shard);
+      document.body.appendChild(shard);
+      shards.push(shard);
 
-      /* direction d'explosion */
+      /* Trajectoire d'explosion */
       var angle = (i / total) * Math.PI * 2 - Math.PI / 2;
-      var dist  = isMobile ? 160 + Math.random()*60 : 260 + Math.random()*100;
-      var tx = Math.cos(angle) * dist;
-      var ty = Math.sin(angle) * dist;
-      var rot = -180 + Math.random() * 360;
-      setTimeout(function(){
-        shard.style.opacity = '1';
-        shard.style.transform = 'translate('+tx+'px,'+ty+'px) rotate('+rot+'deg) scale(1.1)';
-        shard.style.transition = 'all .65s cubic-bezier(.16,1,.3,1)';
-      }, 40 + i * 38);
-    });
-  }, 4700);
-
-  /* ════ PHASE 7 (5.9s) : chaque icône vole vers sa place dans la sidebar ════ */
-  setTimeout(function() {
-    if (glow) { glow.classList.remove('supernova','intense'); }
-
-    /* fond de l'overlay devient semi-transparent pour voir la sidebar */
-    overlay.style.transition = 'background 1.2s ease';
-    overlay.style.background = 'rgba(0,8,20,.55)';
-
-    var sidebarVisible = !isMobile;
-    var arrivedCount = 0;
-
-    shardEls.forEach(function(shard, i) {
-      var sec = sections[i];
-      /* trouve l'élément sidebar correspondant */
-      var target = document.querySelector('[data-page="'+sec.page+'"]');
+      var dist  = isMobile ? 140 + Math.random()*50 : 230 + Math.random()*90;
+      var destX = cx + Math.cos(angle) * dist;
+      var destY = cy + Math.sin(angle) * dist;
+      var rot   = -200 + Math.random() * 400;
 
       setTimeout(function() {
-        if (target && sidebarVisible) {
-          var rect = target.getBoundingClientRect();
+        shard.style.transition = 'all .6s cubic-bezier(.16,1,.3,1)';
+        shard.style.opacity    = '1';
+        shard.style.left       = destX + 'px';
+        shard.style.top        = destY + 'px';
+        shard.style.transform  = 'translate(-50%,-50%) rotate('+rot+'deg) scale(1.15)';
+      }, 30 + i * 35);
+    });
+  }, 4850);
+
+  /* ════ PHASE 7 (6.2s) : overlay semi-transparent + barre visible ════ */
+  setTimeout(function() {
+    if (glow) { glow.classList.remove('supernova','intense'); }
+    overlay.style.transition = 'background 1.4s ease';
+    overlay.style.background = 'rgba(0,6,18,.72)';
+    if (build) build.classList.add('show');
+  }, 6200);
+
+  /* ════ PHASE 8 (6.5s) : chaque shard vole vers son item sidebar ════ */
+  var arrivedCount = 0;
+  setTimeout(function() {
+    var STAGGER = isMobile ? 320 : 260; /* ms entre chaque icône */
+
+    shards.forEach(function(shard, i) {
+      setTimeout(function() {
+        var sec    = sections[i];
+        var target = document.querySelector('[data-page="'+sec.page+'"]');
+
+        if (target && !isMobile) {
+          /* ─ Desktop : icône vole vers la sidebar ─ */
+          var rect  = target.getBoundingClientRect();
           var destX = rect.left + rect.width  / 2;
           var destY = rect.top  + rect.height / 2;
 
-          shard.style.transition = 'all .85s cubic-bezier(.34,1.1,.64,1)';
-          shard.style.left      = destX + 'px';
-          shard.style.top       = destY + 'px';
-          shard.style.margin    = '0';
-          shard.style.transform = 'translate(-50%,-50%) scale(.7)';
+          shard.style.transition = 'all .75s cubic-bezier(.4,0,.2,1)';
+          shard.style.left       = destX + 'px';
+          shard.style.top        = destY + 'px';
+          shard.style.transform  = 'translate(-50%,-50%) rotate(0deg) scale(.55)';
 
-          /* quand l'icône arrive : flash sur le sidebar item + icône disparaît */
+          /* Quand elle arrive → item se construit */
           setTimeout(function() {
-            shard.style.transition = 'all .25s ease';
-            shard.style.transform  = 'translate(-50%,-50%) scale(0)';
-            shard.style.opacity    = '0';
-            /* flash sidebar item */
-            target.style.transition   = 'background .15s ease, box-shadow .15s ease, transform .15s ease';
-            target.style.background   = 'rgba(77,159,255,.25)';
-            target.style.boxShadow    = '0 0 12px rgba(77,159,255,.4)';
-            target.style.transform    = 'translateX(4px)';
-            setTimeout(function(){
-              target.style.background = '';
-              target.style.boxShadow  = '';
-              target.style.transform  = '';
-            }, 400);
+            shard.remove();
+
+            /* Construire l'item sidebar */
+            target.style.transition = 'none';
+            target.style.opacity    = '1';
+            target.classList.add('sb-constructing');
+            setTimeout(function(){ target.classList.remove('sb-constructing'); }, 600);
+
+            /* Construire aussi le label de section si premier de son groupe */
+            var prev = target.previousElementSibling;
+            if (prev && prev.classList.contains('sidebar-section-label')) {
+              prev.style.opacity = '1';
+              prev.classList.add('sb-constructing');
+              setTimeout(function(){ prev.classList.remove('sb-constructing'); }, 500);
+            }
+
+            /* Mise à jour barre */
             arrivedCount++;
-            if (arrivedCount === total) finishAnimation();
-          }, 850);
+            if (buildFill)  buildFill.style.width = (arrivedCount / total * 100) + '%';
+            if (buildCount) buildCount.textContent = arrivedCount + ' / ' + total + ' sections';
+
+            if (arrivedCount === total) onAllArrived();
+          }, 750);
 
         } else {
-          /* mobile : grille au centre */
+          /* ─ Mobile : grille 4×3 centrée ─ */
           var cols = 4;
-          var row  = Math.floor(i / cols);
-          var col  = i % cols;
-          var gx   = (col - 1.5) * 70;
-          var gy   = (row - 1.5) * 70;
-          shard.style.transition = 'all .85s cubic-bezier(.34,1.1,.64,1)';
-          shard.style.left      = '50%';
-          shard.style.top       = '50%';
-          shard.style.margin    = '0';
-          shard.style.transform = 'translate(calc(-50% + '+gx+'px), calc(-50% + '+gy+'px)) scale(1)';
-          shard.classList.add('placed');
-          arrivedCount++;
-          if (arrivedCount === total) finishAnimation();
+          var gx = (i % cols - 1.5) * 66;
+          var gy = (Math.floor(i / cols) - 1.5) * 66;
+          shard.style.transition = 'all .75s cubic-bezier(.34,1.1,.64,1)';
+          shard.style.left       = cx + 'px';
+          shard.style.top        = cy + 'px';
+          shard.style.transform  = 'translate(calc(-50% + '+gx+'px), calc(-50% + '+gy+'px)) scale(1) rotate(0deg)';
+
+          setTimeout(function() {
+            arrivedCount++;
+            if (buildFill)  buildFill.style.width = (arrivedCount / total * 100) + '%';
+            if (buildCount) buildCount.textContent = arrivedCount + ' / ' + total + ' sections';
+            if (arrivedCount === total) onAllArrived();
+          }, 750);
         }
-      }, i * 80);
+      }, i * STAGGER);
     });
-  }, 5900);
+  }, 6500);
 
-  /* ════ Fin : texte bienvenue → zoom → site ════ */
-  function finishAnimation() {
+  /* ════ Fin de construction ════ */
+  function onAllArrived() {
+    /* Restaurer tous les items non construits (labels manqués etc.) */
+    allSbItems.forEach(function(el) {
+      if (parseFloat(window.getComputedStyle(el).opacity) < 0.5) {
+        el.style.transition = 'opacity .4s ease';
+        el.style.opacity = '1';
+      }
+    });
+
+    /* Flash "Terminé" */
+    if (buildLabel) {
+      buildLabel.style.color = 'rgba(77,255,160,.8)';
+      buildLabel.textContent = '✓ Construction terminée';
+    }
+    if (buildFill) {
+      buildFill.style.background = 'linear-gradient(90deg,#00a86b,#4dffc2)';
+    }
+
+    /* Flash de la sidebar */
+    var sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.style.transition = 'box-shadow .3s ease';
+      sidebar.style.boxShadow  = '4px 0 40px rgba(77,159,255,.5)';
+      setTimeout(function(){ sidebar.style.boxShadow = ''; }, 600);
+    }
+
+    /* Après une pause : titre bienvenue */
     setTimeout(function() {
+      if (build) build.classList.remove('show');
       if (title) title.classList.add('show');
-    }, 400);
+    }, 700);
 
+    /* Zoom final */
     setTimeout(function() {
-      /* effacer les styles de flash sur les sidebar items */
-      sections.forEach(function(sec) {
-        var t = document.querySelector('[data-page="'+sec.page+'"]');
-        if (t) { t.style.transition = ''; }
-      });
       overlay.classList.add('phase-zoom');
       setTimeout(function() {
+        /* Tout nettoyer */
         overlay.classList.remove('active','phase-zoom');
-        overlay.style.display     = 'none';
-        overlay.style.background  = '';
-        overlay.style.transition  = '';
+        overlay.style.cssText = 'display:none';
         logo.className = 'm-logo';
-        logo.style.opacity = '1';
         if (title) title.classList.remove('show');
         if (glow)  glow.className = 'm-glow';
-        scene.querySelectorAll('.m-shard,.m-ring,.m-ripple,.m-line').forEach(function(e){ e.remove(); });
-        particlesEl.innerHTML = '';
+        if (build) build.classList.remove('show');
+        particles.innerHTML = '';
+        scene.querySelectorAll('.m-shard,.m-ring,.m-ripple').forEach(function(e){ e.remove(); });
+        /* Restaurer la sidebar complètement */
+        allSbItems.forEach(function(el) {
+          el.style.opacity = '';
+          el.style.transition = '';
+          el.style.transform  = '';
+          el.style.background = '';
+          el.style.boxShadow  = '';
+        });
         window._orbitalRunning = false;
         if (typeof initOnboarding === 'function') initOnboarding();
-      }, 1300);
-    }, 1600);
+      }, 1400);
+    }, 1800);
   }
 }
 
