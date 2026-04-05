@@ -12250,7 +12250,13 @@ function startMorphAnimation() {
   var particles  = document.getElementById('mParticles');
   if (!overlay || !logo) return;
 
-  /* Mapping sections → pages sidebar */
+  /* ── Masquer immédiatement l'onboarding s'il est déjà ouvert ── */
+  var onbOverlay = document.getElementById('onb-overlay');
+  if (onbOverlay) {
+    onbOverlay.classList.add('hidden');
+    onbOverlay.classList.remove('show');
+  }
+
   var sections = [
     {e:'🏠', l:'Accueil',    page:'home',       c:'rgba(0,87,173,.4)'},
     {e:'🧮', l:'Simulateur', page:'simulateur', c:'rgba(0,150,136,.4)'},
@@ -12267,274 +12273,228 @@ function startMorphAnimation() {
   ];
   var total    = sections.length;
   var isMobile = window.innerWidth < 600;
-  var vw = window.innerWidth;
-  var vh = window.innerHeight;
+  var vw = window.innerWidth, vh = window.innerHeight;
   var cx = vw / 2, cy = vh / 2;
 
-  /* ── Reset complet ── */
+  /* ── Reset overlay ── */
   overlay.classList.remove('fade-out','phase-zoom');
   overlay.style.cssText = '';
   overlay.classList.add('active');
+
+  /* ── L'overlay recouvre TOUT (opaque) ── */
+  /* La sidebar sera remontée AU-DESSUS via z-index temporaire */
+  var sidebar = document.querySelector('.sidebar');
+  var sidebarOrigZ = '';
+  if (sidebar && !isMobile) {
+    sidebarOrigZ = sidebar.style.zIndex;
+    sidebar.style.zIndex   = '999999';   /* au-dessus du morphOverlay (999998) */
+    sidebar.style.position = 'fixed';
+  }
+
+  /* ── Tous les items sidebar en invisible ── */
+  var allSbItems = document.querySelectorAll('.sidebar-item, .sidebar-section-label');
+  allSbItems.forEach(function(el) {
+    el.style.transition = 'none';
+    el.style.opacity    = '0';
+  });
+
+  /* ── Reset UI ── */
   logo.className = 'm-logo idle';
   cursor.className = 'm-cursor';
   if (glow)  glow.className = 'm-glow';
   if (hint)  { hint.classList.remove('show'); hint.textContent = ''; }
   if (title) title.classList.remove('show');
-  if (build) { build.classList.remove('show'); }
-  if (buildFill)  buildFill.style.width = '0%';
-  if (buildCount) buildCount.textContent = '0 / ' + total + ' sections';
-  if (buildLabel) buildLabel.textContent = 'Construction en cours…';
+  if (build) { build.classList.remove('show'); buildFill.style.width='0%'; buildCount.textContent='0 / '+total+' sections'; buildLabel.textContent='Construction en cours…'; buildLabel.style.color=''; buildFill.style.background=''; }
   scene.querySelectorAll('.m-shard,.m-ring,.m-ripple').forEach(function(e){ e.remove(); });
 
-  /* Mettre tous les sidebar items en état "non construit" */
-  var allSbItems = document.querySelectorAll('.sidebar-item, .sidebar-section-label');
-  allSbItems.forEach(function(el) {
-    el.style.opacity = '0.08';
-    el.style.transition = 'none';
-  });
-
-  /* ── Particules de fond ── */
+  /* ── Particules ── */
   particles.innerHTML = '';
   for (var p = 0; p < 55; p++) {
     var dot = document.createElement('div');
     dot.className = 'm-dot';
-    dot.style.left = (Math.random() * 110 - 5) + '%';
-    dot.style.top  = (70 + Math.random() * 35) + '%';
-    dot.style.animationDuration = (6 + Math.random() * 9) + 's';
-    dot.style.animationDelay   = (Math.random() * 8) + 's';
-    var sz = (1.5 + Math.random() * 3.5) + 'px';
+    dot.style.left = (Math.random()*110-5)+'%';
+    dot.style.top  = (70+Math.random()*35)+'%';
+    dot.style.animationDuration = (6+Math.random()*9)+'s';
+    dot.style.animationDelay   = (Math.random()*8)+'s';
+    var sz = (1.5+Math.random()*3.5)+'px';
     dot.style.width = dot.style.height = sz;
-    dot.style.opacity = '0';
     particles.appendChild(dot);
   }
 
-  /* ════ PHASE 1 (0.8s) : curseur apparaît ════ */
-  setTimeout(function() {
-    cursor.style.left = (cx + 210) + 'px';
-    cursor.style.top  = (cy + 170) + 'px';
-    cursor.style.transition = 'none';
-    cursor.classList.add('show');
+  /* ════ PHASE 1 (0.8s) : curseur ════ */
+  setTimeout(function(){
+    cursor.style.left=(cx+210)+'px'; cursor.style.top=(cy+170)+'px';
+    cursor.style.transition='none'; cursor.classList.add('show');
   }, 800);
 
-  /* ════ PHASE 2 (1.4s) : curseur glisse vers le logo ════ */
-  setTimeout(function() {
-    cursor.style.transition = 'left 1.3s cubic-bezier(.25,.1,.25,1), top 1.3s cubic-bezier(.25,.1,.25,1)';
-    cursor.style.left = (cx + 10) + 'px';
-    cursor.style.top  = (cy + 10) + 'px';
+  /* ════ PHASE 2 (1.4s) : glisse vers logo ════ */
+  setTimeout(function(){
+    cursor.style.transition='left 1.3s cubic-bezier(.25,.1,.25,1), top 1.3s cubic-bezier(.25,.1,.25,1)';
+    cursor.style.left=(cx+10)+'px'; cursor.style.top=(cy+10)+'px';
   }, 1400);
 
   /* ════ PHASE 3 (2.5s) : hover ════ */
-  setTimeout(function() {
-    logo.classList.remove('idle');
-    logo.classList.add('hover');
-    if (hint) { hint.textContent = 'Clique pour découvrir'; hint.classList.add('show'); }
+  setTimeout(function(){
+    logo.classList.remove('idle'); logo.classList.add('hover');
+    if(hint){ hint.textContent='Clique pour découvrir'; hint.classList.add('show'); }
   }, 2500);
 
-  /* ════ PHASE 4 (3.1s) : CLIC ! ════ */
-  setTimeout(function() {
+  /* ════ PHASE 4 (3.1s) : CLIC ════ */
+  setTimeout(function(){
     cursor.classList.add('clicking');
-    logo.classList.remove('hover');
-    logo.classList.add('pressed');
-    if (hint) hint.classList.remove('show');
-    var ripple = document.createElement('div');
-    ripple.className = 'm-ripple';
-    ripple.style.left = cx + 'px'; ripple.style.top = cy + 'px';
-    scene.appendChild(ripple);
-    setTimeout(function(){ ripple.remove(); }, 900);
+    logo.classList.remove('hover'); logo.classList.add('pressed');
+    if(hint) hint.classList.remove('show');
+    var ripple=document.createElement('div'); ripple.className='m-ripple';
+    ripple.style.left=cx+'px'; ripple.style.top=cy+'px';
+    scene.appendChild(ripple); setTimeout(function(){ ripple.remove(); },900);
   }, 3100);
 
   /* ════ PHASE 5 (3.35s) : spin ════ */
-  setTimeout(function() {
+  setTimeout(function(){
     cursor.classList.remove('clicking','show');
-    logo.classList.remove('pressed');
-    logo.classList.add('spin');
-    if (glow) glow.classList.add('intense');
+    logo.classList.remove('pressed'); logo.classList.add('spin');
+    if(glow) glow.classList.add('intense');
   }, 3350);
 
   /* ════ PHASE 6 (4.85s) : EXPLOSION ════ */
-  var shards = [];
-  setTimeout(function() {
-    logo.classList.remove('spin');
-    logo.classList.add('explode');
-    if (glow) glow.classList.add('supernova');
+  var shards=[];
+  setTimeout(function(){
+    logo.classList.remove('spin'); logo.classList.add('explode');
+    if(glow) glow.classList.add('supernova');
+    for(var r=0;r<3;r++){(function(d){setTimeout(function(){
+      var ring=document.createElement('div'); ring.className='m-ring';
+      scene.appendChild(ring); setTimeout(function(){ ring.remove(); },1000);
+    },d);})(r*130);}
 
-    /* Ondes de choc */
-    for (var r = 0; r < 3; r++) {
-      (function(d){ setTimeout(function(){
-        var ring = document.createElement('div');
-        ring.className = 'm-ring';
-        scene.appendChild(ring);
-        setTimeout(function(){ ring.remove(); }, 1000);
-      }, d); })(r * 130);
-    }
-
-    /* Création et explosion des fragments */
-    sections.forEach(function(sec, i) {
-      var shard = document.createElement('div');
-      shard.className = 'm-shard';
-      shard.style.setProperty('--sc', sec.c);
-      shard.style.left = cx + 'px';
-      shard.style.top  = cy + 'px';
-      shard.style.transform = 'translate(-50%,-50%) scale(0)';
-      shard.style.opacity = '0';
-      shard.style.transition = 'none';
-
-      var em = document.createElement('span');
-      em.className = 'm-shard-emoji';
-      em.textContent = sec.e;
+    sections.forEach(function(sec,i){
+      var shard=document.createElement('div');
+      shard.className='m-shard';
+      shard.style.setProperty('--sc',sec.c);
+      shard.style.left=cx+'px'; shard.style.top=cy+'px';
+      shard.style.transform='translate(-50%,-50%) scale(0)';
+      shard.style.opacity='0'; shard.style.transition='none';
+      var em=document.createElement('span'); em.className='m-shard-emoji'; em.textContent=sec.e;
       shard.appendChild(em);
-      document.body.appendChild(shard);
-      shards.push(shard);
+      document.body.appendChild(shard); shards.push(shard);
 
-      /* Trajectoire d'explosion */
-      var angle = (i / total) * Math.PI * 2 - Math.PI / 2;
-      var dist  = isMobile ? 140 + Math.random()*50 : 230 + Math.random()*90;
-      var destX = cx + Math.cos(angle) * dist;
-      var destY = cy + Math.sin(angle) * dist;
-      var rot   = -200 + Math.random() * 400;
-
-      setTimeout(function() {
-        shard.style.transition = 'all .6s cubic-bezier(.16,1,.3,1)';
-        shard.style.opacity    = '1';
-        shard.style.left       = destX + 'px';
-        shard.style.top        = destY + 'px';
-        shard.style.transform  = 'translate(-50%,-50%) rotate('+rot+'deg) scale(1.15)';
-      }, 30 + i * 35);
+      var angle=(i/total)*Math.PI*2-Math.PI/2;
+      var dist=isMobile?130+Math.random()*50:220+Math.random()*90;
+      var dx=Math.cos(angle)*dist, dy=Math.sin(angle)*dist;
+      var rot=-200+Math.random()*400;
+      setTimeout(function(){
+        shard.style.transition='all .6s cubic-bezier(.16,1,.3,1)';
+        shard.style.opacity='1';
+        shard.style.left=(cx+dx)+'px'; shard.style.top=(cy+dy)+'px';
+        shard.style.transform='translate(-50%,-50%) rotate('+rot+'deg) scale(1.1)';
+      }, 30+i*35);
     });
   }, 4850);
 
-  /* ════ PHASE 7 (6.2s) : overlay semi-transparent + barre visible ════ */
-  setTimeout(function() {
-    if (glow) { glow.classList.remove('supernova','intense'); }
-    overlay.style.transition = 'background 1.4s ease';
-    overlay.style.background = 'rgba(0,6,18,.72)';
-    if (build) build.classList.add('show');
-  }, 6200);
+  /* ════ PHASE 7 (6.4s) : construction sidebar ════ */
+  if(build) setTimeout(function(){ build.classList.add('show'); }, 6200);
 
-  /* ════ PHASE 8 (6.5s) : chaque shard vole vers son item sidebar ════ */
-  var arrivedCount = 0;
-  setTimeout(function() {
-    var STAGGER = isMobile ? 320 : 260; /* ms entre chaque icône */
+  var arrivedCount=0;
+  setTimeout(function(){
+    var STAGGER=isMobile?300:240;
 
-    shards.forEach(function(shard, i) {
-      setTimeout(function() {
-        var sec    = sections[i];
-        var target = document.querySelector('[data-page="'+sec.page+'"]');
+    shards.forEach(function(shard,i){
+      setTimeout(function(){
+        var sec=sections[i];
+        var target=document.querySelector('[data-page="'+sec.page+'"]');
 
-        if (target && !isMobile) {
-          /* ─ Desktop : icône vole vers la sidebar ─ */
-          var rect  = target.getBoundingClientRect();
-          var destX = rect.left + rect.width  / 2;
-          var destY = rect.top  + rect.height / 2;
+        if(target && !isMobile){
+          var rect=target.getBoundingClientRect();
+          var destX=rect.left+rect.width/2;
+          var destY=rect.top+rect.height/2;
 
-          shard.style.transition = 'all .75s cubic-bezier(.4,0,.2,1)';
-          shard.style.left       = destX + 'px';
-          shard.style.top        = destY + 'px';
-          shard.style.transform  = 'translate(-50%,-50%) rotate(0deg) scale(.55)';
+          shard.style.transition='all .7s cubic-bezier(.4,0,.2,1)';
+          shard.style.left=destX+'px'; shard.style.top=destY+'px';
+          shard.style.transform='translate(-50%,-50%) rotate(0deg) scale(.55)';
 
-          /* Quand elle arrive → item se construit */
-          setTimeout(function() {
+          setTimeout(function(){
             shard.remove();
 
-            /* Construire l'item sidebar */
-            target.style.transition = 'none';
-            target.style.opacity    = '1';
+            /* Révéler le sidebar item */
+            target.style.transition='opacity .15s ease, background .3s ease, transform .3s ease, box-shadow .3s ease';
+            target.style.opacity='1';
             target.classList.add('sb-constructing');
             setTimeout(function(){ target.classList.remove('sb-constructing'); }, 600);
 
-            /* Construire aussi le label de section si premier de son groupe */
-            var prev = target.previousElementSibling;
-            if (prev && prev.classList.contains('sidebar-section-label')) {
-              prev.style.opacity = '1';
+            /* Label de section (si premier item du groupe) */
+            var prev=target.previousElementSibling;
+            if(prev && prev.classList.contains('sidebar-section-label')){
+              prev.style.transition='opacity .3s ease';
+              prev.style.opacity='1';
               prev.classList.add('sb-constructing');
-              setTimeout(function(){ prev.classList.remove('sb-constructing'); }, 500);
+              setTimeout(function(){ prev.classList.remove('sb-constructing'); },500);
             }
 
-            /* Mise à jour barre */
             arrivedCount++;
-            if (buildFill)  buildFill.style.width = (arrivedCount / total * 100) + '%';
-            if (buildCount) buildCount.textContent = arrivedCount + ' / ' + total + ' sections';
-
-            if (arrivedCount === total) onAllArrived();
-          }, 750);
+            if(buildFill) buildFill.style.width=(arrivedCount/total*100)+'%';
+            if(buildCount) buildCount.textContent=arrivedCount+' / '+total+' sections';
+            if(arrivedCount===total) onAllArrived();
+          }, 700);
 
         } else {
-          /* ─ Mobile : grille 4×3 centrée ─ */
-          var cols = 4;
-          var gx = (i % cols - 1.5) * 66;
-          var gy = (Math.floor(i / cols) - 1.5) * 66;
-          shard.style.transition = 'all .75s cubic-bezier(.34,1.1,.64,1)';
-          shard.style.left       = cx + 'px';
-          shard.style.top        = cy + 'px';
-          shard.style.transform  = 'translate(calc(-50% + '+gx+'px), calc(-50% + '+gy+'px)) scale(1) rotate(0deg)';
-
-          setTimeout(function() {
-            arrivedCount++;
-            if (buildFill)  buildFill.style.width = (arrivedCount / total * 100) + '%';
-            if (buildCount) buildCount.textContent = arrivedCount + ' / ' + total + ' sections';
-            if (arrivedCount === total) onAllArrived();
-          }, 750);
+          /* Mobile : grille */
+          var cols=4, gx=(i%cols-1.5)*64, gy=(Math.floor(i/cols)-1.5)*64;
+          shard.style.transition='all .75s cubic-bezier(.34,1.1,.64,1)';
+          shard.style.left=cx+'px'; shard.style.top=cy+'px';
+          shard.style.transform='translate(calc(-50% + '+gx+'px), calc(-50% + '+gy+'px)) rotate(0deg) scale(1)';
+          arrivedCount++;
+          if(buildFill) buildFill.style.width=(arrivedCount/total*100)+'%';
+          if(buildCount) buildCount.textContent=arrivedCount+' / '+total+' sections';
+          if(arrivedCount===total) onAllArrived();
         }
-      }, i * STAGGER);
+      }, i*STAGGER);
     });
-  }, 6500);
+  }, 6400);
 
-  /* ════ Fin de construction ════ */
-  function onAllArrived() {
-    /* Restaurer tous les items non construits (labels manqués etc.) */
-    allSbItems.forEach(function(el) {
-      if (parseFloat(window.getComputedStyle(el).opacity) < 0.5) {
-        el.style.transition = 'opacity .4s ease';
-        el.style.opacity = '1';
+  /* ════ Fin ════ */
+  function onAllArrived(){
+    /* Révéler les labels restants */
+    allSbItems.forEach(function(el){
+      if(!el.style.opacity || el.style.opacity==='0'){
+        el.style.transition='opacity .4s ease'; el.style.opacity='1';
       }
     });
 
-    /* Flash "Terminé" */
-    if (buildLabel) {
-      buildLabel.style.color = 'rgba(77,255,160,.8)';
-      buildLabel.textContent = '✓ Construction terminée';
-    }
-    if (buildFill) {
-      buildFill.style.background = 'linear-gradient(90deg,#00a86b,#4dffc2)';
-    }
+    if(buildLabel){ buildLabel.style.color='rgba(77,255,160,.85)'; buildLabel.textContent='✓ Construction terminée !'; }
+    if(buildFill){ buildFill.style.background='linear-gradient(90deg,#00a86b,#4dffc2)'; }
 
-    /* Flash de la sidebar */
-    var sidebar = document.querySelector('.sidebar');
-    if (sidebar) {
-      sidebar.style.transition = 'box-shadow .3s ease';
-      sidebar.style.boxShadow  = '4px 0 40px rgba(77,159,255,.5)';
-      setTimeout(function(){ sidebar.style.boxShadow = ''; }, 600);
-    }
+    /* Flash sidebar */
+    if(sidebar){ sidebar.style.transition='box-shadow .3s ease'; sidebar.style.boxShadow='4px 0 50px rgba(77,159,255,.6)';
+      setTimeout(function(){ sidebar.style.boxShadow=''; },700); }
 
-    /* Après une pause : titre bienvenue */
-    setTimeout(function() {
-      if (build) build.classList.remove('show');
-      if (title) title.classList.add('show');
+    setTimeout(function(){
+      if(build) build.classList.remove('show');
+      if(title) title.classList.add('show');
     }, 700);
 
-    /* Zoom final */
-    setTimeout(function() {
+    setTimeout(function(){
+      /* Restaurer la sidebar à son état normal */
+      if(sidebar){
+        sidebar.style.zIndex   = sidebarOrigZ;
+        sidebar.style.position = '';
+        sidebar.style.boxShadow= '';
+        sidebar.style.transition='';
+      }
+      allSbItems.forEach(function(el){
+        el.style.opacity=''; el.style.transition=''; el.style.transform=''; el.style.background=''; el.style.boxShadow='';
+      });
+
       overlay.classList.add('phase-zoom');
-      setTimeout(function() {
-        /* Tout nettoyer */
+      setTimeout(function(){
         overlay.classList.remove('active','phase-zoom');
-        overlay.style.cssText = 'display:none';
-        logo.className = 'm-logo';
-        if (title) title.classList.remove('show');
-        if (glow)  glow.className = 'm-glow';
-        if (build) build.classList.remove('show');
-        particles.innerHTML = '';
+        overlay.style.cssText='display:none';
+        logo.className='m-logo';
+        if(title) title.classList.remove('show');
+        if(glow) glow.className='m-glow';
+        if(build) build.classList.remove('show');
+        particles.innerHTML='';
         scene.querySelectorAll('.m-shard,.m-ring,.m-ripple').forEach(function(e){ e.remove(); });
-        /* Restaurer la sidebar complètement */
-        allSbItems.forEach(function(el) {
-          el.style.opacity = '';
-          el.style.transition = '';
-          el.style.transform  = '';
-          el.style.background = '';
-          el.style.boxShadow  = '';
-        });
-        window._orbitalRunning = false;
-        if (typeof initOnboarding === 'function') initOnboarding();
+        window._orbitalRunning=false;
+        if(typeof initOnboarding==='function') initOnboarding();
       }, 1400);
     }, 1800);
   }
