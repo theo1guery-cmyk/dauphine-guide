@@ -17882,10 +17882,17 @@ function dsEnsureSheetSchema(sheet) {
 }
 
 function dsGetSubjectsFromSimulator() {
-  if (Array.isArray(window.MATIERES) && window.MATIERES.length) {
+  var matSource = [];
+  if (typeof MATIERES !== 'undefined' && Array.isArray(MATIERES)) {
+    matSource = MATIERES;
+  } else if (Array.isArray(window.MATIERES)) {
+    matSource = window.MATIERES;
+  }
+
+  if (matSource.length) {
     var out = [];
     var seen = Object.create(null);
-    window.MATIERES.forEach(function(m) {
+    matSource.forEach(function(m) {
       if (!m || !m.nom || m.coef <= 0) return;
       var name = String(m.nom).trim();
       if (!seen[name]) {
