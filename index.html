@@ -12920,6 +12920,13 @@ if (document.readyState === 'loading') {
 var currentAccess = null;
 
 function initLogin() {
+  // Mode widget : bypass total de l'auth
+  if (new URLSearchParams(window.location.search).has('widget')) {
+    currentAccess = 'full';
+    applyAccess('full');
+    hideLoginScreen();
+    return;
+  }
   // Vérifier si une session existe déjà (localStorage pour persistance sur mobile)
   var saved = localStorage.getItem('dg_access');
   if (saved === 'full' || saved === 'limited') {
