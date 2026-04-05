@@ -595,11 +595,11 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 /* Wipe reveal */
 .m-wipe{position:fixed;top:0;height:100vh;z-index:999997;pointer-events:none;transform-origin:right center;transition:transform .85s cubic-bezier(.77,0,.18,1)}
 /* Onde lumineuse sidebar → contenu */
-.m-wave{position:fixed;height:2px;z-index:999996;pointer-events:none;opacity:.9;transition:width .55s ease-out,opacity .55s ease-out}
+.m-wave{position:fixed;height:2px;z-index:9999997;pointer-events:none;opacity:.9;transition:width .55s ease-out,opacity .55s ease-out}
 /* Traînée de particules */
-.m-trail{position:fixed;border-radius:50%;pointer-events:none;z-index:999994;transform:translate(-50%,-50%);transition:opacity .35s ease,transform .35s ease}
+.m-trail{position:fixed;border-radius:50%;pointer-events:none;z-index:9999998;transform:translate(-50%,-50%);transition:opacity .35s ease,transform .35s ease}
 /* Ghost content preview (aperçu fantôme dans les ondes) */
-.m-preview{position:fixed;z-index:999996;pointer-events:none;background:rgba(255,255,255,.07);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;min-width:160px;max-width:200px;font-family:Figtree,sans-serif}
+.m-preview{position:fixed;z-index:9999998;pointer-events:none;background:rgba(255,255,255,.07);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease;min-width:160px;max-width:200px;font-family:Figtree,sans-serif}
 .m-preview.show{opacity:1;transform:translateY(0)}
 .m-preview-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .m-preview-body{font-size:12px;color:rgba(255,255,255,.75);line-height:1.4}
@@ -12463,21 +12463,26 @@ function startMorphAnimation() {
           if(r.width===0||r.height===0) return;
           var x=r.left+r.width/2, y=r.top+r.height/2;
           /* Ne pas spawner si le shard est encore au centre (pas encore bougé) */
-          if(Math.abs(x-cx)<5 && Math.abs(y-cy)<5) return;
-          var color=shard.style.getPropertyValue('--sc')||'rgba(77,159,255,.5)';
-          var sz=(2+Math.random()*3.5)+'px';
-          var trail=document.createElement('div');
-          trail.className='m-trail';
-          trail.style.left=x+'px'; trail.style.top=y+'px';
-          trail.style.width=sz; trail.style.height=sz;
-          trail.style.background=color;
-          trail.style.opacity=String(.5+Math.random()*.4);
-          document.body.appendChild(trail);
-          setTimeout(function(){
-            trail.style.opacity='0';
-            trail.style.transform='translate(-50%,-50%) scale(0)';
-          },40);
-          setTimeout(function(){ if(trail.parentNode) trail.remove(); },400);
+          if(Math.abs(x-cx)<10 && Math.abs(y-cy)<10) return;
+          var color=shard.style.getPropertyValue('--sc')||'rgba(77,159,255,.8)';
+          /* spawn 2-3 particules par shard par frame */
+          var count=2+Math.floor(Math.random()*2);
+          for(var p=0;p<count;p++){
+            var sz=(3+Math.random()*5)+'px';
+            var ox=(Math.random()-.5)*12, oy=(Math.random()-.5)*12;
+            var trail=document.createElement('div');
+            trail.className='m-trail';
+            trail.style.left=(x+ox)+'px'; trail.style.top=(y+oy)+'px';
+            trail.style.width=sz; trail.style.height=sz;
+            trail.style.background=color;
+            trail.style.boxShadow='0 0 6px '+color;
+            trail.style.opacity=String(.7+Math.random()*.3);
+            document.body.appendChild(trail);
+            (function(t){
+              setTimeout(function(){ t.style.opacity='0'; t.style.transform='translate(-50%,-50%) scale(0)'; },80);
+              setTimeout(function(){ if(t.parentNode) t.remove(); },450);
+            })(trail);
+          }
         });
       }
       trailRAF=requestAnimationFrame(runTrails);
