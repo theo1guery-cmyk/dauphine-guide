@@ -9055,7 +9055,27 @@ var GROQ_MODEL   = 'llama-3.1-8b-instant';
 var GEMINI_API_KEY = 'AIzaSyAw9s4JTVd-EoHVBDIVaCVxnP_ATMhU914'; // <- Gemini pour news avec Google Search
 
 var CULTURE_CACHE_KEY = 'dg_culture_daily_v2';
+var CULTURE_HISTORY_KEY = 'dg_culture_history_v1';
 var CULTURE_STATE = { data: null };
+
+function cultureGetRecentThreads(limit) {
+  var n = limit || 8;
+  try {
+    var arr = JSON.parse(localStorage.getItem(CULTURE_HISTORY_KEY) || '[]');
+    if (!Array.isArray(arr)) return [];
+    return arr.slice(0, n).map(function(x) { return String(x || '').trim(); }).filter(Boolean);
+  } catch (e) {
+    return [];
+  }
+}
+
+function cultureRememberThread(thread) {
+  var t = String(thread || '').trim();
+  if (!t) return;
+  var current = cultureGetRecentThreads(24);
+  var next = [t].concat(current.filter(function(x) { return x !== t; })).slice(0, 24);
+  localStorage.setItem(CULTURE_HISTORY_KEY, JSON.stringify(next));
+}
 
 function cultureTodayKey() {
   var d = new Date();
@@ -9101,7 +9121,7 @@ function cultureSeedFromDate(dateKey) {
   return s;
 }
 
-function cultureBuildFallbackDaily(today) {
+function cultureBuildFallbackDaily(today, avoidThreads, forceRefresh) {
   var dossiers = [
     {
       fil_rouge: 'Guerre froide et ordre mondial',
@@ -9146,11 +9166,47 @@ function cultureBuildFallbackDaily(today) {
         { question: 'Le non-alignement signifie ...', options: ['S aligner automatiquement sur une superpuissance', 'Refuser toute diplomatie', 'Chercher une autonomie entre les blocs', 'Quitter les organisations internationales'], answer_index: 2, explanation: 'Le principe vise a garder une politique étrangère autonome face aux blocs rivaux.' },
         { question: 'La décolonisation a eu pour effet majeur ...', options: ['La réduction du nombre d Etats', 'Une nouvelle carte politique mondiale', 'La fin immédiate des conflits', 'La disparition du commerce international'], answer_index: 1, explanation: 'L indépendance de nombreux territoires a profondément reconfiguré l ordre international.' }
       ]
+    },
+    {
+      fil_rouge: 'Routes maritimes et rivalités navales',
+      theme: { title: 'Contrôle des détroits stratégiques', summary: 'Les détroits structurent les échanges mondiaux et la projection de puissance. Leur contrôle conditionne sécurité énergétique et logistique. Les tensions régionales y prennent souvent une dimension mondiale.' },
+      historical_date: { title: '1869 - Ouverture du canal de Suez', summary: 'Le canal réduit fortement les distances commerciales entre Europe et Asie. Il modifie durablement les équilibres économiques et impériaux. Aujourd hui encore, il reste un nœud critique du commerce maritime.' },
+      concept: { title: 'Chokepoint maritime', summary: 'Un chokepoint est un passage étroit par lequel transitent des flux essentiels. Une perturbation locale peut y provoquer des effets globaux sur les prix et les chaînes d approvisionnement. C est un concept central en géopolitique maritime.' },
+      quiz: [
+        { question: 'Suez est stratégique car il ...', options: ['Augmente les distances maritimes', 'Réduit les temps de transport entre Europe et Asie', 'Ne sert qu au trafic militaire', 'Est un port pétrolier uniquement'], answer_index: 1, explanation: 'Le canal de Suez raccourcit les routes commerciales majeures.' },
+        { question: 'Un chokepoint maritime désigne ...', options: ['Une zone sans trafic', 'Un passage étroit essentiel aux flux', 'Un accord commercial', 'Une base aérienne'], answer_index: 1, explanation: 'Le terme désigne un point de passage critique des routes maritimes.' },
+        { question: 'Une crise sur un détroit peut ...', options: ['Rester totalement locale', 'Avoir des effets globaux sur le commerce', 'Baisser automatiquement les coûts logistiques', 'Supprimer la dépendance énergétique'], answer_index: 1, explanation: 'Les détroits concentrent des flux vitaux, donc les blocages ont des effets mondiaux.' }
+      ]
+    },
+    {
+      fil_rouge: 'Antiquité méditerranéenne et puissance impériale',
+      theme: { title: 'Hégémonie romaine en Méditerranée', summary: 'Rome construit progressivement un espace politique et militaire intégré autour de la Méditerranée. Cette domination repose sur la logistique, le droit et l armée. Elle façonne durablement les modèles étatiques européens.' },
+      historical_date: { title: '31 av. J.-C. - Bataille d Actium', summary: 'La victoire d Octave face a Marc Antoine et Cléopâtre ouvre la voie au principat. L événement marque un basculement politique majeur du monde romain. Il consolide l ordre impérial naissant.' },
+      concept: { title: 'Hégémonie', summary: 'L hégémonie décrit la capacité d un acteur a structurer un ordre régional ou international. Elle combine puissance matérielle, normes et alliances. Ce cadre d analyse reste utile pour comprendre la géopolitique actuelle.' },
+      quiz: [
+        { question: 'Actium (31 av. J.-C.) favorise surtout ...', options: ['La chute de Rome', 'L installation du pouvoir d Octave', 'La fin du commerce méditerranéen', 'L indépendance de l Egypte'], answer_index: 1, explanation: 'La bataille d Actium ouvre la consolidation du pouvoir d Octave.' },
+        { question: 'Le concept d hégémonie sert a analyser ...', options: ['Uniquement les élections locales', 'La domination structurante d un acteur', 'Les politiques monétaires seulement', 'Le droit privé uniquement'], answer_index: 1, explanation: 'L hégémonie renvoie a la capacité de structurer un ordre politique.' },
+        { question: 'La puissance romaine reposait notamment sur ...', options: ['L absence d armée', 'La logistique et l intégration politique', 'Un isolement maritime', 'Le rejet du droit'], answer_index: 1, explanation: 'Rome combine institutions, armée, routes et droit pour stabiliser son espace.' }
+      ]
+    },
+    {
+      fil_rouge: 'Asie-Pacifique et rivalités de puissance',
+      theme: { title: 'Compétition stratégique dans l Indo-Pacifique', summary: 'L Indo-Pacifique devient un centre majeur de rivalités géopolitiques. Les enjeux y sont commerciaux, technologiques et militaires. Les alliances y évoluent rapidement face aux changements de rapport de force.' },
+      historical_date: { title: '1972 - Rapprochement sino-américain', summary: 'La visite de Nixon en Chine modifie les équilibres de la Guerre froide. Elle introduit une nouvelle triangulation diplomatique. Cet épisode reste clé pour comprendre la géopolitique asiatique contemporaine.' },
+      concept: { title: 'Equilibre des puissances', summary: 'L équilibre des puissances vise a éviter la domination d un acteur unique par jeux d alliances et de contrepoids. Cette logique structure de nombreuses stratégies régionales. Elle reste centrale en Indo-Pacifique aujourd hui.' },
+      quiz: [
+        { question: 'Le rapprochement sino-américain de 1972 a surtout ...', options: ['Supprimé la diplomatie mondiale', 'Recomposé les équilibres de la Guerre froide', 'Mis fin a toute rivalité en Asie', 'Créé l Union européenne'], answer_index: 1, explanation: 'L ouverture diplomatique de 1972 change la configuration stratégique globale.' },
+        { question: 'L équilibre des puissances cherche a ...', options: ['Concentrer toutes les capacités chez un seul acteur', 'Empêcher une hégémonie unique', 'Supprimer les alliances', 'Annuler les échanges commerciaux'], answer_index: 1, explanation: 'Le principe repose sur des contrepoids pour limiter la domination.' },
+        { question: 'L Indo-Pacifique est stratégique notamment pour ...', options: ['Ses routes commerciales et enjeux technologiques', 'Son absence d acteurs majeurs', 'Son isolement des marchés', 'La fin des tensions navales'], answer_index: 0, explanation: 'La région concentre routes maritimes, production industrielle et compétition technologique.' }
+      ]
     }
   ];
 
-  var seed = cultureSeedFromDate(today);
-  var dossier = dossiers[seed % dossiers.length];
+  var seedBase = cultureSeedFromDate(today) + (forceRefresh ? Math.floor(Math.random() * 1000) : 0);
+  var blocked = Array.isArray(avoidThreads) ? avoidThreads : [];
+  var available = dossiers.filter(function(d) { return blocked.indexOf(d.fil_rouge) === -1; });
+  if (!available.length) available = dossiers;
+  var dossier = available[seedBase % available.length];
 
   return {
     generated_for: today,
@@ -9268,13 +9324,16 @@ async function cultureGenerateGroq(forceRefresh) {
   if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.textContent = '⏳ Génération...'; }
   if (dailyBtn) dailyBtn.disabled = true;
   loading.style.display = 'block';
-  loading.textContent = 'Groq génère le thème, la date historique, le concept et le mini quiz...';
+  loading.textContent = 'Groq génère un dossier histoire/géopolitique large (ancien + actuel) + mini quiz...';
   err.style.display = 'none';
 
   var randomSeed = Math.floor(Math.random() * 1000000);
+  var recentThreads = cultureGetRecentThreads(10);
+  var avoidLine = recentThreads.length ? ('Sujets récents a EVITER: ' + recentThreads.join(' | ') + '. ') : '';
   var prompt = "Tu es un coach Culture G pour étudiants L1 Droit-Éco. "
     + "Retourne UNIQUEMENT un objet JSON valide, sans markdown, sans texte avant/après. "
     + "Le contenu doit être en français, clair, concret, fiable et court. Focus principal: histoire et géopolitique. "
+    + avoidLine
     + "Date du jour: " + today + ". Seed: " + randomSeed + ".\\n\\n"
     + "Format JSON STRICT:\\n"
     + "{"
@@ -9296,7 +9355,10 @@ async function cultureGenerateGroq(forceRefresh) {
     + " 3) answer_index doit être 0,1,2 ou 3,"
     + " 4) pas de contenu fictif invérifiable,"
     + " 5) ton simple et pédagogique."
-    + " 6) prioriser des sujets d histoire/geopolitique (relations internationales, conflits, construction europeenne, energie, diplomatie).";
+    + " 6) prioriser des sujets d histoire/geopolitique (relations internationales, conflits, construction europeenne, energie, diplomatie)."
+    + " 7) couvrir LARGE: Antiquité, Moyen Âge, époque moderne, XIXe, XXe, XXIe."
+    + " 8) varier zones géographiques: Europe, Moyen-Orient, Asie, Afrique, Amériques."
+    + " 9) interdire les redites des sujets récents listés plus haut.";
 
   try {
     var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -9337,13 +9399,15 @@ async function cultureGenerateGroq(forceRefresh) {
     payload.quiz = cultureNormalizeQuiz(payload.quiz);
 
     localStorage.setItem(CULTURE_CACHE_KEY, JSON.stringify({ date: today, payload: payload }));
+    cultureRememberThread(payload.fil_rouge || '');
     cultureRender(payload);
     toast('Culture G mise à jour', '🌍');
   } catch (e) {
     console.error('Culture Groq error:', e);
     try {
-      var fallback = cultureBuildFallbackDaily(today);
+      var fallback = cultureBuildFallbackDaily(today, recentThreads, forceRefresh);
       localStorage.setItem(CULTURE_CACHE_KEY, JSON.stringify({ date: today, payload: fallback }));
+      cultureRememberThread(fallback.fil_rouge || '');
       cultureRender(fallback);
       if (String(e && e.message || '').toLowerCase().indexOf('restricted') > -1) {
         toast('Groq restreint: bascule auto en mode local', '⚠️');
