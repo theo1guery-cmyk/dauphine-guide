@@ -1100,6 +1100,14 @@ html{scroll-behavior:smooth}
 .draw-subject-head{font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px 4px}
 .draw-sheet-new{margin:6px;padding:7px 14px;font-size:12px;font-weight:700;border:1.5px dashed var(--g300);border-radius:6px;color:var(--text-sub);cursor:pointer;text-align:center;transition:all .12s}
 .draw-sheet-new:hover{border-color:var(--blue-mid);color:var(--blue-mid)}
+.draw-new-form{display:none;margin:8px 6px 6px;padding:8px;border:1px solid var(--g200);border-radius:8px;background:var(--bg-card)}
+.draw-new-form.show{display:block}
+.draw-new-input,.draw-new-select{width:100%;padding:7px 8px;font-size:12px;border:1px solid var(--g200);border-radius:6px;background:var(--bg-card);color:var(--text-main);font-family:'Figtree',sans-serif}
+.draw-new-select{margin-top:6px}
+.draw-new-actions{display:flex;gap:6px;margin-top:7px}
+.draw-new-btn{flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--g200);background:var(--g50);font-size:12px;font-weight:700;cursor:pointer;color:var(--text-sub)}
+.draw-new-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.draw-new-btn.primary:hover{background:var(--blue-mid)}
 .draw-sheet-del{float:right;opacity:0;font-size:11px;padding:1px 4px;border-radius:3px;transition:opacity .1s}
 .draw-sheet-item:hover .draw-sheet-del{opacity:.5}
 .draw-sheet-del:hover{opacity:1!important;background:#fecaca;color:#dc2626}
@@ -6055,7 +6063,15 @@ aside.sidebar {
       <div class="draw-sheets-title">Feuilles</div>
       <select id="dsSubjectSelect" class="draw-subject-select" onchange="dsUpdateActiveSubject(this.value)"></select>
       <div id="dsSheetList"></div>
-      <div class="draw-sheet-new" onclick="dsNewSheet()">+ Nouvelle feuille</div>
+      <div class="draw-sheet-new" onclick="dsShowNewSheetForm()">+ Nouvelle feuille</div>
+      <div class="draw-new-form" id="dsNewForm">
+        <input id="dsNewName" class="draw-new-input" type="text" placeholder="Nom de la feuille">
+        <select id="dsNewSubject" class="draw-new-select"></select>
+        <div class="draw-new-actions">
+          <button class="draw-new-btn" onclick="dsCancelNewSheet()">Annuler</button>
+          <button class="draw-new-btn primary" onclick="dsConfirmNewSheet()">Créer</button>
+        </div>
+      </div>
     </div>
     <!-- Canvas -->
     <div class="draw-canvas-area">
@@ -17884,22 +17900,29 @@ function dsGetSubjectsFromSimulator() {
 
 function dsRenderSubjectOptions(selected) {
   var sel = document.getElementById('dsSubjectSelect');
-  if (!sel) return;
-  sel.innerHTML = '';
-  DS.subjects.forEach(function(sub) {
-    var opt = document.createElement('option');
-    opt.value = sub;
-    opt.textContent = sub;
-    sel.appendChild(opt);
-  });
+  var newSel = document.getElementById('dsNewSubject');
   var finalValue = selected || DS.subjects[0] || 'Général';
-  if (!DS.subjects.includes(finalValue)) {
-    var extra = document.createElement('option');
-    extra.value = finalValue;
-    extra.textContent = finalValue;
-    sel.appendChild(extra);
+
+  function fillSelect(target, selectedValue) {
+    if (!target) return;
+    target.innerHTML = '';
+    DS.subjects.forEach(function(sub) {
+      var opt = document.createElement('option');
+      opt.value = sub;
+      opt.textContent = sub;
+      target.appendChild(opt);
+    });
+    if (!DS.subjects.includes(selectedValue)) {
+      var extra = document.createElement('option');
+      extra.value = selectedValue;
+      extra.textContent = selectedValue;
+      target.appendChild(extra);
+    }
+    target.value = selectedValue;
   }
-  sel.value = finalValue;
+
+  fillSelect(sel, finalValue);
+  fillSelect(newSel, finalValue);
 }
 
 /* ── Init ── */
@@ -18270,6 +18293,46 @@ function dsNewSheet() {
   dsRenderSheets();
   dsResizeCanvas(sheet.height, false);
   dsRenderTextBoxes();
+  dsStatus('Nouvelle feuille créée ✓');
+}
+
+function dsShowNewSheetForm() {
+  var form = document.getElementById('dsNewForm');
+  var nameInput = document.getElementById('dsNewName');
+  var active = dsGetActiveSheet();
+  var currentSub = active ? active.subject : (DS.subjects[0] || 'Général');
+  dsRenderSubjectOptions(currentSub);
+  if (!form || !nameInput) return;
+  nameInput.value = '';
+  form.classList.add('show');
+  setTimeout(function(){ nameInput.focus(); }, 10);
+}
+
+function dsCancelNewSheet() {
+  var form = document.getElementById('dsNewForm');
+  if (form) form.classList.remove('show');
+}
+
+function dsConfirmNewSheet() {
+  try { dsSave(); } catch (_) {}
+  var n = DS.sheets.length + 1;
+  var nameInput = document.getElementById('dsNewName');
+  var subInput = document.getElementById('dsNewSubject');
+  var form = document.getElementById('dsNewForm');
+
+  var name = nameInput ? String(nameInput.value || '').trim() : '';
+  if (!name) name = 'Feuille ' + n;
+  var subject = (subInput && subInput.value) ? subInput.value : (DS.subjects[0] || 'Général');
+
+  var sheet = { id: Date.now(), name: name, subject: subject, data: '', texts: [], height: 1200 };
+  DS.sheets.push(sheet);
+  DS.activeId = sheet.id;
+  DS.dirty = false;
+  dsPersist();
+  dsRenderSheets();
+  dsResizeCanvas(sheet.height, false);
+  dsRenderTextBoxes();
+  if (form) form.classList.remove('show');
   dsStatus('Nouvelle feuille créée ✓');
 }
 
