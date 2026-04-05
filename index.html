@@ -19445,50 +19445,52 @@ function wgCopyLink() {
       '*{margin:0;padding:0;box-sizing:border-box}',
       'html,body{width:100%;height:100%;overflow:hidden;background:transparent!important;font-family:-apple-system,"Figtree","Inter",sans-serif}',
       /* Conteneur positionné haut-droite comme widget météo macOS */
+      /* 170×110pt = taille officielle petit widget macOS (WidgetKit systemSmall) */
       '#dg-widget{',
         'position:fixed;top:32px;right:20px;',
-        'width:148px;',
+        'width:170px;',
         'z-index:9999999;',
         'color:#fff;',
       '}',
-      /* Carte principale */
+      /* Carte principale — hauteur fixe 110px comme petit widget macOS */
       '.wg-card{',
-        'background:rgba(30,30,35,.72);',
+        'width:170px;height:110px;',
+        'background:rgba(30,30,35,.78);',
         'backdrop-filter:blur(40px) saturate(1.8);',
         '-webkit-backdrop-filter:blur(40px) saturate(1.8);',
         'border-radius:16px;',
-        'padding:14px 14px 12px;',
-        'border:1px solid rgba(255,255,255,.12);',
+        'padding:12px 13px 10px;',
+        'border:1px solid rgba(255,255,255,.13);',
         'box-shadow:0 8px 32px rgba(0,0,0,.5);',
+        'display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;',
       '}',
-      /* Label PROCHAIN COURS */
-      '.wg-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;',
-        'color:rgba(255,255,255,.45);margin-bottom:8px}',
-      /* Nom du cours */
-      '.wg-title{font-size:15px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:6px;',
-        'overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}',
-      /* Heure */
-      '.wg-time{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:10px}',
+      /* Label */
+      '.wg-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:3px}',
+      /* Nom du cours — 1 ligne max */
+      '.wg-title{font-size:13px;font-weight:700;color:#fff;line-height:1.2;',
+        'overflow:hidden;white-space:nowrap;text-overflow:ellipsis}',
+      /* Heure + date */
+      '.wg-time{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       /* Compte à rebours */
-      '.wg-cd{display:flex;align-items:baseline;gap:4px;margin-top:2px}',
-      '.wg-cd-val{font-size:28px;font-weight:800;color:#60a5fa;line-height:1;letter-spacing:-.02em}',
-      '.wg-cd-lbl{font-size:10px;font-weight:600;color:rgba(96,165,250,.7);text-transform:uppercase;letter-spacing:.06em}',
+      '.wg-cd{display:flex;align-items:baseline;gap:3px}',
+      '.wg-cd-val{font-size:24px;font-weight:800;color:#60a5fa;line-height:1;letter-spacing:-.02em}',
+      '.wg-cd-lbl{font-size:9px;font-weight:600;color:rgba(96,165,250,.7);text-transform:uppercase;letter-spacing:.05em}',
       /* Barre de progression */
-      '.wg-bar{height:3px;background:rgba(255,255,255,.1);border-radius:99px;margin-top:10px;overflow:hidden}',
+      '.wg-bar{height:2px;background:rgba(255,255,255,.1);border-radius:99px;margin-top:6px;overflow:hidden}',
       '.wg-bar-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:99px;transition:width 1s linear}',
       /* Salle */
-      '.wg-loc{font-size:10px;color:rgba(255,255,255,.35);margin-top:6px}',
+      '.wg-loc{font-size:9px;color:rgba(255,255,255,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       /* Pas de cours */
-      '.wg-free{text-align:center;padding:4px 0}',
-      '.wg-free-ic{font-size:26px;margin-bottom:4px}',
-      '.wg-free-t{font-size:13px;font-weight:700;color:#fff}',
-      '.wg-free-s{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}',
+      '.wg-free{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center}',
+      '.wg-free-ic{font-size:22px;margin-bottom:4px}',
+      '.wg-free-t{font-size:12px;font-weight:700;color:#fff}',
+      '.wg-free-s{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px}',
       /* Bouton retour discret */
-      '.wg-back{display:block;width:100%;margin-top:6px;padding:5px 0;',
-        'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);',
-        'border-radius:8px;color:rgba(255,255,255,.3);font-size:10px;font-weight:600;',
+      '.wg-back{display:block;width:170px;margin-top:5px;padding:4px 0;',
+        'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);',
+        'border-radius:8px;color:rgba(255,255,255,.25);font-size:9px;font-weight:600;',
         'cursor:pointer;font-family:inherit;letter-spacing:.04em;transition:all .15s;text-align:center}',
-      '.wg-back:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}',
+      '.wg-back:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}',
     ].join('\n');
     document.head.appendChild(style);
 
@@ -19541,12 +19543,17 @@ function wgCopyLink() {
       var dateStr = e.date !== todayStr ? JOURS[new Date(e.date.replace(/-/g,'/')).getDay()]+' '+new Date(e.date.replace(/-/g,'/')).getDate()+' '+MOIS[new Date(e.date.replace(/-/g,'/')).getMonth()] : 'Aujourd\'hui';
 
       body.innerHTML = [
-        '<div class="wg-label">'+(isOngoing ? 'En cours' : 'Prochain cours')+'</div>',
-        '<div class="wg-title">'+e.summary+'</div>',
-        '<div class="wg-time">'+dateStr+' · '+e.time+(e.end&&e.end!==e.time?' – '+e.end:'')+'</div>',
-        '<div class="wg-cd"><div class="wg-cd-val" id="wgCdVal">–</div><div class="wg-cd-lbl" id="wgCdLbl">'+(isOngoing?'restant':'dans')+'</div></div>',
+        '<div>',
+          '<div class="wg-label">'+(isOngoing?'En cours':'Prochain cours')+'</div>',
+          '<div class="wg-title">'+e.summary+'</div>',
+          '<div class="wg-time">'+dateStr+' · '+e.time+(e.end&&e.end!==e.time?' – '+e.end:'')+'</div>',
+        '</div>',
+        '<div>',
+          '<div class="wg-cd"><div class="wg-cd-val" id="wgCdVal">–</div><div class="wg-cd-lbl" id="wgCdLbl">'+(isOngoing?'restant':'dans')+'</div></div>',
         isOngoing ? '<div class="wg-bar"><div class="wg-bar-fill" id="wgBar" style="width:'+pct+'%"></div></div>' : '',
-        e.location ? '<div class="wg-loc">📍 '+e.location+'</div>' : '',
+          isOngoing ? '<div class="wg-bar"><div class="wg-bar-fill" id="wgBar" style="width:'+pct+'%"></div></div>' : '',
+          e.location ? '<div class="wg-loc">📍 '+e.location+'</div>' : '',
+        '</div>',
       ].join('');
 
       if (_cdTimer) clearInterval(_cdTimer);
