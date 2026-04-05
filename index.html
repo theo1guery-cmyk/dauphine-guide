@@ -9054,7 +9054,7 @@ var GROQ_API_KEY = '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';
 var GROQ_MODEL   = 'llama-3.1-8b-instant';
 var GEMINI_API_KEY = 'AIzaSyAw9s4JTVd-EoHVBDIVaCVxnP_ATMhU914'; // <- Gemini pour news avec Google Search
 
-var CULTURE_CACHE_KEY = 'dg_culture_daily_v1';
+var CULTURE_CACHE_KEY = 'dg_culture_daily_v2';
 var CULTURE_STATE = { data: null };
 
 function cultureTodayKey() {
@@ -9102,57 +9102,63 @@ function cultureSeedFromDate(dateKey) {
 }
 
 function cultureBuildFallbackDaily(today) {
-  var themes = [
-    { title: 'Pouvoir et contre-pouvoirs', summary: 'Dans une démocratie, le pouvoir est distribué entre plusieurs institutions pour éviter les abus. La séparation des pouvoirs permet un équilibre durable. En pratique, cela protège les libertés individuelles et la stabilité politique.' },
-    { title: 'Mondialisation commerciale', summary: 'Les échanges internationaux augmentent la circulation des biens, des capitaux et des idées. Ils créent des opportunités de croissance, mais aussi des dépendances. Les Etats arbitrent entre ouverture et protection stratégique.' },
-    { title: 'Opinion publique et médias', summary: 'Les médias façonnent les débats collectifs en sélectionnant les sujets visibles. L opinion publique influence ensuite les décisions politiques. Comprendre ces mécanismes aide a lire l actualité avec recul.' },
-    { title: 'Innovation et productivité', summary: 'Le progrès technique améliore la productivité et transforme le travail. Les gains ne sont pas toujours immédiatement répartis entre secteurs. La politique économique vise a accompagner ces transitions.' }
-  ];
-
-  var dates = [
-    { title: '1789 - Déclaration des droits de l homme', summary: 'Ce texte fonde des principes majeurs: liberté, égalité et souveraineté nationale. Il influence durablement le droit constitutionnel français. Ses idées restent centrales dans les démocraties contemporaines.' },
-    { title: '1948 - Déclaration universelle des droits humains', summary: 'Adoptée par l ONU, elle fixe des standards communs de dignité et de libertés. Elle n est pas directement contraignante, mais sert de référence mondiale. Elle inspire de nombreux traités internationaux.' },
-    { title: '1992 - Traité de Maastricht', summary: 'Le traité crée l Union européenne telle qu on la connaît aujourd hui. Il renforce l intégration politique et économique entre les Etats membres. Il prépare notamment l union économique et monétaire.' },
-    { title: '2008 - Crise financière mondiale', summary: 'La crise partie du crédit immobilier américain se propage rapidement a l échelle mondiale. Elle montre l interconnexion des marchés financiers. Elle conduit a des réformes de régulation bancaire.' }
-  ];
-
-  var concepts = [
-    { title: 'Etat de droit', summary: 'L Etat de droit signifie que les autorités publiques sont elles aussi soumises aux règles juridiques. Les juges contrôlent la légalité des actes de l administration. C est une garantie essentielle contre l arbitraire.' },
-    { title: 'Externalité', summary: 'Une externalité apparaît quand l action d un acteur a un effet sur d autres sans compensation monétaire. Pollution et innovation en sont des exemples classiques. Les pouvoirs publics peuvent corriger ces effets par la règle ou la fiscalité.' },
-    { title: 'Inflation', summary: 'L inflation correspond a une hausse générale et durable des prix. Elle réduit le pouvoir d achat si les revenus n augmentent pas au même rythme. Les banques centrales ajustent leur politique monétaire pour la contenir.' },
-    { title: 'Souveraineté populaire', summary: 'Ce principe affirme que la légitimité politique vient du peuple. Le vote, la représentation et le débat public en sont les instruments principaux. Il structure la logique des régimes démocratiques modernes.' }
+  var dossiers = [
+    {
+      fil_rouge: 'Guerre froide et ordre mondial',
+      theme: { title: 'Bipolarisation du monde', summary: 'Après 1945, le système international s organise autour de deux blocs, américain et soviétique. Les rivalités sont globales: idéologiques, militaires et technologiques. Cette structure influence durablement la géopolitique contemporaine.' },
+      historical_date: { title: '1962 - Crise des missiles de Cuba', summary: 'La découverte de missiles soviétiques a Cuba provoque une confrontation majeure avec les Etats-Unis. Le risque nucléaire atteint un niveau critique. L épisode conduit a des mécanismes de désescalade entre superpuissances.' },
+      concept: { title: 'Dissuasion nucléaire', summary: 'La dissuasion repose sur la capacité de représailles pour empêcher l adversaire d attaquer. Son efficacité dépend de la crédibilité militaire et politique. Elle reste un pilier de la sécurité stratégique de plusieurs Etats.' },
+      quiz: [
+        { question: 'Quel événement symbolise le pic de tension nucléaire de la Guerre froide ?', options: ['La chute du mur de Berlin', 'La crise de Cuba', 'Le traité de Maastricht', 'La guerre du Golfe'], answer_index: 1, explanation: 'La crise de Cuba (1962) est l un des moments les plus dangereux de confrontation nucléaire.' },
+        { question: 'La dissuasion nucléaire vise principalement a ...', options: ['Préparer une guerre conventionnelle', 'Empêcher une attaque adverse', 'Remplacer la diplomatie', 'Abolir les alliances'], answer_index: 1, explanation: 'La logique de dissuasion cherche surtout a prévenir l attaque par la peur des représailles.' },
+        { question: 'Dans la Guerre froide, le monde est souvent décrit comme ...', options: ['Multipolaire', 'Bipolaire', 'Unipolaire', 'Sans alliances'], answer_index: 1, explanation: 'La période est marquée par la domination de deux superpuissances rivales.' }
+      ]
+    },
+    {
+      fil_rouge: 'Construction européenne',
+      theme: { title: 'Intégration politique et économique', summary: 'La construction européenne vise a stabiliser le continent et a renforcer la coopération entre Etats. Elle progresse par traités successifs. Son impact est juridique, économique et géopolitique.' },
+      historical_date: { title: '1992 - Traité de Maastricht', summary: 'Ce traité fonde l Union européenne et élargit les compétences communes. Il prépare l union économique et monétaire. Il marque un saut institutionnel majeur.' },
+      concept: { title: 'Souveraineté partagée', summary: 'Les Etats membres conservent des compétences nationales mais en exercent certaines en commun. Cette logique permet des décisions coordonnées a l échelle européenne. Elle alimente aussi des débats démocratiques sur le niveau de décision.' },
+      quiz: [
+        { question: 'Le traité de Maastricht est signé en ...', options: ['1986', '1992', '2001', '2008'], answer_index: 1, explanation: 'Le traité est signé en 1992 et constitue une étape clé de l Union européenne.' },
+        { question: 'La souveraineté partagée signifie que ...', options: ['Les Etats disparaissent', 'Toutes les lois sont locales', 'Certaines compétences sont exercées en commun', 'Les frontières sont supprimées juridiquement'], answer_index: 2, explanation: 'L Union repose sur un partage de compétences entre niveau national et européen.' },
+        { question: 'Quel est un objectif central de l intégration européenne ?', options: ['Augmenter les tensions militaires', 'Isoler les économies nationales', 'Coordonner les politiques et stabiliser la région', 'Supprimer tout contrôle juridictionnel'], answer_index: 2, explanation: 'Le projet européen vise la stabilité et la coordination durable entre Etats.' }
+      ]
+    },
+    {
+      fil_rouge: 'Moyen-Orient et ressources stratégiques',
+      theme: { title: 'Energie et rapports de puissance', summary: 'Le Moyen-Orient occupe une place centrale dans les équilibres énergétiques mondiaux. Les ressources, routes maritimes et alliances y pèsent fortement. La géopolitique régionale a donc des effets globaux.' },
+      historical_date: { title: '1973 - Premier choc pétrolier', summary: 'La réduction de l offre pétrolière provoque une forte hausse des prix. Les économies importatrices subissent inflation et ralentissement. L épisode révèle la dépendance énergétique des Etats.' },
+      concept: { title: 'Sécurité énergétique', summary: 'La sécurité énergétique est la capacité d un pays a garantir un approvisionnement stable et abordable. Elle combine diversification des sources, stockage et diplomatie. C est un enjeu clé de souveraineté.' },
+      quiz: [
+        { question: 'Le choc pétrolier de 1973 met surtout en évidence ...', options: ['La fin du commerce mondial', 'La dépendance énergétique des pays importateurs', 'La disparition de l inflation', 'Un recul durable des tensions'], answer_index: 1, explanation: 'La crise montre la vulnérabilité des économies dépendantes des importations d énergie.' },
+        { question: 'La sécurité énergétique vise a ...', options: ['Réduire toute consommation', 'Garantir un approvisionnement stable', 'Supprimer les marchés', 'Rendre l énergie gratuite'], answer_index: 1, explanation: 'L objectif principal est d assurer la continuité et la résilience de l approvisionnement.' },
+        { question: 'Pourquoi le Moyen-Orient est-il stratégique ?', options: ['Uniquement pour le tourisme', 'Pour ses ressources et routes énergétiques', 'Parce qu il est isolé des échanges', 'Car il n influence pas les prix mondiaux'], answer_index: 1, explanation: 'La région concentre des ressources et des points de passage majeurs pour l énergie mondiale.' }
+      ]
+    },
+    {
+      fil_rouge: 'Décolonisation et non-alignement',
+      theme: { title: 'Nouveaux Etats et nouvel équilibre mondial', summary: 'Au XXe siècle, de nombreux territoires accèdent a l indépendance. Cette transformation modifie la carte politique mondiale. Elle fait émerger de nouveaux acteurs dans les institutions internationales.' },
+      historical_date: { title: '1955 - Conférence de Bandung', summary: 'Des Etats d Asie et d Afrique s y réunissent pour affirmer leur autonomie diplomatique. La conférence structure l idée d un non-alignement. Elle marque un tournant dans les relations internationales.' },
+      concept: { title: 'Non-alignement', summary: 'Le non-alignement consiste a ne pas s inscrire durablement dans un bloc de superpuissance. Cette posture cherche a préserver une marge de manœuvre diplomatique. Elle a joué un rôle important durant la Guerre froide.' },
+      quiz: [
+        { question: 'Bandung (1955) est associé a ...', options: ['La création de l OTAN', 'La décolonisation et le non-alignement', 'La chute de l URSS', 'Le lancement de l euro'], answer_index: 1, explanation: 'La conférence de Bandung symbolise l affirmation diplomatique des nouveaux Etats indépendants.' },
+        { question: 'Le non-alignement signifie ...', options: ['S aligner automatiquement sur une superpuissance', 'Refuser toute diplomatie', 'Chercher une autonomie entre les blocs', 'Quitter les organisations internationales'], answer_index: 2, explanation: 'Le principe vise a garder une politique étrangère autonome face aux blocs rivaux.' },
+        { question: 'La décolonisation a eu pour effet majeur ...', options: ['La réduction du nombre d Etats', 'Une nouvelle carte politique mondiale', 'La fin immédiate des conflits', 'La disparition du commerce international'], answer_index: 1, explanation: 'L indépendance de nombreux territoires a profondément reconfiguré l ordre international.' }
+      ]
+    }
   ];
 
   var seed = cultureSeedFromDate(today);
-  var theme = themes[seed % themes.length];
-  var historical = dates[(seed >> 3) % dates.length];
-  var concept = concepts[(seed >> 5) % concepts.length];
+  var dossier = dossiers[seed % dossiers.length];
 
   return {
     generated_for: today,
-    theme: theme,
-    historical_date: historical,
-    concept: concept,
-    quiz: [
-      {
-        question: 'Quel est l objectif principal de la séparation des pouvoirs ?',
-        options: ['Concentrer l autorité dans une seule institution', 'Eviter les abus et équilibrer les institutions', 'Supprimer les élections', 'Rendre la justice facultative'],
-        answer_index: 1,
-        explanation: 'La séparation des pouvoirs limite la concentration de l autorité et crée un contrôle réciproque.'
-      },
-      {
-        question: 'Une externalité négative correspond a ...',
-        options: ['Un bénéfice privé sans effet collectif', 'Un coût imposé a des tiers sans compensation', 'Une baisse automatique des impôts', 'Une décision judiciaire'],
-        answer_index: 1,
-        explanation: 'Une externalité négative est un dommage pour d autres acteurs qui n est pas payé par l émetteur.'
-      },
-      {
-        question: 'Quel texte de 1948 pose une référence mondiale en matière de droits humains ?',
-        options: ['Le Code civil', 'Le Traité de Maastricht', 'La Déclaration universelle des droits humains', 'La Constitution de 1958'],
-        answer_index: 2,
-        explanation: 'La Déclaration universelle de 1948 fixe des principes de droits fondamentaux reconnus internationalement.'
-      }
-    ]
+    fil_rouge: dossier.fil_rouge,
+    theme: dossier.theme,
+    historical_date: dossier.historical_date,
+    concept: dossier.concept,
+    quiz: dossier.quiz
   };
 }
 
@@ -9163,8 +9169,9 @@ function cultureRender(data) {
   var content = document.getElementById('cultureContent');
   if (!content || !loading || !err) return;
 
+  var linkedFocus = cultureSafeText(data.fil_rouge, '');
   if (dayLabel) {
-    dayLabel.textContent = '📅 ' + (data.generated_for || cultureTodayKey());
+    dayLabel.textContent = '📅 ' + (data.generated_for || cultureTodayKey()) + (linkedFocus ? (' · ' + linkedFocus) : '');
   }
 
   document.getElementById('cultureThemeTitle').textContent = cultureSafeText(data.theme && data.theme.title, 'Thème');
@@ -9177,6 +9184,7 @@ function cultureRender(data) {
   var quiz = cultureNormalizeQuiz(data.quiz);
   CULTURE_STATE.data = {
     generated_for: data.generated_for || cultureTodayKey(),
+    fil_rouge: data.fil_rouge || '',
     theme: data.theme || {},
     historical_date: data.historical_date || {},
     concept: data.concept || {},
@@ -9266,11 +9274,12 @@ async function cultureGenerateGroq(forceRefresh) {
   var randomSeed = Math.floor(Math.random() * 1000000);
   var prompt = "Tu es un coach Culture G pour étudiants L1 Droit-Éco. "
     + "Retourne UNIQUEMENT un objet JSON valide, sans markdown, sans texte avant/après. "
-    + "Le contenu doit être en français, clair, concret, fiable et court. "
+    + "Le contenu doit être en français, clair, concret, fiable et court. Focus principal: histoire et géopolitique. "
     + "Date du jour: " + today + ". Seed: " + randomSeed + ".\\n\\n"
     + "Format JSON STRICT:\\n"
     + "{"
     + "\\\"generated_for\\\":\\\"" + today + "\\\"," 
+    + "\\\"fil_rouge\\\":\\\"...\\\"," 
     + "\\\"theme\\\":{\\\"title\\\":\\\"...\\\",\\\"summary\\\":\\\"...\\\"},"
     + "\\\"historical_date\\\":{\\\"title\\\":\\\"...\\\",\\\"summary\\\":\\\"...\\\"},"
     + "\\\"concept\\\":{\\\"title\\\":\\\"...\\\",\\\"summary\\\":\\\"...\\\"},"
@@ -9280,11 +9289,14 @@ async function cultureGenerateGroq(forceRefresh) {
     + "]"
     + "}\\n\\n"
     + "Contraintes:"
+    + " 0) theme, historical_date et concept doivent porter sur le MEME sujet (meme fil directeur),"
     + " 1) summaries de 2 a 4 phrases chacune,"
     + " 2) quiz exactement 3 questions, 4 options par question,"
+    + " 2bis) les 3 questions doivent aussi porter sur le meme fil directeur,"
     + " 3) answer_index doit être 0,1,2 ou 3,"
     + " 4) pas de contenu fictif invérifiable,"
-    + " 5) ton simple et pédagogique.";
+    + " 5) ton simple et pédagogique."
+    + " 6) prioriser des sujets d histoire/geopolitique (relations internationales, conflits, construction europeenne, energie, diplomatie).";
 
   try {
     var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
