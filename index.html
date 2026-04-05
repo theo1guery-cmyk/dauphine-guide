@@ -17454,12 +17454,12 @@ function beRenderBlock(blk, idx) {
     tb.id = 'be-tb-' + idx;
     var colors = ['#111827','#1d4ed8','#dc2626','#16a34a','#ea580c','#9333ea','#be185d','#ffffff'];
     tb.innerHTML =
-      '<button class="blk-draw-tool active" data-tool="pen" onclick="beSetTool('+idx+','pen',this)">✒ Stylo</button>' +
-      '<button class="blk-draw-tool" data-tool="marker" onclick="beSetTool('+idx+','marker',this)">🖍 Marqueur</button>' +
-      '<button class="blk-draw-tool" data-tool="eraser" onclick="beSetTool('+idx+','eraser',this)">◻ Gomme</button>' +
+      '<button class="blk-draw-tool active" data-tool="pen" onclick="beSetTool('+idx+',&quot;pen&quot;,this)">&#9998; Stylo</button>' +
+      '<button class="blk-draw-tool" data-tool="marker" onclick="beSetTool('+idx+',&quot;marker&quot;,this)">&#9638; Marqueur</button>' +
+      '<button class="blk-draw-tool" data-tool="eraser" onclick="beSetTool('+idx+',&quot;eraser&quot;,this)">&#9723; Gomme</button>' +
       '<div class="blk-draw-sep"></div>' +
       colors.map(function(c){
-        return '<div class="blk-draw-swatch'+(c==='#111827'?' active':'')+'" style="background:'+c+';'+(c==='#ffffff'?'border:1.5px solid #ccc':'')+'" onclick="beSetColor('+idx+',''+c+'',this)"></div>';
+        return '<div class="blk-draw-swatch'+(c==='#111827'?' active':'')+'" style="background:'+c+';'+(c==='#ffffff'?'border:1.5px solid #ccc':'')+'" onclick="beSetColor('+idx+',&quot;'+c+'&quot;,this)"></div>';
       }).join('') +
       '<div class="blk-draw-sep"></div>' +
       '<button class="blk-draw-size active" data-size="2" onclick="beSetSize('+idx+',2,this)" title="Fin">S</button>' +
@@ -17519,8 +17519,8 @@ function beAdder(afterIdx) {
   div.innerHTML =
     '<div class="blk-adder-line"></div>' +
     '<div class="blk-adder-menu">' +
-    '<button class="blk-adder-btn" onclick="beAddBlock('text',' + (afterIdx+1) + ')">+ Texte</button>' +
-    '<button class="blk-adder-btn" onclick="beAddBlock('draw',' + (afterIdx+1) + ')">✒ Dessin</button>' +
+    '<button class="blk-adder-btn" onclick="beAddBlock(&quot;text&quot;,' + (afterIdx+1) + ')">+ Texte</button>' +
+    '<button class="blk-adder-btn" onclick="beAddBlock(&quot;draw&quot;,' + (afterIdx+1) + ')">&#9998; Dessin</button>' +
     '</div>' +
     '<div class="blk-adder-line"></div>';
   return div;
