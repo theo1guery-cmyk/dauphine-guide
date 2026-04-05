@@ -18259,21 +18259,8 @@ function dsNewSheet() {
   if (name === null) return;
   if (!name) name = 'Feuille ' + n;
 
-  var defaultSubject = (document.getElementById('dsSubjectSelect') || {}).value || (DS.subjects[0] || 'Général');
-  var subjectMsg = 'Matière de la feuille (écris exactement le nom) :\n\n' + DS.subjects.join('\n');
-  var subjectInput = prompt(subjectMsg, defaultSubject);
-  if (subjectInput === null) return;
-  subjectInput = String(subjectInput).trim();
-
-  var subject = defaultSubject;
-  if (subjectInput) {
-    var matched = DS.subjects.find(function(s){ return s.toLowerCase() === subjectInput.toLowerCase(); });
-    if (matched) {
-      subject = matched;
-    } else {
-      alert('Matière non reconnue. La feuille sera créée avec : ' + defaultSubject);
-    }
-  }
+  var subjectEl = document.getElementById('dsSubjectSelect');
+  var subject = (subjectEl && subjectEl.value) ? subjectEl.value : (DS.subjects[0] || 'Général');
 
   var sheet = { id: Date.now(), name: name.trim(), subject: subject, data: '', texts: [], height: 1200 };
   DS.sheets.push(sheet);
