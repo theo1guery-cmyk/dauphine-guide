@@ -19643,7 +19643,7 @@ function wgCopyLink() {
   function renderMeteo() {
     var body = document.getElementById('wgBody');
     if (!body) return;
-    body.innerHTML = '<div class="wg-label">Météo · Porte Dauphine</div><div style="font-size:32px;margin:4px 0" id="wgMetIc">🌤️</div><div class="wg-cd"><div class="wg-cd-val" id="wgMetTmp" style="font-size:32px">–°</div></div><div class="wg-time" id="wgMetDesc" style="margin-top:4px">Chargement…</div>';
+    body.innerHTML = '<div><div class="wg-label">Météo · Porte Dauphine</div><div class="wg-title" id="wgMetDesc">Chargement…</div></div><div style="display:flex;align-items:center;gap:8px"><div id="wgMetIc" style="font-size:28px;line-height:1">🌤️</div><div class="wg-cd"><div class="wg-cd-val" id="wgMetTmp">–°</div></div></div>';
     fetch('https://api.open-meteo.com/v1/forecast?latitude=48.8726&longitude=2.2756&current=temperature_2m,weathercode&timezone=Europe/Paris')
       .then(function(r){ return r.json(); })
       .then(function(d) {
