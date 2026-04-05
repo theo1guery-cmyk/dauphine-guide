@@ -1073,19 +1073,36 @@ html{scroll-behavior:smooth}
 [data-theme="dark"] .notes-section{background:var(--bg-main)}
 
 /* ══ SECTION DESSIN ══ */
-.draw-section{margin:0;border-top:2px solid var(--g100)}
-[data-theme="dark"] .draw-section{border-color:var(--border-col)}
-.draw-section-header{display:flex;align-items:center;gap:12px;padding:16px 24px;cursor:pointer;user-select:none;background:var(--bg-card);transition:background .15s}
-.draw-section-header:hover{background:var(--blue-light)}
-[data-theme="dark"] .draw-section-header:hover{background:rgba(77,159,255,.08)}
-.draw-section-icon{font-size:20px}
-.draw-section-title{font-weight:700;font-size:15px;color:var(--text-main);flex:1}
-.draw-section-sub{font-size:12px;color:var(--text-sub)}
-.draw-section-arrow{font-size:12px;color:var(--text-sub);transition:transform .25s}
+.draw-section{margin:26px 0 0;border:1px solid rgba(29,78,216,.12);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,250,252,.96));box-shadow:0 18px 45px rgba(15,23,42,.06),0 2px 8px rgba(29,78,216,.06);transition:box-shadow .18s,border-color .18s,transform .18s}
+[data-theme="dark"] .draw-section{background:linear-gradient(180deg,rgba(19,27,43,.98),rgba(13,20,32,.98));border-color:rgba(77,159,255,.18);box-shadow:0 20px 50px rgba(0,0,0,.28)}
+.draw-section.open{border-color:rgba(59,130,246,.24);box-shadow:0 22px 52px rgba(15,23,42,.1),0 4px 14px rgba(59,130,246,.1)}
+[data-theme="dark"] .draw-section.open{border-color:rgba(96,165,250,.28);box-shadow:0 26px 56px rgba(0,0,0,.34)}
+.draw-section-header{position:relative;display:flex;align-items:center;gap:18px;padding:22px 24px;cursor:pointer;user-select:none;background:radial-gradient(circle at top left,rgba(77,159,255,.18),transparent 38%),linear-gradient(135deg,rgba(239,246,255,.96),rgba(255,255,255,.92) 52%,rgba(219,234,254,.72));transition:transform .18s,box-shadow .18s,background .18s}
+.draw-section-header::before{content:'';position:absolute;inset:auto -80px -90px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.15),transparent 68%);pointer-events:none}
+.draw-section-header:hover{transform:translateY(-1px);box-shadow:inset 0 -1px 0 rgba(255,255,255,.35)}
+[data-theme="dark"] .draw-section-header{background:radial-gradient(circle at top left,rgba(77,159,255,.22),transparent 34%),linear-gradient(135deg,rgba(17,34,61,.96),rgba(16,23,37,.96) 60%,rgba(10,28,54,.92))}
+[data-theme="dark"] .draw-section-header:hover{box-shadow:inset 0 -1px 0 rgba(255,255,255,.05)}
+.draw-section-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;border-radius:18px;font-size:24px;color:#0f4aa1;background:linear-gradient(135deg,#ffffff,#dbeafe);box-shadow:0 12px 24px rgba(59,130,246,.14);flex-shrink:0}
+[data-theme="dark"] .draw-section-icon{color:#dbeafe;background:linear-gradient(135deg,rgba(77,159,255,.24),rgba(30,64,175,.34));box-shadow:none}
+.draw-section-copy{min-width:0;flex:1}
+.draw-section-title{font-weight:800;font-size:18px;color:var(--text-main);letter-spacing:-.02em}
+.draw-section-sub{font-size:12px;color:var(--text-sub);margin-top:4px}
+.draw-section-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;position:relative;z-index:1}
+.draw-section-pill{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.02em;color:#1d4ed8;background:rgba(255,255,255,.78);border:1px solid rgba(59,130,246,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+[data-theme="dark"] .draw-section-pill{color:#bfdbfe;background:rgba(255,255,255,.05);border-color:rgba(148,163,184,.14)}
+.draw-section-pill.soft{color:var(--text-sub);font-weight:700}
+.draw-header-preview{display:flex;align-items:flex-end;gap:6px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.58);border:1px solid rgba(59,130,246,.14);min-width:74px;justify-content:center}
+[data-theme="dark"] .draw-header-preview{background:rgba(255,255,255,.05);border-color:rgba(148,163,184,.12)}
+.draw-header-preview span{display:block;width:8px;border-radius:999px;background:linear-gradient(180deg,#60a5fa,#1d4ed8)}
+.draw-header-preview span:nth-child(1){height:16px;opacity:.6}
+.draw-header-preview span:nth-child(2){height:24px}
+.draw-header-preview span:nth-child(3){height:20px;opacity:.8}
+.draw-section-arrow{font-size:14px;color:var(--text-sub);transition:transform .25s;background:rgba(255,255,255,.72);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+[data-theme="dark"] .draw-section-arrow{background:rgba(255,255,255,.07)}
 .draw-section-arrow.open{transform:rotate(180deg)}
-.draw-section-body{display:none;border-top:1px solid var(--g100)}
+.draw-section-body{display:none;border-top:1px solid rgba(148,163,184,.14);background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(248,250,252,.96))}
 [data-theme="dark"] .draw-section-body{border-color:var(--border-col)}
-.draw-section-body.open{display:flex;height:520px}
+.draw-section.open .draw-section-body,.draw-section-body.open{display:flex;height:520px}
 /* Sheets sidebar */
 .draw-sheets{width:210px;flex-shrink:0;border-right:1px solid var(--g100);display:flex;flex-direction:column;background:var(--g50)}
 [data-theme="dark"] .draw-sheets{background:#1a1f2e;border-color:var(--border-col)}
@@ -1144,6 +1161,8 @@ html{scroll-behavior:smooth}
 .draw-text-del:hover{background:#fee2e2}
 .draw-text-content{padding:8px 9px;font-size:14px;line-height:1.45;color:var(--text-main);outline:none;min-height:42px}
 .draw-status{position:absolute;bottom:8px;right:12px;font-size:11px;color:var(--text-sub);pointer-events:none;opacity:.6}
+@media(max-width:900px){.draw-section-header{flex-wrap:wrap}.draw-section-meta{width:100%;justify-content:flex-start}.draw-section-arrow{margin-left:auto}}
+@media(max-width:640px){.draw-section{border-radius:18px}.draw-section-header{padding:18px 16px}.draw-section-icon{width:46px;height:46px;font-size:21px}.draw-section-title{font-size:16px}.draw-header-preview{display:none}}
 
 .notes-layout{display:grid;grid-template-columns:240px 1fr;gap:0;border:1.5px solid var(--g100);border-radius:16px;overflow:hidden;min-height:520px;background:#fff}
 [data-theme="dark"] .notes-layout{background:var(--bg-card);border-color:var(--border-col)}
@@ -6054,12 +6073,21 @@ aside.sidebar {
 <!-- SECTION DESSIN -->
 <div class="draw-section" id="drawSection">
   <div class="draw-section-header" onclick="dsToggle()">
-    <span class="draw-section-icon">✏️</span>
-    <div>
+    <span class="draw-section-icon" onclick="event.stopPropagation(); dsToggle()">✏️</span>
+    <div class="draw-section-copy">
       <div class="draw-section-title">Dessin libre</div>
       <div class="draw-section-sub">Stylet, souris, tactile · Feuilles sauvegardées</div>
     </div>
-    <span class="draw-section-arrow" id="dsArrow">▼</span>
+    <div class="draw-section-meta">
+      <span class="draw-section-pill" id="dsSheetsBadge">1 feuille</span>
+      <span class="draw-section-pill soft" id="dsSubjectBadge">Général</span>
+      <div class="draw-header-preview" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <span class="draw-section-arrow" id="dsArrow" onclick="event.stopPropagation(); dsToggle()">▼</span>
   </div>
   <div class="draw-section-body" id="dsSectionBody">
     <!-- Sheets list -->
@@ -17939,6 +17967,21 @@ function dsRenderSubjectOptions(selected) {
   fillSelect(newSel, finalValue);
 }
 
+function dsRefreshHeaderSummary() {
+  var sheetsBadge = document.getElementById('dsSheetsBadge');
+  var subjectBadge = document.getElementById('dsSubjectBadge');
+  var active = dsGetActiveSheet();
+  var count = Array.isArray(DS.sheets) ? DS.sheets.length : 0;
+  var subject = active ? (active.subject || 'Général') : (DS.subjects[0] || 'Général');
+
+  if (sheetsBadge) {
+    sheetsBadge.textContent = count + ' feuille' + (count > 1 ? 's' : '');
+  }
+  if (subjectBadge) {
+    subjectBadge.textContent = subject;
+  }
+}
+
 /* ── Init ── */
 function dsInit() {
   DS.subjects = dsGetSubjectsFromSimulator();
@@ -17949,6 +17992,7 @@ function dsInit() {
     DS.sheets = [{ id: Date.now(), name: 'Feuille 1', subject: DS.subjects[0], data: '', texts: [], height: 1200 }];
   }
   DS.activeId = DS.sheets[0].id;
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsInitCanvas();
   dsLoadSheet(DS.activeId);
@@ -17964,14 +18008,17 @@ function dsInit() {
 /* ── Toggle panel ── */
 function dsToggle() {
   DS.open = !DS.open;
+  var section = document.getElementById('drawSection');
   var body  = document.getElementById('dsSectionBody');
   var arrow = document.getElementById('dsArrow');
   if (DS.open) {
+    if (section) section.classList.add('open');
     body.classList.add('open');
     arrow.classList.add('open');
     setTimeout(function() { dsLoadSheet(DS.activeId); }, 50);
   } else {
     dsSave();
+    if (section) section.classList.remove('open');
     body.classList.remove('open');
     arrow.classList.remove('open');
   }
@@ -18119,6 +18166,7 @@ function dsLoadSheet(id) {
   if (!sheet) return;
   dsRenderSubjectOptions(sheet.subject || DS.subjects[0]);
   dsResizeCanvas(sheet.height || null, false);
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsSetAutosave('');
   dsStatus('Feuille chargée');
@@ -18139,6 +18187,7 @@ function dsSave() {
   DS.dirty = false;
   dsPersist();
   dsSetAutosave('Sauvegardé ✓');
+  dsRefreshHeaderSummary();
   dsStatus('Sauvegardé ✓');
   dsRenderSheets();
 }
@@ -18248,6 +18297,7 @@ function dsRenderTextBoxes() {
 function dsRenderSheets() {
   var list = document.getElementById('dsSheetList');
   if (!list) return;
+  dsRefreshHeaderSummary();
   list.innerHTML = '';
   var grouped = {};
   DS.sheets.forEach(function(s){
@@ -18318,6 +18368,7 @@ function dsNewSheet() {
   DS.activeId = sheet.id;
   DS.dirty = false;
   dsPersist();
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsResizeCanvas(sheet.height, false);
   dsRenderTextBoxes();
@@ -18357,6 +18408,7 @@ function dsConfirmNewSheet() {
   DS.activeId = sheet.id;
   DS.dirty = false;
   dsPersist();
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsResizeCanvas(sheet.height, false);
   dsRenderTextBoxes();
@@ -18377,6 +18429,7 @@ function dsRenameSheet(id) {
   sheet.name = next;
   DS.dirty = true;
   dsPersist();
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsStatus('Nom de la feuille mis à jour');
 }
@@ -18387,6 +18440,7 @@ function dsUpdateActiveSubject(subject) {
   sheet.subject = subject || 'Général';
   DS.dirty = true;
   dsPersist();
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsStatus('Matière mise à jour');
 }
@@ -18398,6 +18452,7 @@ function dsDeleteSheet(id) {
   DS.sheets = DS.sheets.filter(function(s){ return s.id !== id; });
   if (DS.activeId === id) DS.activeId = DS.sheets[0].id;
   dsPersist();
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsLoadSheet(DS.activeId);
 }
@@ -18420,6 +18475,7 @@ function dsDuplicateSheet(id) {
   DS.activeId = copy.id;
   DS.dirty = false;
   dsPersist();
+  dsRefreshHeaderSummary();
   dsRenderSheets();
   dsLoadSheet(copy.id);
   dsStatus('Feuille dupliquée ✓');
