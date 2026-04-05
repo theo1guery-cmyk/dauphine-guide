@@ -1177,6 +1177,37 @@ html{scroll-behavior:smooth}
 @media(max-width:900px){.draw-section-header{flex-wrap:wrap}.draw-section-meta{width:100%;justify-content:flex-start}.draw-section-arrow{margin-left:auto}}
 @media(max-width:640px){.draw-section{border-radius:16px}.draw-section-header{padding:18px 16px}.draw-section-icon{width:40px;height:40px;font-size:18px}.draw-section-title{font-size:22px}.draw-header-preview{display:none}}
 
+/* Culture G */
+.culture-wrap{max-width:1020px;margin:0 auto;padding:0 48px 64px}
+.culture-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px 0 16px}
+.culture-date-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;background:var(--blue-light);border:1px solid rgba(59,130,246,.15);color:var(--blue-mid);font-size:12px;font-weight:700}
+.culture-actions{display:flex;gap:8px;flex-wrap:wrap}
+.culture-btn{border:1px solid var(--g200);background:var(--bg-card);color:var(--text-sub);font-size:12px;font-weight:700;padding:8px 12px;border-radius:8px;cursor:pointer;font-family:'Figtree',sans-serif}
+.culture-btn:hover{border-color:var(--blue-mid);color:var(--blue-mid)}
+.culture-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.culture-btn.primary:hover{background:var(--blue-mid)}
+.culture-loading,.culture-error{padding:14px 16px;border-radius:12px;border:1px solid var(--g200);background:var(--bg-card);font-size:13px;color:var(--text-sub)}
+.culture-error{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+.culture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.culture-card{background:var(--bg-card);border:1.5px solid var(--g100);border-radius:14px;padding:14px 14px 15px;min-height:210px}
+.culture-card-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--g500)}
+.culture-card-title{font-family:var(--font-serif,serif);font-size:24px;line-height:1.08;letter-spacing:-.02em;color:var(--g900);margin:8px 0 8px}
+.culture-card-sub{font-size:12px;line-height:1.65;color:var(--text-sub)}
+.culture-quiz{margin-top:14px;background:var(--bg-card);border:1.5px solid var(--g100);border-radius:14px;padding:14px}
+.culture-quiz-title{font-family:var(--font-serif,serif);font-size:23px;color:var(--g900);margin-bottom:8px}
+.culture-q{padding:10px 0;border-top:1px dashed var(--g200)}
+.culture-q:first-child{border-top:none;padding-top:0}
+.culture-q-prompt{font-size:13px;font-weight:700;color:var(--g800);margin-bottom:6px}
+.culture-opt{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-sub);margin:4px 0}
+.culture-opt input{margin-top:2px}
+.culture-quiz-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.culture-score{font-size:12px;color:var(--text-sub);font-weight:700}
+.culture-exp{margin-top:4px;font-size:12px;line-height:1.6;color:var(--text-sub);display:none}
+[data-theme="dark"] .culture-card,[data-theme="dark"] .culture-quiz,[data-theme="dark"] .culture-loading{border-color:var(--border-col)}
+[data-theme="dark"] .culture-card-title,[data-theme="dark"] .culture-quiz-title{color:var(--text-main)}
+[data-theme="dark"] .culture-error{background:rgba(127,29,29,.2);border-color:rgba(244,63,94,.35);color:#fecdd3}
+@media(max-width:900px){.culture-grid{grid-template-columns:1fr}.culture-wrap{padding:0 16px 40px}}
+
 .notes-layout{display:grid;grid-template-columns:240px 1fr;gap:0;border:1.5px solid var(--g100);border-radius:16px;overflow:hidden;min-height:520px;background:#fff}
 [data-theme="dark"] .notes-layout{background:var(--bg-card);border-color:var(--border-col)}
 @media(max-width:760px){.notes-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
@@ -4840,6 +4871,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="planning" onclick="showPage(&#39;planning&#39;,this)"><span class="s-ic">📅</span> Planning<span class="sb-badge" id="sidebarUrgentBadge">0</span></button>
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
     <div class="sidebar-section-label">Actualités</div>
+    <button class="sidebar-item" data-page="culture" onclick="showPage(&#39;culture&#39;,this)"><span class="s-ic">🌍</span> Culture G</button>
     <button class="sidebar-item" data-page="news" onclick="showPage(&#39;news&#39;,this)"><span class="s-ic">📰</span> News juridiques</button>
     <div class="sidebar-section-label">Communauté</div>
     <button class="sidebar-item" data-page="chat" onclick="showPage('chat',this)"><span class="s-ic">💬</span> Chat étudiant</button>
@@ -6346,6 +6378,62 @@ aside.sidebar {
 </div>
 
 
+
+<!-- CULTURE G -->
+<div class="page-section" id="page-culture">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">🌍</div>
+      <div>
+        <div class="section-header-title">Culture G quotidienne</div>
+        <div class="section-header-sub">Un thème, une date historique, un concept + mini quiz</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-culture">Mardi 17 mars 2026</div>
+  </div>
+
+  <div class="culture-wrap">
+    <div class="culture-head">
+      <div class="culture-date-chip" id="cultureDayLabel">📅 Aujourd'hui</div>
+      <div class="culture-actions">
+        <button class="culture-btn" id="cultureRefreshBtn" onclick="cultureGenerateGroq(true)">🔄 Régénérer</button>
+        <button class="culture-btn primary" id="cultureDailyBtn" onclick="cultureGenerateGroq(false)">✨ Charger le jour</button>
+      </div>
+    </div>
+
+    <div class="culture-loading" id="cultureLoading">Choisis l'onglet pour générer le contenu culturel du jour…</div>
+    <div class="culture-error" id="cultureError" style="display:none"></div>
+
+    <div id="cultureContent" style="display:none">
+      <div class="culture-grid">
+        <article class="culture-card">
+          <div class="culture-card-tag">Thème du jour</div>
+          <div class="culture-card-title" id="cultureThemeTitle">-</div>
+          <div class="culture-card-sub" id="cultureThemeSummary">-</div>
+        </article>
+        <article class="culture-card">
+          <div class="culture-card-tag">Date historique</div>
+          <div class="culture-card-title" id="cultureDateTitle">-</div>
+          <div class="culture-card-sub" id="cultureDateSummary">-</div>
+        </article>
+        <article class="culture-card">
+          <div class="culture-card-tag">Concept clé</div>
+          <div class="culture-card-title" id="cultureConceptTitle">-</div>
+          <div class="culture-card-sub" id="cultureConceptSummary">-</div>
+        </article>
+      </div>
+
+      <section class="culture-quiz">
+        <div class="culture-quiz-title">Mini quiz</div>
+        <div id="cultureQuizList"></div>
+        <div class="culture-quiz-actions">
+          <button class="culture-btn primary" onclick="cultureCheckQuiz()">✅ Corriger le quiz</button>
+          <div class="culture-score" id="cultureScore">Score : -</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
 
 <!-- NEWS -->
 <div class="page-section" id="page-news">
@@ -8965,6 +9053,240 @@ function updateNoCCFields() {
 var GROQ_API_KEY = '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';
 var GROQ_MODEL   = 'llama-3.1-8b-instant';
 var GEMINI_API_KEY = 'AIzaSyAw9s4JTVd-EoHVBDIVaCVxnP_ATMhU914'; // <- Gemini pour news avec Google Search
+
+var CULTURE_CACHE_KEY = 'dg_culture_daily_v1';
+var CULTURE_STATE = { data: null };
+
+function cultureTodayKey() {
+  var d = new Date();
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+function cultureEscape(v) {
+  return String(v || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function cultureSafeText(v, fallback) {
+  var s = String(v || '').trim();
+  return s || (fallback || '');
+}
+
+function cultureNormalizeQuiz(quiz) {
+  var src = Array.isArray(quiz) ? quiz.slice(0, 3) : [];
+  return src.map(function(item, idx) {
+    var options = Array.isArray(item && item.options) ? item.options.slice(0, 4) : [];
+    while (options.length < 4) options.push('Option ' + (options.length + 1));
+    var answerIdx = Number(item && item.answer_index);
+    if (!(answerIdx >= 0 && answerIdx <= 3)) answerIdx = 0;
+    return {
+      question: cultureSafeText(item && item.question, 'Question ' + (idx + 1)),
+      options: options.map(function(o) { return cultureSafeText(o, 'Option'); }),
+      answer_index: answerIdx,
+      explanation: cultureSafeText(item && item.explanation, 'Explication indisponible.')
+    };
+  });
+}
+
+function cultureRender(data) {
+  var dayLabel = document.getElementById('cultureDayLabel');
+  var loading = document.getElementById('cultureLoading');
+  var err = document.getElementById('cultureError');
+  var content = document.getElementById('cultureContent');
+  if (!content || !loading || !err) return;
+
+  if (dayLabel) {
+    dayLabel.textContent = '📅 ' + (data.generated_for || cultureTodayKey());
+  }
+
+  document.getElementById('cultureThemeTitle').textContent = cultureSafeText(data.theme && data.theme.title, 'Thème');
+  document.getElementById('cultureThemeSummary').textContent = cultureSafeText(data.theme && data.theme.summary, '');
+  document.getElementById('cultureDateTitle').textContent = cultureSafeText(data.historical_date && data.historical_date.title, 'Date historique');
+  document.getElementById('cultureDateSummary').textContent = cultureSafeText(data.historical_date && data.historical_date.summary, '');
+  document.getElementById('cultureConceptTitle').textContent = cultureSafeText(data.concept && data.concept.title, 'Concept');
+  document.getElementById('cultureConceptSummary').textContent = cultureSafeText(data.concept && data.concept.summary, '');
+
+  var quiz = cultureNormalizeQuiz(data.quiz);
+  CULTURE_STATE.data = {
+    generated_for: data.generated_for || cultureTodayKey(),
+    theme: data.theme || {},
+    historical_date: data.historical_date || {},
+    concept: data.concept || {},
+    quiz: quiz
+  };
+
+  var quizList = document.getElementById('cultureQuizList');
+  if (quizList) {
+    quizList.innerHTML = quiz.map(function(q, qi) {
+      var opts = q.options.map(function(opt, oi) {
+        return '<label class="culture-opt">'
+          + '<input type="radio" name="cultureQ' + qi + '" value="' + oi + '">'
+          + '<span>' + cultureEscape(opt) + '</span>'
+          + '</label>';
+      }).join('');
+      return '<div class="culture-q">'
+        + '<div class="culture-q-prompt">' + (qi + 1) + '. ' + cultureEscape(q.question) + '</div>'
+        + opts
+        + '<div class="culture-exp" id="cultureExp' + qi + '"></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  var score = document.getElementById('cultureScore');
+  if (score) score.textContent = 'Score : -';
+
+  loading.style.display = 'none';
+  err.style.display = 'none';
+  content.style.display = 'block';
+}
+
+function cultureCheckQuiz() {
+  if (!CULTURE_STATE.data || !Array.isArray(CULTURE_STATE.data.quiz)) {
+    toast('Génère d\'abord le contenu Culture G', '⚠️');
+    return;
+  }
+  var quiz = CULTURE_STATE.data.quiz;
+  var score = 0;
+
+  quiz.forEach(function(q, i) {
+    var checked = document.querySelector('input[name="cultureQ' + i + '"]:checked');
+    var selected = checked ? Number(checked.value) : -1;
+    var ok = selected === q.answer_index;
+    if (ok) score += 1;
+
+    var exp = document.getElementById('cultureExp' + i);
+    if (exp) {
+      exp.style.display = 'block';
+      exp.innerHTML = (ok ? '✅ ' : '❌ ') + 'Bonne réponse : <strong>'
+        + cultureEscape(q.options[q.answer_index]) + '</strong><br>'
+        + cultureEscape(q.explanation);
+    }
+  });
+
+  var scoreEl = document.getElementById('cultureScore');
+  if (scoreEl) scoreEl.textContent = 'Score : ' + score + '/' + quiz.length;
+  toast('Quiz corrigé : ' + score + '/' + quiz.length, score >= 2 ? '🎯' : '📝');
+}
+
+async function cultureGenerateGroq(forceRefresh) {
+  var loading = document.getElementById('cultureLoading');
+  var err = document.getElementById('cultureError');
+  var content = document.getElementById('cultureContent');
+  var refreshBtn = document.getElementById('cultureRefreshBtn');
+  var dailyBtn = document.getElementById('cultureDailyBtn');
+  if (!loading || !err || !content) return;
+
+  var today = cultureTodayKey();
+  var cached = null;
+  try {
+    cached = JSON.parse(localStorage.getItem(CULTURE_CACHE_KEY) || 'null');
+  } catch (e) {
+    cached = null;
+  }
+
+  if (!forceRefresh && cached && cached.date === today && cached.payload) {
+    cultureRender(cached.payload);
+    return;
+  }
+
+  if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.textContent = '⏳ Génération...'; }
+  if (dailyBtn) dailyBtn.disabled = true;
+  loading.style.display = 'block';
+  loading.textContent = 'Groq génère le thème, la date historique, le concept et le mini quiz...';
+  err.style.display = 'none';
+
+  var randomSeed = Math.floor(Math.random() * 1000000);
+  var prompt = "Tu es un coach Culture G pour étudiants L1 Droit-Éco. "
+    + "Retourne UNIQUEMENT un objet JSON valide, sans markdown, sans texte avant/après. "
+    + "Le contenu doit être en français, clair, concret, fiable et court. "
+    + "Date du jour: " + today + ". Seed: " + randomSeed + ".\\n\\n"
+    + "Format JSON STRICT:\\n"
+    + "{"
+    + "\\\"generated_for\\\":\\\"" + today + "\\\"," 
+    + "\\\"theme\\\":{\\\"title\\\":\\\"...\\\",\\\"summary\\\":\\\"...\\\"},"
+    + "\\\"historical_date\\\":{\\\"title\\\":\\\"...\\\",\\\"summary\\\":\\\"...\\\"},"
+    + "\\\"concept\\\":{\\\"title\\\":\\\"...\\\",\\\"summary\\\":\\\"...\\\"},"
+    + "\\\"quiz\\\":["
+    + "{\\\"question\\\":\\\"...\\\",\\\"options\\\":[\\\"A\\\",\\\"B\\\",\\\"C\\\",\\\"D\\\"],\\\"answer_index\\\":0,\\\"explanation\\\":\\\"...\\\"},"
+    + "{...},{...}"
+    + "]"
+    + "}\\n\\n"
+    + "Contraintes:"
+    + " 1) summaries de 2 a 4 phrases chacune,"
+    + " 2) quiz exactement 3 questions, 4 options par question,"
+    + " 3) answer_index doit être 0,1,2 ou 3,"
+    + " 4) pas de contenu fictif invérifiable,"
+    + " 5) ton simple et pédagogique.";
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + GROQ_API_KEY
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        max_tokens: 1400,
+        temperature: 0.6,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      var errData = await res.json();
+      throw new Error(errData.error && errData.error.message ? errData.error.message : ('Erreur API ' + res.status));
+    }
+
+    var data = await res.json();
+    var raw = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || '').trim();
+    raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+
+    var start = raw.indexOf('{');
+    var end = raw.lastIndexOf('}');
+    if (start < 0 || end < 0 || end <= start) {
+      throw new Error('Réponse invalide : JSON non trouvé');
+    }
+
+    var payload = JSON.parse(raw.substring(start, end + 1));
+    if (!payload || !payload.theme || !payload.historical_date || !payload.concept || !Array.isArray(payload.quiz)) {
+      throw new Error('Structure JSON inattendue');
+    }
+
+    payload.generated_for = payload.generated_for || today;
+    payload.quiz = cultureNormalizeQuiz(payload.quiz);
+
+    localStorage.setItem(CULTURE_CACHE_KEY, JSON.stringify({ date: today, payload: payload }));
+    cultureRender(payload);
+    toast('Culture G mise à jour', '🌍');
+  } catch (e) {
+    console.error('Culture Groq error:', e);
+    content.style.display = 'none';
+    err.style.display = 'block';
+    err.textContent = 'Impossible de générer le contenu Culture G: ' + (e && e.message ? e.message : 'Erreur inconnue');
+
+    if (String(e && e.message || '').indexOf('401') > -1) {
+      toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    } else if (String(e && e.message || '').indexOf('429') > -1) {
+      toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+    } else {
+      toast('Échec génération Culture G', '❌');
+    }
+  } finally {
+    if (refreshBtn) { refreshBtn.disabled = false; refreshBtn.textContent = '🔄 Régénérer'; }
+    if (dailyBtn) dailyBtn.disabled = false;
+    if (loading.style.display !== 'none' && content.style.display === 'none' && err.style.display === 'none') {
+      loading.style.display = 'none';
+    }
+  }
+}
 
 async function generateFlashcardsGroq() {
   var text    = document.getElementById('flashInput').value.trim();
@@ -13388,6 +13710,7 @@ function showPage(pageId, btn) {
   }
   if (pageId === 'agenda')     { setTimeout(function(){ loadDevoirs(); renderAgenda(); renderAgendaExamBar(); }, 80); }
   if (pageId === 'notes')      { setTimeout(function(){ loadNotes(); renderNotesList(); }, 80); }
+  if (pageId === 'culture')    { setTimeout(function(){ cultureGenerateGroq(false); }, 80); }
   if (pageId === 'flashcards') { setTimeout(function(){ renderFilters(); renderCard(); renderStats(); renderHeatmap(); }, 80); }
   if (pageId === 'home')       { setTimeout(updateHomeStats, 80); }
 }
