@@ -12418,6 +12418,35 @@ function startMorphAnimation() {
   /* ══ EXPLOSION ══ */
   var shards=[];
   var shardPositions=[];  /* stocke les positions d'explosion pour les trails */
+  
+  /* Sur MOBILE : sauter directement l'animation */
+  if(isMobile){
+    setTimeout(function(){
+      logo.classList.remove('spin'); logo.classList.add('explode');
+      if(glow) glow.classList.add('supernova');
+      /* Construction rapide du sidebar sans animations */
+      ghost.style.opacity='1';
+      ghostHead.style.opacity='1';
+      ghostItems.forEach(function(gi,i){
+        if(gi) {
+          gi.style.opacity='1';
+          gi.style.transform='translateX(0)';
+        }
+      });
+      if(build) build.classList.add('show');
+      if(buildCount) buildCount.textContent=total+' / '+total+' sections';
+      if(buildLabel) buildLabel.textContent='✓ Construction terminée !';
+      if(buildFill) {
+        buildFill.style.width='100%';
+        buildFill.style.background='linear-gradient(90deg,#00a86b,#4dffc2)';
+      }
+      /* Aller directement à la fin */
+      setTimeout(onAllArrived, 600);
+    },4650);
+    return;
+  }
+  
+  /* Sur DESKTOP : animation complète */
   setTimeout(function(){
     logo.classList.remove('spin'); logo.classList.add('explode');
     if(glow) glow.classList.add('supernova');
