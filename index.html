@@ -9095,6 +9095,67 @@ function cultureNormalizeQuiz(quiz) {
   });
 }
 
+function cultureSeedFromDate(dateKey) {
+  var s = 0;
+  for (var i = 0; i < dateKey.length; i++) s = (s * 31 + dateKey.charCodeAt(i)) >>> 0;
+  return s;
+}
+
+function cultureBuildFallbackDaily(today) {
+  var themes = [
+    { title: 'Pouvoir et contre-pouvoirs', summary: 'Dans une démocratie, le pouvoir est distribué entre plusieurs institutions pour éviter les abus. La séparation des pouvoirs permet un équilibre durable. En pratique, cela protège les libertés individuelles et la stabilité politique.' },
+    { title: 'Mondialisation commerciale', summary: 'Les échanges internationaux augmentent la circulation des biens, des capitaux et des idées. Ils créent des opportunités de croissance, mais aussi des dépendances. Les Etats arbitrent entre ouverture et protection stratégique.' },
+    { title: 'Opinion publique et médias', summary: 'Les médias façonnent les débats collectifs en sélectionnant les sujets visibles. L opinion publique influence ensuite les décisions politiques. Comprendre ces mécanismes aide a lire l actualité avec recul.' },
+    { title: 'Innovation et productivité', summary: 'Le progrès technique améliore la productivité et transforme le travail. Les gains ne sont pas toujours immédiatement répartis entre secteurs. La politique économique vise a accompagner ces transitions.' }
+  ];
+
+  var dates = [
+    { title: '1789 - Déclaration des droits de l homme', summary: 'Ce texte fonde des principes majeurs: liberté, égalité et souveraineté nationale. Il influence durablement le droit constitutionnel français. Ses idées restent centrales dans les démocraties contemporaines.' },
+    { title: '1948 - Déclaration universelle des droits humains', summary: 'Adoptée par l ONU, elle fixe des standards communs de dignité et de libertés. Elle n est pas directement contraignante, mais sert de référence mondiale. Elle inspire de nombreux traités internationaux.' },
+    { title: '1992 - Traité de Maastricht', summary: 'Le traité crée l Union européenne telle qu on la connaît aujourd hui. Il renforce l intégration politique et économique entre les Etats membres. Il prépare notamment l union économique et monétaire.' },
+    { title: '2008 - Crise financière mondiale', summary: 'La crise partie du crédit immobilier américain se propage rapidement a l échelle mondiale. Elle montre l interconnexion des marchés financiers. Elle conduit a des réformes de régulation bancaire.' }
+  ];
+
+  var concepts = [
+    { title: 'Etat de droit', summary: 'L Etat de droit signifie que les autorités publiques sont elles aussi soumises aux règles juridiques. Les juges contrôlent la légalité des actes de l administration. C est une garantie essentielle contre l arbitraire.' },
+    { title: 'Externalité', summary: 'Une externalité apparaît quand l action d un acteur a un effet sur d autres sans compensation monétaire. Pollution et innovation en sont des exemples classiques. Les pouvoirs publics peuvent corriger ces effets par la règle ou la fiscalité.' },
+    { title: 'Inflation', summary: 'L inflation correspond a une hausse générale et durable des prix. Elle réduit le pouvoir d achat si les revenus n augmentent pas au même rythme. Les banques centrales ajustent leur politique monétaire pour la contenir.' },
+    { title: 'Souveraineté populaire', summary: 'Ce principe affirme que la légitimité politique vient du peuple. Le vote, la représentation et le débat public en sont les instruments principaux. Il structure la logique des régimes démocratiques modernes.' }
+  ];
+
+  var seed = cultureSeedFromDate(today);
+  var theme = themes[seed % themes.length];
+  var historical = dates[(seed >> 3) % dates.length];
+  var concept = concepts[(seed >> 5) % concepts.length];
+
+  return {
+    generated_for: today,
+    theme: theme,
+    historical_date: historical,
+    concept: concept,
+    quiz: [
+      {
+        question: 'Quel est l objectif principal de la séparation des pouvoirs ?',
+        options: ['Concentrer l autorité dans une seule institution', 'Eviter les abus et équilibrer les institutions', 'Supprimer les élections', 'Rendre la justice facultative'],
+        answer_index: 1,
+        explanation: 'La séparation des pouvoirs limite la concentration de l autorité et crée un contrôle réciproque.'
+      },
+      {
+        question: 'Une externalité négative correspond a ...',
+        options: ['Un bénéfice privé sans effet collectif', 'Un coût imposé a des tiers sans compensation', 'Une baisse automatique des impôts', 'Une décision judiciaire'],
+        answer_index: 1,
+        explanation: 'Une externalité négative est un dommage pour d autres acteurs qui n est pas payé par l émetteur.'
+      },
+      {
+        question: 'Quel texte de 1948 pose une référence mondiale en matière de droits humains ?',
+        options: ['Le Code civil', 'Le Traité de Maastricht', 'La Déclaration universelle des droits humains', 'La Constitution de 1958'],
+        answer_index: 2,
+        explanation: 'La Déclaration universelle de 1948 fixe des principes de droits fondamentaux reconnus internationalement.'
+      }
+    ]
+  };
+}
+
 function cultureRender(data) {
   var dayLabel = document.getElementById('cultureDayLabel');
   var loading = document.getElementById('cultureLoading');
@@ -9268,16 +9329,29 @@ async function cultureGenerateGroq(forceRefresh) {
     toast('Culture G mise à jour', '🌍');
   } catch (e) {
     console.error('Culture Groq error:', e);
-    content.style.display = 'none';
-    err.style.display = 'block';
-    err.textContent = 'Impossible de générer le contenu Culture G: ' + (e && e.message ? e.message : 'Erreur inconnue');
+    try {
+      var fallback = cultureBuildFallbackDaily(today);
+      localStorage.setItem(CULTURE_CACHE_KEY, JSON.stringify({ date: today, payload: fallback }));
+      cultureRender(fallback);
+      if (String(e && e.message || '').toLowerCase().indexOf('restricted') > -1) {
+        toast('Groq restreint: bascule auto en mode local', '⚠️');
+      } else {
+        toast('Groq indisponible: contenu local chargé', '⚠️');
+      }
+      return;
+    } catch (fallbackErr) {
+      console.error('Culture fallback error:', fallbackErr);
+      content.style.display = 'none';
+      err.style.display = 'block';
+      err.textContent = 'Impossible de générer le contenu Culture G: ' + (e && e.message ? e.message : 'Erreur inconnue');
 
-    if (String(e && e.message || '').indexOf('401') > -1) {
-      toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
-    } else if (String(e && e.message || '').indexOf('429') > -1) {
-      toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
-    } else {
-      toast('Échec génération Culture G', '❌');
+      if (String(e && e.message || '').indexOf('401') > -1) {
+        toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+      } else if (String(e && e.message || '').indexOf('429') > -1) {
+        toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
+      } else {
+        toast('Échec génération Culture G', '❌');
+      }
     }
   } finally {
     if (refreshBtn) { refreshBtn.disabled = false; refreshBtn.textContent = '🔄 Régénérer'; }
