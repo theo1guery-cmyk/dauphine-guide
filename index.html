@@ -12584,6 +12584,13 @@ function startMorphAnimation() {
 
     setTimeout(function(){
       if(title) title.classList.remove('show');
+
+      /* Fade ghost sidebar dès que le wipe commence */
+      ghost.style.transition='opacity .25s ease';
+      ghost.style.opacity='0';
+      ghostHead.style.transition='opacity .25s ease';
+      ghostHead.style.opacity='0';
+
       var wipe=document.createElement('div');
       wipe.className='m-wipe';
       wipe.style.left=sbW+'px'; wipe.style.width=(vw-sbW)+'px';
