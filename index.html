@@ -1190,8 +1190,8 @@ html{scroll-behavior:smooth}
 
 /* ══ BLOCK EDITOR (mode Mixte) ══ */
 #blockEditor{flex:1;overflow-y:auto;padding:12px 20px 40px;display:flex;flex-direction:column;gap:0}
-.blk-adder{display:flex;align-items:center;gap:8px;padding:3px 0;opacity:0;transition:opacity .15s;position:relative;z-index:1}
-.blk-adder:hover,.blk-adder.always{opacity:1}
+.blk-adder{display:flex;align-items:center;gap:8px;padding:4px 0;opacity:.5;transition:opacity .15s;position:relative;z-index:1}
+.blk-adder:hover{opacity:1}
 .blk-adder-line{flex:1;height:1px;background:var(--g200)}
 .blk-adder-menu{display:flex;gap:4px}
 .blk-adder-btn{padding:3px 10px;font-size:11px;font-weight:700;border-radius:6px;border:1px solid var(--g200);background:var(--bg-card);color:var(--text-sub);cursor:pointer;transition:all .15s}
@@ -17389,10 +17389,13 @@ function beRender() {
   document.querySelectorAll('#blockEditor .blk-canvas').forEach(function(canvas) {
     var idx = parseInt(canvas.dataset.idx);
     var blk = beBlocks[idx];
+    // White background
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (blk && blk.data) {
       var img = new Image();
       img.onload = function() {
-        var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
       };
       img.src = blk.data;
@@ -17526,8 +17529,8 @@ function beAdder(afterIdx) {
 /* ── Actions ── */
 function beAddBlock(type, insertAt) {
   var blk = type === 'text'
-    ? {type:'text', content:''}
-    : {type:'draw', data:'', height:220};
+    ? {type:'text', content:'', id: Date.now()}
+    : {type:'draw', data:'', height:220, id: Date.now()};
   beBlocks.splice(insertAt, 0, blk);
   beRender();
   // Focus new block
@@ -17557,10 +17560,13 @@ function beMove(idx, dir) {
 
 /* ── Canvas drawing ── */
 function beInitCanvas(canvas, idx) {
-  if (!beDrawState[idx]) {
-    beDrawState[idx] = { tool:'pen', color:'#111827', size:2, drawing:false, lastX:0, lastY:0 };
+  var blk = beBlocks[idx];
+  var key = (blk && blk.id) ? blk.id : idx;
+  canvas.dataset.key = key;
+  if (!beDrawState[key]) {
+    beDrawState[key] = { tool:'pen', color:'#111827', size:2, drawing:false, lastX:0, lastY:0 };
   }
-  var state = beDrawState[idx];
+  var state = beDrawState[key];
 
   function getPos(e) {
     var r = canvas.getBoundingClientRect();
@@ -17623,25 +17629,33 @@ function beInitCanvas(canvas, idx) {
   canvas.addEventListener('pointerleave',  endDraw);
 }
 
+function beGetKey(idx) {
+  var blk = beBlocks[idx];
+  return (blk && blk.id) ? blk.id : idx;
+}
+
 function beSetTool(idx, tool, btn) {
-  beDrawState[idx] = beDrawState[idx] || {};
-  beDrawState[idx].tool = tool;
+  var key = beGetKey(idx);
+  beDrawState[key] = beDrawState[key] || {};
+  beDrawState[key].tool = tool;
   var tb = document.getElementById('be-tb-' + idx);
   if (tb) tb.querySelectorAll('.blk-draw-tool').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
 }
 
 function beSetColor(idx, color, el) {
-  beDrawState[idx] = beDrawState[idx] || {};
-  beDrawState[idx].color = color;
+  var key = beGetKey(idx);
+  beDrawState[key] = beDrawState[key] || {};
+  beDrawState[key].color = color;
   var tb = document.getElementById('be-tb-' + idx);
   if (tb) tb.querySelectorAll('.blk-draw-swatch').forEach(function(s){ s.classList.remove('active'); });
   if (el) el.classList.add('active');
 }
 
 function beSetSize(idx, size, btn) {
-  beDrawState[idx] = beDrawState[idx] || {};
-  beDrawState[idx].size = size;
+  var key = beGetKey(idx);
+  beDrawState[key] = beDrawState[key] || {};
+  beDrawState[key].size = size;
   var tb = document.getElementById('be-tb-' + idx);
   if (tb) tb.querySelectorAll('.blk-draw-size').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
@@ -17651,7 +17665,8 @@ function beClear(idx) {
   var canvas = document.querySelector('#blockEditor .blk-canvas[data-idx="'+idx+'"]');
   if (canvas) {
     var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (beBlocks[idx]) beBlocks[idx].data = '';
     beSave();
   }
