@@ -1934,6 +1934,19 @@ section.hero{padding-top:0!important;min-height:380px}
 #page-home .hero-content { display:none !important; }
 
 
+/* ════ WIDGET BANNER ════ */
+.wg-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:32px 0 0;padding:18px 24px;border-radius:16px;background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;box-shadow:0 12px 32px rgba(15,23,42,.25)}
+[data-theme="dark"] .wg-banner{background:linear-gradient(135deg,rgba(15,23,42,.8),rgba(30,58,95,.6));border:1px solid rgba(96,165,250,.15)}
+.wg-banner-left{display:flex;align-items:center;gap:14px}
+.wg-banner-ic{font-size:28px}
+.wg-banner-title{font-weight:700;font-size:15px}
+.wg-banner-sub{font-size:12px;color:rgba(148,163,184,.8);margin-top:2px}
+.wg-banner-right{display:flex;gap:8px;flex-wrap:wrap}
+.wg-banner-btn{padding:9px 16px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-family:'Figtree',sans-serif;transition:all .15s}
+.wg-banner-btn:hover{background:rgba(255,255,255,.15)}
+.wg-banner-btn.primary{background:#3b82f6;border-color:#3b82f6}
+.wg-banner-btn.primary:hover{background:#2563eb}
+
 /* ════ HOME FOOTER ════ */
 .home-footer {
   position: relative;
@@ -5111,6 +5124,50 @@ aside.sidebar {
       </div>
     </div>
 
+
+    <!-- WIDGET BANNER -->
+    <div class="wg-banner rev" id="wgBanner">
+      <div class="wg-banner-left">
+        <div class="wg-banner-ic">🖥️</div>
+        <div>
+          <div class="wg-banner-title">Fond d'écran dynamique</div>
+          <div class="wg-banner-sub">Affiche ton prochain cours en direct sur ton bureau</div>
+        </div>
+      </div>
+      <div class="wg-banner-right">
+        <button class="wg-banner-btn" onclick="wgOpenPreview()">👁 Aperçu</button>
+        <button class="wg-banner-btn primary" onclick="wgShowInstructions()">⚙️ Configurer</button>
+      </div>
+    </div>
+    <!-- Modal instructions widget -->
+    <div id="wgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:none;align-items:center;justify-content:center">
+      <div style="background:var(--bg-card);border-radius:20px;padding:32px;max-width:500px;width:90%;position:relative;box-shadow:0 32px 64px rgba(0,0,0,.4)">
+        <button onclick="document.getElementById('wgModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-sub)">✕</button>
+        <div style="font-size:24px;margin-bottom:8px">🖥️ Widget fond d'écran</div>
+        <p style="color:var(--text-sub);font-size:13px;margin-bottom:24px;line-height:1.6">Ton prochain cours, l'heure en direct, le compte à rebours — sur ton bureau en permanence.</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="background:var(--g50);border-radius:12px;padding:16px">
+            <div style="font-weight:700;font-size:13px;margin-bottom:8px">🪟 Windows — Lively Wallpaper</div>
+            <ol style="font-size:12px;color:var(--text-sub);line-height:2;padding-left:18px">
+              <li>Télécharge <strong>Lively Wallpaper</strong> (gratuit, Microsoft Store)</li>
+              <li>Ouvre Lively → clique sur le <strong>+</strong></li>
+              <li>Colle ce lien : <code id="wgLink" style="background:var(--g100);padding:2px 6px;border-radius:4px;font-size:11px"></code></li>
+              <li>Clique sur <strong>OK</strong> et définis comme fond d'écran</li>
+            </ol>
+          </div>
+          <div style="background:var(--g50);border-radius:12px;padding:16px">
+            <div style="font-weight:700;font-size:13px;margin-bottom:8px">🍎 Mac — Plash</div>
+            <ol style="font-size:12px;color:var(--text-sub);line-height:2;padding-left:18px">
+              <li>Télécharge <strong>Plash</strong> sur le Mac App Store (gratuit)</li>
+              <li>Ouvre Plash → <strong>Preferences</strong></li>
+              <li>Colle ce lien dans le champ URL : <code style="background:var(--g100);padding:2px 6px;border-radius:4px;font-size:11px" id="wgLink2"></code></li>
+              <li>Active <strong>Launch at login</strong> pour l'avoir toujours</li>
+            </ol>
+          </div>
+        </div>
+        <button onclick="wgCopyLink()" style="margin-top:20px;width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copier le lien widget</button>
+      </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="home-footer">
@@ -19324,6 +19381,285 @@ function notesJumpToDrawing() {
 document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('drawCanvas')) dsInit();
 });
+
+/* ════ WIDGET BANNER FUNCTIONS ════ */
+function wgGetLink() {
+  return window.location.href.split('?')[0] + '?widget';
+}
+function wgOpenPreview() {
+  window.open(wgGetLink(), '_blank', 'width=1280,height=720');
+}
+function wgShowInstructions() {
+  var link = wgGetLink();
+  var el1 = document.getElementById('wgLink');
+  var el2 = document.getElementById('wgLink2');
+  if (el1) el1.textContent = link;
+  if (el2) el2.textContent = link;
+  var modal = document.getElementById('wgModal');
+  if (modal) modal.style.display = 'flex';
+}
+function wgCopyLink() {
+  var link = wgGetLink();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(function() {
+      var btn = document.querySelector('#wgModal button:last-child');
+      if (btn) { btn.textContent = '✅ Lien copié !'; setTimeout(function(){ btn.textContent = '📋 Copier le lien widget'; }, 2000); }
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   WIDGET MODE  —  ?widget dans l'URL
+   Affiche une page fond d'écran plein écran
+   Compatible Lively Wallpaper (PC) et Plash (Mac)
+   ═══════════════════════════════════════════════ */
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (!params.has('widget')) return;
+
+  // Cache tout le reste de l'app
+  document.addEventListener('DOMContentLoaded', function() {
+    var toHide = ['#sidebar','#main-content','#auth-overlay','#splash-screen','.morph-overlay'];
+    toHide.forEach(function(sel) {
+      var el = document.querySelector(sel);
+      if (el) el.style.display = 'none';
+    });
+    buildWidget();
+  });
+
+  function buildWidget() {
+    // Inject CSS
+    var style = document.createElement('style');
+    style.textContent = [
+      '*{margin:0;padding:0;box-sizing:border-box}',
+      'html,body{width:100%;height:100%;overflow:hidden;font-family:"Figtree","Inter",sans-serif}',
+      '#dg-widget{',
+        'position:fixed;inset:0;',
+        'background:linear-gradient(135deg,#060d1f 0%,#0a1628 50%,#0d1f3c 100%);',
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;',
+        'color:#fff;',
+      '}',
+      '/* Particules de fond */',
+      '#dg-widget::before{',
+        'content:"";position:absolute;inset:0;',
+        'background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(59,130,246,.12),transparent),',
+          'radial-gradient(ellipse 40% 40% at 80% 80%,rgba(99,102,241,.08),transparent);',
+        'pointer-events:none;',
+      '}',
+      '.wg-inner{position:relative;z-index:1;text-align:center;width:100%;max-width:900px;padding:40px;}',
+      '/* Date + salutation */',
+      '.wg-greeting{font-size:clamp(13px,1.2vw,16px);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(148,163,184,.7);margin-bottom:8px}',
+      '.wg-date{font-size:clamp(14px,1.3vw,17px);color:rgba(148,163,184,.5);margin-bottom:48px;letter-spacing:.04em}',
+      '/* Heure */',
+      '.wg-clock{font-size:clamp(72px,10vw,130px);font-weight:800;letter-spacing:-.04em;line-height:1;',
+        'background:linear-gradient(135deg,#fff 30%,rgba(148,163,184,.7));',
+        '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;',
+        'margin-bottom:12px;',
+      '}',
+      '.wg-seconds{font-size:clamp(20px,2.5vw,32px);font-weight:300;color:rgba(148,163,184,.4);letter-spacing:.02em;margin-bottom:56px}',
+      '/* Carte prochain cours */',
+      '.wg-card{',
+        'display:inline-flex;align-items:center;gap:20px;',
+        'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);',
+        'backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);',
+        'border-radius:20px;padding:20px 32px;',
+        'min-width:420px;max-width:700px;',
+        'box-shadow:0 24px 48px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);',
+      '}',
+      '.wg-card-ic{',
+        'width:52px;height:52px;border-radius:14px;flex-shrink:0;',
+        'background:linear-gradient(135deg,#1d4ed8,#3b82f6);',
+        'display:flex;align-items:center;justify-content:center;font-size:22px;',
+        'box-shadow:0 8px 20px rgba(59,130,246,.4);',
+      '}',
+      '.wg-card-body{text-align:left;flex:1;min-width:0}',
+      '.wg-card-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(148,163,184,.6);margin-bottom:6px}',
+      '.wg-card-title{font-size:clamp(16px,2vw,22px);font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}',
+      '.wg-card-meta{font-size:clamp(11px,1.1vw,13px);color:rgba(148,163,184,.6);margin-top:5px;display:flex;gap:12px;flex-wrap:wrap}',
+      '.wg-card-meta span{display:flex;align-items:center;gap:4px}',
+      '.wg-countdown{',
+        'text-align:center;flex-shrink:0;',
+      '}',
+      '.wg-cd-val{font-size:clamp(22px,2.8vw,36px);font-weight:800;color:#60a5fa;line-height:1}',
+      '.wg-cd-lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(148,163,184,.5);margin-top:3px}',
+      '/* Barre de progression cours en cours */',
+      '.wg-progress{width:100%;height:3px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:14px;overflow:hidden;display:none}',
+      '.wg-progress-bar{height:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:99px;transition:width 1s linear}',
+      '/* Logo */',
+      '.wg-logo{position:absolute;bottom:28px;right:36px;display:flex;align-items:center;gap:8px;opacity:.3;font-size:13px;font-weight:700;letter-spacing:.04em}',
+      '.wg-logo-d{width:28px;height:28px;background:#1d4ed8;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-style:italic;font-size:16px;color:#fff}',
+      '/* Pas de cours */',
+      '.wg-free{text-align:center}',
+      '.wg-free-emoji{font-size:clamp(40px,5vw,64px);margin-bottom:12px}',
+      '.wg-free-title{font-size:clamp(18px,2.5vw,28px);font-weight:700;color:#f1f5f9;margin-bottom:6px}',
+      '.wg-free-sub{font-size:clamp(12px,1.2vw,15px);color:rgba(148,163,184,.5)}',
+    ].join('\n');
+    document.head.appendChild(style);
+
+    // Inject HTML
+    var root = document.createElement('div');
+    root.id = 'dg-widget';
+    root.innerHTML = [
+      '<div class="wg-inner">',
+        '<div class="wg-greeting" id="wgGreeting"></div>',
+        '<div class="wg-date" id="wgDate"></div>',
+        '<div class="wg-clock" id="wgClock">00:00</div>',
+        '<div class="wg-seconds" id="wgSec">00s</div>',
+        '<div id="wgCoursWrap"></div>',
+      '</div>',
+      '<div class="wg-logo">',
+        '<div class="wg-logo-d">D</div>',
+        'DauphineGuide',
+      '</div>',
+    ].join('');
+    document.body.appendChild(root);
+
+    // Helpers
+    function pad(n) { return String(n).padStart(2,'0'); }
+    function fmtDate(d) {
+      return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+    }
+    var JOURS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    var MOIS  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+    // Tick
+    var _cdTimer = null;
+    function tick() {
+      var now = new Date();
+      var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+
+      // Heure
+      document.getElementById('wgClock').textContent = pad(h) + ':' + pad(m);
+      document.getElementById('wgSec').textContent   = pad(s) + 's';
+
+      // Date
+      document.getElementById('wgDate').textContent =
+        JOURS[now.getDay()] + ' ' + now.getDate() + ' ' + MOIS[now.getMonth()] + ' ' + now.getFullYear();
+
+      // Salutation
+      var prof = (typeof getProfil === 'function') ? getProfil() : {};
+      var prenom = prof.prenom || '';
+      var greeting;
+      if      (h>=5  && h<12) greeting = prenom ? 'Bonjour, ' + prenom + ' !' : 'Bonjour !';
+      else if (h>=12 && h<14) greeting = prenom ? 'Bon appétit, ' + prenom + ' !' : 'Bon appétit !';
+      else if (h>=14 && h<19) greeting = prenom ? 'Bon courage, ' + prenom + ' !' : 'Bon courage !';
+      else if (h>=19 && h<22) greeting = prenom ? 'Bonsoir, ' + prenom + ' !' : 'Bonsoir !';
+      else                     greeting = prenom ? 'Bonne nuit, ' + prenom + ' !' : 'Bonne nuit !';
+      document.getElementById('wgGreeting').textContent = greeting;
+
+      // Prochain cours (re-calculé toutes les 30s seulement pour perf)
+      if (s % 30 === 0 || s === 0) renderCours();
+    }
+
+    function renderCours() {
+      var wrap = document.getElementById('wgCoursWrap');
+      if (!wrap) return;
+
+      var now = new Date();
+      var todayStr = fmtDate(now);
+      var nowMin = now.getHours()*60 + now.getMinutes();
+
+      var evts = (typeof getActiveEvents === 'function') ? getActiveEvents() :
+                 (typeof EVENTS !== 'undefined' ? EVENTS : []);
+      var manual = (typeof manualEvents !== 'undefined') ? manualEvents : [];
+      var all = evts.concat(manual);
+
+      var candidates = all.filter(function(e) {
+        if (!e.date || e.date < todayStr) return false;
+        var ep = (e.end || e.time || '00:00').split(':');
+        var endMin = parseInt(ep[0])*60 + parseInt(ep[1]);
+        if (e.date === todayStr && endMin <= nowMin) return false;
+        return true;
+      }).sort(function(a,b) {
+        if (a.date !== b.date) return a.date.localeCompare(b.date);
+        return (a.time||'').localeCompare(b.time||'');
+      });
+
+      if (!candidates.length) {
+        wrap.innerHTML = [
+          '<div class="wg-free">',
+            '<div class="wg-free-emoji">🎉</div>',
+            '<div class="wg-free-title">Pas de cours prévu</div>',
+            '<div class="wg-free-sub">Profite de ta liberté !</div>',
+          '</div>',
+        ].join('');
+        if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
+        return;
+      }
+
+      var e = candidates[0];
+      var sp = e.time.split(':');
+      var startMin = parseInt(sp[0])*60 + parseInt(sp[1]);
+      var endSp = (e.end||e.time).split(':');
+      var endMin2 = parseInt(endSp[0])*60 + parseInt(endSp[1]);
+      var isOngoing = e.date === todayStr && nowMin >= startMin && nowMin < endMin2;
+      var label = isOngoing ? 'En cours maintenant' : 'Prochain cours';
+      var icon  = isOngoing ? '📖' : '⏰';
+
+      var metaParts = [];
+      if (e.location) metaParts.push('<span>📍 ' + e.location + '</span>');
+      metaParts.push('<span>🕐 ' + e.time + (e.end && e.end !== e.time ? ' – ' + e.end : '') + '</span>');
+      if (e.date !== todayStr) {
+        var d2 = new Date(e.date.replace(/-/g,'/'));
+        metaParts.push('<span>📅 ' + JOURS[d2.getDay()] + ' ' + d2.getDate() + ' ' + MOIS[d2.getMonth()] + '</span>');
+      }
+
+      // Progress bar (cours en cours)
+      var duration = endMin2 - startMin;
+      var elapsed  = nowMin - startMin;
+      var pct = duration > 0 ? Math.min(100, Math.round(elapsed/duration*100)) : 0;
+
+      wrap.innerHTML = [
+        '<div class="wg-card">',
+          '<div class="wg-card-ic">' + icon + '</div>',
+          '<div class="wg-card-body">',
+            '<div class="wg-card-label">' + label + '</div>',
+            '<div class="wg-card-title">' + e.summary + '</div>',
+            '<div class="wg-card-meta">' + metaParts.join('') + '</div>',
+            isOngoing ? '<div class="wg-progress" style="display:block"><div class="wg-progress-bar" id="wgProgBar" style="width:' + pct + '%"></div></div>' : '',
+          '</div>',
+          '<div class="wg-countdown">',
+            '<div class="wg-cd-val" id="wgCdVal">–</div>',
+            '<div class="wg-cd-lbl" id="wgCdLbl">' + (isOngoing ? 'restant' : 'dans') + '</div>',
+          '</div>',
+        '</div>',
+      ].join('');
+
+      // Countdown live
+      if (_cdTimer) clearInterval(_cdTimer);
+      _cdTimer = setInterval(function() {
+        var now2 = new Date();
+        var target = new Date(e.date.replace(/-/g,'/'));
+        target.setHours(parseInt(sp[0]), parseInt(sp[1]), 0);
+        var isOn2 = e.date === fmtDate(now2) && now2 >= target;
+        var endTarget = new Date(e.date.replace(/-/g,'/'));
+        endTarget.setHours(parseInt(endSp[0]), parseInt(endSp[1]), 0);
+        var diff = Math.max(0, Math.round(((isOn2 ? endTarget : target) - now2) / 1000));
+        var hh = Math.floor(diff/3600);
+        var mm = Math.floor((diff%3600)/60);
+        var ss = diff%60;
+        var val = document.getElementById('wgCdVal');
+        if (val) val.textContent = hh > 0 ? hh + 'h' + pad(mm) : mm > 0 ? mm + 'min' + pad(ss) + 's' : ss + 's';
+        // Mise à jour progress bar
+        if (isOn2) {
+          var bar = document.getElementById('wgProgBar');
+          if (bar) {
+            var el2 = Math.floor((now2.getHours()*60+now2.getMinutes()) - startMin);
+            bar.style.width = Math.min(100, Math.round(el2/duration*100)) + '%';
+          }
+        }
+      }, 1000);
+    }
+
+    // Démarrage
+    tick();
+    setInterval(tick, 1000);
+    // Charge les events manuels si dispo
+    if (typeof loadManualEvents === 'function') loadManualEvents();
+    if (typeof loadUserIcs === 'function') loadUserIcs().then(renderCours).catch(function(){});
+    setTimeout(renderCours, 500);
+  }
+})();
 
 </script>
 </body></html>
