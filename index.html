@@ -568,9 +568,6 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 .m-ripple{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.7);pointer-events:none;z-index:15;animation:mRipple .8s ease-out forwards}
 @keyframes mRipple{0%{width:0;height:0;opacity:1}100%{width:300px;height:300px;opacity:0;margin-left:-150px;margin-top:-150px}}
 
-/* Mobile loader spinner */
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-
 /* Fragments / shards */
 .m-shard{position:fixed;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;opacity:0;z-index:999999;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.2);box-shadow:0 0 18px var(--sc,rgba(77,159,255,.3));pointer-events:none}
 .m-shard-emoji{font-size:23px;filter:drop-shadow(0 0 8px rgba(255,255,255,.5));line-height:1}
@@ -12303,47 +12300,35 @@ function startMorphAnimation() {
   var vw = window.innerWidth, vh = window.innerHeight;
   var cx = vw/2, cy = vh/2;
 
-  /* ══ VERSION MOBILE : Écran de chargement classique ══ */
+  /* ══ VERSION MOBILE : Utiliser le splash screen existant ══ */
   if(isMobile){
-    overlay.classList.remove('fade-out','phase-zoom');
-    overlay.style.cssText = '';
-    overlay.classList.add('active');
-    
-    /* Créer un simple loader */
-    var loaderHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;height:100vh;background:linear-gradient(135deg,#003d7a,#0057ad)">' +
-      '<div style="width:60px;height:60px;border:3px solid rgba(255,255,255,.3);border-top:3px solid #fff;border-radius:50%;animation:spin 1s linear infinite"></div>' +
-      '<div style="color:#fff;font-size:14px;font-weight:500;font-family:Figtree,sans-serif">Chargement…</div>' +
-      '<div style="width:160px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden">' +
-        '<div id="mobileLoadBar" style="width:0%;height:100%;background:linear-gradient(90deg,#4dffc2,#00a86b);transition:width .3s ease;border-radius:2px"></div>' +
-      '</div>' +
-      '</div>';
-    
-    overlay.innerHTML = loaderHTML;
-    
-    /* Animer la barre de progression */
-    var bar = document.getElementById('mobileLoadBar');
-    var progress = 0;
-    var interval = setInterval(function(){
-      progress += Math.random() * 30;
-      if(progress > 90) progress = 90;
-      if(bar) bar.style.width = progress + '%';
-    }, 300);
-    
-    /* Fermer après 1.2s */
-    setTimeout(function(){
-      clearInterval(interval);
-      if(bar) bar.style.width = '100%';
-      setTimeout(function(){
-        overlay.style.transition = 'opacity .4s ease';
-        overlay.style.opacity = '0';
-        setTimeout(function(){
-          overlay.classList.remove('active');
-          overlay.style.cssText = 'display:none';
-          window._orbitalRunning = false;
-          if(typeof initOnboarding === 'function') initOnboarding();
-        }, 400);
-      }, 200);
-    }, 1200);
+    var splash = document.getElementById('splashScreen');
+    if(splash){
+      splash.style.display = 'flex';
+      splash.classList.remove('fade-out');
+      var bar = document.getElementById('splashBar');
+      if(bar){
+        bar.style.width = '0%';
+        var animateBar = setInterval(function(){
+          var current = parseFloat(bar.style.width) || 0;
+          current += Math.random() * 20 + 10;
+          if(current >= 95) {
+            clearInterval(animateBar);
+            bar.style.width = '100%';
+            setTimeout(function(){
+              splash.classList.add('fade-out');
+              setTimeout(function(){
+                splash.style.display = 'none';
+                window._orbitalRunning = false;
+                if(typeof initOnboarding === 'function') initOnboarding();
+              }, 600);
+            }, 300);
+          } else {
+            bar.style.width = Math.min(current, 95) + '%';
+          }
+        }, 80);
+      }
+    }
     return;
   }
 
