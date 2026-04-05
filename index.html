@@ -12701,6 +12701,11 @@ function initBackgroundDB() {
       loadBackground();
       resolve();
     };
+    req.onerror = function() {
+      bgCustomizerDB = null;
+      loadBackground();
+      resolve();
+    };
   });
 }
 
@@ -12818,10 +12823,20 @@ function applyBackground() {
         posY: parseInt(posY)
       };
 
-      // Save to IndexedDB
-      var tx = bgCustomizerDB.transaction('backgrounds', 'readwrite');
-      var store = tx.objectStore('backgrounds');
-      store.put(bgData, 'current');
+      // Save to IndexedDB if available, otherwise fallback to localStorage.
+      try {
+        if (bgCustomizerDB) {
+          var tx = bgCustomizerDB.transaction('backgrounds', 'readwrite');
+          var store = tx.objectStore('backgrounds');
+          store.put(bgData, 'current');
+        } else {
+          localStorage.setItem('bg_customizer_fallback_v1', JSON.stringify(bgData));
+        }
+      } catch (err) {
+        try {
+          localStorage.setItem('bg_customizer_fallback_v1', JSON.stringify(bgData));
+        } catch (_) {}
+      }
 
       // Apply immediately
       applyBgToDOM(bgData);
@@ -12852,23 +12867,50 @@ function applyBgToDOM(bgData) {
 }
 
 function loadBackground() {
-  if (!bgCustomizerDB) return;
-  var tx = bgCustomizerDB.transaction('backgrounds', 'readonly');
-  var store = tx.objectStore('backgrounds');
-  var req = store.get('current');
+  if (bgCustomizerDB) {
+    try {
+      var tx = bgCustomizerDB.transaction('backgrounds', 'readonly');
+      var store = tx.objectStore('backgrounds');
+      var req = store.get('current');
 
-  req.onsuccess = function() {
-    if (req.result) {
-      applyBgToDOM(req.result);
-    }
-  };
+      req.onsuccess = function() {
+        if (req.result) {
+          applyBgToDOM(req.result);
+          return;
+        }
+        try {
+          var fallback = localStorage.getItem('bg_customizer_fallback_v1');
+          if (fallback) applyBgToDOM(JSON.parse(fallback));
+        } catch (_) {}
+      };
+
+      req.onerror = function() {
+        try {
+          var fallback = localStorage.getItem('bg_customizer_fallback_v1');
+          if (fallback) applyBgToDOM(JSON.parse(fallback));
+        } catch (_) {}
+      };
+      return;
+    } catch (_) {}
+  }
+
+  try {
+    var localBg = localStorage.getItem('bg_customizer_fallback_v1');
+    if (localBg) applyBgToDOM(JSON.parse(localBg));
+  } catch (_) {}
 }
 
 function resetBackground() {
-  if (!bgCustomizerDB) return;
-  var tx = bgCustomizerDB.transaction('backgrounds', 'readwrite');
-  var store = tx.objectStore('backgrounds');
-  store.delete('current');
+  try {
+    if (bgCustomizerDB) {
+      var tx = bgCustomizerDB.transaction('backgrounds', 'readwrite');
+      var store = tx.objectStore('backgrounds');
+      store.delete('current');
+    }
+  } catch (_) {}
+  try {
+    localStorage.removeItem('bg_customizer_fallback_v1');
+  } catch (_) {}
 
   document.body.style.backgroundImage = 'none';
   var overlay = document.getElementById('bgOverlay');
