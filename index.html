@@ -3516,7 +3516,11 @@ aside.sidebar {
     cursor: pointer; margin-top: 12px; transition: color .2s;
   }
   .auth-forgot:hover { color: var(--accent); }
-  .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  #auth-overlay .login-logo {
+    width: auto; height: auto; background: none; border-radius: 0;
+    font-size: inherit; margin: 0 0 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
   .d-icon {
     width: 44px; height: 44px; background: var(--accent); border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
