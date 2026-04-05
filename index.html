@@ -1115,7 +1115,7 @@ html{scroll-behavior:smooth}
 .draw-section-arrow.open{transform:rotate(180deg)}
 .draw-section-body{display:none;border-top:1px solid var(--g100);background:#fff}
 [data-theme="dark"] .draw-section-body{border-color:var(--border-col)}
-.draw-section.open .draw-section-body,.draw-section-body.open{display:flex;height:520px}
+.draw-section.open .draw-section-body,.draw-section-body.open{display:flex;height:520px;overflow:hidden}
 /* Sheets sidebar */
 .draw-sheets{width:210px;flex-shrink:0;border-right:1px solid var(--g100);display:flex;flex-direction:column;background:var(--g50)}
 [data-theme="dark"] .draw-sheets{background:#1a1f2e;border-color:var(--border-col)}
@@ -18823,15 +18823,25 @@ function dsSetAutosave(msg, keep) {
 
 function notesJumpToDrawing() {
   var section = document.getElementById('drawSection');
-  if (!section) return;
+  var mc = document.querySelector('.main-content');
+  if (!section || !mc) return;
+
+  function scrollToSection() {
+    var sectionTop = section.offsetTop;
+    var sectionHeight = section.offsetHeight;
+    var mcHeight = mc.clientHeight;
+    // Scroll so the section bottom is at the viewport bottom (no blank space below)
+    var target = Math.max(0, sectionTop + sectionHeight - mcHeight);
+    mc.scrollTop = target;
+  }
+
   if (typeof DS !== 'undefined' && !DS.open) {
     dsToggle();
-    setTimeout(function() {
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 120);
+    // Wait for the section to open and layout to settle before scrolling
+    setTimeout(function() { requestAnimationFrame(scrollToSection); }, 120);
     return;
   }
-  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scrollToSection();
 }
 
 /* Init on notes page open */
