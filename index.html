@@ -1071,6 +1071,53 @@ html{scroll-behavior:smooth}
 /* ════ NOTES DE COURS ════ */
 .notes-section{padding:64px 0}
 [data-theme="dark"] .notes-section{background:var(--bg-main)}
+
+/* ══ SECTION DESSIN ══ */
+.draw-section{margin:0;border-top:2px solid var(--g100)}
+[data-theme="dark"] .draw-section{border-color:var(--border-col)}
+.draw-section-header{display:flex;align-items:center;gap:12px;padding:16px 24px;cursor:pointer;user-select:none;background:var(--bg-card);transition:background .15s}
+.draw-section-header:hover{background:var(--blue-light)}
+[data-theme="dark"] .draw-section-header:hover{background:rgba(77,159,255,.08)}
+.draw-section-icon{font-size:20px}
+.draw-section-title{font-weight:700;font-size:15px;color:var(--text-main);flex:1}
+.draw-section-sub{font-size:12px;color:var(--text-sub)}
+.draw-section-arrow{font-size:12px;color:var(--text-sub);transition:transform .25s}
+.draw-section-arrow.open{transform:rotate(180deg)}
+.draw-section-body{display:none;border-top:1px solid var(--g100)}
+[data-theme="dark"] .draw-section-body{border-color:var(--border-col)}
+.draw-section-body.open{display:flex;height:520px}
+/* Sheets sidebar */
+.draw-sheets{width:160px;flex-shrink:0;border-right:1px solid var(--g100);display:flex;flex-direction:column;background:var(--g50)}
+[data-theme="dark"] .draw-sheets{background:#1a1f2e;border-color:var(--border-col)}
+.draw-sheets-title{font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:.08em;padding:12px 14px 6px}
+.draw-sheet-item{padding:8px 14px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;border-radius:6px;margin:1px 6px;transition:all .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.draw-sheet-item:hover{background:var(--g100);color:var(--text-main)}
+[data-theme="dark"] .draw-sheet-item:hover{background:rgba(255,255,255,.06)}
+.draw-sheet-item.active{background:var(--blue-light);color:var(--blue-mid);font-weight:700}
+[data-theme="dark"] .draw-sheet-item.active{background:rgba(77,159,255,.15);color:#4d9fff}
+.draw-sheet-new{margin:6px;padding:7px 14px;font-size:12px;font-weight:700;border:1.5px dashed var(--g300);border-radius:6px;color:var(--text-sub);cursor:pointer;text-align:center;transition:all .12s}
+.draw-sheet-new:hover{border-color:var(--blue-mid);color:var(--blue-mid)}
+.draw-sheet-del{float:right;opacity:0;font-size:11px;padding:1px 4px;border-radius:3px;transition:opacity .1s}
+.draw-sheet-item:hover .draw-sheet-del{opacity:.5}
+.draw-sheet-del:hover{opacity:1!important;background:#fecaca;color:#dc2626}
+/* Canvas area */
+.draw-canvas-area{flex:1;display:flex;flex-direction:column;min-width:0}
+.draw-toolbar{display:flex;align-items:center;gap:5px;padding:7px 12px;background:var(--bg-card);border-bottom:1px solid var(--g100);flex-wrap:wrap}
+[data-theme="dark"] .draw-toolbar{border-color:var(--border-col)}
+.dt-btn{padding:4px 11px;font-size:12px;font-weight:600;border-radius:6px;border:1px solid var(--g200);background:var(--bg-card);color:var(--text-sub);cursor:pointer;transition:all .12s;white-space:nowrap}
+.dt-btn:hover,.dt-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.dt-sep{width:1px;height:20px;background:var(--g200);margin:0 2px;flex-shrink:0}
+.dt-swatch{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:border .1s}
+.dt-swatch.on{border-color:#374151;box-shadow:0 0 0 1px #fff,0 0 0 3px #374151}
+[data-theme="dark"] .dt-swatch.on{box-shadow:0 0 0 1px #1a1f2e,0 0 0 3px #fff}
+.dt-size{width:22px;height:22px;border-radius:5px;border:1px solid var(--g200);background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.dt-size.on,.dt-size:hover{background:var(--g200)}
+.dt-spacer{flex:1}
+.draw-canvas-wrap{flex:1;overflow:hidden;position:relative;background:#f8f9fa;cursor:crosshair}
+[data-theme="dark"] .draw-canvas-wrap{background:#1a1f2e}
+#drawCanvas{display:block;width:100%;height:100%;touch-action:none}
+.draw-status{position:absolute;bottom:8px;right:12px;font-size:11px;color:var(--text-sub);pointer-events:none;opacity:.6}
+
 .notes-layout{display:grid;grid-template-columns:240px 1fr;gap:0;border:1.5px solid var(--g100);border-radius:16px;overflow:hidden;min-height:520px;background:#fff}
 [data-theme="dark"] .notes-layout{background:var(--bg-card);border-color:var(--border-col)}
 @media(max-width:760px){.notes-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}}
@@ -5965,18 +6012,64 @@ aside.sidebar {
               <div class="ntb-color-picker" id="ntbTxPicker"><div class="ntb-swatch" style="background:#1d4ed8" title="bleu foncé" onclick="ntbColor(&#39;#1d4ed8&#39;)"></div><div class="ntb-swatch" style="background:#dc2626" title="rouge" onclick="ntbColor(&#39;#dc2626&#39;)"></div><div class="ntb-swatch" style="background:#16a34a" title="vert" onclick="ntbColor(&#39;#16a34a&#39;)"></div><div class="ntb-swatch" style="background:#9333ea" title="violet" onclick="ntbColor(&#39;#9333ea&#39;)"></div><div class="ntb-swatch" style="background:#ea580c" title="orange" onclick="ntbColor(&#39;#ea580c&#39;)"></div><div class="ntb-swatch" style="background:#0891b2" title="cyan" onclick="ntbColor(&#39;#0891b2&#39;)"></div><div class="ntb-swatch" style="background:#be185d" title="rose" onclick="ntbColor(&#39;#be185d&#39;)"></div><div class="ntb-swatch" style="background:#854d0e" title="marron" onclick="ntbColor(&#39;#854d0e&#39;)"></div><div class="ntb-swatch" style="background:#374151" title="gris" onclick="ntbColor(&#39;#374151&#39;)"></div><div class="ntb-swatch" style="background:#000000" title="noir" onclick="ntbColor(&#39;#000000&#39;)"></div></div>
             </div>
           </div>
-          <div class="notes-tabs"><button class="notes-tab on" id="ntabWrite" onclick="switchNoteTab(&#39;write&#39;)">✏️ Écriture</button><button class="notes-tab" id="ntabPreview" onclick="switchNoteTab(&#39;preview&#39;)">✍️ Aperçu &amp; édition</button><button class="notes-tab" id="ntabMixte" onclick="switchNoteTab(&#39;mixte&#39;)">🖊 Mixte</button></div><div id="ntbMarkdown" class="notes-toolbar"><button class="ntb-btn" onclick="ntbInsert(&#39;**&#39;,&#39;**&#39;)" title="Gras"><b>G</b></button><button class="ntb-btn" onclick="ntbInsert(&#39;*&#39;,&#39;*&#39;)" title="Italique"><em>I</em></button><button class="ntb-btn" onclick="ntbInsert(&#39;&lt;u&gt;&#39;,&#39;&lt;/u&gt;&#39;)" title="Souligné"><u>S</u></button><button class="ntb-btn" onclick="ntbInsert(&#39;`&#39;,&#39;`&#39;)" title="Code">`</button><div class="ntb-sep"></div><button class="ntb-btn" onclick="ntbLine(&#39;# &#39;)">H1</button><button class="ntb-btn" onclick="ntbLine(&#39;## &#39;)">H2</button><button class="ntb-btn" onclick="ntbLine(&#39;### &#39;)">H3</button><div class="ntb-sep"></div><button class="ntb-btn" onclick="ntbLine(&#39;- &#39;)">•</button><button class="ntb-btn" onclick="ntbLine(&#39;1. &#39;)">1.</button><button class="ntb-btn" onclick="ntbLine(&#39;&gt; &#39;)">“</button><div class="ntb-sep"></div><div class="ntb-color-wrap"><button class="ntb-btn" onclick="togglePicker(&#39;ntbHlPicker&#39;)" title="Surligner">🖊</button><div class="ntb-color-picker" id="ntbHlPicker"><div class="ntb-swatch" style="background:#fef08a" onclick="ntbHighlight(&#39;#fef08a&#39;)"></div><div class="ntb-swatch" style="background:#bbf7d0" onclick="ntbHighlight(&#39;#bbf7d0&#39;)"></div><div class="ntb-swatch" style="background:#bae6fd" onclick="ntbHighlight(&#39;#bae6fd&#39;)"></div><div class="ntb-swatch" style="background:#fecaca" onclick="ntbHighlight(&#39;#fecaca&#39;)"></div><div class="ntb-swatch" style="background:#e9d5ff" onclick="ntbHighlight(&#39;#e9d5ff&#39;)"></div></div></div><div class="ntb-color-wrap"><button class="ntb-btn" onclick="togglePicker(&#39;ntbTxPicker&#39;)" title="Couleur">🎨</button><div class="ntb-color-picker" id="ntbTxPicker"><div class="ntb-swatch" style="background:#dc2626" onclick="ntbColor(&#39;#dc2626&#39;)"></div><div class="ntb-swatch" style="background:#1d4ed8" onclick="ntbColor(&#39;#1d4ed8&#39;)"></div><div class="ntb-swatch" style="background:#16a34a" onclick="ntbColor(&#39;#16a34a&#39;)"></div><div class="ntb-swatch" style="background:#9333ea" onclick="ntbColor(&#39;#9333ea&#39;)"></div><div class="ntb-swatch" style="background:#ea580c" onclick="ntbColor(&#39;#ea580c&#39;)"></div></div></div></div><div id="ntbWysiwyg" class="notes-toolbar" style="display:none"><button class="ntb-btn" onclick="wysiExec(&#39;bold&#39;)" title="Gras"><b>G</b></button><button class="ntb-btn" onclick="wysiExec(&#39;italic&#39;)" title="Italique"><em>I</em></button><button class="ntb-btn" onclick="wysiExec(&#39;underline&#39;)" title="Souligné"><u>S</u></button><button class="ntb-btn" onclick="wysiExec(&#39;strikeThrough&#39;)" title="Barré"><s>AB</s></button><div class="ntb-sep"></div><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;h1&#39;)" style="font-size:11px">H1</button><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;h2&#39;)" style="font-size:11px">H2</button><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;h3&#39;)" style="font-size:11px">H3</button><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;p&#39;)" style="font-size:10px">¶</button><div class="ntb-sep"></div><button class="ntb-btn" onclick="wysiExec(&#39;insertUnorderedList&#39;)" title="Liste">•</button><button class="ntb-btn" onclick="wysiExec(&#39;insertOrderedList&#39;)" title="Liste num.">1.</button><div class="ntb-sep"></div><div class="ntb-color-wrap"><button class="ntb-btn" title="Surligner" onclick="togglePicker(&#39;wysiHlPicker&#39;)">🖊</button><div class="ntb-color-picker" id="wysiHlPicker"><div class="ntb-swatch" style="background:#fef08a" onclick="wysiHL(&#39;#fef08a&#39;)"></div><div class="ntb-swatch" style="background:#bbf7d0" onclick="wysiHL(&#39;#bbf7d0&#39;)"></div><div class="ntb-swatch" style="background:#bae6fd" onclick="wysiHL(&#39;#bae6fd&#39;)"></div><div class="ntb-swatch" style="background:#fecaca" onclick="wysiHL(&#39;#fecaca&#39;)"></div><div class="ntb-swatch" style="background:#e9d5ff" onclick="wysiHL(&#39;#e9d5ff&#39;)"></div><div class="ntb-swatch" style="background:#fed7aa" onclick="wysiHL(&#39;#fed7aa&#39;)"></div><div class="ntb-swatch" style="background:#fce7f3" onclick="wysiHL(&#39;#fce7f3&#39;)"></div></div></div><div class="ntb-color-wrap"><button class="ntb-btn" title="Couleur texte" onclick="togglePicker(&#39;wysiTxPicker&#39;)">🎨</button><div class="ntb-color-picker" id="wysiTxPicker"><div class="ntb-swatch" style="background:#dc2626" onclick="wysiTC(&#39;#dc2626&#39;)"></div><div class="ntb-swatch" style="background:#1d4ed8" onclick="wysiTC(&#39;#1d4ed8&#39;)"></div><div class="ntb-swatch" style="background:#16a34a" onclick="wysiTC(&#39;#16a34a&#39;)"></div><div class="ntb-swatch" style="background:#9333ea" onclick="wysiTC(&#39;#9333ea&#39;)"></div><div class="ntb-swatch" style="background:#ea580c" onclick="wysiTC(&#39;#ea580c&#39;)"></div><div class="ntb-swatch" style="background:#0891b2" onclick="wysiTC(&#39;#0891b2&#39;)"></div><div class="ntb-swatch" style="background:#be185d" onclick="wysiTC(&#39;#be185d&#39;)"></div></div></div></div><div class="notes-body"><textarea class="notes-textarea" id="noteTextarea" placeholder="Ecris ici en markdown...
+          <div class="notes-tabs"><button class="notes-tab on" id="ntabWrite" onclick="switchNoteTab(&#39;write&#39;)">✏️ Écriture</button><button class="notes-tab" id="ntabPreview" onclick="switchNoteTab(&#39;preview&#39;)">✍️ Aperçu &amp; édition</button></div><div id="ntbMarkdown" class="notes-toolbar"><button class="ntb-btn" onclick="ntbInsert(&#39;**&#39;,&#39;**&#39;)" title="Gras"><b>G</b></button><button class="ntb-btn" onclick="ntbInsert(&#39;*&#39;,&#39;*&#39;)" title="Italique"><em>I</em></button><button class="ntb-btn" onclick="ntbInsert(&#39;&lt;u&gt;&#39;,&#39;&lt;/u&gt;&#39;)" title="Souligné"><u>S</u></button><button class="ntb-btn" onclick="ntbInsert(&#39;`&#39;,&#39;`&#39;)" title="Code">`</button><div class="ntb-sep"></div><button class="ntb-btn" onclick="ntbLine(&#39;# &#39;)">H1</button><button class="ntb-btn" onclick="ntbLine(&#39;## &#39;)">H2</button><button class="ntb-btn" onclick="ntbLine(&#39;### &#39;)">H3</button><div class="ntb-sep"></div><button class="ntb-btn" onclick="ntbLine(&#39;- &#39;)">•</button><button class="ntb-btn" onclick="ntbLine(&#39;1. &#39;)">1.</button><button class="ntb-btn" onclick="ntbLine(&#39;&gt; &#39;)">“</button><div class="ntb-sep"></div><div class="ntb-color-wrap"><button class="ntb-btn" onclick="togglePicker(&#39;ntbHlPicker&#39;)" title="Surligner">🖊</button><div class="ntb-color-picker" id="ntbHlPicker"><div class="ntb-swatch" style="background:#fef08a" onclick="ntbHighlight(&#39;#fef08a&#39;)"></div><div class="ntb-swatch" style="background:#bbf7d0" onclick="ntbHighlight(&#39;#bbf7d0&#39;)"></div><div class="ntb-swatch" style="background:#bae6fd" onclick="ntbHighlight(&#39;#bae6fd&#39;)"></div><div class="ntb-swatch" style="background:#fecaca" onclick="ntbHighlight(&#39;#fecaca&#39;)"></div><div class="ntb-swatch" style="background:#e9d5ff" onclick="ntbHighlight(&#39;#e9d5ff&#39;)"></div></div></div><div class="ntb-color-wrap"><button class="ntb-btn" onclick="togglePicker(&#39;ntbTxPicker&#39;)" title="Couleur">🎨</button><div class="ntb-color-picker" id="ntbTxPicker"><div class="ntb-swatch" style="background:#dc2626" onclick="ntbColor(&#39;#dc2626&#39;)"></div><div class="ntb-swatch" style="background:#1d4ed8" onclick="ntbColor(&#39;#1d4ed8&#39;)"></div><div class="ntb-swatch" style="background:#16a34a" onclick="ntbColor(&#39;#16a34a&#39;)"></div><div class="ntb-swatch" style="background:#9333ea" onclick="ntbColor(&#39;#9333ea&#39;)"></div><div class="ntb-swatch" style="background:#ea580c" onclick="ntbColor(&#39;#ea580c&#39;)"></div></div></div></div><div id="ntbWysiwyg" class="notes-toolbar" style="display:none"><button class="ntb-btn" onclick="wysiExec(&#39;bold&#39;)" title="Gras"><b>G</b></button><button class="ntb-btn" onclick="wysiExec(&#39;italic&#39;)" title="Italique"><em>I</em></button><button class="ntb-btn" onclick="wysiExec(&#39;underline&#39;)" title="Souligné"><u>S</u></button><button class="ntb-btn" onclick="wysiExec(&#39;strikeThrough&#39;)" title="Barré"><s>AB</s></button><div class="ntb-sep"></div><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;h1&#39;)" style="font-size:11px">H1</button><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;h2&#39;)" style="font-size:11px">H2</button><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;h3&#39;)" style="font-size:11px">H3</button><button class="ntb-btn" onclick="wysiExec(&#39;formatBlock&#39;,&#39;p&#39;)" style="font-size:10px">¶</button><div class="ntb-sep"></div><button class="ntb-btn" onclick="wysiExec(&#39;insertUnorderedList&#39;)" title="Liste">•</button><button class="ntb-btn" onclick="wysiExec(&#39;insertOrderedList&#39;)" title="Liste num.">1.</button><div class="ntb-sep"></div><div class="ntb-color-wrap"><button class="ntb-btn" title="Surligner" onclick="togglePicker(&#39;wysiHlPicker&#39;)">🖊</button><div class="ntb-color-picker" id="wysiHlPicker"><div class="ntb-swatch" style="background:#fef08a" onclick="wysiHL(&#39;#fef08a&#39;)"></div><div class="ntb-swatch" style="background:#bbf7d0" onclick="wysiHL(&#39;#bbf7d0&#39;)"></div><div class="ntb-swatch" style="background:#bae6fd" onclick="wysiHL(&#39;#bae6fd&#39;)"></div><div class="ntb-swatch" style="background:#fecaca" onclick="wysiHL(&#39;#fecaca&#39;)"></div><div class="ntb-swatch" style="background:#e9d5ff" onclick="wysiHL(&#39;#e9d5ff&#39;)"></div><div class="ntb-swatch" style="background:#fed7aa" onclick="wysiHL(&#39;#fed7aa&#39;)"></div><div class="ntb-swatch" style="background:#fce7f3" onclick="wysiHL(&#39;#fce7f3&#39;)"></div></div></div><div class="ntb-color-wrap"><button class="ntb-btn" title="Couleur texte" onclick="togglePicker(&#39;wysiTxPicker&#39;)">🎨</button><div class="ntb-color-picker" id="wysiTxPicker"><div class="ntb-swatch" style="background:#dc2626" onclick="wysiTC(&#39;#dc2626&#39;)"></div><div class="ntb-swatch" style="background:#1d4ed8" onclick="wysiTC(&#39;#1d4ed8&#39;)"></div><div class="ntb-swatch" style="background:#16a34a" onclick="wysiTC(&#39;#16a34a&#39;)"></div><div class="ntb-swatch" style="background:#9333ea" onclick="wysiTC(&#39;#9333ea&#39;)"></div><div class="ntb-swatch" style="background:#ea580c" onclick="wysiTC(&#39;#ea580c&#39;)"></div><div class="ntb-swatch" style="background:#0891b2" onclick="wysiTC(&#39;#0891b2&#39;)"></div><div class="ntb-swatch" style="background:#be185d" onclick="wysiTC(&#39;#be185d&#39;)"></div></div></div></div><div class="notes-body"><textarea class="notes-textarea" id="noteTextarea" placeholder="Ecris ici en markdown...
 
 # Mon titre
 ## Sous-titre
 **gras**, *italique*
 - élément" oninput="autoSaveNote()"></textarea><div class="notes-preview show" id="notePreview" contenteditable="false" style="display:none;flex:1;padding:20px;overflow-y:auto;outline:none;font-size:14px;line-height:1.8;color:var(--g900);min-height:300px"><em style="color:var(--g400)">Aperçu ici...</em></div></div>
-          <div id="blockEditor" style="display:none"></div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- SECTION DESSIN -->
+<div class="draw-section" id="drawSection">
+  <div class="draw-section-header" onclick="dsToggle()">
+    <span class="draw-section-icon">✏️</span>
+    <div>
+      <div class="draw-section-title">Dessin libre</div>
+      <div class="draw-section-sub">Stylet, souris, tactile · Feuilles sauvegardées</div>
+    </div>
+    <span class="draw-section-arrow" id="dsArrow">▼</span>
+  </div>
+  <div class="draw-section-body" id="dsSectionBody">
+    <!-- Sheets list -->
+    <div class="draw-sheets" id="dsSheets">
+      <div class="draw-sheets-title">Feuilles</div>
+      <div id="dsSheetList"></div>
+      <div class="draw-sheet-new" onclick="dsNewSheet()">+ Nouvelle feuille</div>
+    </div>
+    <!-- Canvas -->
+    <div class="draw-canvas-area">
+      <div class="draw-toolbar" id="dsToolbar">
+        <button class="dt-btn on" id="dsTool-pen" onclick="dsSetTool('pen',this)">✒ Stylo</button>
+        <button class="dt-btn" id="dsTool-marker" onclick="dsSetTool('marker',this)">◼ Marqueur</button>
+        <button class="dt-btn" id="dsTool-eraser" onclick="dsSetTool('eraser',this)">◻ Gomme</button>
+        <div class="dt-sep"></div>
+        <div class="dt-swatch on" style="background:#111827" onclick="dsSetColor('#111827',this)"></div>
+        <div class="dt-swatch" style="background:#1d4ed8" onclick="dsSetColor('#1d4ed8',this)"></div>
+        <div class="dt-swatch" style="background:#dc2626" onclick="dsSetColor('#dc2626',this)"></div>
+        <div class="dt-swatch" style="background:#16a34a" onclick="dsSetColor('#16a34a',this)"></div>
+        <div class="dt-swatch" style="background:#ea580c" onclick="dsSetColor('#ea580c',this)"></div>
+        <div class="dt-swatch" style="background:#9333ea" onclick="dsSetColor('#9333ea',this)"></div>
+        <div class="dt-sep"></div>
+        <div class="dt-size on" id="dsSize-2" onclick="dsSetSize(2,this)" title="Fin"><div style="width:3px;height:3px;border-radius:50%;background:currentColor;margin:auto"></div></div>
+        <div class="dt-size" id="dsSize-5" onclick="dsSetSize(5,this)" title="Moyen"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;margin:auto"></div></div>
+        <div class="dt-size" id="dsSize-12" onclick="dsSetSize(12,this)" title="Épais"><div style="width:11px;height:11px;border-radius:50%;background:currentColor;margin:auto"></div></div>
+        <div class="dt-spacer"></div>
+        <button class="dt-btn" onclick="dsClear()" style="color:#dc2626;border-color:#fecaca">⌫ Effacer</button>
+        <button class="dt-btn" onclick="dsExport()">↓ PNG</button>
+      </div>
+      <div class="draw-canvas-wrap" id="dsCanvasWrap">
+        <canvas id="drawCanvas"></canvas>
+        <div class="draw-status" id="dsStatus"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <!-- BU -->
@@ -9634,7 +9727,240 @@ function exportPDF(mode){
     +'<p>'+cards.length+' cartes exportées le '+new Date().toLocaleDateString('fr-FR')+'</p>'
     +'<table><thead><tr><th>Matière</th><th>Question</th><th>Réponse</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table>'
-    +'</body></html>';
+    +'<script>
+
+/* ══════════════════════════════════════════
+   SECTION DESSIN — Feuilles indépendantes
+   ══════════════════════════════════════════ */
+var DS = {
+  open: false,
+  sheets: [],        // [{id, name, data}]
+  activeId: null,
+  tool: 'pen',
+  color: '#111827',
+  size: 2,
+  drawing: false,
+  lastX: 0, lastY: 0,
+  dirty: false
+};
+
+/* ── Init ── */
+function dsInit() {
+  try { DS.sheets = JSON.parse(localStorage.getItem('dg_draw_sheets') || '[]'); } catch(e) { DS.sheets = []; }
+  if (!DS.sheets.length) DS.sheets = [{ id: Date.now(), name: 'Feuille 1', data: '' }];
+  DS.activeId = DS.sheets[0].id;
+  dsRenderSheets();
+  dsInitCanvas();
+}
+
+/* ── Toggle panel ── */
+function dsToggle() {
+  DS.open = !DS.open;
+  var body  = document.getElementById('dsSectionBody');
+  var arrow = document.getElementById('dsArrow');
+  if (DS.open) {
+    body.classList.add('open');
+    arrow.classList.add('open');
+    setTimeout(function() { dsResizeCanvas(); dsLoadSheet(DS.activeId); }, 50);
+  } else {
+    dsSave();
+    body.classList.remove('open');
+    arrow.classList.remove('open');
+  }
+}
+
+/* ── Canvas setup ── */
+function dsInitCanvas() {
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas) return;
+
+  function getPos(e) {
+    var r = canvas.getBoundingClientRect();
+    var sx = canvas.width  / r.width;
+    var sy = canvas.height / r.height;
+    return {
+      x: (e.clientX - r.left) * sx,
+      y: (e.clientY - r.top)  * sy,
+      p: Math.min(1, Math.max(0.1, e.pressure || 0.5))
+    };
+  }
+
+  canvas.addEventListener('pointerdown', function(e) {
+    e.preventDefault();
+    canvas.setPointerCapture(e.pointerId);
+    DS.drawing = true;
+    var p = getPos(e);
+    DS.lastX = p.x; DS.lastY = p.y;
+  });
+
+  canvas.addEventListener('pointermove', function(e) {
+    if (!DS.drawing) return;
+    e.preventDefault();
+    var p   = getPos(e);
+    var ctx = canvas.getContext('2d');
+    if (DS.tool === 'eraser') {
+      var es = DS.size * 6;
+      ctx.clearRect(p.x - es/2, p.y - es/2, es, es);
+    } else {
+      var lw = DS.tool === 'marker' ? DS.size * 3 : Math.max(0.8, DS.size * p.p);
+      ctx.globalAlpha  = DS.tool === 'marker' ? 0.4 : 1;
+      ctx.strokeStyle  = DS.color;
+      ctx.lineWidth    = lw;
+      ctx.lineCap      = 'round';
+      ctx.lineJoin     = 'round';
+      ctx.beginPath();
+      ctx.moveTo(DS.lastX, DS.lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.globalAlpha  = 1;
+    }
+    DS.lastX = p.x; DS.lastY = p.y;
+    DS.dirty = true;
+    clearTimeout(DS._saveTimer);
+    DS._saveTimer = setTimeout(dsSave, 1200);
+  });
+
+  function endDraw() {
+    DS.drawing = false;
+  }
+  canvas.addEventListener('pointerup',     endDraw);
+  canvas.addEventListener('pointercancel', endDraw);
+  canvas.addEventListener('pointerleave',  endDraw);
+}
+
+function dsResizeCanvas() {
+  var wrap   = document.getElementById('dsCanvasWrap');
+  var canvas = document.getElementById('drawCanvas');
+  if (!wrap || !canvas) return;
+  var r = wrap.getBoundingClientRect();
+  if (r.width < 10) return;
+  // Save current content, resize, restore
+  var oldData = DS.dirty || !DS._canvasSnapshot ? null : DS._canvasSnapshot;
+  canvas.width  = Math.round(r.width);
+  canvas.height = Math.round(r.height);
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  if (sheet && sheet.data) {
+    var img = new Image();
+    img.onload = function() { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+    img.src = sheet.data;
+  }
+}
+
+/* ── Load/save sheet ── */
+function dsLoadSheet(id) {
+  if (DS.dirty) dsSave();
+  DS.activeId = id;
+  DS.dirty = false;
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas) return;
+  dsResizeCanvas();
+  var sheet = DS.sheets.find(function(s){ return s.id === id; });
+  dsStatus('Feuille chargée');
+}
+
+function dsSave() {
+  var canvas = document.getElementById('drawCanvas');
+  if (!canvas || !DS.activeId) return;
+  var sheet = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  if (!sheet) return;
+  sheet.data = canvas.toDataURL('image/jpeg', 0.75);
+  DS.dirty = false;
+  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+  dsStatus('Sauvegardé ✓');
+  dsRenderSheets();
+}
+
+/* ── Sheets list ── */
+function dsRenderSheets() {
+  var list = document.getElementById('dsSheetList');
+  if (!list) return;
+  list.innerHTML = '';
+  DS.sheets.forEach(function(s) {
+    var div = document.createElement('div');
+    div.className = 'draw-sheet-item' + (s.id === DS.activeId ? ' active' : '');
+    div.innerHTML = '<span>' + s.name + '</span><span class="draw-sheet-del" onclick="event.stopPropagation();dsDeleteSheet(' + s.id + ')">✕</span>';
+    div.addEventListener('click', function() { dsLoadSheet(s.id); dsRenderSheets(); });
+    list.appendChild(div);
+  });
+}
+
+function dsNewSheet() {
+  dsSave();
+  var n = DS.sheets.length + 1;
+  var name = prompt('Nom de la feuille :', 'Feuille ' + n);
+  if (!name) name = 'Feuille ' + n;
+  var sheet = { id: Date.now(), name: name, data: '' };
+  DS.sheets.push(sheet);
+  DS.activeId = sheet.id;
+  DS.dirty = false;
+  dsRenderSheets();
+  dsResizeCanvas();
+}
+
+function dsDeleteSheet(id) {
+  if (DS.sheets.length <= 1) { alert('Impossible de supprimer la dernière feuille.'); return; }
+  if (!confirm('Supprimer cette feuille ?')) return;
+  DS.sheets = DS.sheets.filter(function(s){ return s.id !== id; });
+  if (DS.activeId === id) DS.activeId = DS.sheets[0].id;
+  try { localStorage.setItem('dg_draw_sheets', JSON.stringify(DS.sheets)); } catch(e) {}
+  dsRenderSheets();
+  dsResizeCanvas();
+}
+
+/* ── Tools ── */
+function dsSetTool(tool, btn) {
+  DS.tool = tool;
+  document.querySelectorAll('#dsToolbar .dt-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+}
+
+function dsSetColor(color, el) {
+  DS.color = color;
+  document.querySelectorAll('#dsToolbar .dt-swatch').forEach(function(s){ s.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+
+function dsSetSize(size, el) {
+  DS.size = size;
+  document.querySelectorAll('#dsToolbar .dt-size').forEach(function(s){ s.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+
+function dsClear() {
+  if (!confirm('Effacer toute la feuille ?')) return;
+  var canvas = document.getElementById('drawCanvas');
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  DS.dirty = true;
+  dsSave();
+}
+
+function dsExport() {
+  var canvas = document.getElementById('drawCanvas');
+  var sheet  = DS.sheets.find(function(s){ return s.id === DS.activeId; });
+  var name   = sheet ? sheet.name : 'dessin';
+  var a = document.createElement('a');
+  a.download = name + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function dsStatus(msg) {
+  var el = document.getElementById('dsStatus');
+  if (el) { el.textContent = msg; clearTimeout(DS._stTimer); DS._stTimer = setTimeout(function(){ el.textContent=''; }, 2000); }
+}
+
+/* Init on notes page open */
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('drawCanvas')) dsInit();
+});
+
+</script>
+</body></html>';
 
   var w=window.open('','_blank');
   w.document.write(html);
@@ -11226,12 +11552,7 @@ function openNote(id){
   document.getElementById('noteTitleInput').value = note.title||'';
   document.getElementById('noteMatSelect').value = note.mat||'';
   document.getElementById('noteTextarea').value = note.content||'';
-  // Switch to mixte tab if note has blocks
-  if (note.blocks && note.blocks.length) {
-    switchNoteTab('mixte');
-  } else {
-    switchNoteTab('write');
-  }
+  switchNoteTab('write');
   renderNotesList();
 }
 
@@ -11750,30 +12071,9 @@ function switchNoteTab(tab) {
   var wyTb  = document.getElementById('ntbWysiwyg');
   var tw    = document.getElementById('ntabWrite');
   var tp    = document.getElementById('ntabPreview');
-  var tm    = document.getElementById('ntabMixte');
-  var be    = document.getElementById('blockEditor');
   if (!ta || !prev) return;
 
-  // Reset Mixte tab
-  if (tm) tm.classList.remove('on');
-  if (be) be.style.display = 'none';
 
-  if (tab === 'mixte') {
-    // Save current text first
-    if (ta) { var note = activeNoteId ? notes.find(function(n){return n.id===activeNoteId;}) : null; if(note) note.content = ta.value; }
-    ta.style.display   = 'none';
-    prev.style.display = 'none';
-    prev.contentEditable = 'false';
-    if (mdTb) mdTb.style.display = 'none';
-    if (wyTb) wyTb.style.display = 'none';
-    if (tw) tw.classList.remove('on');
-    if (tp) tp.classList.remove('on');
-    if (tm) tm.classList.add('on');
-    if (be) be.style.display = 'flex';
-    var curNote = activeNoteId ? notes.find(function(n){return n.id===activeNoteId;}) : null;
-    if (curNote && typeof beOpen === 'function') beOpen(curNote);
-    return;
-  }
 
   if (tab === 'write') {
     // Save any edits made in preview before switching back
