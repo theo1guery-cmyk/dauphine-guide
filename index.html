@@ -20685,6 +20685,8 @@ var oralState = {
   active: false,
   maxTurns: 6,
   turn: 0,
+  currentIndex: 0,
+  retryCount: 0,
   timerId: null,
   silenceTimerId: null,
   secondsLeft: 12 * 60,
@@ -20693,6 +20695,8 @@ var oralState = {
   currentQuestion: '',
   score: 12,
   jokerUsed: false,
+  questions: [],
+  recentFeedbacks: [],
   history: [],
   replay: [],
   speechRate: 0.98,
@@ -20768,7 +20772,7 @@ function oralRefreshChips() {
   var turnChip = document.getElementById('oralTurnChip');
   var modeChip = document.getElementById('oralModeChip');
   if (timerChip) timerChip.textContent = '⏱️ ' + oralFormatClock(oralState.secondsLeft);
-  if (turnChip) turnChip.textContent = 'Tour ' + oralState.turn + '/' + oralState.maxTurns;
+  if (turnChip) turnChip.textContent = 'Question ' + oralState.turn + '/' + oralState.maxTurns;
   if (modeChip) modeChip.textContent = 'Mode ' + oralGetSpecialMode();
 }
 
@@ -21028,10 +21032,13 @@ function resetOralSimulator() {
   if (ambBtn) ambBtn.textContent = '🔊 Ambiance salle';
   oralState.active = false;
   oralState.turn = 0;
+  oralState.currentIndex = 0;
+  oralState.retryCount = 0;
   oralState.secondsLeft = 12 * 60;
   oralState.currentQuestion = '';
   oralState.score = 12;
   oralState.jokerUsed = false;
+  oralState.questions = [];
   oralState.history = [];
   oralState.replay = [];
   oralState.reportHtml = '';
@@ -21083,6 +21090,57 @@ function oralClampScore(val) {
   return Math.max(0, Math.min(20, val));
 }
 
+function oralQuestionText(item) {
+  if (typeof item === 'string') return item.trim();
+  if (!item || typeof item !== 'object') return '';
+  return String(item.question || item.text || item.prompt || item.intitule || '').trim();
+}
+
+function oralNormalizeText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function oralDedupeQuestions(items, limit) {
+  var seen = {};
+  var out = [];
+  (items || []).forEach(function(item) {
+    var txt = oralQuestionText(item);
+    if (!txt) return;
+    var key = oralNormalizeText(txt);
+    if (!key || seen[key]) return;
+    seen[key] = true;
+    out.push(txt);
+  });
+  return out.slice(0, limit || out.length);
+}
+
+function oralQuestionThemeKey(question) {
+  var stop = {
+    le:1, la:1, les:1, de:1, des:1, du:1, en:1, et:1, ou:1, un:1, une:1, au:1, aux:1,
+    sur:1, dans:1, pour:1, par:1, que:1, qui:1, quoi:1, comment:1, pourquoi:1
+  };
+  var words = oralNormalizeText(question).split(' ').filter(function(w) {
+    return w && !stop[w] && w.length >= 4;
+  });
+  return words.slice(0, 3).join(' ');
+}
+
+function oralCoverageWeak(questions, expectedCount) {
+  if (!Array.isArray(questions) || questions.length < Math.min(3, expectedCount)) return true;
+  var themes = {};
+  questions.forEach(function(q) {
+    var key = oralQuestionThemeKey(q);
+    if (key) themes[key] = true;
+  });
+  var uniqueThemes = Object.keys(themes).length;
+  return uniqueThemes < Math.max(3, Math.ceil(expectedCount * 0.7));
+}
+
 function oralBuildSessionPrompt(opts) {
   var formatNote = '';
   if (opts.format === 'soutenance') {
@@ -21096,14 +21154,17 @@ function oralBuildSessionPrompt(opts) {
   if (opts.special === 'training') modeNote = 'Mode entrainement: si blocage probable, autorise un indice court.';
   if (opts.special === 'concours') modeNote = 'Mode concours: niveau plus eleve, relances tres selectives.';
   if (opts.special === 'sansfilet') modeNote = 'Mode sans filet: ton sec et pression temporelle.';
+  var scopeNote = opts.scope && opts.scope.indexOf('tout le cours') !== -1
+    ? 'IMPORTANT: couvre tout le cours avec des themes DISTINCTS, sans reposer la meme idee sous une autre forme.'
+    : 'Reste strictement sur la partie ciblee sans sortir du perimetre.';
   return 'Tu simules un oral universitaire pour un etudiant L1 Dauphine. '
     + 'Professeur: ' + opts.profName + '. Reputation: ' + opts.profRep + '. '
     + 'Style prof: ' + opts.style + '. Matiere: ' + opts.matiere + '. Format: ' + opts.format + '. '
-    + 'Perimetre: ' + opts.scope + '. ' + formatNote + ' ' + modeNote + ' '
+    + 'Perimetre: ' + opts.scope + '. ' + scopeNote + ' ' + formatNote + ' ' + modeNote + ' '
     + 'Cours etudiant: ' + opts.course.slice(0, 7600) + '. '
     + 'Reponds UNIQUEMENT en JSON valide format '
-    + '{"intro":"...","questions":["..."],"hints":["..."]}. '
-    + 'Donne exactement ' + opts.count + ' questions progressives et realistes, puis 3 hints optionnels.';
+    + '{"intro":"...","questions":[{"theme":"...","question":"..."}],"hints":["..."]}. '
+    + 'Donne exactement ' + opts.count + ' questions progressives, realistes et variees, une par theme principal du cours.';
 }
 
 async function startOralSession() {
@@ -21146,10 +21207,26 @@ async function startOralSession() {
     oralState.active = true;
     oralState.maxTurns = count;
     oralState.turn = 1;
+    oralState.currentIndex = 0;
+    oralState.retryCount = 0;
     oralState.score = special === 'concours' ? 10.5 : 12;
     oralState.jokerUsed = false;
     oralState.secondsLeft = (format === 'soutenance' ? 15 : 12) * 60;
     oralState.history = [];
+    oralState.recentFeedbacks = [];
+
+    var questions = oralDedupeQuestions(data.questions, count);
+    if (scope === 'all' && oralCoverageWeak(questions, count)) {
+      var retryPrompt = oralBuildSessionPrompt(opts)
+        + ' Regeneration forcee: assure une couverture LARGE du cours et interdit les doublons de theme.';
+      var retryData = profParseJson(await profRequest(retryPrompt, 1400, 0.35));
+      if (retryData && Array.isArray(retryData.questions)) {
+        questions = oralDedupeQuestions(retryData.questions, count);
+        if (retryData.intro) data.intro = retryData.intro;
+      }
+    }
+    oralState.questions = questions;
+    if (!oralState.questions.length) throw new Error('Aucune question exploitable generee');
     oralState.replay = [];
     oralState.lastSpeechAt = Date.now();
     oralSetControlState(true);
@@ -21160,7 +21237,8 @@ async function startOralSession() {
     if (chat) chat.innerHTML = '';
     oralResetResultPanel();
     var intro = String(data.intro || ('Bonjour, je suis ' + profName + '. Nous commencons.')).trim();
-    var firstQuestion = String(data.questions[0] || '').trim();
+    var firstQuestion = oralQuestionText(oralState.questions[0]);
+    if (!firstQuestion) throw new Error('Premiere question illisible');
     oralState.currentQuestion = firstQuestion;
     oralState.history.push({ role: 'prof', text: intro });
     oralState.history.push({ role: 'prof', text: firstQuestion });
@@ -21211,8 +21289,6 @@ async function submitOralAnswer() {
   oralMaybeInterrupt(answer);
   if (input) input.value = '';
 
-  if (oralState.turn >= oralState.maxTurns) return finishOralSession('Derniere reponse envoyee');
-
   oralSetStatus('Correction et relance...', false);
   try {
     var special = oralGetSpecialMode();
@@ -21221,35 +21297,72 @@ async function submitOralAnswer() {
     }).join('\n');
     var hintNeed = special === 'training' ? 'Si la reponse est faible, ajoute un indice bref dans hint.' : 'Laisse hint vide.';
     var moodNeed = 'Si hors-sujet, ton plus sec. Si precis, approuve explicitement.';
+    var avoid = oralState.recentFeedbacks.slice(-3).join(' | ');
     var prompt = 'Tu joues un professeur a l oral. '
       + moodNeed + ' '
       + 'Analyse la reponse et relance immediatement. '
       + 'Reponds UNIQUEMENT en JSON valide format '
-      + '{"feedback":"...","relance":"...","score_delta":0,"hint":"..."}. '
-      + 'Contraintes: feedback 1-2 phrases, relance precise, score_delta entre -2 et +2. '
+      + '{"feedback":"...","relance":"...","score_delta":0,"hint":"...","is_correct":false,"diagnostic":["..."],"next_focus":"..."}. '
+      + 'Contraintes: feedback 1-2 phrases, relance precise, score_delta entre -2 et +2, evite les phrases deja utilisees. '
       + hintNeed + ' '
+      + (avoid ? ('Ne reutilise pas ces formulations: ' + avoid + '. ') : '')
       + 'Question actuelle: ' + oralState.currentQuestion + '.\nHistorique recent:\n' + context;
 
     var data = profParseJson(await profRequest(prompt, 700, 0.3));
-    if (!data || !data.relance) throw new Error('Relance indisponible');
+    if (!data || (!data.relance && !data.next_focus)) throw new Error('Relance indisponible');
 
     var feedback = String(data.feedback || 'Reponse recue.');
-    var relance = String(data.relance || '').trim();
+    var relance = String(data.relance || data.next_focus || '').trim();
     var hint = String(data.hint || '').trim();
+    var diagnostics = Array.isArray(data.diagnostic) ? data.diagnostic.slice(0, 2) : [];
+    var isCorrect = !!data.is_correct;
+    var heuristicPositive = /bon|correct|precis|solide|juste|pertinent/i.test(feedback);
+    if (!isCorrect && heuristicPositive && Number(data.score_delta || 0) >= 1) isCorrect = true;
     var delta = Number(data.score_delta || 0);
     oralState.score = oralClampScore(oralState.score + Math.max(-2, Math.min(2, delta)));
 
-    oralState.turn += 1;
-    oralState.currentQuestion = relance;
+    if (!isCorrect) oralState.retryCount += 1;
+
+    var mustMoveNext = isCorrect || oralState.retryCount >= 2;
+    if (mustMoveNext) {
+      oralState.currentIndex += 1;
+      oralState.retryCount = 0;
+      if (oralState.currentIndex >= oralState.maxTurns || oralState.currentIndex >= oralState.questions.length) {
+        oralPushMessage('prof', feedback + '\n\nTrès bien, on s\'arrête là pour cette session.');
+        oralPushReplay('prof', feedback + ' [fin de session]');
+        return finishOralSession('Derniere reponse envoyee');
+      }
+      oralState.turn = oralState.currentIndex + 1;
+      oralState.currentQuestion = oralState.questions[oralState.currentIndex];
+    } else {
+      oralState.currentQuestion = relance || oralState.currentQuestion;
+    }
+
     oralRefreshChips();
     oralState.history.push({ role: 'prof', text: feedback });
-    oralState.history.push({ role: 'prof', text: relance });
 
-    var bundle = feedback + '\n\nQuestion ' + oralState.turn + ': ' + relance;
+    var bundle;
+    if (mustMoveNext) {
+      oralState.history.push({ role: 'prof', text: oralState.currentQuestion });
+      bundle = feedback + '\n\nQuestion ' + oralState.turn + ': ' + oralState.currentQuestion;
+    } else {
+      oralState.history.push({ role: 'prof', text: oralState.currentQuestion });
+      bundle = feedback + '\n\nRebond: ' + oralState.currentQuestion;
+    }
+    if (diagnostics.length) {
+      bundle += '\n\nDiagnostic rapide: ' + diagnostics.map(function(d) { return '- ' + d; }).join('\n');
+    }
     if (hint && oralGetSpecialMode() === 'training') bundle += '\n\nIndice: ' + hint;
+
+    var feedbackNorm = oralNormalizeText(feedback);
+    if (feedbackNorm) {
+      if (oralState.recentFeedbacks.length >= 6) oralState.recentFeedbacks.shift();
+      oralState.recentFeedbacks.push(feedbackNorm);
+    }
+
     oralPushMessage('prof', bundle);
     oralPushReplay('prof', bundle);
-    oralSpeak(feedback + ' ' + relance + (hint && oralGetSpecialMode() === 'training' ? (' Indice: ' + hint) : ''));
+    oralSpeak(feedback + ' ' + oralState.currentQuestion + (hint && oralGetSpecialMode() === 'training' ? (' Indice: ' + hint) : ''));
     oralSetStatus('Oral en cours', false);
     oralRenderReplay();
   } catch (error) {
