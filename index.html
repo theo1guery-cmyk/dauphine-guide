@@ -19847,8 +19847,8 @@ async function profRequest(prompt, maxTokens, temperature) {
 }
 
 async function profRequestXXL(prompt, maxTokens, temperature) {
-  var XXL_MODEL = 'llama-3.3-70b-versatile'; // modèle plus puissant + quota séparé
-  var MAX_RETRIES = 3;
+  var XXL_MODEL = 'llama-3.3-70b-versatile';
+  var MAX_RETRIES = 4;
 
   for (var attempt = 0; attempt < MAX_RETRIES; attempt++) {
     var res = await fetch(GROQ_PROXY, {
@@ -19856,7 +19856,7 @@ async function profRequestXXL(prompt, maxTokens, temperature) {
       headers: { 'Content-Type': 'application/json', 'X-Groq-Tier': 'xxl' },
       body: JSON.stringify({
         model: XXL_MODEL,
-        max_tokens: maxTokens || 1200,
+        max_tokens: maxTokens || 800,
         temperature: typeof temperature === 'number' ? temperature : 0.3,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -19871,17 +19871,18 @@ async function profRequestXXL(prompt, maxTokens, temperature) {
     var errData = await res.json().catch(function() { return {}; });
     var msg = errData.error && errData.error.message ? errData.error.message : '';
 
-    // Rate limit → attend le temps suggéré puis réessaie
     if (res.status === 429) {
       var waitMatch = msg.match(/try again in ([0-9.]+)s/i);
-      var waitSecs = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 1 : 20;
+      var waitSecs = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 2 : 15;
       if (attempt < MAX_RETRIES - 1) {
-        toast('Rate limit — nouvelle tentative dans ' + waitSecs + 's…', '⏳');
-        await new Promise(function(r) { setTimeout(r, waitSecs * 1000); });
+        // Affiche un compte à rebours
+        for (var s = waitSecs; s > 0; s--) {
+          profSetFicheProgress(null, 'Rate limit — reprise dans ' + s + 's…');
+          await new Promise(function(r) { setTimeout(r, 1000); });
+        }
         continue;
       }
     }
-
     throw new Error(msg || 'Erreur API ' + res.status);
   }
 }
@@ -20195,13 +20196,13 @@ function profChunkCourseText(text, targetLen, overlapLen) {
 }
 
 async function profExtractChunkSummary(chunk, idx, total) {
-  var prompt = 'Tu es un assistant de révision universitaire. Analyse le bloc de cours ci-dessous. '
-    + 'Réponds uniquement en JSON valide avec ce format: '
-    + '{"chunk_id":"c'+idx+'","concepts":[{"nom":"...","definition":"...","points_cles":["..."],"exemples":["..."],"pieges":["..."]}],"questions":[{"question":"...","reponse":"..."}],"notes":["..."]}. '
-    + 'Règles: 6 à 14 concepts max selon la densité du bloc, pas de blabla hors JSON, niveau L1. '
-    + 'Bloc ' + idx + '/' + total + ' :\n\n' + chunk;
-  var raw = await profRequestXXL(prompt, 1100, 0.2);
-  return profParseJson(raw) || { chunk_id: 'c'+idx, concepts: [], questions: [], notes: [] };
+  var prompt = 'Analyse ce bloc de cours L1 droit-éco. '
+    + 'Réponds UNIQUEMENT en JSON: '
+    + '{"concepts":[{"nom":"...","definition":"...","points_cles":["..."]}],"questions":[{"question":"...","reponse":"..."}]}. '
+    + '4 à 7 concepts max, 2 questions max, sois concis. '
+    + 'Bloc ' + idx + '/' + total + ':\n\n' + chunk.slice(0, 2000);
+  var raw = await profRequestXXL(prompt, 700, 0.2);
+  return profParseJson(raw) || { concepts: [], questions: [] };
 }
 
 function profMergeChunkSummaries(summaries) {
@@ -20239,16 +20240,27 @@ function profMergeChunkSummaries(summaries) {
 }
 
 async function profBuildFinalSheetFromKnowledge(kb) {
-  var kbJson = JSON.stringify(kb).slice(0, 14000);
-  var prompt = 'Tu es un tuteur d\'excellence en droit-économie. À partir de la base de connaissance JSON ci-dessous, '
-    + 'rédige une fiche de révision très complète et structurée pour partiel de L1. '
-    + 'Réponds uniquement en JSON valide au format: '
-    + '{"sections":[{"titre":"...","contenu":"..."}],"questions":[{"question":"...","reponse":"..."}]}. '
-    + 'Contraintes: 8 à 12 sections riches, contenu dense, exemples concrets, distinctions importantes, style clair et universitaire. '
-    + 'Ajoute 10 à 15 questions difficiles avec réponses développées. '
-    + 'Base JSON:\n' + kbJson;
-  var raw = await profRequestXXL(prompt, 1900, 0.2);
-  return profParseJson(raw);
+  // Étape A : génère les sections de la fiche
+  var kbJson = JSON.stringify({ concepts: (kb.concepts || []).slice(0, 30) }).slice(0, 6000);
+  var promptA = 'À partir de ces concepts de cours L1 droit-éco, rédige une fiche de révision structurée. '
+    + 'Réponds UNIQUEMENT en JSON: {"sections":[{"titre":"...","contenu":"..."}]}. '
+    + '6 à 8 sections denses, style universitaire, exemples concrets. '
+    + 'Concepts:\n' + kbJson;
+  var rawA = await profRequestXXL(promptA, 1100, 0.2);
+  var dataA = profParseJson(rawA) || { sections: [] };
+
+  // Délai entre les deux appels finaux
+  await new Promise(function(r) { setTimeout(r, 8000); });
+
+  // Étape B : génère les questions difficiles
+  var qJson = JSON.stringify({ questions: (kb.questions || []).slice(0, 20) }).slice(0, 4000);
+  var promptB = 'À partir de ces questions/réponses de cours L1, sélectionne et reformule les 8 plus difficiles. '
+    + 'Réponds UNIQUEMENT en JSON: {"questions":[{"question":"...","reponse":"..."}]}. '
+    + 'Questions source:\n' + qJson;
+  var rawB = await profRequestXXL(promptB, 900, 0.2);
+  var dataB = profParseJson(rawB) || { questions: [] };
+
+  return { sections: dataA.sections || [], questions: dataB.questions || [] };
 }
 
 function profRenderRevisionData(data, result) {
@@ -20362,15 +20374,22 @@ async function generateRevisionSheetXXL() {
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>Mode XXL en cours</strong><span>Analyse par blocs, fusion et rédaction finale en plusieurs étapes.</span></div></div>';
   try {
     var clean = source.replace(/\r/g, '').trim();
-    var chunks = profChunkCourseText(clean, 3200, 260);
+    var chunks = profChunkCourseText(clean, 2000, 150);
     if (!chunks.length) throw new Error('Cours vide après découpage');
 
     var summaries = [];
     for (var i = 0; i < chunks.length; i++) {
-      var pct = 10 + Math.round((i / chunks.length) * 55);
-      profSetFicheProgress(pct, 'Extraction du bloc ' + (i + 1) + '/' + chunks.length + '…');
+      var pct = 10 + Math.round((i / chunks.length) * 50);
+      profSetFicheProgress(pct, 'Analyse du bloc ' + (i + 1) + '/' + chunks.length + '…');
       var summary = await profExtractChunkSummary(chunks[i], i + 1, chunks.length);
       summaries.push(summary);
+      // Pause entre chaque bloc pour rester sous le rate limit (6000 TPM/min)
+      if (i < chunks.length - 1) {
+        for (var s = 10; s > 0; s--) {
+          profSetFicheProgress(pct, 'Bloc ' + (i + 1) + '/' + chunks.length + ' — pause ' + s + 's…');
+          await new Promise(function(r) { setTimeout(r, 1000); });
+        }
+      }
     }
 
     profSetFicheProgress(72, 'Fusion des connaissances…');
