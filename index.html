@@ -19827,11 +19827,23 @@ function profFindMatterName(matterId) {
 function profParseJson(raw) {
   if (!raw) return null;
   var clean = String(raw).trim().replace(/```json/gi, '').replace(/```/g, '');
-  try { return JSON.parse(clean); } catch (error) {}
-  var start = clean.indexOf('{');
-  var end = clean.lastIndexOf('}');
-  if (start !== -1 && end > start) {
-    try { return JSON.parse(clean.slice(start, end + 1)); } catch (error2) {}
+  var candidates = [clean];
+  var fenced = clean.match(/\{[\s\S]*\}/g);
+  if (fenced && fenced.length) candidates = candidates.concat(fenced);
+  for (var i = 0; i < candidates.length; i++) {
+    var candidate = candidates[i];
+    if (!candidate) continue;
+    var sanitized = candidate
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/,\s*([}\]])/g, '$1')
+      .replace(/\u00a0/g, ' ');
+    try { return JSON.parse(sanitized); } catch (error) {}
+    var start = sanitized.indexOf('{');
+    var end = sanitized.lastIndexOf('}');
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(sanitized.slice(start, end + 1)); } catch (error2) {}
+    }
   }
   return null;
 }
@@ -20039,6 +20051,28 @@ function profRenderCorrection(data) {
   return html;
 }
 
+function profRenderMarkdownFallback(title, raw, copyText, printTitle) {
+  var safeRaw = profCompactText(raw || '');
+  var html = '<div class="prof-section-label">' + profEscapeHtml(title) + '</div>';
+  html += '<div class="prof-feedback"><div class="prof-output-scroll"><div class="prof-markdown">' + markdownToHtml(safeRaw || 'Réponse vide.') + '</div></div>';
+  html += '<div class="prof-result-toolbar"><button class="prof-btn secondary" type="button" onclick="profCopyToClipboard(window.profLastFallbackText, \'Réponse copiée\')">📋 Copier</button><button class="prof-btn ghost" type="button" onclick="profPrintHtml(' + JSON.stringify(printTitle || title) + ', window.profLastFallbackHtml)">🖨️ PDF / Imprimer</button></div></div>';
+  window.profLastFallbackText = safeRaw;
+  window.profLastFallbackHtml = '<h1>' + profEscapeHtml(printTitle || title) + '</h1>' + markdownToHtml(safeRaw || 'Réponse vide.');
+  return html;
+}
+
+function profRenderCorrectionFallback(raw) {
+  var text = profCompactText(raw || '');
+  var noteMatch = text.match(/(\d{1,2}(?:[\.,]\d+)?)\s*\/\s*20/);
+  var note = noteMatch ? parseFloat(noteMatch[1].replace(',', '.')) : 0;
+  var html = '<div class="prof-score">';
+  html += '<div class="prof-score-badge ' + profScoreClass(note) + '"><div><div class="prof-score-value">' + (note ? note.toFixed(1) : '?.?') + '</div><div class="prof-score-den">/20</div></div></div>';
+  html += '<div class="prof-score-text"><strong>Réponse brute de l\'IA</strong><span>Le format JSON attendu n\'a pas été respecté, mais le contenu reste exploitable.</span></div>';
+  html += '</div>';
+  html += profRenderMarkdownFallback('Correction reçue', text, text, 'Correction Dauphine');
+  return html;
+}
+
 function switchProfTab(tabName, button) {
   document.querySelectorAll('.prof-tab').forEach(function(tab) { tab.classList.remove('on'); });
   document.querySelectorAll('.prof-panel').forEach(function(panel) { panel.classList.remove('active'); });
@@ -20077,7 +20111,8 @@ async function corrigerCopie() {
       + 'Exigences impératives: cite toujours plusieurs passages exacts de la copie; propose des reformulations concrètes; la copie corrigée doit être complète, soignée, démonstrative, avec introduction, développement structuré et conclusion si le genre s\'y prête. '
       + 'Sois rigoureux, concret, et crédible pour un étudiant de L1. Copie: ' + compactCopy;
     var raw = await profRequest(prompt, 2000, 0.22);
-    result.innerHTML = profRenderCorrection(profParseJson(raw));
+    var parsed = profParseJson(raw);
+    result.innerHTML = parsed ? profRenderCorrection(parsed) : profRenderCorrectionFallback(raw);
   } catch (error) {
     if (profIsRequestTooLarge(error)) {
       result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Copie trop longue pour un seul passage</strong><span>Le texte a été réduit au maximum utile, mais la demande reste trop lourde pour Groq. Essaie de corriger une partie de la copie à la fois.</span></div></div>';
@@ -20199,7 +20234,8 @@ async function submitProfExam() {
       + '{"note":13.5,"resume":"appréciation courte","commentaire_global":"3 à 5 phrases","parties":[{"titre":"Introduction","verdict":"...","commentaire":"..."},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et gestion du temps","verdict":"...","commentaire":"..."}],"points_forts":["..."],"axes_amelioration":["..."]}. '
       + 'Copie: ' + compactCopy;
     var raw = await profRequest(prompt, 1100, 0.25);
-    result.innerHTML = profRenderCorrection(profParseJson(raw));
+    var parsed = profParseJson(raw);
+    result.innerHTML = parsed ? profRenderCorrection(parsed) : profRenderCorrectionFallback(raw);
   } catch (error) {
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   }
@@ -20231,8 +20267,12 @@ async function generateArretSheet() {
     var prompt = 'Tu es chargé de TD en droit. À partir de l\'arrêt suivant, réponds uniquement en JSON valide avec les clés suivantes: '
       + '{"juridiction":"...","faits":"...","procedure":"...","question":"...","solution":"...","portee":"..."}. '
       + 'Chaque champ doit être concis mais précis. Arrêt: ' + compactSource;
-    var data = profParseJson(await profRequest(prompt, 900, 0.2));
-    if (!data) throw new Error('Réponse illisible');
+    var raw = await profRequest(prompt, 900, 0.2);
+    var data = profParseJson(raw);
+    if (!data) {
+      result.innerHTML = profRenderMarkdownFallback('Fiche d\'arrêt générée', raw, raw, 'Fiche d\'arrêt');
+      return;
+    }
     result.innerHTML = '<div class="prof-structured">'
       + '<div class="prof-structured-block"><strong>Juridiction</strong><p>' + profNl2br(data.juridiction || '') + '</p></div>'
       + '<div class="prof-structured-block"><strong>Faits</strong><p>' + profNl2br(data.faits || '') + '</p></div>'
@@ -20265,8 +20305,12 @@ async function generateDissertationPlan() {
       + 'pour le sujet suivant: ' + subject + '. '
       + (compactNotes ? 'Appuie-toi si possible sur cet extrait de cours: ' + compactNotes + '. ' : '')
       + 'Le plan doit être crédible pour une copie de L1.';
-    var data = profParseJson(await profRequest(prompt, 850, 0.3));
-    if (!data) throw new Error('Réponse illisible');
+    var raw = await profRequest(prompt, 850, 0.3);
+    var data = profParseJson(raw);
+    if (!data) {
+      result.innerHTML = profRenderMarkdownFallback('Plan de dissertation généré', raw, raw, 'Plan de dissertation');
+      return;
+    }
     result.innerHTML = '<div class="prof-structured">'
       + '<div class="prof-structured-block"><strong>Problématique</strong><p>' + profNl2br(data.problematique || '') + '</p></div>'
       + '<div class="prof-structured-block"><strong>I. ' + profEscapeHtml(data.partie1 && data.partie1.titre || '') + '</strong><p>A. ' + profNl2br(data.partie1 && data.partie1.a || '') + '<br><br>B. ' + profNl2br(data.partie1 && data.partie1.b || '') + '</p></div>'
@@ -20295,8 +20339,15 @@ async function generateRevisionSheet() {
       + '{"titre":"...","introduction":"...","sections":[{"titre":"...","contenu":"...","points_cles":["...","..."],"exemples":["...","..."],"pieges":["...","..."]}],"synthese":"...","questions":[{"question":"...","reponse":"..."}],"plan_flash":"...","vocabulaire":[{"terme":"...","definition":"..."}]}. '
       + 'Exigences: 5 a 6 sections substantielles si la matière le permet; chaque section doit être riche; ajoute des exemples, distinctions, nuances, pièges, et une mini synthèse finale; les réponses aux questions doivent être développées. '
       + 'Le ton doit être universitaire, précis, clair et approfondi. Privilégie la densité utile plutôt que la longueur gratuite. Cours: ' + compactSource;
-    var data = profParseJson(await profRequest(prompt, 1800, 0.2));
-    if (!data) throw new Error('Réponse illisible');
+    var raw = await profRequest(prompt, 1800, 0.2);
+    var data = profParseJson(raw);
+    if (!data) {
+      window.profLastTtsText = profCompactText(raw);
+      window.profLastRevisionMarkdown = profCompactText(raw);
+      window.profLastRevisionHtml = '<h1>Fiche de révision</h1>' + markdownToHtml(window.profLastRevisionMarkdown);
+      result.innerHTML = profRenderMarkdownFallback('Fiche de révision générée', raw, raw, 'Fiche de révision') + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button></div>';
+      return;
+    }
     var sectionsHtml = '';
     if (data.titre || data.introduction) {
       sectionsHtml += '<div class="prof-structured">';
