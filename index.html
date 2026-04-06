@@ -9505,7 +9505,7 @@ function updateNoCCFields() {
 }
 
 // ─── GROQ API ───
-var GROQ_API_KEY = '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';
+var GROQ_PROXY = 'https://shiny-lake-f66d.theo1-guery.workers.dev'; // clé cachée côté Cloudflare Worker
 var GROQ_API_KEY_XXL = 'AIzaSyB-m_YpnYbgG3R1e_ms51pdMz9OqCu7QtI';
 var GROQ_MODEL   = 'llama-3.1-8b-instant';
 var GEMINI_API_KEY = 'AIzaSyAw9s4JTVd-EoHVBDIVaCVxnP_ATMhU914'; // <- Gemini pour news avec Google Search
@@ -9820,11 +9820,10 @@ async function cultureGenerateGroq(forceRefresh) {
     + " 12) donner un angle précis, niche, mais rigoureux et utile.";
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -9881,7 +9880,7 @@ async function cultureGenerateGroq(forceRefresh) {
       err.textContent = 'Impossible de générer le contenu Culture G: ' + (e && e.message ? e.message : 'Erreur inconnue');
 
       if (String(e && e.message || '').indexOf('401') > -1) {
-        toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+        toast('Clé API invalide — réessaie', '❌');
       } else if (String(e && e.message || '').indexOf('429') > -1) {
         toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
       } else {
@@ -9925,11 +9924,10 @@ async function generateFlashcardsGroq() {
     + "COURS:\n" + text.slice(0, 3000);
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -10014,7 +10012,7 @@ async function generateFlashcardsGroq() {
   } catch(e) {
     console.error('Groq error:', e);
     if (e.message && e.message.indexOf('401') > -1) {
-      toast('Cle API invalide — verifie GROQ_API_KEY dans le code', '❌');
+      toast('Cle API invalide — réessaie', '❌');
     } else if (e.message && e.message.indexOf('429') > -1) {
       toast('Limite Groq atteinte — reessaie dans quelques secondes', '⚠️');
     } else {
@@ -13097,11 +13095,10 @@ async function notesGenGroq() {
   if (load) load.style.display = 'block';
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -13177,7 +13174,7 @@ async function notesGenGroq() {
   } catch(e) {
     console.error('Groq notesGen error:', e);
     if (e.message && e.message.indexOf('401') > -1) {
-      toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+      toast('Clé API invalide — réessaie', '❌');
     } else if (e.message && e.message.indexOf('429') > -1) {
       toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
     } else {
@@ -14177,11 +14174,10 @@ Sois constructif, précis, et donne des conseils actionnables. Focalise-toi sur 
 
   (async function() {
     try {
-      var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      var res = await fetch(GROQ_PROXY, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + GROQ_API_KEY
         },
         body: JSON.stringify({
           model: GROQ_MODEL,
@@ -15033,11 +15029,10 @@ async function fluideGroq() {
   if (load) load.style.display = 'block';
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -15073,7 +15068,7 @@ async function fluideGroq() {
   } catch(e) {
     console.error('Groq fluide error:', e);
     if (e.message && e.message.indexOf('401') > -1) {
-      toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+      toast('Clé API invalide — réessaie', '❌');
     } else if (e.message && e.message.indexOf('429') > -1) {
       toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
     } else {
@@ -15116,9 +15111,9 @@ async function resumeNote() {
     + 'NOTE DE COURS :\n' + content.slice(0, 4000);
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+      headers: { 'Content-Type': 'application/json',  },
       body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 1500, temperature: 0.4,
         messages: [{ role: 'user', content: prompt }] })
     });
@@ -15131,7 +15126,7 @@ async function resumeNote() {
     document.getElementById('resumeContent').style.display = 'block';
   } catch(e) {
     document.getElementById('resumeLoading').style.display = 'none';
-    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — réessaie', '❌');
     else if (e.message && e.message.indexOf('429') > -1) toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
     else toast('Erreur : ' + e.message, '❌');
     resumeClose();
@@ -15193,9 +15188,9 @@ async function explainCard(overrideCard) {
     + 'Sois précis, concis et motivant.';
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+      headers: { 'Content-Type': 'application/json',  },
       body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 800, temperature: 0.5,
         messages: [{ role: 'user', content: prompt }] })
     });
@@ -15207,7 +15202,7 @@ async function explainCard(overrideCard) {
     document.getElementById('explainResult').style.display = 'block';
   } catch(e) {
     document.getElementById('explainLoading').style.display = 'none';
-    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — réessaie', '❌');
     else if (e.message && e.message.indexOf('429') > -1) toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
     else toast('Erreur : ' + e.message, '❌');
     explainClose();
@@ -15310,9 +15305,9 @@ async function planningIAGenerate() {
     + 'SESSIONS_JSON:[{"date":"YYYY-MM-DD","time":"HH:MM","end":"HH:MM","summary":"Révision Matière"},...]';
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+      headers: { 'Content-Type': 'application/json',  },
       body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 2500, temperature: 0.6,
         messages: [{ role: 'user', content: prompt }] })
     });
@@ -15359,7 +15354,7 @@ async function planningIAGenerate() {
     if (addBtn) addBtn.style.display = window._planningIASessions.length ? '' : 'none';
   } catch(e) {
     document.getElementById('planningIALoading').style.display = 'none';
-    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — vérifie GROQ_API_KEY', '❌');
+    if (e.message && e.message.indexOf('401') > -1) toast('Clé API invalide — réessaie', '❌');
     else if (e.message && e.message.indexOf('429') > -1) toast('Limite Groq atteinte — réessaie dans quelques secondes', '⚠️');
     else toast('Erreur : ' + e.message, '❌');
     planningIAClose();
@@ -16120,11 +16115,10 @@ async function generateCpGroq() {
     + 'Texte brut uniquement. Rien d\'autre.';
 
   try {
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(GROQ_PROXY, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_API_KEY
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -19834,11 +19828,10 @@ function profSetButtonLoading(buttonId, isLoading, loadingText, idleText) {
 }
 
 async function profRequest(prompt, maxTokens, temperature) {
-  var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  var res = await fetch(GROQ_PROXY, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + GROQ_API_KEY
     },
     body: JSON.stringify({
       model: GROQ_MODEL,
@@ -19856,8 +19849,8 @@ async function profRequest(prompt, maxTokens, temperature) {
 }
 
 async function profRequestXXL(prompt, maxTokens, temperature) {
-  var xxlKey = (typeof GROQ_API_KEY_XXL !== 'undefined' && GROQ_API_KEY_XXL) ? GROQ_API_KEY_XXL : (localStorage.getItem('dg_groq_api_key_xxl') || GROQ_API_KEY);
-  var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  // clé gérée par le Worker Cloudflare
+  var res = await fetch(GROQ_PROXY, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -20789,14 +20782,14 @@ function wgCopyLink() {
     body.innerHTML = '<div class="wg-free"><div class="wg-free-ic">📰</div><div class="wg-free-t" style="animation:pulse 1.2s infinite">Chargement…</div></div>';
 
     // 3. Appel Groq direct
-    var apiKey = (typeof GROQ_API_KEY !== 'undefined') ? GROQ_API_KEY : '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';
+    var apiKey = 'PROXY'; // unused, Worker handles auth
     var model  = (typeof GROQ_MODEL !== 'undefined') ? GROQ_MODEL : 'llama-3.1-8b-instant';
     var today  = new Date().toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'});
     var prompt = 'Donne-moi 3 titres courts (max 15 mots chacun) d\'actualités récentes importantes pour des étudiants en droit et économie à Paris Dauphine. Thèmes : droit constitutionnel, droit des affaires, macroéconomie, politique économique française ou européenne. Date : '+today+'. Réponds UNIQUEMENT avec un tableau JSON de 3 chaînes, sans texte autour. Exemple : ["Titre 1","Titre 2","Titre 3"]';
 
-    fetch('https://api.groq.com/openai/v1/chat/completions', {
+    fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: model, max_tokens: 200, temperature: 0.5, messages: [{ role: 'user', content: prompt }] })
     }).then(function(r){ return r.json(); }).then(function(data) {
       var text = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'';
