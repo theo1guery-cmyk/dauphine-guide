@@ -4670,7 +4670,6 @@ aside.sidebar {
 .prof-pill{padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.5;background:#f8fafc;border:1px solid var(--g100);color:var(--g700)}
 .prof-pill.good{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
 .prof-pill.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
-.prof-pill.neutral{background:#eef5ff;border-color:#bfdbfe;color:#1d4ed8}
 .prof-exam-top{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
 .prof-duration-row{display:flex;gap:8px;flex-wrap:wrap}
 .prof-duration{padding:10px 14px;border-radius:999px;border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;font-size:12px;font-weight:800}
@@ -4695,15 +4694,6 @@ aside.sidebar {
 .prof-structured-block{border-radius:18px;padding:15px 16px;background:#fff;border:1px solid var(--g100)}
 .prof-structured-block strong{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:8px}
 .prof-structured-block p{font-size:13px;line-height:1.65;color:var(--g600)}
-.prof-markdown{font-size:13px;line-height:1.75;color:var(--g700)}
-.prof-markdown h1,.prof-markdown h2,.prof-markdown h3{margin:0 0 10px;color:var(--g900);font-family:var(--font-serif,serif);letter-spacing:-.02em}
-.prof-markdown p,.prof-markdown li,.prof-markdown blockquote{font-size:13px;line-height:1.75}
-.prof-markdown ul{padding-left:20px;margin:8px 0}
-.prof-markdown hr{border:none;border-top:1px solid var(--g200);margin:16px 0}
-.prof-result-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.prof-output-scroll{max-height:720px;overflow:auto;padding-right:4px}
-.prof-output-scroll::-webkit-scrollbar{width:8px}
-.prof-output-scroll::-webkit-scrollbar-thumb{background:rgba(148,163,184,.35);border-radius:999px}
 .prof-qa{display:grid;gap:10px}
 .prof-question{border:1px solid var(--g100);border-radius:18px;background:#fff;padding:14px 16px}
 .prof-question strong{display:block;font-size:13px;color:var(--g900);margin-bottom:8px}
@@ -4715,7 +4705,6 @@ aside.sidebar {
 [data-theme="dark"] .prof-board-card,[data-theme="dark"] .prof-feedback,[data-theme="dark"] .prof-structured-block,[data-theme="dark"] .prof-question{background:rgba(15,23,42,.72);border-color:var(--border-col)}
 [data-theme="dark"] .prof-card-title,[data-theme="dark"] .prof-score-text strong,[data-theme="dark"] .prof-feedback-head strong,[data-theme="dark"] .prof-question strong{color:#f8fafc}
 [data-theme="dark"] .prof-card-sub,[data-theme="dark"] .prof-feedback p,[data-theme="dark"] .prof-score-text span,[data-theme="dark"] .prof-structured-block p,[data-theme="dark"] .prof-answer,[data-theme="dark"] .prof-pill{color:#cbd5e1}
-[data-theme="dark"] .prof-markdown,[data-theme="dark"] .prof-markdown h1,[data-theme="dark"] .prof-markdown h2,[data-theme="dark"] .prof-markdown h3{color:#e5e7eb}
 [data-theme="dark"] .prof-select,[data-theme="dark"] .prof-input,[data-theme="dark"] .prof-textarea,[data-theme="dark"] .prof-duration,[data-theme="dark"] .prof-subtab,[data-theme="dark"] .prof-tab{background:rgba(15,23,42,.72);border-color:var(--border-col);color:#e5e7eb}
 [data-theme="dark"] .prof-btn.ghost{border-color:var(--border-col);color:#e5e7eb}
 @media (max-width: 980px){
@@ -7078,7 +7067,6 @@ aside.sidebar {
               </div>
               <div class="prof-actions">
                 <button class="prof-btn" id="profCorrectionBtn" onclick="corrigerCopie()">✨ Corriger comme à Dauphine</button>
-                <button class="prof-btn ghost" type="button" onclick="resetProfCorrection()">🗑️ Réinitialiser</button>
               </div>
             </div>
             <div class="prof-card" id="profCorrectionResult">
@@ -7124,7 +7112,6 @@ aside.sidebar {
             </div>
             <div class="prof-actions">
               <button class="prof-btn" id="profExamStartBtn" onclick="startProfExam()">⏱️ Lancer l'examen</button>
-              <button class="prof-btn ghost" type="button" onclick="resetProfExam()">🗑️ Réinitialiser</button>
             </div>
           </div>
 
@@ -7175,7 +7162,6 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profArretBtn" onclick="generateArretSheet()">📋 Générer la fiche d'arrêt</button>
-                  <button class="prof-btn ghost" type="button" onclick="resetProfArret()">🗑️ Réinitialiser</button>
                 </div>
               </div>
               <div class="prof-card" id="profArretResult">
@@ -7205,7 +7191,6 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profDissertationBtn" onclick="generateDissertationPlan()">📐 Générer le plan</button>
-                  <button class="prof-btn ghost" type="button" onclick="resetProfDissertation()">🗑️ Réinitialiser</button>
                 </div>
               </div>
               <div class="prof-card" id="profDissertationResult">
@@ -7231,7 +7216,6 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profFicheBtn" onclick="generateRevisionSheet()">📚 Générer la fiche</button>
-                  <button class="prof-btn ghost" type="button" onclick="resetProfRevisionSheet()">🗑️ Réinitialiser</button>
                 </div>
               </div>
               <div class="prof-card" id="profFicheResult">
@@ -19798,13 +19782,6 @@ var profTutorState = {
   examSubject: ''
 };
 
-var profDefaults = {
-  correctionResult: '<div class="prof-empty"><div><div style="font-size:38px">📋</div><strong>La correction apparaîtra ici</strong><span>Choisis une matière, colle ta copie et lance la correction.</span></div></div>',
-  arretResult: '<div class="prof-empty"><div><div style="font-size:38px">⚖️</div><strong>La fiche d\'arrêt apparaîtra ici</strong><span>Colle un arrêt et l\'outil recompose automatiquement la méthode.</span></div></div>',
-  dissertationResult: '<div class="prof-empty"><div><div style="font-size:38px">🧭</div><strong>Le plan apparaîtra ici</strong><span>Entre un sujet et laisse l\'outil construire une vraie colonne vertébrale.</span></div></div>',
-  ficheResult: '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>La fiche de révision apparaîtra ici</strong><span>Une synthèse exploitable tout de suite, avec questions de vérification.</span></div></div>'
-};
-
 function profEscapeHtml(value) {
   return String(value == null ? '' : value)
     .replace(/&/g, '&amp;')
@@ -19827,23 +19804,11 @@ function profFindMatterName(matterId) {
 function profParseJson(raw) {
   if (!raw) return null;
   var clean = String(raw).trim().replace(/```json/gi, '').replace(/```/g, '');
-  var candidates = [clean];
-  var fenced = clean.match(/\{[\s\S]*\}/g);
-  if (fenced && fenced.length) candidates = candidates.concat(fenced);
-  for (var i = 0; i < candidates.length; i++) {
-    var candidate = candidates[i];
-    if (!candidate) continue;
-    var sanitized = candidate
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'")
-      .replace(/,\s*([}\]])/g, '$1')
-      .replace(/\u00a0/g, ' ');
-    try { return JSON.parse(sanitized); } catch (error) {}
-    var start = sanitized.indexOf('{');
-    var end = sanitized.lastIndexOf('}');
-    if (start !== -1 && end > start) {
-      try { return JSON.parse(sanitized.slice(start, end + 1)); } catch (error2) {}
-    }
+  try { return JSON.parse(clean); } catch (error) {}
+  var start = clean.indexOf('{');
+  var end = clean.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(clean.slice(start, end + 1)); } catch (error2) {}
   }
   return null;
 }
@@ -19877,27 +19842,6 @@ async function profRequest(prompt, maxTokens, temperature) {
   return data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : '';
 }
 
-function profCompactText(text) {
-  return String(text || '')
-    .replace(/\r/g, '')
-    .replace(/[ \t]+/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
-function profTrimForModel(text, maxChars) {
-  var clean = profCompactText(text);
-  if (!maxChars || clean.length <= maxChars) return clean;
-  var sep = '\n\n[... extrait tronqué pour rester sous la limite du modèle ...]\n\n';
-  var head = Math.floor((maxChars - sep.length) * 0.72);
-  var tail = Math.max(0, maxChars - sep.length - head);
-  return clean.slice(0, head) + sep + clean.slice(clean.length - tail);
-}
-
-function profIsRequestTooLarge(error) {
-  return !!(error && error.message && /request too large|tokens per minute|requested \d+/i.test(error.message));
-}
-
 function profScoreClass(note) {
   if (note >= 14) return 'good';
   if (note < 10) return 'bad';
@@ -19912,102 +19856,15 @@ function profMention(note) {
   return 'À retravailler';
 }
 
-function profCopyToClipboard(text, successMessage) {
-  if (!navigator.clipboard || !text) {
-    toast('Copie impossible', '⚠️');
-    return;
-  }
-  navigator.clipboard.writeText(text).then(function() {
-    toast(successMessage || 'Copié', '📋');
-  }).catch(function() {
-    toast('Copie impossible', '⚠️');
-  });
-}
-
-function profPrintHtml(title, html) {
-  var w = window.open('', '_blank');
-  if (!w) {
-    toast('Popup bloquée pour l\'export PDF', '⚠️');
-    return;
-  }
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + profEscapeHtml(title) + '</title><style>'
-    + 'body{font-family:Figtree,Arial,sans-serif;padding:32px;color:#111827;line-height:1.7}'
-    + 'h1,h2,h3{font-family:"Instrument Serif",Georgia,serif;color:#0f172a;letter-spacing:-.02em}'
-    + 'h1{font-size:32px;margin:0 0 16px} h2{font-size:24px;margin:22px 0 10px} h3{font-size:18px;margin:16px 0 8px}'
-    + 'p,li,blockquote{font-size:13px;line-height:1.75}'
-    + 'ul{padding-left:20px} hr{border:none;border-top:1px solid #e2e8f0;margin:18px 0}'
-    + 'blockquote{margin:12px 0;padding-left:14px;border-left:3px solid #93c5fd;color:#334155}'
-    + '</style></head><body>' + html + '</body></html>');
-  w.document.close();
-  setTimeout(function() { w.print(); }, 300);
-}
-
-function profResetResult(containerId, fallbackHtml) {
-  var el = document.getElementById(containerId);
-  if (el) el.innerHTML = fallbackHtml;
-}
-
-function resetProfCorrection() {
-  var matter = document.getElementById('profCorrectionMatiere');
-  if (matter) matter.value = '';
-  var criteria = document.getElementById('profCorrectionCriteres');
-  if (criteria) criteria.value = '';
-  var text = document.getElementById('profCorrectionTexte');
-  if (text) text.value = '';
-  window.profLastCorrectedCopy = '';
-  window.profLastCorrectedCopyHtml = '';
-  profResetResult('profCorrectionResult', profDefaults.correctionResult);
-}
-
-function resetProfArret() {
-  var input = document.getElementById('profArretInput');
-  if (input) input.value = '';
-  profResetResult('profArretResult', profDefaults.arretResult);
-}
-
-function resetProfDissertation() {
-  var subject = document.getElementById('profDissertationSujet');
-  if (subject) subject.value = '';
-  var cours = document.getElementById('profDissertationCours');
-  if (cours) cours.value = '';
-  profResetResult('profDissertationResult', profDefaults.dissertationResult);
-}
-
-function resetProfRevisionSheet() {
-  var input = document.getElementById('profFicheCours');
-  if (input) input.value = '';
-  window.profLastTtsText = '';
-  window.profLastRevisionHtml = '';
-  window.profLastRevisionMarkdown = '';
-  profResetResult('profFicheResult', profDefaults.ficheResult);
-}
-
-function profRenderCorrectionExamples(examples) {
-  if (!Array.isArray(examples) || !examples.length) return '';
-  var html = '<div class="prof-section-label">Exemples précis tirés de ta copie</div><div class="prof-feedback-list">';
-  examples.forEach(function(example) {
-    html += '<div class="prof-feedback">';
-    html += '<div class="prof-feedback-head"><strong>' + profEscapeHtml(example.point || 'Exemple') + '</strong><span class="prof-feedback-tag">Copie citée</span></div>';
-    if (example.extrait) html += '<p><em>« ' + profEscapeHtml(example.extrait) + ' »</em></p>';
-    if (example.analyse) html += '<p>' + profNl2br(example.analyse) + '</p>';
-    if (example.reformulation) html += '<p><strong>Reformulation conseillée:</strong><br>' + profNl2br(example.reformulation) + '</p>';
-    html += '</div>';
-  });
-  html += '</div>';
-  return html;
-}
-
 function profRenderCorrection(data) {
   if (!data) return '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Réponse illisible</strong><span>L\'IA a répondu dans un format inattendu. Réessaie.</span></div></div>';
   var note = Number(data.note || 0);
   var parts = Array.isArray(data.parties) ? data.parties : [];
   var strengths = Array.isArray(data.points_forts) ? data.points_forts : [];
   var improvements = Array.isArray(data.axes_amelioration) ? data.axes_amelioration : [];
-  var examples = Array.isArray(data.exemples_concrets) ? data.exemples_concrets : [];
-  var correctedCopy = data.copie_corrigee || data.correction_modele || '';
   var html = '';
   html += '<div class="prof-score">';
-  html += '<div class="prof-score-badge ' + profScoreClass(note) + '" ><div><div class="prof-score-value">' + (note ? note.toFixed(1) : '0.0') + '</div><div class="prof-score-den">/20</div></div></div>';
+  html += '<div class="prof-score-badge ' + profScoreClass(note) + '"><div><div class="prof-score-value">' + (note ? note.toFixed(1) : '0.0') + '</div><div class="prof-score-den">/20</div></div></div>';
   html += '<div class="prof-score-text"><strong>' + profEscapeHtml(profMention(note)) + '</strong><span>' + profEscapeHtml(data.resume || data.commentaire_global || '') + '</span></div>';
   html += '</div>';
   if (data.commentaire_global) {
@@ -20020,56 +19877,24 @@ function profRenderCorrection(data) {
       html += '<div class="prof-feedback">';
       html += '<div class="prof-feedback-head"><strong>' + profEscapeHtml(part.titre || 'Partie') + '</strong><span class="prof-feedback-tag">' + profEscapeHtml(part.verdict || 'Observation') + '</span></div>';
       html += '<p>' + profNl2br(part.commentaire || '') + '</p>';
-      if (part.extrait) html += '<p><em>Extrait ciblé: « ' + profEscapeHtml(part.extrait) + ' »</em></p>';
-      if (part.correction) html += '<p><strong>Correction locale:</strong><br>' + profNl2br(part.correction) + '</p>';
       html += '</div>';
     });
     html += '</div>';
   }
-  html += profRenderCorrectionExamples(examples);
   if (strengths.length) {
     html += '<div class="prof-section-label">Points forts</div><div class="prof-pill-list">';
-    strengths.forEach(function(item) { html += '<div class="prof-pill good">' + profEscapeHtml(item) + '</div>'; });
+    strengths.forEach(function(item) {
+      html += '<div class="prof-pill good">' + profEscapeHtml(item) + '</div>';
+    });
     html += '</div>';
   }
   if (improvements.length) {
     html += '<div class="prof-section-label">Axes d\'amélioration</div><div class="prof-pill-list">';
-    improvements.forEach(function(item) { html += '<div class="prof-pill warn">' + profEscapeHtml(item) + '</div>'; });
+    improvements.forEach(function(item) {
+      html += '<div class="prof-pill warn">' + profEscapeHtml(item) + '</div>';
+    });
     html += '</div>';
   }
-  if (correctedCopy) {
-    html += '<div class="prof-section-label">Proposition de copie corrigée</div>';
-    html += '<div class="prof-feedback"><div class="prof-output-scroll"><div class="prof-markdown">' + markdownToHtml(correctedCopy) + '</div></div>';
-    html += '<div class="prof-result-toolbar"><button class="prof-btn secondary" type="button" onclick="profCopyToClipboard(window.profLastCorrectedCopy, \'Copie corrigée copiée\')">📋 Copier</button><button class="prof-btn ghost" type="button" onclick="profPrintHtml(\'Copie corrigée Dauphine\', window.profLastCorrectedCopyHtml)">🖨️ PDF / Imprimer</button></div>';
-    html += '</div>';
-    window.profLastCorrectedCopy = correctedCopy;
-    window.profLastCorrectedCopyHtml = '<h1>Copie corrigée</h1>' + markdownToHtml(correctedCopy);
-  } else {
-    window.profLastCorrectedCopy = '';
-    window.profLastCorrectedCopyHtml = '';
-  }
-  return html;
-}
-
-function profRenderMarkdownFallback(title, raw, copyText, printTitle) {
-  var safeRaw = profCompactText(raw || '');
-  var html = '<div class="prof-section-label">' + profEscapeHtml(title) + '</div>';
-  html += '<div class="prof-feedback"><div class="prof-output-scroll"><div class="prof-markdown">' + markdownToHtml(safeRaw || 'Réponse vide.') + '</div></div>';
-  html += '<div class="prof-result-toolbar"><button class="prof-btn secondary" type="button" onclick="profCopyToClipboard(window.profLastFallbackText, \'Réponse copiée\')">📋 Copier</button><button class="prof-btn ghost" type="button" onclick="profPrintHtml(' + JSON.stringify(printTitle || title) + ', window.profLastFallbackHtml)">🖨️ PDF / Imprimer</button></div></div>';
-  window.profLastFallbackText = safeRaw;
-  window.profLastFallbackHtml = '<h1>' + profEscapeHtml(printTitle || title) + '</h1>' + markdownToHtml(safeRaw || 'Réponse vide.');
-  return html;
-}
-
-function profRenderCorrectionFallback(raw) {
-  var text = profCompactText(raw || '');
-  var noteMatch = text.match(/(\d{1,2}(?:[\.,]\d+)?)\s*\/\s*20/);
-  var note = noteMatch ? parseFloat(noteMatch[1].replace(',', '.')) : 0;
-  var html = '<div class="prof-score">';
-  html += '<div class="prof-score-badge ' + profScoreClass(note) + '"><div><div class="prof-score-value">' + (note ? note.toFixed(1) : '?.?') + '</div><div class="prof-score-den">/20</div></div></div>';
-  html += '<div class="prof-score-text"><strong>Réponse brute de l\'IA</strong><span>Le format JSON attendu n\'a pas été respecté, mais le contenu reste exploitable.</span></div>';
-  html += '</div>';
-  html += profRenderMarkdownFallback('Correction reçue', text, text, 'Correction Dauphine');
   return html;
 }
 
@@ -20099,7 +19924,6 @@ async function corrigerCopie() {
     return;
   }
   var matterName = profFindMatterName(matterId) || 'matière non précisée';
-  var compactCopy = profTrimForModel(copy, 5600);
   profSetButtonLoading('profCorrectionBtn', true, 'Correction...', '✨ Corriger comme à Dauphine');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction en cours</strong><span>Le correcteur analyse ta copie et prépare son barème.</span></div></div>';
   try {
@@ -20107,17 +19931,11 @@ async function corrigerCopie() {
       + 'Tu notes une copie d\'étudiant sur 20 comme un vrai chargé de TD ou professeur. '
       + (criteria ? 'Consignes particulières du professeur à respecter: ' + criteria + '. ' : '')
       + 'Réponds uniquement en JSON valide au format suivant: '
-      + '{"note":14.5,"resume":"résumé très court","commentaire_global":"3 à 5 phrases franches et utiles","parties":[{"titre":"Introduction","verdict":"solide ou faible","commentaire":"analyse précise","extrait":"citation très courte tirée mot pour mot de la copie","correction":"réécriture locale de ce passage"},{"titre":"Développement","verdict":"...","commentaire":"...","extrait":"...","correction":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"...","extrait":"...","correction":"..."},{"titre":"Méthode et style","verdict":"...","commentaire":"...","extrait":"...","correction":"..."}],"exemples_concrets":[{"point":"faiblesse ou force précise","extrait":"courte citation mot pour mot tirée de la copie","analyse":"pourquoi cela marche ou non","reformulation":"version améliorée de la phrase ou du passage"}],"points_forts":["...","..."],"axes_amelioration":["...","..."],"copie_corrigee":"version intégralement réécrite de la copie, en markdown, avec un style universitaire impeccable, adaptée à la matière, pouvant faire 3 ou 4 pages si nécessaire"}. '
-      + 'Exigences impératives: cite toujours plusieurs passages exacts de la copie; propose des reformulations concrètes; la copie corrigée doit être complète, soignée, démonstrative, avec introduction, développement structuré et conclusion si le genre s\'y prête. '
-      + 'Sois rigoureux, concret, et crédible pour un étudiant de L1. Copie: ' + compactCopy;
-    var raw = await profRequest(prompt, 2000, 0.22);
-    var parsed = profParseJson(raw);
-    result.innerHTML = parsed ? profRenderCorrection(parsed) : profRenderCorrectionFallback(raw);
+      + '{"note":14.5,"resume":"résumé très court","commentaire_global":"3 à 5 phrases franches et utiles","parties":[{"titre":"Introduction","verdict":"solide ou faible","commentaire":"analyse précise"},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et style","verdict":"...","commentaire":"..."}],"points_forts":["...","..."],"axes_amelioration":["...","..."]}. '
+      + 'Sois rigoureux, concret, et crédible pour un étudiant de L1. Copie: ' + copy.slice(0, 6500);
+    var raw = await profRequest(prompt, 1200, 0.25);
+    result.innerHTML = profRenderCorrection(profParseJson(raw));
   } catch (error) {
-    if (profIsRequestTooLarge(error)) {
-      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Copie trop longue pour un seul passage</strong><span>Le texte a été réduit au maximum utile, mais la demande reste trop lourde pour Groq. Essaie de corriger une partie de la copie à la fois.</span></div></div>';
-      return;
-    }
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   } finally {
     profSetButtonLoading('profCorrectionBtn', false, 'Correction...', '✨ Corriger comme à Dauphine');
@@ -20228,14 +20046,12 @@ async function submitProfExam() {
   }
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction du partiel blanc</strong><span>L\'IA corrige ta copie avec le même niveau d\'exigence.</span></div></div>';
   try {
-    var compactCopy = profTrimForModel(copy, 5200);
     var prompt = 'Tu es un correcteur exigeant de Paris Dauphine. Matière: ' + profTutorState.examMatterName + '. Sujet: ' + profTutorState.examSubject + '. '
       + 'Tu corriges une copie d\'examen blanc et tu réponds uniquement en JSON valide au format: '
       + '{"note":13.5,"resume":"appréciation courte","commentaire_global":"3 à 5 phrases","parties":[{"titre":"Introduction","verdict":"...","commentaire":"..."},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et gestion du temps","verdict":"...","commentaire":"..."}],"points_forts":["..."],"axes_amelioration":["..."]}. '
-      + 'Copie: ' + compactCopy;
-    var raw = await profRequest(prompt, 1100, 0.25);
-    var parsed = profParseJson(raw);
-    result.innerHTML = parsed ? profRenderCorrection(parsed) : profRenderCorrectionFallback(raw);
+      + 'Copie: ' + copy.slice(0, 6500);
+    var raw = await profRequest(prompt, 1200, 0.25);
+    result.innerHTML = profRenderCorrection(profParseJson(raw));
   } catch (error) {
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   }
@@ -20246,10 +20062,7 @@ function resetProfExam() {
   profTutorState.examTimerId = null;
   profTutorState.examPaused = false;
   profTutorState.examSecondsLeft = profTutorState.examDurationMinutes * 60;
-  document.getElementById('profExamMatiere').value = '';
-  document.getElementById('profExamSujet').value = '';
   document.getElementById('profExamCopy').value = '';
-  document.getElementById('profExamResult').innerHTML = '';
   profShowExamStage('profExamSetup');
 }
 
@@ -20263,16 +20076,11 @@ async function generateArretSheet() {
   profSetButtonLoading('profArretBtn', true, 'Analyse...', '📋 Générer la fiche d\'arrêt');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Analyse de l\'arrêt</strong><span>La méthode de fiche d\'arrêt est en cours d\'application.</span></div></div>';
   try {
-    var compactSource = profTrimForModel(source, 4300);
     var prompt = 'Tu es chargé de TD en droit. À partir de l\'arrêt suivant, réponds uniquement en JSON valide avec les clés suivantes: '
       + '{"juridiction":"...","faits":"...","procedure":"...","question":"...","solution":"...","portee":"..."}. '
-      + 'Chaque champ doit être concis mais précis. Arrêt: ' + compactSource;
-    var raw = await profRequest(prompt, 900, 0.2);
-    var data = profParseJson(raw);
-    if (!data) {
-      result.innerHTML = profRenderMarkdownFallback('Fiche d\'arrêt générée', raw, raw, 'Fiche d\'arrêt');
-      return;
-    }
+      + 'Chaque champ doit être concis mais précis. Arrêt: ' + source.slice(0, 6500);
+    var data = profParseJson(await profRequest(prompt, 1000, 0.2));
+    if (!data) throw new Error('Réponse illisible');
     result.innerHTML = '<div class="prof-structured">'
       + '<div class="prof-structured-block"><strong>Juridiction</strong><p>' + profNl2br(data.juridiction || '') + '</p></div>'
       + '<div class="prof-structured-block"><strong>Faits</strong><p>' + profNl2br(data.faits || '') + '</p></div>'
@@ -20299,18 +20107,13 @@ async function generateDissertationPlan() {
   profSetButtonLoading('profDissertationBtn', true, 'Plan...', '📐 Générer le plan');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Construction du plan</strong><span>La problématique et les deux parties sont en cours de formulation.</span></div></div>';
   try {
-    var compactNotes = notes ? profTrimForModel(notes, 2600) : '';
     var prompt = 'Tu es professeur de droit et de sciences économiques à Paris Dauphine. Donne uniquement un JSON valide au format '
       + '{"problematique":"...","partie1":{"titre":"...","a":"...","b":"..."},"partie2":{"titre":"...","a":"...","b":"..."}} '
       + 'pour le sujet suivant: ' + subject + '. '
-      + (compactNotes ? 'Appuie-toi si possible sur cet extrait de cours: ' + compactNotes + '. ' : '')
+      + (notes ? 'Appuie-toi si possible sur cet extrait de cours: ' + notes.slice(0, 3500) + '. ' : '')
       + 'Le plan doit être crédible pour une copie de L1.';
-    var raw = await profRequest(prompt, 850, 0.3);
-    var data = profParseJson(raw);
-    if (!data) {
-      result.innerHTML = profRenderMarkdownFallback('Plan de dissertation généré', raw, raw, 'Plan de dissertation');
-      return;
-    }
+    var data = profParseJson(await profRequest(prompt, 900, 0.3));
+    if (!data) throw new Error('Réponse illisible');
     result.innerHTML = '<div class="prof-structured">'
       + '<div class="prof-structured-block"><strong>Problématique</strong><p>' + profNl2br(data.problematique || '') + '</p></div>'
       + '<div class="prof-structured-block"><strong>I. ' + profEscapeHtml(data.partie1 && data.partie1.titre || '') + '</strong><p>A. ' + profNl2br(data.partie1 && data.partie1.a || '') + '<br><br>B. ' + profNl2br(data.partie1 && data.partie1.b || '') + '</p></div>'
@@ -20333,89 +20136,24 @@ async function generateRevisionSheet() {
   profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Création de la fiche</strong><span>Résumé, architecture du cours et questions difficiles en préparation.</span></div></div>';
   try {
-    var compactSource = profTrimForModel(source, 4800);
-    var prompt = 'Tu es un tuteur universitaire excellent pour un étudiant de L1 à Dauphine. Tu dois produire une fiche de révision dense, riche et exploitable pour un vrai partiel. '
-      + 'Réponds uniquement en JSON valide au format '
-      + '{"titre":"...","introduction":"...","sections":[{"titre":"...","contenu":"...","points_cles":["...","..."],"exemples":["...","..."],"pieges":["...","..."]}],"synthese":"...","questions":[{"question":"...","reponse":"..."}],"plan_flash":"...","vocabulaire":[{"terme":"...","definition":"..."}]}. '
-      + 'Exigences: 5 a 6 sections substantielles si la matière le permet; chaque section doit être riche; ajoute des exemples, distinctions, nuances, pièges, et une mini synthèse finale; les réponses aux questions doivent être développées. '
-      + 'Le ton doit être universitaire, précis, clair et approfondi. Privilégie la densité utile plutôt que la longueur gratuite. Cours: ' + compactSource;
-    var raw = await profRequest(prompt, 1800, 0.2);
-    var data = profParseJson(raw);
-    if (!data) {
-      window.profLastTtsText = profCompactText(raw);
-      window.profLastRevisionMarkdown = profCompactText(raw);
-      window.profLastRevisionHtml = '<h1>Fiche de révision</h1>' + markdownToHtml(window.profLastRevisionMarkdown);
-      result.innerHTML = profRenderMarkdownFallback('Fiche de révision générée', raw, raw, 'Fiche de révision') + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button></div>';
-      return;
-    }
-    var sectionsHtml = '';
-    if (data.titre || data.introduction) {
-      sectionsHtml += '<div class="prof-structured">';
-      if (data.titre) sectionsHtml += '<div class="prof-structured-block"><strong>Titre de la fiche</strong><p>' + profNl2br(data.titre) + '</p></div>';
-      if (data.introduction) sectionsHtml += '<div class="prof-structured-block"><strong>Vue d\'ensemble</strong><p>' + profNl2br(data.introduction) + '</p></div>';
-      sectionsHtml += '</div>';
-    }
-    sectionsHtml += '<div class="prof-structured">';
+    var prompt = 'Tu es un excellent tuteur pour un étudiant de L1 à Dauphine. Réponds uniquement en JSON valide au format '
+      + '{"sections":[{"titre":"...","contenu":"..."}],"questions":[{"question":"...","reponse":"..."}]}. '
+      + 'Fais au maximum 5 sections courtes et 5 questions vraiment exigeantes. Cours: ' + source.slice(0, 6500);
+    var data = profParseJson(await profRequest(prompt, 1300, 0.25));
+    if (!data) throw new Error('Réponse illisible');
+    var sectionsHtml = '<div class="prof-structured">';
     (data.sections || []).forEach(function(section) {
-      sectionsHtml += '<div class="prof-structured-block"><strong>' + profEscapeHtml(section.titre || '') + '</strong><p>' + profNl2br(section.contenu || '') + '</p>';
-      if (Array.isArray(section.points_cles) && section.points_cles.length) {
-        sectionsHtml += '<div class="prof-section-label">Points clés</div><div class="prof-pill-list">';
-        section.points_cles.forEach(function(item) { sectionsHtml += '<div class="prof-pill neutral">' + profEscapeHtml(item) + '</div>'; });
-        sectionsHtml += '</div>';
-      }
-      if (Array.isArray(section.exemples) && section.exemples.length) {
-        sectionsHtml += '<div class="prof-section-label">Exemples</div><div class="prof-feedback-list">';
-        section.exemples.forEach(function(item) { sectionsHtml += '<div class="prof-feedback"><p>' + profNl2br(item) + '</p></div>'; });
-        sectionsHtml += '</div>';
-      }
-      if (Array.isArray(section.pieges) && section.pieges.length) {
-        sectionsHtml += '<div class="prof-section-label">Pièges classiques</div><div class="prof-pill-list">';
-        section.pieges.forEach(function(item) { sectionsHtml += '<div class="prof-pill warn">' + profEscapeHtml(item) + '</div>'; });
-        sectionsHtml += '</div>';
-      }
-      sectionsHtml += '</div>';
+      sectionsHtml += '<div class="prof-structured-block"><strong>' + profEscapeHtml(section.titre || '') + '</strong><p>' + profNl2br(section.contenu || '') + '</p></div>';
     });
     sectionsHtml += '</div>';
-    if (Array.isArray(data.vocabulaire) && data.vocabulaire.length) {
-      sectionsHtml += '<div class="prof-section-label">Vocabulaire à maîtriser</div><div class="prof-feedback-list">';
-      data.vocabulaire.forEach(function(item) {
-        sectionsHtml += '<div class="prof-feedback"><div class="prof-feedback-head"><strong>' + profEscapeHtml(item.terme || '') + '</strong><span class="prof-feedback-tag">Définition</span></div><p>' + profNl2br(item.definition || '') + '</p></div>';
-      });
-      sectionsHtml += '</div>';
-    }
-    if (data.plan_flash) {
-      sectionsHtml += '<div class="prof-section-label">Plan flash à retenir</div><div class="prof-feedback"><div class="prof-markdown">' + markdownToHtml(data.plan_flash) + '</div></div>';
-    }
-    if (data.synthese) {
-      sectionsHtml += '<div class="prof-section-label">Synthèse finale</div><div class="prof-feedback"><div class="prof-markdown">' + markdownToHtml(data.synthese) + '</div></div>';
-    }
     var questionsHtml = '<div class="prof-section-label">Questions difficiles</div><div class="prof-qa">';
     (data.questions || []).forEach(function(item, index) {
       questionsHtml += '<div class="prof-question"><strong>' + (index + 1) + '. ' + profEscapeHtml(item.question || '') + '</strong><button type="button" onclick="toggleProfAnswer(this)">Voir la réponse</button><div class="prof-answer">' + profNl2br(item.reponse || '') + '</div></div>';
     });
     questionsHtml += '</div>';
-    window.profLastTtsText = [data.introduction || '', (data.sections || []).map(function(section) { return (section.titre || '') + '. ' + (section.contenu || ''); }).join(' '), data.synthese || ''].join(' ');
-    window.profLastRevisionMarkdown = [
-      data.titre ? '# ' + data.titre : '# Fiche de révision',
-      data.introduction || '',
-      (data.sections || []).map(function(section) {
-        return '## ' + (section.titre || 'Section') + '\n' + (section.contenu || '')
-          + ((section.points_cles || []).length ? '\n\n### Points clés\n- ' + section.points_cles.join('\n- ') : '')
-          + ((section.exemples || []).length ? '\n\n### Exemples\n- ' + section.exemples.join('\n- ') : '')
-          + ((section.pieges || []).length ? '\n\n### Pièges\n- ' + section.pieges.join('\n- ') : '');
-      }).join('\n\n'),
-      (data.vocabulaire || []).length ? '## Vocabulaire\n' + data.vocabulaire.map(function(item) { return '- **' + (item.terme || '') + '** : ' + (item.definition || ''); }).join('\n') : '',
-      data.plan_flash ? '## Plan flash\n' + data.plan_flash : '',
-      data.synthese ? '## Synthèse finale\n' + data.synthese : '',
-      (data.questions || []).length ? '## Questions difficiles\n' + data.questions.map(function(item, index) { return (index + 1) + '. **' + (item.question || '') + '**\n\nRéponse : ' + (item.reponse || ''); }).join('\n\n') : ''
-    ].filter(Boolean).join('\n\n');
-    window.profLastRevisionHtml = '<h1>' + profEscapeHtml(data.titre || 'Fiche de révision') + '</h1>' + markdownToHtml(window.profLastRevisionMarkdown);
-    result.innerHTML = sectionsHtml + questionsHtml + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button><button class="prof-btn secondary" type="button" onclick="profCopyToClipboard(window.profLastRevisionMarkdown, \'Fiche copiée\')">📋 Copier la fiche</button><button class="prof-btn ghost" type="button" onclick="profPrintHtml(\'Fiche de révision\', window.profLastRevisionHtml)">🖨️ PDF / Imprimer</button></div>';
+    window.profLastTtsText = (data.sections || []).map(function(section) { return (section.titre || '') + '. ' + (section.contenu || ''); }).join(' ');
+    result.innerHTML = sectionsHtml + questionsHtml + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button></div>';
   } catch (error) {
-    if (profIsRequestTooLarge(error)) {
-      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Fiche trop lourde pour Groq</strong><span>Le cours a déjà été compacté automatiquement. Si l\'erreur persiste, colle le chapitre par morceaux et génère une fiche par thème.</span></div></div>';
-      return;
-    }
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Fiche indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   } finally {
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
