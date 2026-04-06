@@ -4701,15 +4701,57 @@ aside.sidebar {
 .prof-answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--g100);font-size:13px;line-height:1.65;color:var(--g600)}
 .prof-tts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .prof-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.34);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px}
+.oral-shell{padding:32px 48px 56px}
+.oral-grid{display:grid;grid-template-columns:minmax(330px,.95fr) minmax(340px,1.05fr);gap:18px;align-items:start}
+.oral-status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.oral-chip{padding:7px 12px;border-radius:999px;background:#edf5ff;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.02em}
+.oral-chip.warn{background:#fff7ed;color:#9a3412}
+.oral-chip.live{background:#dcfce7;color:#166534}
+.oral-chat{border:1px solid var(--g100);border-radius:18px;background:#fff;min-height:220px;max-height:520px;overflow:auto;padding:12px;display:grid;gap:8px}
+.oral-msg{padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.6}
+.oral-msg.prof{background:#eef5ff;color:#0f172a;border:1px solid #dbeafe}
+.oral-msg.student{background:#f8fafc;color:#334155;border:1px solid #e2e8f0}
+.oral-msg.system{background:#fef9c3;color:#854d0e;border:1px solid #fde68a}
+.oral-live{display:grid;gap:10px;margin-top:12px}
+.oral-live textarea{min-height:120px}
+.oral-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.oral-voice-row{display:flex;gap:8px;align-items:center}
+.oral-note-live{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--g500);margin-top:8px}
+.oral-note-dot{width:9px;height:9px;border-radius:50%;background:#94a3b8;transition:all .2s ease}
+.oral-note-dot.live{background:#22c55e;box-shadow:0 0 0 6px rgba(34,197,94,.2);animation:oralPulse 1.2s ease infinite}
+.oral-replay{margin-top:10px;border:1px solid var(--g100);border-radius:14px;max-height:220px;overflow:auto;background:#fff;padding:10px;display:grid;gap:8px}
+.oral-replay-row{padding:8px 10px;border-radius:10px;font-size:12px;line-height:1.5;border:1px solid var(--g100)}
+.oral-replay-row.prof{background:#eff6ff}
+.oral-replay-row.student{background:#f8fafc}
+.oral-history{margin-top:10px;display:grid;gap:8px}
+.oral-history-item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 10px;border-radius:12px;border:1px solid var(--g100);background:#fff}
+.oral-bar{height:7px;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.oral-bar > span{display:block;height:100%;background:linear-gradient(90deg,#0ea5e9,#2563eb)}
+.oral-report{display:grid;gap:10px}
+.oral-report-grid{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:10px}
+.oral-report-kpi{border:1px solid var(--g100);border-radius:14px;padding:10px 12px;background:#fff}
+.oral-report-kpi strong{display:block;font-size:11px;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.oral-report-kpi span{font-size:20px;font-weight:800;color:var(--g900)}
+@keyframes oralPulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
 [data-theme="dark"] .prof-card,[data-theme="dark"] .prof-hero-board{background:rgba(20,23,32,.84);border-color:var(--border-col)}
 [data-theme="dark"] .prof-board-card,[data-theme="dark"] .prof-feedback,[data-theme="dark"] .prof-structured-block,[data-theme="dark"] .prof-question{background:rgba(15,23,42,.72);border-color:var(--border-col)}
 [data-theme="dark"] .prof-card-title,[data-theme="dark"] .prof-score-text strong,[data-theme="dark"] .prof-feedback-head strong,[data-theme="dark"] .prof-question strong{color:#f8fafc}
 [data-theme="dark"] .prof-card-sub,[data-theme="dark"] .prof-feedback p,[data-theme="dark"] .prof-score-text span,[data-theme="dark"] .prof-structured-block p,[data-theme="dark"] .prof-answer,[data-theme="dark"] .prof-pill{color:#cbd5e1}
 [data-theme="dark"] .prof-select,[data-theme="dark"] .prof-input,[data-theme="dark"] .prof-textarea,[data-theme="dark"] .prof-duration,[data-theme="dark"] .prof-subtab,[data-theme="dark"] .prof-tab{background:rgba(15,23,42,.72);border-color:var(--border-col);color:#e5e7eb}
 [data-theme="dark"] .prof-btn.ghost{border-color:var(--border-col);color:#e5e7eb}
+[data-theme="dark"] .oral-chat,[data-theme="dark"] .oral-report-kpi{background:rgba(15,23,42,.72);border-color:var(--border-col)}
+[data-theme="dark"] .oral-msg.prof{background:rgba(30,64,175,.25);border-color:rgba(96,165,250,.34);color:#dbeafe}
+[data-theme="dark"] .oral-msg.student{background:rgba(30,41,59,.72);border-color:var(--border-col);color:#e2e8f0}
+[data-theme="dark"] .oral-msg.system{background:rgba(113,63,18,.3);border-color:rgba(245,158,11,.35);color:#fde68a}
+[data-theme="dark"] .oral-report-kpi span{color:#f8fafc}
+[data-theme="dark"] .oral-replay,[data-theme="dark"] .oral-history-item{background:rgba(15,23,42,.72);border-color:var(--border-col)}
+[data-theme="dark"] .oral-replay-row{border-color:var(--border-col)}
+[data-theme="dark"] .oral-replay-row.prof{background:rgba(30,64,175,.23)}
+[data-theme="dark"] .oral-replay-row.student{background:rgba(30,41,59,.72)}
 @media (max-width: 980px){
-  .prof-shell{padding:24px 16px 40px}
-  .prof-hero,.prof-grid,.prof-droit-grid,.prof-exam-top{grid-template-columns:1fr}
+  .prof-shell,.oral-shell{padding:24px 16px 40px}
+  .prof-hero,.prof-grid,.prof-droit-grid,.prof-exam-top,.oral-grid{grid-template-columns:1fr}
+  .oral-row{grid-template-columns:1fr}
   .prof-empty{min-height:260px}
 }
 
@@ -4989,6 +5031,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="pomodoro" onclick="showPage(&#39;pomodoro&#39;,this)"><span class="s-ic">⏱️</span> Pomodoro</button>
     <button class="sidebar-item" data-page="caspratiques" onclick="showPage(&#39;caspratiques&#39;,this)"><span class="s-ic">⚖️</span> Cas pratiques</button>
     <button class="sidebar-item" data-page="prof" onclick="showPage(&#39;prof&#39;,this)"><span class="s-ic">🧑‍🏫</span> Prof particulier</button>
+    <button class="sidebar-item" data-page="oral" onclick="showPage(&#39;oral&#39;,this)"><span class="s-ic">🎙️</span> Simulateur d'oral</button>
     <div class="sidebar-section-label">Organisation</div>
     <button class="sidebar-item" data-page="planning" onclick="showPage(&#39;planning&#39;,this)"><span class="s-ic">📅</span> Planning<span class="sb-badge" id="sidebarUrgentBadge">0</span></button>
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
@@ -7239,6 +7282,186 @@ aside.sidebar {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATEUR D'ORAL -->
+    <div class="page-section" id="page-oral">
+      <div class="section-header">
+        <div class="section-header-left">
+          <div class="section-header-ic">🎙️</div>
+          <div>
+            <div class="section-header-title">Simulateur d'oral</div>
+            <div class="section-header-sub">Conversation voix ↔ IA avec relances réalistes et note finale</div>
+          </div>
+        </div>
+        <div class="section-header-date" id="sh-date-page-oral">Mardi 17 mars 2026</div>
+      </div>
+
+      <div class="oral-shell">
+        <div class="oral-grid">
+          <div class="prof-card">
+            <div class="prof-card-title">Configurer l'oral</div>
+            <div class="prof-card-sub">Choix du professeur, format, modes spéciaux et immersion complète. L'IA t'interroge sur ton cours exact.</div>
+
+            <div class="prof-field">
+              <label for="oralMatiere">Matière</label>
+              <select class="prof-select" id="oralMatiere">
+                <option value="">Choisis une matière</option>
+              </select>
+            </div>
+
+            <div class="prof-field">
+              <label for="oralPersona">Type de professeur</label>
+              <select class="prof-select" id="oralPersona" onchange="oralApplyPersonaPreset()">
+                <option value="bienveillant">Bienveillant</option>
+                <option value="strict">Strict Dauphine</option>
+                <option value="jury">Jury de concours</option>
+                <option value="td">Chargé de TD exigeant</option>
+              </select>
+            </div>
+
+            <div class="oral-row">
+              <div class="prof-field">
+                <label for="oralProfName">Nom du professeur</label>
+                <input class="prof-input" id="oralProfName" value="Prof. Martin" />
+              </div>
+              <div class="prof-field">
+                <label for="oralProfReputation">Réputation</label>
+                <input class="prof-input" id="oralProfReputation" value="Connu pour ses colles sur la jurisprudence récente" />
+              </div>
+            </div>
+
+            <div class="prof-field">
+              <label for="oralFormat">Format d'oral</label>
+              <select class="prof-select" id="oralFormat">
+                <option value="classique">Oral classique</option>
+                <option value="soutenance">Soutenance (présentation + questions)</option>
+                <option value="colle">Colle surprise</option>
+                <option value="cas">Cas pratique oral</option>
+              </select>
+            </div>
+
+            <div class="prof-field">
+              <label for="oralScope">Périmètre du cours</label>
+              <select class="prof-select" id="oralScope" onchange="toggleOralPartField()">
+                <option value="all">Interroger tout le cours</option>
+                <option value="part">Interroger une partie précise</option>
+              </select>
+            </div>
+
+            <div class="oral-row">
+              <div class="prof-field">
+                <label for="oralSpecialMode">Mode spécial</label>
+                <select class="prof-select" id="oralSpecialMode">
+                  <option value="normal">Normal</option>
+                  <option value="training">Entraînement (indices si blocage)</option>
+                  <option value="sansfilet">Sans filet (coupure si silence &gt; 5s)</option>
+                  <option value="concours">Concours (Sciences Po/ENA/CRFPA)</option>
+                </select>
+              </div>
+              <div class="prof-field">
+                <label for="oralQuestionCount">Nombre de questions</label>
+                <select class="prof-select" id="oralQuestionCount">
+                  <option value="6">6</option>
+                  <option value="8">8</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="prof-field" id="oralPartWrap" style="display:none">
+              <label for="oralPartTopic">Partie ciblée</label>
+              <input class="prof-input" id="oralPartTopic" placeholder="Ex: La séparation des pouvoirs dans la Ve République" />
+            </div>
+
+            <div class="prof-field">
+              <label for="oralCourse">Ton cours</label>
+              <textarea class="prof-textarea tall" id="oralCourse" placeholder="Colle ici ton cours, tes notes ou une fiche. Le simulateur prépare ses questions à partir de ce texte."></textarea>
+            </div>
+
+            <div class="oral-row">
+              <div class="prof-field">
+                <label for="oralVoiceSelect">Voix du professeur</label>
+                <select class="prof-select" id="oralVoiceSelect"></select>
+              </div>
+              <div class="prof-field">
+                <label for="oralSpeechRate">Débit de parole</label>
+                <div class="oral-voice-row">
+                  <input type="range" id="oralSpeechRate" min="0.75" max="1.35" step="0.05" value="0.98" style="flex:1">
+                  <span id="oralSpeechRateVal" style="font-size:12px;color:var(--g500);min-width:34px;text-align:right">0.98x</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="oral-row">
+              <div class="prof-field">
+                <label for="oralPresentationTopic">Sujet de soutenance <span>optionnel</span></label>
+                <input class="prof-input" id="oralPresentationTopic" placeholder="Ex: L'office du juge administratif" />
+              </div>
+              <div class="prof-field">
+                <label for="oralPresentationMinutes">Présentation (min)</label>
+                <select class="prof-select" id="oralPresentationMinutes">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="prof-actions">
+              <button class="prof-btn" id="oralStartBtn" onclick="startOralSession()">🚀 Démarrer l'oral</button>
+              <button class="prof-btn secondary" id="oralListenBtn" onclick="toggleOralListening()" disabled>🎤 Commencer à parler</button>
+              <button class="prof-btn" id="oralSendBtn" onclick="submitOralAnswer()" disabled>📨 Envoyer ma réponse</button>
+              <button class="prof-btn ghost" id="oralJokerBtn" onclick="oralUseJoker()" disabled>🃏 +1 min joker</button>
+              <button class="prof-btn ghost" id="oralRepeatBtn" onclick="oralRepeatQuestion()" disabled>🔁 Reposer la question</button>
+              <button class="prof-btn ghost" id="oralAmbienceBtn" onclick="toggleOralAmbience()">🔊 Ambiance salle</button>
+              <button class="prof-btn ghost" onclick="resetOralSimulator()">🗑️ Réinitialiser</button>
+            </div>
+
+            <div class="oral-live">
+              <label for="oralLiveTranscript" style="display:block;font-size:12px;font-weight:700;color:var(--g700)">Transcription en direct / réponse editable</label>
+              <textarea class="prof-textarea" id="oralLiveTranscript" placeholder="Ta réponse transcrite apparait ici (tu peux corriger avant envoi)." disabled></textarea>
+              <div class="oral-note-live"><span class="oral-note-dot" id="oralNoteDot"></span><span id="oralNoteLabel">Le prof prend des notes…</span></div>
+            </div>
+          </div>
+
+          <div class="prof-card">
+            <div class="prof-card-title">Session en cours</div>
+            <div class="prof-card-sub" id="oralCompat">Chrome/Edge recommandé pour la reconnaissance vocale.</div>
+            <div class="oral-status">
+              <div class="oral-chip" id="oralStatusChip">Prêt</div>
+              <div class="oral-chip" id="oralTimerChip">⏱️ 12:00</div>
+              <div class="oral-chip" id="oralTurnChip">Tour 0/6</div>
+              <div class="oral-chip" id="oralModeChip">Mode normal</div>
+            </div>
+            <div class="oral-chat" id="oralChat">
+              <div class="oral-msg system">Le professeur IA apparaîtra ici au lancement de la session.</div>
+            </div>
+
+            <div class="prof-section-label">Replay de l'oral</div>
+            <div class="oral-replay" id="oralReplay">
+              <div class="oral-replay-row prof">Le replay détaillé apparaitra ici à la fin.</div>
+            </div>
+
+            <div class="prof-section-label">Évaluation finale</div>
+            <div id="oralResult">
+              <div class="prof-empty" style="min-height:180px">
+                <div>
+                  <div style="font-size:36px">🎯</div>
+                  <strong>La note apparaîtra ici</strong>
+                  <span>Finis l'oral pour obtenir une note /20 et un feedback détaillé.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prof-actions" style="margin-top:12px">
+              <button class="prof-btn ghost" onclick="oralExportPdf()">🧾 Exporter feedback PDF</button>
+            </div>
+
+            <div class="prof-section-label">Historique & progression</div>
+            <div class="oral-history" id="oralHistory"></div>
           </div>
         </div>
       </div>
@@ -20437,7 +20660,7 @@ function profStopSpeaking() {
 }
 
 function initProfTutor() {
-  var selectIds = ['profCorrectionMatiere', 'profExamMatiere'];
+  var selectIds = ['profCorrectionMatiere', 'profExamMatiere', 'oralMatiere'];
   selectIds.forEach(function(selectId) {
     var select = document.getElementById(selectId);
     if (!select || typeof MATIERES === 'undefined') return;
@@ -20457,9 +20680,733 @@ function initProfTutor() {
   profUpdateExamTimer();
 }
 
+var ORAL_HISTORY_KEY = 'dg_oral_history_v1';
+var oralState = {
+  active: false,
+  maxTurns: 6,
+  turn: 0,
+  timerId: null,
+  silenceTimerId: null,
+  secondsLeft: 12 * 60,
+  listening: false,
+  recognition: null,
+  currentQuestion: '',
+  score: 12,
+  jokerUsed: false,
+  history: [],
+  replay: [],
+  speechRate: 0.98,
+  lastSpeechAt: Date.now(),
+  ambience: { on: false, ctx: null, src: null, gain: null },
+  reportHtml: ''
+};
+
+function oralSupportsRecognition() {
+  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function oralGetSpecialMode() {
+  var sel = document.getElementById('oralSpecialMode');
+  return sel ? sel.value : 'normal';
+}
+
+function toggleOralPartField() {
+  var scope = document.getElementById('oralScope');
+  var wrap = document.getElementById('oralPartWrap');
+  if (!scope || !wrap) return;
+  wrap.style.display = scope.value === 'part' ? '' : 'none';
+}
+
+function oralApplyPersonaPreset() {
+  var persona = document.getElementById('oralPersona');
+  var name = document.getElementById('oralProfName');
+  var rep = document.getElementById('oralProfReputation');
+  if (!persona || !name || !rep) return;
+  var map = {
+    bienveillant: { n: 'Prof. Claire Bernard', r: 'Réputée pour ses feedbacks précis et motivants' },
+    strict: { n: 'Prof. Martin Lefevre', r: 'Connu pour ses colles sur la jurisprudence récente' },
+    jury: { n: 'Mme Durand, Jury', r: 'Réputation: relances pointues et exigences de concours' },
+    td: { n: 'M. Roussel, Charge de TD', r: 'Methodologie rigoureuse, coupe les raccourcis' }
+  };
+  var p = map[persona.value] || map.bienveillant;
+  name.value = p.n;
+  rep.value = p.r;
+}
+
+function oralSetControlState(active) {
+  var ids = ['oralListenBtn', 'oralSendBtn', 'oralJokerBtn', 'oralRepeatBtn'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.disabled = !active;
+  });
+  var input = document.getElementById('oralLiveTranscript');
+  if (input) input.disabled = !active;
+}
+
+function oralSetStatus(label, isWarn) {
+  var chip = document.getElementById('oralStatusChip');
+  if (!chip) return;
+  chip.textContent = label;
+  chip.classList.toggle('warn', !!isWarn);
+}
+
+function oralSetNotesLive(isLive) {
+  var dot = document.getElementById('oralNoteDot');
+  var lbl = document.getElementById('oralNoteLabel');
+  if (dot) dot.classList.toggle('live', !!isLive);
+  if (lbl) lbl.textContent = isLive ? 'Le prof prend des notes en direct…' : 'Le prof prend des notes…';
+}
+
+function oralFormatClock(totalSeconds) {
+  var mins = Math.floor(totalSeconds / 60);
+  var secs = totalSeconds % 60;
+  return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+}
+
+function oralRefreshChips() {
+  var timerChip = document.getElementById('oralTimerChip');
+  var turnChip = document.getElementById('oralTurnChip');
+  var modeChip = document.getElementById('oralModeChip');
+  if (timerChip) timerChip.textContent = '⏱️ ' + oralFormatClock(oralState.secondsLeft);
+  if (turnChip) turnChip.textContent = 'Tour ' + oralState.turn + '/' + oralState.maxTurns;
+  if (modeChip) modeChip.textContent = 'Mode ' + oralGetSpecialMode();
+}
+
+function oralPushMessage(role, text) {
+  var chat = document.getElementById('oralChat');
+  if (!chat) return;
+  var msg = document.createElement('div');
+  msg.className = 'oral-msg ' + role;
+  msg.innerHTML = profNl2br(text || '');
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function oralPushReplay(role, text) {
+  oralState.replay.push({ role: role, text: text, at: new Date().toISOString() });
+}
+
+function oralRenderReplay() {
+  var box = document.getElementById('oralReplay');
+  if (!box) return;
+  var html = '';
+  oralState.replay.forEach(function(item) {
+    html += '<div class="oral-replay-row ' + (item.role === 'prof' ? 'prof' : 'student') + '"><strong>'
+      + (item.role === 'prof' ? 'Prof' : 'Etudiant') + ':</strong> ' + profNl2br(item.text || '') + '</div>';
+  });
+  box.innerHTML = html || '<div class="oral-replay-row prof">Le replay detaille apparaitra ici a la fin.</div>';
+}
+
+function oralPopulateVoices() {
+  var sel = document.getElementById('oralVoiceSelect');
+  if (!sel || !window.speechSynthesis) return;
+  var voices = window.speechSynthesis.getVoices();
+  if (!voices || !voices.length) return;
+  sel.innerHTML = '';
+  voices.forEach(function(v, idx) {
+    var opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = v.lang + ' - ' + v.name;
+    if (v.lang && v.lang.toLowerCase().indexOf('fr') === 0 && !sel.dataset.frSet) {
+      opt.selected = true;
+      sel.dataset.frSet = '1';
+    }
+    sel.appendChild(opt);
+  });
+}
+
+function oralSpeak(text) {
+  if (!text || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(String(text));
+  u.lang = 'fr-FR';
+  var rateInput = document.getElementById('oralSpeechRate');
+  oralState.speechRate = rateInput ? Number(rateInput.value || 0.98) : 0.98;
+  u.rate = oralState.speechRate;
+  var sel = document.getElementById('oralVoiceSelect');
+  var voices = window.speechSynthesis.getVoices();
+  if (sel && voices && voices.length && voices[Number(sel.value)]) u.voice = voices[Number(sel.value)];
+  window.speechSynthesis.speak(u);
+}
+
+function oralStopListeningUi() {
+  oralState.listening = false;
+  oralSetNotesLive(false);
+  var btn = document.getElementById('oralListenBtn');
+  if (btn) btn.textContent = '🎤 Commencer à parler';
+}
+
+function oralInitRecognition() {
+  if (oralState.recognition) return oralState.recognition;
+  var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Ctor) return null;
+  var rec = new Ctor();
+  rec.lang = 'fr-FR';
+  rec.interimResults = true;
+  rec.continuous = true;
+
+  rec.onresult = function(event) {
+    var input = document.getElementById('oralLiveTranscript');
+    if (!input) return;
+    var finalText = '';
+    for (var i = event.resultIndex; i < event.results.length; i++) {
+      var transcript = event.results[i][0] ? event.results[i][0].transcript : '';
+      if (event.results[i].isFinal) finalText += transcript + ' ';
+    }
+    if (finalText) {
+      input.value = (input.value + ' ' + finalText).trim();
+      oralState.lastSpeechAt = Date.now();
+    }
+  };
+
+  rec.onend = function() {
+    oralStopListeningUi();
+  };
+
+  rec.onerror = function() {
+    oralStopListeningUi();
+  };
+
+  oralState.recognition = rec;
+  return rec;
+}
+
+function toggleOralListening() {
+  if (!oralState.active) return;
+  if (!oralSupportsRecognition()) {
+    toast('Reconnaissance vocale non supportee ici (utilise Chrome/Edge)', '⚠️');
+    return;
+  }
+  var rec = oralInitRecognition();
+  if (!rec) return;
+  var btn = document.getElementById('oralListenBtn');
+  if (oralState.listening) {
+    rec.stop();
+    oralStopListeningUi();
+    return;
+  }
+  try {
+    rec.start();
+    oralState.listening = true;
+    oralState.lastSpeechAt = Date.now();
+    oralSetNotesLive(true);
+    if (btn) btn.textContent = '⏹️ Stop micro';
+  } catch (e) {
+    toast('Micro deja actif ou indisponible', '⚠️');
+  }
+}
+
+function oralStartAmbience() {
+  if (oralState.ambience.on) return;
+  try {
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) throw new Error('AudioContext indisponible');
+    var ctx = new Ctx();
+    var sampleRate = ctx.sampleRate;
+    var buffer = ctx.createBuffer(1, sampleRate * 2, sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.12;
+    var src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+    var lowpass = ctx.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.value = 1200;
+    var gain = ctx.createGain();
+    gain.gain.value = 0.025;
+    src.connect(lowpass);
+    lowpass.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+    oralState.ambience = { on: true, ctx: ctx, src: src, gain: gain };
+  } catch (e) {}
+}
+
+function oralStopAmbience() {
+  if (!oralState.ambience.on) return;
+  try {
+    oralState.ambience.src.stop();
+    oralState.ambience.ctx.close();
+  } catch (e) {}
+  oralState.ambience = { on: false, ctx: null, src: null, gain: null };
+}
+
+function toggleOralAmbience() {
+  var btn = document.getElementById('oralAmbienceBtn');
+  if (!oralState.ambience.on) {
+    oralStartAmbience();
+    if (btn) btn.textContent = '🔇 Couper ambiance';
+  } else {
+    oralStopAmbience();
+    if (btn) btn.textContent = '🔊 Ambiance salle';
+  }
+}
+
+function oralUseJoker() {
+  if (!oralState.active) return;
+  if (oralState.jokerUsed) {
+    toast('Joker deja utilise pour cet oral', '⚠️');
+    return;
+  }
+  oralState.jokerUsed = true;
+  oralState.secondsLeft += 60;
+  oralRefreshChips();
+  oralPushMessage('system', '🃏 Joker utilise: +1 minute de reflexion.');
+  oralPushReplay('prof', '[Joker accorde +1 minute]');
+}
+
+function oralRepeatQuestion() {
+  if (!oralState.active || !oralState.currentQuestion) return;
+  oralSpeak(oralState.currentQuestion);
+  oralPushMessage('system', '🔁 Le professeur reformule la question a l oral.');
+  oralPushReplay('prof', 'Reformulation: ' + oralState.currentQuestion);
+}
+
+function oralBuildProfStyle(persona) {
+  if (persona === 'strict') return 'Prof strict Dauphine: exige precision, structure, exemples juridiques, s agace sur le hors-sujet.';
+  if (persona === 'jury') return 'Jury de concours: ton formel, relances pointues, pression maitrisee.';
+  if (persona === 'td') return 'Charge de TD: tres methodique, oriente raisonnement et qualification juridique.';
+  return 'Prof bienveillant: exigeant mais pedagogique, valide les progres nets.';
+}
+
+function oralClearRuntime() {
+  if (oralState.timerId) clearInterval(oralState.timerId);
+  if (oralState.silenceTimerId) clearInterval(oralState.silenceTimerId);
+  oralState.timerId = null;
+  oralState.silenceTimerId = null;
+  if (oralState.recognition && oralState.listening) {
+    try { oralState.recognition.stop(); } catch (e) {}
+  }
+  oralStopListeningUi();
+}
+
+function oralResetResultPanel() {
+  var result = document.getElementById('oralResult');
+  if (!result) return;
+  result.innerHTML = '<div class="prof-empty" style="min-height:180px"><div><div style="font-size:36px">🎯</div><strong>La note apparaitra ici</strong><span>Finis l oral pour obtenir une note /20 et un feedback detaille.</span></div></div>';
+}
+
+function oralLoadHistory() {
+  try {
+    var arr = JSON.parse(localStorage.getItem(ORAL_HISTORY_KEY) || '[]');
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function oralSaveSession(session) {
+  var list = oralLoadHistory();
+  list.unshift(session);
+  if (list.length > 24) list = list.slice(0, 24);
+  localStorage.setItem(ORAL_HISTORY_KEY, JSON.stringify(list));
+}
+
+function oralRenderHistory() {
+  var box = document.getElementById('oralHistory');
+  if (!box) return;
+  var list = oralLoadHistory();
+  if (!list.length) {
+    box.innerHTML = '<div class="oral-history-item"><span>Aucun oral enregistre</span><span>--</span></div>';
+    return;
+  }
+  var html = '';
+  list.slice(0, 6).forEach(function(item) {
+    var n = Number(item.note || 0);
+    html += '<div class="oral-history-item"><div><div style="font-size:12px;font-weight:700">'
+      + profEscapeHtml(item.matiere || 'Matiere') + ' · ' + profEscapeHtml(item.mode || 'normal') + '</div>'
+      + '<div class="oral-bar"><span style="width:' + Math.round((n / 20) * 100) + '%"></span></div></div>'
+      + '<div style="font-size:12px;font-weight:800;color:var(--blue)">' + n.toFixed(1) + '/20</div></div>';
+  });
+  box.innerHTML = html;
+}
+
+function resetOralSimulator() {
+  oralClearRuntime();
+  oralStopAmbience();
+  var ambBtn = document.getElementById('oralAmbienceBtn');
+  if (ambBtn) ambBtn.textContent = '🔊 Ambiance salle';
+  oralState.active = false;
+  oralState.turn = 0;
+  oralState.secondsLeft = 12 * 60;
+  oralState.currentQuestion = '';
+  oralState.score = 12;
+  oralState.jokerUsed = false;
+  oralState.history = [];
+  oralState.replay = [];
+  oralState.reportHtml = '';
+  oralSetControlState(false);
+  oralSetStatus('Pret', false);
+  oralSetNotesLive(false);
+  oralRefreshChips();
+  var t = document.getElementById('oralLiveTranscript');
+  if (t) t.value = '';
+  var chat = document.getElementById('oralChat');
+  if (chat) chat.innerHTML = '<div class="oral-msg system">Le professeur IA apparaitra ici au lancement de la session.</div>';
+  oralResetResultPanel();
+  oralRenderReplay();
+}
+
+function oralStartTimer() {
+  oralClearRuntime();
+  oralState.timerId = setInterval(function() {
+    if (!oralState.active) return;
+    oralState.secondsLeft -= 1;
+    if (oralState.secondsLeft <= 0) {
+      oralState.secondsLeft = 0;
+      oralRefreshChips();
+      finishOralSession('Temps ecoule');
+      return;
+    }
+    oralRefreshChips();
+    var chip = document.getElementById('oralTimerChip');
+    if (chip) chip.classList.toggle('warn', oralState.secondsLeft <= 120);
+  }, 1000);
+
+  oralState.silenceTimerId = setInterval(function() {
+    if (!oralState.active) return;
+    if (oralGetSpecialMode() !== 'sansfilet') return;
+    if (!oralState.listening) return;
+    if (Date.now() - oralState.lastSpeechAt > 5000) {
+      if (oralState.recognition) {
+        try { oralState.recognition.stop(); } catch (e) {}
+      }
+      oralStopListeningUi();
+      oralPushMessage('system', '⛔ Mode sans filet: micro coupe apres 5s de silence. Envoie ta reponse.');
+      oralPushReplay('prof', '[Mode sans filet: interruption pour silence]');
+      oralState.lastSpeechAt = Date.now();
+    }
+  }, 350);
+}
+
+function oralClampScore(val) {
+  return Math.max(0, Math.min(20, val));
+}
+
+function oralBuildSessionPrompt(opts) {
+  var formatNote = '';
+  if (opts.format === 'soutenance') {
+    formatNote = 'Commence par demander une presentation de ' + opts.presentationMin + ' minutes sur le sujet: ' + (opts.presentationTopic || 'le theme du cours') + '.';
+  } else if (opts.format === 'colle') {
+    formatNote = 'Mode colle surprise: questions abruptes, sans annonce de plan.';
+  } else if (opts.format === 'cas') {
+    formatNote = 'Mode cas pratique oral: lis un mini cas puis fais raisonner etudiant a voix haute.';
+  }
+  var modeNote = '';
+  if (opts.special === 'training') modeNote = 'Mode entrainement: si blocage probable, autorise un indice court.';
+  if (opts.special === 'concours') modeNote = 'Mode concours: niveau plus eleve, relances tres selectives.';
+  if (opts.special === 'sansfilet') modeNote = 'Mode sans filet: ton sec et pression temporelle.';
+  return 'Tu simules un oral universitaire pour un etudiant L1 Dauphine. '
+    + 'Professeur: ' + opts.profName + '. Reputation: ' + opts.profRep + '. '
+    + 'Style prof: ' + opts.style + '. Matiere: ' + opts.matiere + '. Format: ' + opts.format + '. '
+    + 'Perimetre: ' + opts.scope + '. ' + formatNote + ' ' + modeNote + ' '
+    + 'Cours etudiant: ' + opts.course.slice(0, 7600) + '. '
+    + 'Reponds UNIQUEMENT en JSON valide format '
+    + '{"intro":"...","questions":["..."],"hints":["..."]}. '
+    + 'Donne exactement ' + opts.count + ' questions progressives et realistes, puis 3 hints optionnels.';
+}
+
+async function startOralSession() {
+  var matterId = document.getElementById('oralMatiere').value;
+  var course = document.getElementById('oralCourse').value.trim();
+  var persona = document.getElementById('oralPersona').value;
+  var format = document.getElementById('oralFormat').value;
+  var scope = document.getElementById('oralScope').value;
+  var part = document.getElementById('oralPartTopic').value.trim();
+  var count = Number(document.getElementById('oralQuestionCount').value || 6);
+  var profName = document.getElementById('oralProfName').value.trim() || 'Prof. Martin';
+  var profRep = document.getElementById('oralProfReputation').value.trim() || 'Exigeant';
+  var special = oralGetSpecialMode();
+  var presentationTopic = document.getElementById('oralPresentationTopic').value.trim();
+  var presentationMin = Number(document.getElementById('oralPresentationMinutes').value || 3);
+
+  if (!matterId) return toast('Choisis une matiere', '⚠️');
+  if (!course) return toast('Colle ton cours pour lancer un oral cible', '⚠️');
+  if (scope === 'part' && !part) return toast('Precise la partie ciblee', '⚠️');
+
+  profSetButtonLoading('oralStartBtn', true, 'Preparation...', '🚀 Demarrer l oral');
+  try {
+    var matiere = profFindMatterName(matterId) || 'matiere non precisee';
+    var opts = {
+      profName: profName,
+      profRep: profRep,
+      style: oralBuildProfStyle(persona),
+      matiere: matiere,
+      format: format,
+      scope: scope === 'part' ? ('uniquement la partie: ' + part) : 'tout le cours',
+      course: course,
+      count: count,
+      special: special,
+      presentationTopic: presentationTopic,
+      presentationMin: presentationMin
+    };
+    var data = profParseJson(await profRequest(oralBuildSessionPrompt(opts), 1300, 0.25));
+    if (!data || !Array.isArray(data.questions) || !data.questions.length) throw new Error('Preparation de l oral impossible');
+
+    oralState.active = true;
+    oralState.maxTurns = count;
+    oralState.turn = 1;
+    oralState.score = special === 'concours' ? 10.5 : 12;
+    oralState.jokerUsed = false;
+    oralState.secondsLeft = (format === 'soutenance' ? 15 : 12) * 60;
+    oralState.history = [];
+    oralState.replay = [];
+    oralState.lastSpeechAt = Date.now();
+    oralSetControlState(true);
+    oralSetStatus('Oral en cours', false);
+    oralRefreshChips();
+
+    var chat = document.getElementById('oralChat');
+    if (chat) chat.innerHTML = '';
+    oralResetResultPanel();
+    var intro = String(data.intro || ('Bonjour, je suis ' + profName + '. Nous commencons.')).trim();
+    var firstQuestion = String(data.questions[0] || '').trim();
+    oralState.currentQuestion = firstQuestion;
+    oralState.history.push({ role: 'prof', text: intro });
+    oralState.history.push({ role: 'prof', text: firstQuestion });
+    oralPushReplay('prof', intro);
+    oralPushReplay('prof', 'Question 1: ' + firstQuestion);
+    oralPushMessage('prof', intro);
+    oralPushMessage('prof', 'Question 1: ' + firstQuestion);
+    if (format === 'soutenance') {
+      oralPushMessage('system', '🎤 Soutenance: commence par presenter ton sujet pendant ' + presentationMin + ' minute(s).');
+      oralPushReplay('prof', '[Soutenance ' + presentationMin + ' min]');
+    }
+    oralSpeak(intro + ' ' + firstQuestion);
+    oralStartTimer();
+  } catch (error) {
+    toast(error.message || 'Impossible de demarrer l oral', '❌');
+  } finally {
+    profSetButtonLoading('oralStartBtn', false, 'Preparation...', '🚀 Demarrer l oral');
+  }
+}
+
+function oralMaybeInterrupt(answerText) {
+  if (!oralState.active) return;
+  var special = oralGetSpecialMode();
+  var should = answerText.length > 320 || (special === 'concours' && answerText.length > 220);
+  if (!should) return;
+  if (Math.random() < 0.5) {
+    var cut = 'Attendez, revenez sur ce point et formulez votre idee en deux etapes claires.';
+    oralPushMessage('prof', '⛔ ' + cut);
+    oralPushReplay('prof', '[Interruption] ' + cut);
+    oralSpeak(cut);
+  }
+}
+
+async function submitOralAnswer() {
+  if (!oralState.active) return;
+  var input = document.getElementById('oralLiveTranscript');
+  var answer = input ? input.value.trim() : '';
+  if (!answer) return toast('Reponds d abord (micro ou clavier)', '⚠️');
+
+  if (oralState.recognition && oralState.listening) {
+    try { oralState.recognition.stop(); } catch (e) {}
+    oralStopListeningUi();
+  }
+
+  oralPushMessage('student', answer);
+  oralPushReplay('student', answer);
+  oralState.history.push({ role: 'student', text: answer });
+  oralMaybeInterrupt(answer);
+  if (input) input.value = '';
+
+  if (oralState.turn >= oralState.maxTurns) return finishOralSession('Derniere reponse envoyee');
+
+  oralSetStatus('Correction et relance...', false);
+  try {
+    var special = oralGetSpecialMode();
+    var context = oralState.history.slice(-10).map(function(item) {
+      return item.role.toUpperCase() + ': ' + item.text;
+    }).join('\n');
+    var hintNeed = special === 'training' ? 'Si la reponse est faible, ajoute un indice bref dans hint.' : 'Laisse hint vide.';
+    var moodNeed = 'Si hors-sujet, ton plus sec. Si precis, approuve explicitement.';
+    var prompt = 'Tu joues un professeur a l oral. '
+      + moodNeed + ' '
+      + 'Analyse la reponse et relance immediatement. '
+      + 'Reponds UNIQUEMENT en JSON valide format '
+      + '{"feedback":"...","relance":"...","score_delta":0,"hint":"..."}. '
+      + 'Contraintes: feedback 1-2 phrases, relance precise, score_delta entre -2 et +2. '
+      + hintNeed + ' '
+      + 'Question actuelle: ' + oralState.currentQuestion + '.\nHistorique recent:\n' + context;
+
+    var data = profParseJson(await profRequest(prompt, 700, 0.3));
+    if (!data || !data.relance) throw new Error('Relance indisponible');
+
+    var feedback = String(data.feedback || 'Reponse recue.');
+    var relance = String(data.relance || '').trim();
+    var hint = String(data.hint || '').trim();
+    var delta = Number(data.score_delta || 0);
+    oralState.score = oralClampScore(oralState.score + Math.max(-2, Math.min(2, delta)));
+
+    oralState.turn += 1;
+    oralState.currentQuestion = relance;
+    oralRefreshChips();
+    oralState.history.push({ role: 'prof', text: feedback });
+    oralState.history.push({ role: 'prof', text: relance });
+
+    var bundle = feedback + '\n\nQuestion ' + oralState.turn + ': ' + relance;
+    if (hint && oralGetSpecialMode() === 'training') bundle += '\n\nIndice: ' + hint;
+    oralPushMessage('prof', bundle);
+    oralPushReplay('prof', bundle);
+    oralSpeak(feedback + ' ' + relance + (hint && oralGetSpecialMode() === 'training' ? (' Indice: ' + hint) : ''));
+    oralSetStatus('Oral en cours', false);
+    oralRenderReplay();
+  } catch (error) {
+    oralPushMessage('system', '❌ Impossible de generer la relance: ' + (error.message || 'erreur inconnue'));
+    oralSetStatus('Erreur API', true);
+  }
+}
+
+function oralRenderReport(report, compareDelta) {
+  var result = document.getElementById('oralResult');
+  if (!result) return;
+  var note = Number(report.note || oralState.score || 0);
+  var c = report.criteres || {};
+  var strengths = Array.isArray(report.points_forts) ? report.points_forts : [];
+  var axes = Array.isArray(report.axes_amelioration) ? report.axes_amelioration : [];
+  var compareTxt = '';
+  if (typeof compareDelta === 'number') {
+    compareTxt = compareDelta === 0 ? 'Stable vs session precedente.' : (compareDelta > 0 ? ('Progression de +' + compareDelta.toFixed(1) + ' point(s).') : ('Baisse de ' + compareDelta.toFixed(1) + ' point(s).'));
+  }
+
+  var html = '<div class="oral-report">';
+  html += '<div class="oral-report-grid">';
+  html += '<div class="oral-report-kpi"><strong>Note finale</strong><span>' + note.toFixed(1) + '/20</span></div>';
+  html += '<div class="oral-report-kpi"><strong>Fond</strong><span>' + Number(c.fond || note).toFixed(1) + '</span></div>';
+  html += '<div class="oral-report-kpi"><strong>Forme</strong><span>' + Number(c.forme || note).toFixed(1) + '</span></div>';
+  html += '<div class="oral-report-kpi"><strong>Structure</strong><span>' + Number(c.structure || note).toFixed(1) + '</span></div>';
+  html += '<div class="oral-report-kpi"><strong>Precision juridique</strong><span>' + Number(c.precision || note).toFixed(1) + '</span></div>';
+  html += '</div>';
+  html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Synthese</strong><p>' + profNl2br(report.resume || 'Session terminee.') + '</p></div>';
+  if (report.verdict_dauphine) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Ce qu un vrai correcteur Dauphine aurait pense</strong><p>' + profNl2br(report.verdict_dauphine) + '</p></div>';
+  if (compareTxt) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Comparaison session precedente</strong><p>' + profNl2br(compareTxt) + '</p></div>';
+  if (strengths.length) {
+    html += '<div class="prof-section-label">Points forts</div><div class="prof-pill-list">';
+    strengths.forEach(function(item) { html += '<div class="prof-pill good">' + profEscapeHtml(item) + '</div>'; });
+    html += '</div>';
+  }
+  if (axes.length) {
+    html += '<div class="prof-section-label">Points faibles / axes d amelioration</div><div class="prof-pill-list">';
+    axes.forEach(function(item) { html += '<div class="prof-pill warn">' + profEscapeHtml(item) + '</div>'; });
+    html += '</div>';
+  }
+  html += '</div>';
+  result.innerHTML = html;
+  oralState.reportHtml = html;
+}
+
+async function finishOralSession(reasonLabel) {
+  if (!oralState.active) return;
+  oralState.active = false;
+  oralClearRuntime();
+  oralSetControlState(false);
+  oralSetStatus('Finalisation...', false);
+  oralPushMessage('system', '🏁 Fin de session: ' + reasonLabel + '. Generation de la note en cours...');
+
+  try {
+    var historyText = oralState.history.map(function(item) {
+      return item.role.toUpperCase() + ': ' + item.text;
+    }).join('\n').slice(0, 11000);
+
+    var prompt = 'Tu es evaluateur d oral a Dauphine. Sur la base de cette simulation, donne un bilan final. '
+      + 'Reponds UNIQUEMENT en JSON valide format '
+      + '{"note":13.5,"resume":"...","criteres":{"fond":13,"forme":12,"structure":14,"precision":13},"points_forts":["..."],"axes_amelioration":["..."],"verdict_dauphine":"..."}. '
+      + 'Feedback exigeant mais utile.\n\n'
+      + historyText;
+
+    var report = profParseJson(await profRequest(prompt, 1000, 0.2));
+    if (!report) {
+      report = {
+        note: oralState.score,
+        resume: 'Evaluation automatique minimale (reponse JSON indisponible).',
+        criteres: { fond: oralState.score, forme: oralState.score, structure: oralState.score, precision: oralState.score },
+        points_forts: ['Participation active a la simulation'],
+        axes_amelioration: ['Structurer davantage les reponses'],
+        verdict_dauphine: 'Travail serieux, continue les simulations pour gagner en precision.'
+      };
+    }
+
+    var past = oralLoadHistory();
+    var prev = past.length ? Number(past[0].note || 0) : null;
+    var delta = prev == null ? null : (Number(report.note || oralState.score) - prev);
+    oralRenderReport(report, delta);
+    oralSetStatus('Session terminee', false);
+
+    oralSaveSession({
+      date: new Date().toISOString(),
+      matiere: profFindMatterName(document.getElementById('oralMatiere').value || ''),
+      mode: oralGetSpecialMode(),
+      note: Number(report.note || oralState.score),
+      replay: oralState.replay.slice(-40)
+    });
+    oralRenderHistory();
+    oralRenderReplay();
+  } catch (error) {
+    oralSetStatus('Erreur finale', true);
+    oralRenderReport({
+      note: oralState.score,
+      resume: 'La note detaillee n a pas pu etre generee (' + (error.message || 'erreur') + ').',
+      criteres: { fond: oralState.score, forme: oralState.score, structure: oralState.score, precision: oralState.score },
+      points_forts: ['Session menee jusqu au bout'],
+      axes_amelioration: ['Relancer une session pour obtenir un feedback complet'],
+      verdict_dauphine: 'Resultat partiel affiche.'
+    }, null);
+  }
+}
+
+function oralExportPdf() {
+  if (!oralState.reportHtml) {
+    toast('Aucun feedback a exporter pour le moment', '⚠️');
+    return;
+  }
+  var w = window.open('', '_blank');
+  if (!w) {
+    toast('Popup bloquee, impossible d exporter', '❌');
+    return;
+  }
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Feedback oral</title>'
+    + '<style>body{font-family:Arial,sans-serif;padding:22px;color:#0f172a}h1{font-size:20px;margin-bottom:14px}.prof-pill{display:inline-block;margin:4px 6px 0 0;padding:6px 10px;border-radius:10px;background:#f1f5f9}.good{background:#dcfce7}.warn{background:#ffedd5}</style></head><body>'
+    + '<h1>Simulateur d oral - Feedback</h1>' + oralState.reportHtml + '</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function() { w.print(); }, 250);
+}
+
+function initOralSimulator() {
+  toggleOralPartField();
+  oralApplyPersonaPreset();
+  oralRefreshChips();
+  oralSetControlState(false);
+  oralRenderHistory();
+  oralRenderReplay();
+
+  var compat = document.getElementById('oralCompat');
+  if (compat) {
+    compat.textContent = oralSupportsRecognition()
+      ? 'Micro detecte. Tu peux parler en direct (Chrome/Edge recommande).'
+      : 'Reconnaissance vocale indisponible ici. Tu peux repondre en texte dans la zone de transcription.';
+  }
+
+  var rate = document.getElementById('oralSpeechRate');
+  var rateVal = document.getElementById('oralSpeechRateVal');
+  if (rate && rateVal) {
+    rate.addEventListener('input', function() {
+      rateVal.textContent = Number(rate.value).toFixed(2) + 'x';
+    });
+    rateVal.textContent = Number(rate.value).toFixed(2) + 'x';
+  }
+
+  if (window.speechSynthesis) {
+    oralPopulateVoices();
+    window.speechSynthesis.onvoiceschanged = oralPopulateVoices;
+  }
+}
+
 /* Init on notes page open */
 document.addEventListener('DOMContentLoaded', function() {
   initProfTutor();
+  initOralSimulator();
   if (document.getElementById('drawCanvas')) dsInit();
 });
 
