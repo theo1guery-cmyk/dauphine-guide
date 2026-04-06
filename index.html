@@ -19847,25 +19847,43 @@ async function profRequest(prompt, maxTokens, temperature) {
 }
 
 async function profRequestXXL(prompt, maxTokens, temperature) {
-  var res = await fetch(GROQ_PROXY, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Groq-Tier': 'xxl'
-    },
-    body: JSON.stringify({
-      model: GROQ_MODEL,
-      max_tokens: maxTokens || 1200,
-      temperature: typeof temperature === 'number' ? temperature : 0.3,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!res.ok) {
+  var XXL_MODEL = 'llama-3.3-70b-versatile'; // modèle plus puissant + quota séparé
+  var MAX_RETRIES = 3;
+
+  for (var attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    var res = await fetch(GROQ_PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Groq-Tier': 'xxl' },
+      body: JSON.stringify({
+        model: XXL_MODEL,
+        max_tokens: maxTokens || 1200,
+        temperature: typeof temperature === 'number' ? temperature : 0.3,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (res.ok) {
+      var data = await res.json();
+      return data && data.choices && data.choices[0] && data.choices[0].message
+        ? data.choices[0].message.content.trim() : '';
+    }
+
     var errData = await res.json().catch(function() { return {}; });
-    throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
+    var msg = errData.error && errData.error.message ? errData.error.message : '';
+
+    // Rate limit → attend le temps suggéré puis réessaie
+    if (res.status === 429) {
+      var waitMatch = msg.match(/try again in ([0-9.]+)s/i);
+      var waitSecs = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) + 1 : 20;
+      if (attempt < MAX_RETRIES - 1) {
+        toast('Rate limit — nouvelle tentative dans ' + waitSecs + 's…', '⏳');
+        await new Promise(function(r) { setTimeout(r, waitSecs * 1000); });
+        continue;
+      }
+    }
+
+    throw new Error(msg || 'Erreur API ' + res.status);
   }
-  var data = await res.json();
-  return data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : '';
 }
 
 function profScoreClass(note) {
