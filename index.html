@@ -20470,7 +20470,23 @@ function wgGetType() {
 function wgGetLink() {
   var base = window.location.href.split('?')[0];
   var type = wgGetType();
-  return base + '?widget&type=' + type;
+  var url = base + '?widget&type=' + type;
+  // Pour le widget cours : encode l'EDT dans l'URL pour que Plash le voie
+  if (type === 'cours') {
+    try {
+      var evts = getActiveEvents ? getActiveEvents() : (typeof EVENTS !== 'undefined' ? EVENTS : []);
+      var manual = (typeof manualEvents !== 'undefined' && manualEvents) ? manualEvents : [];
+      var all = evts.concat(manual);
+      // Garde seulement les 30 prochains événements (champs essentiels)
+      var today = new Date().toISOString().slice(0,10);
+      var slim = all
+        .filter(function(e){ return e.date >= today; })
+        .slice(0, 30)
+        .map(function(e){ return { d:e.date, t:e.time, en:e.end||'', s:e.summary||e.title||'', l:e.location||'' }; });
+      url += '&edt=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(slim)))));
+    } catch(err) {}
+  }
+  return url;
 }
 function wgOpenPreview() {
   window.open(wgGetLink(), '_blank', 'width=1280,height=720');
@@ -20600,8 +20616,18 @@ function wgCopyLink() {
       var todayStr = fmtDate(now);
       var nowMin = now.getHours()*60 + now.getMinutes();
 
-      var evts = (typeof getActiveEvents === 'function') ? getActiveEvents() : (typeof EVENTS !== 'undefined' ? EVENTS : []);
-      var manual = (typeof manualEvents !== 'undefined') ? manualEvents : [];
+      // Lit l'EDT depuis l'URL (encodé par wgGetLink) — fonctionne dans Plash
+      var urlEvts = null;
+      try {
+        var edtParam = params.get('edt');
+        if (edtParam) {
+          var decoded = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(edtParam)))));
+          urlEvts = decoded.map(function(e){ return { date:e.d, time:e.t, end:e.en, summary:e.s, location:e.l }; });
+        }
+      } catch(err) {}
+
+      var evts = urlEvts || ((typeof getActiveEvents === 'function') ? getActiveEvents() : (typeof EVENTS !== 'undefined' ? EVENTS : []));
+      var manual = urlEvts ? [] : (typeof manualEvents !== 'undefined' ? manualEvents : []);
       var all = evts.concat(manual).filter(function(e) {
         if (!e.date || e.date < todayStr) return false;
         var ep = (e.end||e.time||'00:00').split(':');
