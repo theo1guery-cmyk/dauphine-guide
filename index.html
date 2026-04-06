@@ -7219,7 +7219,14 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profFicheBtn" onclick="generateRevisionSheet()">📚 Générer la fiche</button>
+                  <button class="prof-btn secondary" id="profFicheXXLBtn" onclick="generateRevisionSheetXXL()">🚀 Mode XXL</button>
                   <button class="prof-btn ghost" type="button" onclick="resetProfRevisionSheet()">🗑️ Réinitialiser</button>
+                </div>
+                <div id="profFicheProgress" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;background:var(--g50)">
+                  <div id="profFicheProgressLabel" style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px">Préparation…</div>
+                  <div style="height:6px;background:var(--g200);border-radius:999px;overflow:hidden">
+                    <div id="profFicheProgressBar" style="height:100%;width:0;background:linear-gradient(90deg,#003d7a,#2563eb);transition:width .25s ease"></div>
+                  </div>
                 </div>
               </div>
               <div class="prof-card" id="profFicheResult">
@@ -20106,10 +20113,124 @@ function resetProfDissertation() {
 function resetProfRevisionSheet() {
   var input = document.getElementById('profFicheCours');
   var res = document.getElementById('profFicheResult');
+  var pWrap = document.getElementById('profFicheProgress');
+  var pBar = document.getElementById('profFicheProgressBar');
   if (input) input.value = '';
+  if (pWrap) pWrap.style.display = 'none';
+  if (pBar) pBar.style.width = '0%';
   if (res) {
     res.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>La fiche de révision apparaîtra ici</strong><span>Une synthèse exploitable tout de suite, avec questions de vérification.</span></div></div>';
   }
+}
+
+function profSetFicheProgress(percent, label) {
+  var wrap = document.getElementById('profFicheProgress');
+  var bar = document.getElementById('profFicheProgressBar');
+  var lbl = document.getElementById('profFicheProgressLabel');
+  if (!wrap || !bar || !lbl) return;
+  wrap.style.display = '';
+  bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
+  if (label) lbl.textContent = label;
+}
+
+function profHideFicheProgress() {
+  var wrap = document.getElementById('profFicheProgress');
+  if (wrap) wrap.style.display = 'none';
+}
+
+function profChunkCourseText(text, targetLen, overlapLen) {
+  var src = String(text || '').replace(/\r/g, '');
+  var paragraphs = src.split(/\n\s*\n+/).map(function(p){ return p.trim(); }).filter(Boolean);
+  if (!paragraphs.length) return [];
+  var chunks = [];
+  var current = '';
+  paragraphs.forEach(function(p) {
+    if (!current) {
+      current = p;
+      return;
+    }
+    if ((current + '\n\n' + p).length <= targetLen) {
+      current += '\n\n' + p;
+    } else {
+      chunks.push(current);
+      var tail = overlapLen > 0 ? current.slice(Math.max(0, current.length - overlapLen)) : '';
+      current = (tail ? tail + '\n\n' : '') + p;
+    }
+  });
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+async function profExtractChunkSummary(chunk, idx, total) {
+  var prompt = 'Tu es un assistant de révision universitaire. Analyse le bloc de cours ci-dessous. '
+    + 'Réponds uniquement en JSON valide avec ce format: '
+    + '{"chunk_id":"c'+idx+'","concepts":[{"nom":"...","definition":"...","points_cles":["..."],"exemples":["..."],"pieges":["..."]}],"questions":[{"question":"...","reponse":"..."}],"notes":["..."]}. '
+    + 'Règles: 6 à 14 concepts max selon la densité du bloc, pas de blabla hors JSON, niveau L1. '
+    + 'Bloc ' + idx + '/' + total + ' :\n\n' + chunk;
+  var raw = await profRequest(prompt, 1100, 0.2);
+  return profParseJson(raw) || { chunk_id: 'c'+idx, concepts: [], questions: [], notes: [] };
+}
+
+function profMergeChunkSummaries(summaries) {
+  var conceptMap = {};
+  var questions = [];
+  var notes = [];
+  (summaries || []).forEach(function(s) {
+    (s.concepts || []).forEach(function(c) {
+      var key = String(c.nom || '').trim().toLowerCase();
+      if (!key) return;
+      if (!conceptMap[key]) {
+        conceptMap[key] = {
+          nom: c.nom || '',
+          definition: c.definition || '',
+          points_cles: [],
+          exemples: [],
+          pieges: []
+        };
+      }
+      ['points_cles', 'exemples', 'pieges'].forEach(function(k) {
+        (c[k] || []).forEach(function(item) {
+          if (item && conceptMap[key][k].indexOf(item) === -1) conceptMap[key][k].push(item);
+        });
+      });
+      if (!conceptMap[key].definition && c.definition) conceptMap[key].definition = c.definition;
+    });
+    (s.questions || []).forEach(function(q) { questions.push(q); });
+    (s.notes || []).forEach(function(n) { notes.push(n); });
+  });
+  return {
+    concepts: Object.keys(conceptMap).map(function(k){ return conceptMap[k]; }),
+    questions: questions.slice(0, 40),
+    notes: notes.slice(0, 30)
+  };
+}
+
+async function profBuildFinalSheetFromKnowledge(kb) {
+  var kbJson = JSON.stringify(kb).slice(0, 14000);
+  var prompt = 'Tu es un tuteur d\'excellence en droit-économie. À partir de la base de connaissance JSON ci-dessous, '
+    + 'rédige une fiche de révision très complète et structurée pour partiel de L1. '
+    + 'Réponds uniquement en JSON valide au format: '
+    + '{"sections":[{"titre":"...","contenu":"..."}],"questions":[{"question":"...","reponse":"..."}]}. '
+    + 'Contraintes: 8 à 12 sections riches, contenu dense, exemples concrets, distinctions importantes, style clair et universitaire. '
+    + 'Ajoute 10 à 15 questions difficiles avec réponses développées. '
+    + 'Base JSON:\n' + kbJson;
+  var raw = await profRequest(prompt, 1900, 0.2);
+  return profParseJson(raw);
+}
+
+function profRenderRevisionData(data, result) {
+  var sectionsHtml = '<div class="prof-structured">';
+  (data.sections || []).forEach(function(section) {
+    sectionsHtml += '<div class="prof-structured-block"><strong>' + profEscapeHtml(section.titre || '') + '</strong><p>' + profNl2br(section.contenu || '') + '</p></div>';
+  });
+  sectionsHtml += '</div>';
+  var questionsHtml = '<div class="prof-section-label">Questions difficiles</div><div class="prof-qa">';
+  (data.questions || []).forEach(function(item, index) {
+    questionsHtml += '<div class="prof-question"><strong>' + (index + 1) + '. ' + profEscapeHtml(item.question || '') + '</strong><button type="button" onclick="toggleProfAnswer(this)">Voir la réponse</button><div class="prof-answer">' + profNl2br(item.reponse || '') + '</div></div>';
+  });
+  questionsHtml += '</div>';
+  window.profLastTtsText = (data.sections || []).map(function(section) { return (section.titre || '') + '. ' + (section.contenu || ''); }).join(' ');
+  result.innerHTML = sectionsHtml + questionsHtml + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button></div>';
 }
 
 async function generateArretSheet() {
@@ -20187,21 +20308,54 @@ async function generateRevisionSheet() {
       + 'Fais au maximum 5 sections courtes et 5 questions vraiment exigeantes. Cours: ' + source.slice(0, 6500);
     var data = profParseJson(await profRequest(prompt, 1300, 0.25));
     if (!data) throw new Error('Réponse illisible');
-    var sectionsHtml = '<div class="prof-structured">';
-    (data.sections || []).forEach(function(section) {
-      sectionsHtml += '<div class="prof-structured-block"><strong>' + profEscapeHtml(section.titre || '') + '</strong><p>' + profNl2br(section.contenu || '') + '</p></div>';
-    });
-    sectionsHtml += '</div>';
-    var questionsHtml = '<div class="prof-section-label">Questions difficiles</div><div class="prof-qa">';
-    (data.questions || []).forEach(function(item, index) {
-      questionsHtml += '<div class="prof-question"><strong>' + (index + 1) + '. ' + profEscapeHtml(item.question || '') + '</strong><button type="button" onclick="toggleProfAnswer(this)">Voir la réponse</button><div class="prof-answer">' + profNl2br(item.reponse || '') + '</div></div>';
-    });
-    questionsHtml += '</div>';
-    window.profLastTtsText = (data.sections || []).map(function(section) { return (section.titre || '') + '. ' + (section.contenu || ''); }).join(' ');
-    result.innerHTML = sectionsHtml + questionsHtml + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button></div>';
+    profRenderRevisionData(data, result);
   } catch (error) {
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Fiche indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   } finally {
+    profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
+  }
+}
+
+async function generateRevisionSheetXXL() {
+  var source = document.getElementById('profFicheCours').value.trim();
+  var result = document.getElementById('profFicheResult');
+  if (!source) {
+    toast('Colle d\'abord ton cours', '⚠️');
+    return;
+  }
+  profSetButtonLoading('profFicheXXLBtn', true, 'XXL...', '🚀 Mode XXL');
+  profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
+  profSetFicheProgress(5, 'Découpage du cours…');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>Mode XXL en cours</strong><span>Analyse par blocs, fusion et rédaction finale en plusieurs étapes.</span></div></div>';
+  try {
+    var clean = source.replace(/\r/g, '').trim();
+    var chunks = profChunkCourseText(clean, 3200, 260);
+    if (!chunks.length) throw new Error('Cours vide après découpage');
+
+    var summaries = [];
+    for (var i = 0; i < chunks.length; i++) {
+      var pct = 10 + Math.round((i / chunks.length) * 55);
+      profSetFicheProgress(pct, 'Extraction du bloc ' + (i + 1) + '/' + chunks.length + '…');
+      var summary = await profExtractChunkSummary(chunks[i], i + 1, chunks.length);
+      summaries.push(summary);
+    }
+
+    profSetFicheProgress(72, 'Fusion des connaissances…');
+    var kb = profMergeChunkSummaries(summaries);
+
+    profSetFicheProgress(86, 'Rédaction de la fiche finale…');
+    var finalData = await profBuildFinalSheetFromKnowledge(kb);
+    if (!finalData) throw new Error('Réponse finale illisible');
+
+    profSetFicheProgress(96, 'Mise en forme…');
+    profRenderRevisionData(finalData, result);
+    profSetFicheProgress(100, 'Fiche XXL prête ✅');
+    setTimeout(profHideFicheProgress, 1200);
+  } catch (error) {
+    profHideFicheProgress();
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+  } finally {
+    profSetButtonLoading('profFicheXXLBtn', false, 'XXL...', '🚀 Mode XXL');
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
   }
 }
