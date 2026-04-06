@@ -4607,6 +4607,112 @@ aside.sidebar {
 .onb-start-btn{margin-top:14px;padding:12px 32px;background:linear-gradient(135deg,#003d7a,#0057ad);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .2s;animation:onbPulse 2s infinite}
 .onb-start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,61,122,.5)}
 
+/* PROF PARTICULIER */
+.prof-shell{padding:32px 48px 56px}
+.prof-hero{position:relative;overflow:hidden;border-radius:28px;padding:28px;background:linear-gradient(135deg,#08284d 0%,#0b4f8a 52%,#f3f8ff 52%,#fcfdff 100%);box-shadow:0 22px 60px rgba(0,47,95,.18);display:grid;grid-template-columns:1.2fr .9fr;gap:18px;isolation:isolate}
+.prof-hero::before{content:'';position:absolute;inset:-30% auto auto -5%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.26),transparent 70%);pointer-events:none}
+.prof-hero-copy{position:relative;z-index:1;color:#fff}
+.prof-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.prof-kicker::before{content:'';width:8px;height:8px;border-radius:50%;background:#7dd3fc;box-shadow:0 0 0 6px rgba(125,211,252,.18)}
+.prof-hero-title{margin:14px 0 10px;font-size:clamp(30px,5vw,48px);line-height:.96;font-family:var(--font-serif,serif);letter-spacing:-.04em}
+.prof-hero-title em{font-style:italic;color:#dbeafe}
+.prof-hero-sub{max-width:560px;font-size:14px;line-height:1.65;color:rgba(255,255,255,.78)}
+.prof-hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.prof-hero-point{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:12px;font-weight:600;color:#eef6ff}
+.prof-hero-board{position:relative;z-index:1;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.72);border-radius:24px;padding:18px;display:grid;gap:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.prof-board-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-mid)}
+.prof-board-card{border-radius:18px;padding:16px;background:#fff;border:1px solid rgba(0,61,122,.08);box-shadow:0 14px 30px rgba(15,23,42,.08)}
+.prof-board-card strong{display:block;font-size:13px;color:var(--g900);margin-bottom:4px}
+.prof-board-card span{display:block;font-size:12px;line-height:1.55;color:var(--g600)}
+.prof-board-chiprow{display:flex;gap:10px;flex-wrap:wrap}
+.prof-board-chip{flex:1 1 120px;border-radius:16px;padding:13px 14px;background:#edf5ff;color:var(--blue);font-size:12px;font-weight:700;min-width:120px}
+.prof-tabbar{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 18px}
+.prof-tab{padding:11px 16px;border-radius:999px;border:1.5px solid var(--g200);background:rgba(255,255,255,.82);color:var(--g600);cursor:pointer;font-size:13px;font-weight:700;transition:all .18s ease}
+.prof-tab:hover,.prof-tab.on{background:var(--blue);border-color:var(--blue);color:#fff;transform:translateY(-1px)}
+.prof-panel{display:none}
+.prof-panel.active{display:block}
+.prof-grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:18px;align-items:start}
+.prof-card{background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.68);border-radius:24px;padding:22px;box-shadow:var(--shs);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.prof-card-title{font-size:18px;font-weight:800;color:var(--g900);margin-bottom:4px}
+.prof-card-sub{font-size:12px;line-height:1.6;color:var(--g500);margin-bottom:18px}
+.prof-field{margin-bottom:14px}
+.prof-field label{display:block;font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px}
+.prof-field label span{color:var(--g400);font-weight:500}
+.prof-select,.prof-input,.prof-textarea{width:100%;border:1.5px solid var(--g200);border-radius:16px;background:#fff;padding:12px 14px;font-size:13px;color:var(--g900);font-family:'Figtree',sans-serif;transition:border-color .16s,box-shadow .16s}
+.prof-select:focus,.prof-input:focus,.prof-textarea:focus{outline:none;border-color:var(--blue-mid);box-shadow:0 0 0 4px rgba(59,130,246,.08)}
+.prof-textarea{resize:vertical;min-height:124px;line-height:1.6}
+.prof-textarea.tall{min-height:280px}
+.prof-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.prof-btn{border:none;border-radius:16px;padding:12px 16px;background:linear-gradient(135deg,#003d7a,#0057ad);color:#fff;font-size:13px;font-weight:800;cursor:pointer;transition:transform .16s,box-shadow .16s,opacity .16s;box-shadow:0 14px 30px rgba(0,61,122,.22)}
+.prof-btn:hover{transform:translateY(-1px)}
+.prof-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.prof-btn.secondary{background:#eef5ff;color:var(--blue);box-shadow:none}
+.prof-btn.ghost{background:transparent;color:var(--g700);border:1.5px solid var(--g200);box-shadow:none}
+.prof-empty{display:grid;place-items:center;text-align:center;min-height:380px;padding:24px;color:var(--g400)}
+.prof-empty strong{display:block;font-size:18px;color:var(--g700);margin:10px 0 4px}
+.prof-empty span{max-width:280px;font-size:13px;line-height:1.6}
+.prof-score{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--g100)}
+.prof-score-badge{width:96px;height:96px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(135deg,#e0efff,#fff);border:1px solid rgba(0,87,173,.12);color:var(--blue)}
+.prof-score-badge.bad{background:linear-gradient(135deg,#fee2e2,#fff7f7);color:#b91c1c}
+.prof-score-badge.good{background:linear-gradient(135deg,#dcfce7,#f7fff9);color:#15803d}
+.prof-score-value{font-size:30px;font-weight:800;line-height:1}
+.prof-score-den{font-size:13px;font-weight:700;opacity:.7;margin-top:3px}
+.prof-score-text strong{display:block;font-size:18px;color:var(--g900);margin-bottom:5px}
+.prof-score-text span{display:block;font-size:13px;line-height:1.6;color:var(--g600)}
+.prof-section-label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-mid);margin:20px 0 10px}
+.prof-feedback-list{display:grid;gap:10px}
+.prof-feedback{border:1px solid var(--g100);border-radius:18px;padding:14px 16px;background:#fff}
+.prof-feedback-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.prof-feedback-head strong{font-size:13px;color:var(--g900)}
+.prof-feedback-tag{padding:5px 10px;border-radius:999px;background:#edf5ff;color:var(--blue);font-size:11px;font-weight:800}
+.prof-feedback p{font-size:13px;line-height:1.6;color:var(--g600)}
+.prof-pill-list{display:flex;flex-wrap:wrap;gap:8px}
+.prof-pill{padding:10px 12px;border-radius:14px;font-size:12px;line-height:1.5;background:#f8fafc;border:1px solid var(--g100);color:var(--g700)}
+.prof-pill.good{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.prof-pill.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.prof-exam-top{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+.prof-duration-row{display:flex;gap:8px;flex-wrap:wrap}
+.prof-duration{padding:10px 14px;border-radius:999px;border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;font-size:12px;font-weight:800}
+.prof-duration.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.prof-subject-row{display:flex;gap:10px;align-items:center}
+.prof-subject-row .prof-input{flex:1}
+.prof-exam-stage{display:none}
+.prof-exam-stage.active{display:block}
+.prof-exam-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.prof-timer{font-size:34px;font-weight:800;letter-spacing:-.03em;color:var(--g900)}
+.prof-timer.urgent{color:#b91c1c}
+.prof-exam-meta{display:flex;gap:8px;flex-wrap:wrap}
+.prof-exam-chip{padding:8px 12px;border-radius:999px;background:#eef5ff;color:var(--blue);font-size:12px;font-weight:700;max-width:100%}
+.prof-exam-copy{min-height:460px}
+.prof-droit-grid{display:grid;grid-template-columns:minmax(320px,.92fr) minmax(320px,1.08fr);gap:18px;align-items:start}
+.prof-subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.prof-subtab{padding:10px 14px;border-radius:999px;border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;font-size:12px;font-weight:800}
+.prof-subtab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.prof-droit-panel{display:none}
+.prof-droit-panel.active{display:block}
+.prof-structured{display:grid;gap:12px}
+.prof-structured-block{border-radius:18px;padding:15px 16px;background:#fff;border:1px solid var(--g100)}
+.prof-structured-block strong{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:8px}
+.prof-structured-block p{font-size:13px;line-height:1.65;color:var(--g600)}
+.prof-qa{display:grid;gap:10px}
+.prof-question{border:1px solid var(--g100);border-radius:18px;background:#fff;padding:14px 16px}
+.prof-question strong{display:block;font-size:13px;color:var(--g900);margin-bottom:8px}
+.prof-question button{border:none;border-radius:999px;padding:8px 12px;background:#eef5ff;color:var(--blue);font-size:12px;font-weight:700;cursor:pointer}
+.prof-answer{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--g100);font-size:13px;line-height:1.65;color:var(--g600)}
+.prof-tts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.prof-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.34);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px}
+[data-theme="dark"] .prof-card,[data-theme="dark"] .prof-hero-board{background:rgba(20,23,32,.84);border-color:var(--border-col)}
+[data-theme="dark"] .prof-board-card,[data-theme="dark"] .prof-feedback,[data-theme="dark"] .prof-structured-block,[data-theme="dark"] .prof-question{background:rgba(15,23,42,.72);border-color:var(--border-col)}
+[data-theme="dark"] .prof-card-title,[data-theme="dark"] .prof-score-text strong,[data-theme="dark"] .prof-feedback-head strong,[data-theme="dark"] .prof-question strong{color:#f8fafc}
+[data-theme="dark"] .prof-card-sub,[data-theme="dark"] .prof-feedback p,[data-theme="dark"] .prof-score-text span,[data-theme="dark"] .prof-structured-block p,[data-theme="dark"] .prof-answer,[data-theme="dark"] .prof-pill{color:#cbd5e1}
+[data-theme="dark"] .prof-select,[data-theme="dark"] .prof-input,[data-theme="dark"] .prof-textarea,[data-theme="dark"] .prof-duration,[data-theme="dark"] .prof-subtab,[data-theme="dark"] .prof-tab{background:rgba(15,23,42,.72);border-color:var(--border-col);color:#e5e7eb}
+[data-theme="dark"] .prof-btn.ghost{border-color:var(--border-col);color:#e5e7eb}
+@media (max-width: 980px){
+  .prof-shell{padding:24px 16px 40px}
+  .prof-hero,.prof-grid,.prof-droit-grid,.prof-exam-top{grid-template-columns:1fr}
+  .prof-empty{min-height:260px}
+}
+
 </style>
 </head>
 <body>
@@ -4882,6 +4988,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="apprendre" onclick="showPage(&#39;apprendre&#39;,this)"><span class="s-ic">🎓</span> Mode Apprendre</button>
     <button class="sidebar-item" data-page="pomodoro" onclick="showPage(&#39;pomodoro&#39;,this)"><span class="s-ic">⏱️</span> Pomodoro</button>
     <button class="sidebar-item" data-page="caspratiques" onclick="showPage(&#39;caspratiques&#39;,this)"><span class="s-ic">⚖️</span> Cas pratiques</button>
+    <button class="sidebar-item" data-page="prof" onclick="showPage(&#39;prof&#39;,this)"><span class="s-ic">🧑‍🏫</span> Prof particulier</button>
     <div class="sidebar-section-label">Organisation</div>
     <button class="sidebar-item" data-page="planning" onclick="showPage(&#39;planning&#39;,this)"><span class="s-ic">📅</span> Planning<span class="sb-badge" id="sidebarUrgentBadge">0</span></button>
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
@@ -6890,6 +6997,241 @@ aside.sidebar {
     </div>
   </div>
 </div>
+
+    <!-- PROF PARTICULIER -->
+    <div class="page-section" id="page-prof">
+      <div class="section-header">
+        <div class="section-header-left">
+          <div class="section-header-ic">🧑‍🏫</div>
+          <div>
+            <div class="section-header-title">Prof particulier</div>
+            <div class="section-header-sub">Un seul cerveau pour corriger, faire passer un exam blanc et structurer le droit</div>
+          </div>
+        </div>
+        <div class="section-header-date" id="sh-date-page-prof">Mardi 17 mars 2026</div>
+      </div>
+
+      <div class="prof-shell">
+        <section class="prof-hero">
+          <div class="prof-hero-copy">
+            <div class="prof-kicker">Concept central · Prof particulier IA</div>
+            <h2 class="prof-hero-title">Le même <em>prof exigeant</em> te suit du brouillon jusqu'au partiel.</h2>
+            <p class="prof-hero-sub">Ici, tout est regroupé sous une seule logique: tu fais corriger une copie, tu lances un examen blanc chrono, puis tu bascules sur les outils droit sans quitter le même espace de travail.</p>
+            <div class="prof-hero-points">
+              <div class="prof-hero-point">Correction sur 20 comme un correcteur Dauphine</div>
+              <div class="prof-hero-point">Examens blancs avec sujet choisi ou aléatoire</div>
+              <div class="prof-hero-point">Dissertation, fiche d'arrêt, fiche de révision</div>
+            </div>
+          </div>
+          <div class="prof-hero-board">
+            <div class="prof-board-title">Le triptyque</div>
+            <div class="prof-board-card">
+              <strong>1. Corriger</strong>
+              <span>Tu colles ta copie, tu précises la matière et les exigences du prof, l'IA note sur 20 et commente partie par partie.</span>
+            </div>
+            <div class="prof-board-card">
+              <strong>2. Simuler</strong>
+              <span>Tu règles le temps, tu choisis un sujet ou tu demandes un sujet aléatoire, puis tu rédiges dans les mêmes conditions qu'un exam.</span>
+            </div>
+            <div class="prof-board-chiprow">
+              <div class="prof-board-chip">3. Structurer le droit</div>
+              <div class="prof-board-chip">Fiche d'arrêt, plan de dissertation, fiche de révision</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="prof-tabbar">
+          <button class="prof-tab on" onclick="switchProfTab('correction', this)">📝 Correction de copie</button>
+          <button class="prof-tab" onclick="switchProfTab('examen', this)">⏱️ Examen blanc</button>
+          <button class="prof-tab" onclick="switchProfTab('droit', this)">⚖️ Dissertation / Fiche d'arrêt</button>
+        </div>
+
+        <div class="prof-panel active" id="prof-panel-correction">
+          <div class="prof-grid">
+            <div class="prof-card">
+              <div class="prof-card-title">Copie à corriger</div>
+              <div class="prof-card-sub">Une correction pensée comme un enseignant de Dauphine: note sur 20, commentaires par partie, points forts et axes de progrès.</div>
+              <div class="prof-field">
+                <label for="profCorrectionMatiere">Matière</label>
+                <select class="prof-select" id="profCorrectionMatiere">
+                  <option value="">Choisis une matière</option>
+                </select>
+              </div>
+              <div class="prof-field">
+                <label for="profCorrectionCriteres">Consignes du prof <span>optionnel</span></label>
+                <textarea class="prof-textarea" id="profCorrectionCriteres" placeholder="Exemple: le prof veut absolument une accroche en citation, un plan en deux parties avec chapeaux, pas de liste à puces."></textarea>
+              </div>
+              <div class="prof-field">
+                <label for="profCorrectionTexte">Ta copie</label>
+                <textarea class="prof-textarea tall" id="profCorrectionTexte" placeholder="Colle ici ta dissertation, ton commentaire ou ta réponse structurée."></textarea>
+              </div>
+              <div class="prof-actions">
+                <button class="prof-btn" id="profCorrectionBtn" onclick="corrigerCopie()">✨ Corriger comme à Dauphine</button>
+              </div>
+            </div>
+            <div class="prof-card" id="profCorrectionResult">
+              <div class="prof-empty">
+                <div>
+                  <div style="font-size:38px">📋</div>
+                  <strong>La correction apparaîtra ici</strong>
+                  <span>Choisis une matière, colle ta copie et lance la correction.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prof-panel" id="prof-panel-examen">
+          <div class="prof-card prof-exam-stage active" id="profExamSetup">
+            <div class="prof-exam-top">
+              <div>
+                <div class="prof-card-title">Configurer l'examen blanc</div>
+                <div class="prof-card-sub">Tu peux imposer ton sujet, ou laisser l'IA en tirer un réaliste au hasard dans la matière choisie.</div>
+              </div>
+              <button class="prof-btn secondary" type="button" onclick="profGenerateExamSubject(true)">🎲 Sujet aléatoire</button>
+            </div>
+            <div class="prof-field">
+              <label for="profExamMatiere">Matière</label>
+              <select class="prof-select" id="profExamMatiere">
+                <option value="">Choisis une matière</option>
+              </select>
+            </div>
+            <div class="prof-field">
+              <label>Durée</label>
+              <div class="prof-duration-row">
+                <button class="prof-duration" type="button" onclick="setProfExamDuration(60, this)">1h</button>
+                <button class="prof-duration on" type="button" onclick="setProfExamDuration(180, this)">3h</button>
+              </div>
+            </div>
+            <div class="prof-field">
+              <label for="profExamSujet">Sujet <span>laisse vide pour un sujet aléatoire</span></label>
+              <div class="prof-subject-row">
+                <input class="prof-input" id="profExamSujet" placeholder="Exemple: La responsabilité pénale des personnes morales" />
+                <button class="prof-btn ghost" type="button" id="profExamSujetBtn" onclick="profGenerateExamSubject(false)">Générer</button>
+              </div>
+            </div>
+            <div class="prof-actions">
+              <button class="prof-btn" id="profExamStartBtn" onclick="startProfExam()">⏱️ Lancer l'examen</button>
+            </div>
+          </div>
+
+          <div class="prof-card prof-exam-stage" id="profExamRunning">
+            <div class="prof-exam-head">
+              <div>
+                <div class="prof-timer" id="profExamTimer">3:00:00</div>
+                <div class="prof-exam-meta">
+                  <div class="prof-exam-chip" id="profExamMatterChip">Matière</div>
+                  <div class="prof-exam-chip" id="profExamSubjectChip">Sujet</div>
+                </div>
+              </div>
+              <div class="prof-actions" style="margin-top:0">
+                <button class="prof-btn ghost" type="button" id="profExamPauseBtn" onclick="toggleProfExamPause()">⏸️ Pause</button>
+                <button class="prof-btn" type="button" onclick="submitProfExam()">📨 Rendre la copie</button>
+              </div>
+            </div>
+            <textarea class="prof-textarea prof-exam-copy" id="profExamCopy" placeholder="Rédige ici. Intro, problématique, plan, démonstration, conclusion: travaille comme si tu étais en salle."></textarea>
+          </div>
+
+          <div class="prof-card prof-exam-stage" id="profExamResultWrap">
+            <div class="prof-exam-head">
+              <div>
+                <div class="prof-card-title">Correction de l'examen blanc</div>
+                <div class="prof-card-sub">Même logique d'évaluation que la correction de copie.</div>
+              </div>
+              <button class="prof-btn ghost" type="button" onclick="resetProfExam()">↺ Recommencer</button>
+            </div>
+            <div id="profExamResult"></div>
+          </div>
+        </div>
+
+        <div class="prof-panel" id="prof-panel-droit">
+          <div class="prof-subtabs">
+            <button class="prof-subtab on" onclick="switchDroitTool('arret', this)">📋 Fiche d'arrêt</button>
+            <button class="prof-subtab" onclick="switchDroitTool('dissertation', this)">📐 Plan de dissertation</button>
+            <button class="prof-subtab" onclick="switchDroitTool('fiche', this)">📚 Fiche de révision</button>
+          </div>
+
+          <div class="prof-droit-panel active" id="prof-droit-arret">
+            <div class="prof-droit-grid">
+              <div class="prof-card">
+                <div class="prof-card-title">Transformer un arrêt en fiche claire</div>
+                <div class="prof-card-sub">Faits, procédure, question de droit, solution, portée: tout est remis dans l'ordre.</div>
+                <div class="prof-field">
+                  <label for="profArretInput">Texte de l'arrêt</label>
+                  <textarea class="prof-textarea tall" id="profArretInput" placeholder="Colle ici l'arrêt intégral ou un extrait substantiel."></textarea>
+                </div>
+                <div class="prof-actions">
+                  <button class="prof-btn" id="profArretBtn" onclick="generateArretSheet()">📋 Générer la fiche d'arrêt</button>
+                </div>
+              </div>
+              <div class="prof-card" id="profArretResult">
+                <div class="prof-empty">
+                  <div>
+                    <div style="font-size:38px">⚖️</div>
+                    <strong>La fiche d'arrêt apparaîtra ici</strong>
+                    <span>Colle un arrêt et l'outil recompose automatiquement la méthode.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="prof-droit-panel" id="prof-droit-dissertation">
+            <div class="prof-droit-grid">
+              <div class="prof-card">
+                <div class="prof-card-title">Trouver un vrai plan</div>
+                <div class="prof-card-sub">L'outil te propose une problématique solide puis un plan I / II avec sous-parties argumentées.</div>
+                <div class="prof-field">
+                  <label for="profDissertationSujet">Sujet</label>
+                  <input class="prof-input" id="profDissertationSujet" placeholder="Exemple: Le contrôle de constitutionnalité en France" />
+                </div>
+                <div class="prof-field">
+                  <label for="profDissertationCours">Extrait de cours <span>optionnel</span></label>
+                  <textarea class="prof-textarea" id="profDissertationCours" placeholder="Colle ici un extrait du cours si tu veux forcer certains concepts."></textarea>
+                </div>
+                <div class="prof-actions">
+                  <button class="prof-btn" id="profDissertationBtn" onclick="generateDissertationPlan()">📐 Générer le plan</button>
+                </div>
+              </div>
+              <div class="prof-card" id="profDissertationResult">
+                <div class="prof-empty">
+                  <div>
+                    <div style="font-size:38px">🧭</div>
+                    <strong>Le plan apparaîtra ici</strong>
+                    <span>Entre un sujet et laisse l'outil construire une vraie colonne vertébrale.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="prof-droit-panel" id="prof-droit-fiche">
+            <div class="prof-droit-grid">
+              <div class="prof-card">
+                <div class="prof-card-title">Condense un cours en fiche dure à oublier</div>
+                <div class="prof-card-sub">Résumé structuré, idées-clés, puis cinq questions difficiles pour vérifier la compréhension réelle.</div>
+                <div class="prof-field">
+                  <label for="profFicheCours">Cours à condenser</label>
+                  <textarea class="prof-textarea tall" id="profFicheCours" placeholder="Colle ici ton cours, tes notes ou une partie de polycopié."></textarea>
+                </div>
+                <div class="prof-actions">
+                  <button class="prof-btn" id="profFicheBtn" onclick="generateRevisionSheet()">📚 Générer la fiche</button>
+                </div>
+              </div>
+              <div class="prof-card" id="profFicheResult">
+                <div class="prof-empty">
+                  <div>
+                    <div style="font-size:38px">🧠</div>
+                    <strong>La fiche de révision apparaîtra ici</strong>
+                    <span>Une synthèse exploitable tout de suite, avec questions de vérification.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 <!-- CAMPUS -->
 <div class="page-section" id="page-campus">
@@ -19431,8 +19773,441 @@ function notesJumpToDrawing() {
   scrollToSection();
 }
 
+var profTutorState = {
+  examDurationMinutes: 180,
+  examSecondsLeft: 10800,
+  examTimerId: null,
+  examPaused: false,
+  examMatterName: '',
+  examSubject: ''
+};
+
+function profEscapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function profNl2br(value) {
+  return profEscapeHtml(value).replace(/\n/g, '<br>');
+}
+
+function profFindMatterName(matterId) {
+  if (!matterId || typeof MATIERES === 'undefined') return '';
+  var matter = MATIERES.find(function(item) { return item.id === matterId; });
+  return matter ? matter.nom : '';
+}
+
+function profParseJson(raw) {
+  if (!raw) return null;
+  var clean = String(raw).trim().replace(/```json/gi, '').replace(/```/g, '');
+  try { return JSON.parse(clean); } catch (error) {}
+  var start = clean.indexOf('{');
+  var end = clean.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(clean.slice(start, end + 1)); } catch (error2) {}
+  }
+  return null;
+}
+
+function profSetButtonLoading(buttonId, isLoading, loadingText, idleText) {
+  var button = document.getElementById(buttonId);
+  if (!button) return;
+  button.disabled = isLoading;
+  button.innerHTML = isLoading ? '<span class="prof-spinner"></span> ' + loadingText : idleText;
+}
+
+async function profRequest(prompt, maxTokens, temperature) {
+  var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + GROQ_API_KEY
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      max_tokens: maxTokens || 1200,
+      temperature: typeof temperature === 'number' ? temperature : 0.3,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) {
+    var errData = await res.json().catch(function() { return {}; });
+    throw new Error(errData.error && errData.error.message ? errData.error.message : 'Erreur API ' + res.status);
+  }
+  var data = await res.json();
+  return data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : '';
+}
+
+function profScoreClass(note) {
+  if (note >= 14) return 'good';
+  if (note < 10) return 'bad';
+  return '';
+}
+
+function profMention(note) {
+  if (note >= 16) return 'Très bien';
+  if (note >= 14) return 'Bien';
+  if (note >= 12) return 'Assez bien';
+  if (note >= 10) return 'Passable';
+  return 'À retravailler';
+}
+
+function profRenderCorrection(data) {
+  if (!data) return '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Réponse illisible</strong><span>L\'IA a répondu dans un format inattendu. Réessaie.</span></div></div>';
+  var note = Number(data.note || 0);
+  var parts = Array.isArray(data.parties) ? data.parties : [];
+  var strengths = Array.isArray(data.points_forts) ? data.points_forts : [];
+  var improvements = Array.isArray(data.axes_amelioration) ? data.axes_amelioration : [];
+  var html = '';
+  html += '<div class="prof-score">';
+  html += '<div class="prof-score-badge ' + profScoreClass(note) + '"><div><div class="prof-score-value">' + (note ? note.toFixed(1) : '0.0') + '</div><div class="prof-score-den">/20</div></div></div>';
+  html += '<div class="prof-score-text"><strong>' + profEscapeHtml(profMention(note)) + '</strong><span>' + profEscapeHtml(data.resume || data.commentaire_global || '') + '</span></div>';
+  html += '</div>';
+  if (data.commentaire_global) {
+    html += '<div class="prof-section-label">Commentaire global</div>';
+    html += '<div class="prof-feedback"><p>' + profNl2br(data.commentaire_global) + '</p></div>';
+  }
+  if (parts.length) {
+    html += '<div class="prof-section-label">Commentaires par partie</div><div class="prof-feedback-list">';
+    parts.forEach(function(part) {
+      html += '<div class="prof-feedback">';
+      html += '<div class="prof-feedback-head"><strong>' + profEscapeHtml(part.titre || 'Partie') + '</strong><span class="prof-feedback-tag">' + profEscapeHtml(part.verdict || 'Observation') + '</span></div>';
+      html += '<p>' + profNl2br(part.commentaire || '') + '</p>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  if (strengths.length) {
+    html += '<div class="prof-section-label">Points forts</div><div class="prof-pill-list">';
+    strengths.forEach(function(item) {
+      html += '<div class="prof-pill good">' + profEscapeHtml(item) + '</div>';
+    });
+    html += '</div>';
+  }
+  if (improvements.length) {
+    html += '<div class="prof-section-label">Axes d\'amélioration</div><div class="prof-pill-list">';
+    improvements.forEach(function(item) {
+      html += '<div class="prof-pill warn">' + profEscapeHtml(item) + '</div>';
+    });
+    html += '</div>';
+  }
+  return html;
+}
+
+function switchProfTab(tabName, button) {
+  document.querySelectorAll('.prof-tab').forEach(function(tab) { tab.classList.remove('on'); });
+  document.querySelectorAll('.prof-panel').forEach(function(panel) { panel.classList.remove('active'); });
+  if (button) button.classList.add('on');
+  var target = document.getElementById('prof-panel-' + tabName);
+  if (target) target.classList.add('active');
+}
+
+function switchDroitTool(toolName, button) {
+  document.querySelectorAll('.prof-subtab').forEach(function(tab) { tab.classList.remove('on'); });
+  document.querySelectorAll('.prof-droit-panel').forEach(function(panel) { panel.classList.remove('active'); });
+  if (button) button.classList.add('on');
+  var target = document.getElementById('prof-droit-' + toolName);
+  if (target) target.classList.add('active');
+}
+
+async function corrigerCopie() {
+  var matterId = document.getElementById('profCorrectionMatiere').value;
+  var criteria = document.getElementById('profCorrectionCriteres').value.trim();
+  var copy = document.getElementById('profCorrectionTexte').value.trim();
+  var result = document.getElementById('profCorrectionResult');
+  if (!copy) {
+    toast('Colle d\'abord ta copie', '⚠️');
+    return;
+  }
+  var matterName = profFindMatterName(matterId) || 'matière non précisée';
+  profSetButtonLoading('profCorrectionBtn', true, 'Correction...', '✨ Corriger comme à Dauphine');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction en cours</strong><span>Le correcteur analyse ta copie et prépare son barème.</span></div></div>';
+  try {
+    var prompt = 'Tu es un correcteur exigeant de Paris Dauphine en ' + matterName + '. '
+      + 'Tu notes une copie d\'étudiant sur 20 comme un vrai chargé de TD ou professeur. '
+      + (criteria ? 'Consignes particulières du professeur à respecter: ' + criteria + '. ' : '')
+      + 'Réponds uniquement en JSON valide au format suivant: '
+      + '{"note":14.5,"resume":"résumé très court","commentaire_global":"3 à 5 phrases franches et utiles","parties":[{"titre":"Introduction","verdict":"solide ou faible","commentaire":"analyse précise"},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et style","verdict":"...","commentaire":"..."}],"points_forts":["...","..."],"axes_amelioration":["...","..."]}. '
+      + 'Sois rigoureux, concret, et crédible pour un étudiant de L1. Copie: ' + copy.slice(0, 6500);
+    var raw = await profRequest(prompt, 1200, 0.25);
+    result.innerHTML = profRenderCorrection(profParseJson(raw));
+  } catch (error) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+  } finally {
+    profSetButtonLoading('profCorrectionBtn', false, 'Correction...', '✨ Corriger comme à Dauphine');
+  }
+}
+
+function setProfExamDuration(minutes, button) {
+  profTutorState.examDurationMinutes = minutes;
+  document.querySelectorAll('.prof-duration').forEach(function(item) { item.classList.remove('on'); });
+  if (button) button.classList.add('on');
+}
+
+async function profGenerateExamSubject(silent) {
+  var matterId = document.getElementById('profExamMatiere').value;
+  if (!matterId) {
+    if (!silent) toast('Choisis une matière', '⚠️');
+    return '';
+  }
+  profSetButtonLoading('profExamSujetBtn', true, 'Sujet...', 'Générer');
+  try {
+    var matterName = profFindMatterName(matterId);
+    var prompt = 'Tu es un enseignant de Paris Dauphine en ' + matterName + '. Génère un sujet d\'examen blanc réaliste de niveau L1. '
+      + 'Réponds en une seule ligne, sans commentaire autour. Le sujet doit être exploitable immédiatement et ressembler à un vrai partiel.';
+    var raw = await profRequest(prompt, 180, 0.55);
+    document.getElementById('profExamSujet').value = raw.replace(/^Sujet\s*:?\s*/i, '').trim();
+    return document.getElementById('profExamSujet').value;
+  } finally {
+    profSetButtonLoading('profExamSujetBtn', false, 'Sujet...', 'Générer');
+  }
+}
+
+function profShowExamStage(stageId) {
+  document.querySelectorAll('.prof-exam-stage').forEach(function(stage) { stage.classList.remove('active'); });
+  var target = document.getElementById(stageId);
+  if (target) target.classList.add('active');
+}
+
+function profFormatExamTimer(totalSeconds) {
+  var hours = Math.floor(totalSeconds / 3600);
+  var minutes = Math.floor((totalSeconds % 3600) / 60);
+  var seconds = totalSeconds % 60;
+  return hours + ':' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+}
+
+function profUpdateExamTimer() {
+  var timer = document.getElementById('profExamTimer');
+  if (!timer) return;
+  timer.textContent = profFormatExamTimer(profTutorState.examSecondsLeft);
+  timer.classList.toggle('urgent', profTutorState.examSecondsLeft <= 300);
+}
+
+async function startProfExam() {
+  var matterId = document.getElementById('profExamMatiere').value;
+  var subjectInput = document.getElementById('profExamSujet');
+  if (!matterId) {
+    toast('Choisis une matière', '⚠️');
+    return;
+  }
+  profSetButtonLoading('profExamStartBtn', true, 'Préparation...', '⏱️ Lancer l\'examen');
+  try {
+    if (!subjectInput.value.trim()) await profGenerateExamSubject(true);
+    var subject = subjectInput.value.trim();
+    if (!subject) throw new Error('Impossible de générer le sujet');
+    profTutorState.examMatterName = profFindMatterName(matterId);
+    profTutorState.examSubject = subject;
+    profTutorState.examSecondsLeft = profTutorState.examDurationMinutes * 60;
+    profTutorState.examPaused = false;
+    if (profTutorState.examTimerId) clearInterval(profTutorState.examTimerId);
+    profTutorState.examTimerId = setInterval(function() {
+      if (profTutorState.examPaused) return;
+      profTutorState.examSecondsLeft -= 1;
+      if (profTutorState.examSecondsLeft <= 0) {
+        profTutorState.examSecondsLeft = 0;
+        profUpdateExamTimer();
+        clearInterval(profTutorState.examTimerId);
+        submitProfExam();
+        return;
+      }
+      profUpdateExamTimer();
+    }, 1000);
+    document.getElementById('profExamMatterChip').textContent = profTutorState.examMatterName;
+    document.getElementById('profExamSubjectChip').textContent = profTutorState.examSubject;
+    document.getElementById('profExamCopy').value = '';
+    document.getElementById('profExamPauseBtn').textContent = '⏸️ Pause';
+    profUpdateExamTimer();
+    profShowExamStage('profExamRunning');
+  } catch (error) {
+    toast(error.message, '❌');
+  } finally {
+    profSetButtonLoading('profExamStartBtn', false, 'Préparation...', '⏱️ Lancer l\'examen');
+  }
+}
+
+function toggleProfExamPause() {
+  profTutorState.examPaused = !profTutorState.examPaused;
+  var button = document.getElementById('profExamPauseBtn');
+  if (button) button.textContent = profTutorState.examPaused ? '▶️ Reprendre' : '⏸️ Pause';
+}
+
+async function submitProfExam() {
+  if (profTutorState.examTimerId) clearInterval(profTutorState.examTimerId);
+  var copy = document.getElementById('profExamCopy').value.trim();
+  var result = document.getElementById('profExamResult');
+  profShowExamStage('profExamResultWrap');
+  if (!copy) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">📝</div><strong>Copie vide</strong><span>Rien à corriger pour cet examen blanc.</span></div></div>';
+    return;
+  }
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction du partiel blanc</strong><span>L\'IA corrige ta copie avec le même niveau d\'exigence.</span></div></div>';
+  try {
+    var prompt = 'Tu es un correcteur exigeant de Paris Dauphine. Matière: ' + profTutorState.examMatterName + '. Sujet: ' + profTutorState.examSubject + '. '
+      + 'Tu corriges une copie d\'examen blanc et tu réponds uniquement en JSON valide au format: '
+      + '{"note":13.5,"resume":"appréciation courte","commentaire_global":"3 à 5 phrases","parties":[{"titre":"Introduction","verdict":"...","commentaire":"..."},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et gestion du temps","verdict":"...","commentaire":"..."}],"points_forts":["..."],"axes_amelioration":["..."]}. '
+      + 'Copie: ' + copy.slice(0, 6500);
+    var raw = await profRequest(prompt, 1200, 0.25);
+    result.innerHTML = profRenderCorrection(profParseJson(raw));
+  } catch (error) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+  }
+}
+
+function resetProfExam() {
+  if (profTutorState.examTimerId) clearInterval(profTutorState.examTimerId);
+  profTutorState.examTimerId = null;
+  profTutorState.examPaused = false;
+  profTutorState.examSecondsLeft = profTutorState.examDurationMinutes * 60;
+  document.getElementById('profExamCopy').value = '';
+  profShowExamStage('profExamSetup');
+}
+
+async function generateArretSheet() {
+  var source = document.getElementById('profArretInput').value.trim();
+  var result = document.getElementById('profArretResult');
+  if (!source) {
+    toast('Colle un arrêt à analyser', '⚠️');
+    return;
+  }
+  profSetButtonLoading('profArretBtn', true, 'Analyse...', '📋 Générer la fiche d\'arrêt');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Analyse de l\'arrêt</strong><span>La méthode de fiche d\'arrêt est en cours d\'application.</span></div></div>';
+  try {
+    var prompt = 'Tu es chargé de TD en droit. À partir de l\'arrêt suivant, réponds uniquement en JSON valide avec les clés suivantes: '
+      + '{"juridiction":"...","faits":"...","procedure":"...","question":"...","solution":"...","portee":"..."}. '
+      + 'Chaque champ doit être concis mais précis. Arrêt: ' + source.slice(0, 6500);
+    var data = profParseJson(await profRequest(prompt, 1000, 0.2));
+    if (!data) throw new Error('Réponse illisible');
+    result.innerHTML = '<div class="prof-structured">'
+      + '<div class="prof-structured-block"><strong>Juridiction</strong><p>' + profNl2br(data.juridiction || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>Faits</strong><p>' + profNl2br(data.faits || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>Procédure</strong><p>' + profNl2br(data.procedure || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>Question de droit</strong><p>' + profNl2br(data.question || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>Solution</strong><p>' + profNl2br(data.solution || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>Portée</strong><p>' + profNl2br(data.portee || '') + '</p></div>'
+      + '</div>';
+  } catch (error) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Analyse indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+  } finally {
+    profSetButtonLoading('profArretBtn', false, 'Analyse...', '📋 Générer la fiche d\'arrêt');
+  }
+}
+
+async function generateDissertationPlan() {
+  var subject = document.getElementById('profDissertationSujet').value.trim();
+  var notes = document.getElementById('profDissertationCours').value.trim();
+  var result = document.getElementById('profDissertationResult');
+  if (!subject) {
+    toast('Entre un sujet de dissertation', '⚠️');
+    return;
+  }
+  profSetButtonLoading('profDissertationBtn', true, 'Plan...', '📐 Générer le plan');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Construction du plan</strong><span>La problématique et les deux parties sont en cours de formulation.</span></div></div>';
+  try {
+    var prompt = 'Tu es professeur de droit et de sciences économiques à Paris Dauphine. Donne uniquement un JSON valide au format '
+      + '{"problematique":"...","partie1":{"titre":"...","a":"...","b":"..."},"partie2":{"titre":"...","a":"...","b":"..."}} '
+      + 'pour le sujet suivant: ' + subject + '. '
+      + (notes ? 'Appuie-toi si possible sur cet extrait de cours: ' + notes.slice(0, 3500) + '. ' : '')
+      + 'Le plan doit être crédible pour une copie de L1.';
+    var data = profParseJson(await profRequest(prompt, 900, 0.3));
+    if (!data) throw new Error('Réponse illisible');
+    result.innerHTML = '<div class="prof-structured">'
+      + '<div class="prof-structured-block"><strong>Problématique</strong><p>' + profNl2br(data.problematique || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>I. ' + profEscapeHtml(data.partie1 && data.partie1.titre || '') + '</strong><p>A. ' + profNl2br(data.partie1 && data.partie1.a || '') + '<br><br>B. ' + profNl2br(data.partie1 && data.partie1.b || '') + '</p></div>'
+      + '<div class="prof-structured-block"><strong>II. ' + profEscapeHtml(data.partie2 && data.partie2.titre || '') + '</strong><p>A. ' + profNl2br(data.partie2 && data.partie2.a || '') + '<br><br>B. ' + profNl2br(data.partie2 && data.partie2.b || '') + '</p></div>'
+      + '</div>';
+  } catch (error) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Plan indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+  } finally {
+    profSetButtonLoading('profDissertationBtn', false, 'Plan...', '📐 Générer le plan');
+  }
+}
+
+async function generateRevisionSheet() {
+  var source = document.getElementById('profFicheCours').value.trim();
+  var result = document.getElementById('profFicheResult');
+  if (!source) {
+    toast('Colle d\'abord ton cours', '⚠️');
+    return;
+  }
+  profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Création de la fiche</strong><span>Résumé, architecture du cours et questions difficiles en préparation.</span></div></div>';
+  try {
+    var prompt = 'Tu es un excellent tuteur pour un étudiant de L1 à Dauphine. Réponds uniquement en JSON valide au format '
+      + '{"sections":[{"titre":"...","contenu":"..."}],"questions":[{"question":"...","reponse":"..."}]}. '
+      + 'Fais au maximum 5 sections courtes et 5 questions vraiment exigeantes. Cours: ' + source.slice(0, 6500);
+    var data = profParseJson(await profRequest(prompt, 1300, 0.25));
+    if (!data) throw new Error('Réponse illisible');
+    var sectionsHtml = '<div class="prof-structured">';
+    (data.sections || []).forEach(function(section) {
+      sectionsHtml += '<div class="prof-structured-block"><strong>' + profEscapeHtml(section.titre || '') + '</strong><p>' + profNl2br(section.contenu || '') + '</p></div>';
+    });
+    sectionsHtml += '</div>';
+    var questionsHtml = '<div class="prof-section-label">Questions difficiles</div><div class="prof-qa">';
+    (data.questions || []).forEach(function(item, index) {
+      questionsHtml += '<div class="prof-question"><strong>' + (index + 1) + '. ' + profEscapeHtml(item.question || '') + '</strong><button type="button" onclick="toggleProfAnswer(this)">Voir la réponse</button><div class="prof-answer">' + profNl2br(item.reponse || '') + '</div></div>';
+    });
+    questionsHtml += '</div>';
+    window.profLastTtsText = (data.sections || []).map(function(section) { return (section.titre || '') + '. ' + (section.contenu || ''); }).join(' ');
+    result.innerHTML = sectionsHtml + questionsHtml + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button></div>';
+  } catch (error) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Fiche indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+  } finally {
+    profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
+  }
+}
+
+function toggleProfAnswer(button) {
+  var answer = button.parentNode.querySelector('.prof-answer');
+  if (!answer) return;
+  var isOpen = answer.style.display === 'block';
+  answer.style.display = isOpen ? 'none' : 'block';
+  button.textContent = isOpen ? 'Voir la réponse' : 'Masquer la réponse';
+}
+
+function profSpeak(text) {
+  if (!window.speechSynthesis) {
+    toast('Lecture vocale non supportée ici', '⚠️');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  var utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fr-FR';
+  utterance.rate = 0.95;
+  window.speechSynthesis.speak(utterance);
+}
+
+function profStopSpeaking() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function initProfTutor() {
+  var selectIds = ['profCorrectionMatiere', 'profExamMatiere'];
+  selectIds.forEach(function(selectId) {
+    var select = document.getElementById(selectId);
+    if (!select || typeof MATIERES === 'undefined') return;
+    while (select.options.length > 1) select.remove(1);
+    var semesters = { 1: document.createElement('optgroup'), 2: document.createElement('optgroup') };
+    semesters[1].label = 'Semestre 1';
+    semesters[2].label = 'Semestre 2';
+    MATIERES.forEach(function(matter) {
+      var option = document.createElement('option');
+      option.value = matter.id;
+      option.textContent = (matter.emoji ? matter.emoji + ' ' : '') + matter.nom;
+      (matter.sem === 1 ? semesters[1] : semesters[2]).appendChild(option);
+    });
+    select.appendChild(semesters[1]);
+    select.appendChild(semesters[2]);
+  });
+  profUpdateExamTimer();
+}
+
 /* Init on notes page open */
 document.addEventListener('DOMContentLoaded', function() {
+  initProfTutor();
   if (document.getElementById('drawCanvas')) dsInit();
 });
 
