@@ -19865,6 +19865,27 @@ async function profRequest(prompt, maxTokens, temperature) {
   return data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content.trim() : '';
 }
 
+function profCompactText(text) {
+  return String(text || '')
+    .replace(/\r/g, '')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function profTrimForModel(text, maxChars) {
+  var clean = profCompactText(text);
+  if (!maxChars || clean.length <= maxChars) return clean;
+  var sep = '\n\n[... extrait tronqué pour rester sous la limite du modèle ...]\n\n';
+  var head = Math.floor((maxChars - sep.length) * 0.72);
+  var tail = Math.max(0, maxChars - sep.length - head);
+  return clean.slice(0, head) + sep + clean.slice(clean.length - tail);
+}
+
+function profIsRequestTooLarge(error) {
+  return !!(error && error.message && /request too large|tokens per minute|requested \d+/i.test(error.message));
+}
+
 function profScoreClass(note) {
   if (note >= 14) return 'good';
   if (note < 10) return 'bad';
@@ -20044,6 +20065,7 @@ async function corrigerCopie() {
     return;
   }
   var matterName = profFindMatterName(matterId) || 'matière non précisée';
+  var compactCopy = profTrimForModel(copy, 5600);
   profSetButtonLoading('profCorrectionBtn', true, 'Correction...', '✨ Corriger comme à Dauphine');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction en cours</strong><span>Le correcteur analyse ta copie et prépare son barème.</span></div></div>';
   try {
@@ -20053,10 +20075,14 @@ async function corrigerCopie() {
       + 'Réponds uniquement en JSON valide au format suivant: '
       + '{"note":14.5,"resume":"résumé très court","commentaire_global":"3 à 5 phrases franches et utiles","parties":[{"titre":"Introduction","verdict":"solide ou faible","commentaire":"analyse précise","extrait":"citation très courte tirée mot pour mot de la copie","correction":"réécriture locale de ce passage"},{"titre":"Développement","verdict":"...","commentaire":"...","extrait":"...","correction":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"...","extrait":"...","correction":"..."},{"titre":"Méthode et style","verdict":"...","commentaire":"...","extrait":"...","correction":"..."}],"exemples_concrets":[{"point":"faiblesse ou force précise","extrait":"courte citation mot pour mot tirée de la copie","analyse":"pourquoi cela marche ou non","reformulation":"version améliorée de la phrase ou du passage"}],"points_forts":["...","..."],"axes_amelioration":["...","..."],"copie_corrigee":"version intégralement réécrite de la copie, en markdown, avec un style universitaire impeccable, adaptée à la matière, pouvant faire 3 ou 4 pages si nécessaire"}. '
       + 'Exigences impératives: cite toujours plusieurs passages exacts de la copie; propose des reformulations concrètes; la copie corrigée doit être complète, soignée, démonstrative, avec introduction, développement structuré et conclusion si le genre s\'y prête. '
-      + 'Sois rigoureux, concret, et crédible pour un étudiant de L1. Copie: ' + copy.slice(0, 9000);
-    var raw = await profRequest(prompt, 3200, 0.22);
+      + 'Sois rigoureux, concret, et crédible pour un étudiant de L1. Copie: ' + compactCopy;
+    var raw = await profRequest(prompt, 2000, 0.22);
     result.innerHTML = profRenderCorrection(profParseJson(raw));
   } catch (error) {
+    if (profIsRequestTooLarge(error)) {
+      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Copie trop longue pour un seul passage</strong><span>Le texte a été réduit au maximum utile, mais la demande reste trop lourde pour Groq. Essaie de corriger une partie de la copie à la fois.</span></div></div>';
+      return;
+    }
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   } finally {
     profSetButtonLoading('profCorrectionBtn', false, 'Correction...', '✨ Corriger comme à Dauphine');
@@ -20167,11 +20193,12 @@ async function submitProfExam() {
   }
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction du partiel blanc</strong><span>L\'IA corrige ta copie avec le même niveau d\'exigence.</span></div></div>';
   try {
+    var compactCopy = profTrimForModel(copy, 5200);
     var prompt = 'Tu es un correcteur exigeant de Paris Dauphine. Matière: ' + profTutorState.examMatterName + '. Sujet: ' + profTutorState.examSubject + '. '
       + 'Tu corriges une copie d\'examen blanc et tu réponds uniquement en JSON valide au format: '
       + '{"note":13.5,"resume":"appréciation courte","commentaire_global":"3 à 5 phrases","parties":[{"titre":"Introduction","verdict":"...","commentaire":"..."},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et gestion du temps","verdict":"...","commentaire":"..."}],"points_forts":["..."],"axes_amelioration":["..."]}. '
-      + 'Copie: ' + copy.slice(0, 6500);
-    var raw = await profRequest(prompt, 1200, 0.25);
+      + 'Copie: ' + compactCopy;
+    var raw = await profRequest(prompt, 1100, 0.25);
     result.innerHTML = profRenderCorrection(profParseJson(raw));
   } catch (error) {
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Correction indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
@@ -20200,10 +20227,11 @@ async function generateArretSheet() {
   profSetButtonLoading('profArretBtn', true, 'Analyse...', '📋 Générer la fiche d\'arrêt');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Analyse de l\'arrêt</strong><span>La méthode de fiche d\'arrêt est en cours d\'application.</span></div></div>';
   try {
+    var compactSource = profTrimForModel(source, 4300);
     var prompt = 'Tu es chargé de TD en droit. À partir de l\'arrêt suivant, réponds uniquement en JSON valide avec les clés suivantes: '
       + '{"juridiction":"...","faits":"...","procedure":"...","question":"...","solution":"...","portee":"..."}. '
-      + 'Chaque champ doit être concis mais précis. Arrêt: ' + source.slice(0, 6500);
-    var data = profParseJson(await profRequest(prompt, 1000, 0.2));
+      + 'Chaque champ doit être concis mais précis. Arrêt: ' + compactSource;
+    var data = profParseJson(await profRequest(prompt, 900, 0.2));
     if (!data) throw new Error('Réponse illisible');
     result.innerHTML = '<div class="prof-structured">'
       + '<div class="prof-structured-block"><strong>Juridiction</strong><p>' + profNl2br(data.juridiction || '') + '</p></div>'
@@ -20231,12 +20259,13 @@ async function generateDissertationPlan() {
   profSetButtonLoading('profDissertationBtn', true, 'Plan...', '📐 Générer le plan');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Construction du plan</strong><span>La problématique et les deux parties sont en cours de formulation.</span></div></div>';
   try {
+    var compactNotes = notes ? profTrimForModel(notes, 2600) : '';
     var prompt = 'Tu es professeur de droit et de sciences économiques à Paris Dauphine. Donne uniquement un JSON valide au format '
       + '{"problematique":"...","partie1":{"titre":"...","a":"...","b":"..."},"partie2":{"titre":"...","a":"...","b":"..."}} '
       + 'pour le sujet suivant: ' + subject + '. '
-      + (notes ? 'Appuie-toi si possible sur cet extrait de cours: ' + notes.slice(0, 3500) + '. ' : '')
+      + (compactNotes ? 'Appuie-toi si possible sur cet extrait de cours: ' + compactNotes + '. ' : '')
       + 'Le plan doit être crédible pour une copie de L1.';
-    var data = profParseJson(await profRequest(prompt, 900, 0.3));
+    var data = profParseJson(await profRequest(prompt, 850, 0.3));
     if (!data) throw new Error('Réponse illisible');
     result.innerHTML = '<div class="prof-structured">'
       + '<div class="prof-structured-block"><strong>Problématique</strong><p>' + profNl2br(data.problematique || '') + '</p></div>'
@@ -20260,12 +20289,13 @@ async function generateRevisionSheet() {
   profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Création de la fiche</strong><span>Résumé, architecture du cours et questions difficiles en préparation.</span></div></div>';
   try {
+    var compactSource = profTrimForModel(source, 4800);
     var prompt = 'Tu es un tuteur universitaire excellent pour un étudiant de L1 à Dauphine. Tu dois produire une fiche de révision dense, riche et exploitable pour un vrai partiel. '
       + 'Réponds uniquement en JSON valide au format '
       + '{"titre":"...","introduction":"...","sections":[{"titre":"...","contenu":"...","points_cles":["...","..."],"exemples":["...","..."],"pieges":["...","..."]}],"synthese":"...","questions":[{"question":"...","reponse":"..."}],"plan_flash":"...","vocabulaire":[{"terme":"...","definition":"..."}]}. '
-      + 'Exigences: minimum 6 sections substantielles si la matière le permet; chaque section doit être riche; ajoute des exemples, distinctions, nuances, pièges, et une mini synthèse finale; les réponses aux questions doivent être développées. '
-      + 'Le ton doit être universitaire, précis, clair et approfondi. Cours: ' + source.slice(0, 12000);
-    var data = profParseJson(await profRequest(prompt, 3200, 0.2));
+      + 'Exigences: 5 a 6 sections substantielles si la matière le permet; chaque section doit être riche; ajoute des exemples, distinctions, nuances, pièges, et une mini synthèse finale; les réponses aux questions doivent être développées. '
+      + 'Le ton doit être universitaire, précis, clair et approfondi. Privilégie la densité utile plutôt que la longueur gratuite. Cours: ' + compactSource;
+    var data = profParseJson(await profRequest(prompt, 1800, 0.2));
     if (!data) throw new Error('Réponse illisible');
     var sectionsHtml = '';
     if (data.titre || data.introduction) {
@@ -20331,6 +20361,10 @@ async function generateRevisionSheet() {
     window.profLastRevisionHtml = '<h1>' + profEscapeHtml(data.titre || 'Fiche de révision') + '</h1>' + markdownToHtml(window.profLastRevisionMarkdown);
     result.innerHTML = sectionsHtml + questionsHtml + '<div class="prof-tts"><button class="prof-btn secondary" type="button" onclick="profSpeak(window.profLastTtsText)">🔊 Lire la fiche</button><button class="prof-btn ghost" type="button" onclick="profStopSpeaking()">⏹️ Stop</button><button class="prof-btn secondary" type="button" onclick="profCopyToClipboard(window.profLastRevisionMarkdown, \'Fiche copiée\')">📋 Copier la fiche</button><button class="prof-btn ghost" type="button" onclick="profPrintHtml(\'Fiche de révision\', window.profLastRevisionHtml)">🖨️ PDF / Imprimer</button></div>';
   } catch (error) {
+    if (profIsRequestTooLarge(error)) {
+      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Fiche trop lourde pour Groq</strong><span>Le cours a déjà été compacté automatiquement. Si l\'erreur persiste, colle le chapitre par morceaux et génère une fiche par thème.</span></div></div>';
+      return;
+    }
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Fiche indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   } finally {
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
