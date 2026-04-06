@@ -15147,6 +15147,8 @@ var _newsPrompt  = '';
 var _newsType    = 'semaine';
 var _activeTab   = 'semaine';
 
+function newsKey(type) { return 'dauphine_news_' + type; }
+
 var NEWS_PROMPTS = {
   semaine: {
     title: '🗞️ News de la semaine',
@@ -19758,8 +19760,12 @@ function wgCopyLink() {
   function renderNews() {
     var body = document.getElementById('wgBody');
     if (!body) return;
+    // Cherche dans toutes les clés (semaine en priorité)
     var saved = null;
-    try { saved = JSON.parse(localStorage.getItem('dauphine_news')||'null'); } catch(e){}
+    ['semaine','jour','constit','eco'].forEach(function(t) {
+      if (saved) return;
+      try { var c = JSON.parse(localStorage.getItem('dauphine_news_'+t)||'null'); if (c&&c.items&&c.items.length) saved=c; } catch(e){}
+    });
     if (!saved || !saved.items || !saved.items.length) {
       body.innerHTML = '<div class="wg-free"><div class="wg-free-ic">📰</div><div class="wg-free-t">Aucune news</div><div class="wg-free-s">Génère-en dans l\'app</div></div>';
       return;
