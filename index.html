@@ -5171,6 +5171,11 @@ aside.sidebar {
             <div style="font-weight:700;font-size:12px">Pomodoro</div>
             <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Timer · sessions</div>
           </button>
+          <button class="wg-type-btn" data-type="citation" onclick="wgSelectType('citation',this)">
+            <div style="font-size:20px;margin-bottom:4px">💬</div>
+            <div style="font-weight:700;font-size:12px">Citation du jour</div>
+            <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Change chaque jour</div>
+          </button>
         </div>
 
         <!-- Instructions -->
@@ -19636,6 +19641,8 @@ function wgCopyLink() {
     } else if (WG_TYPE === 'pomodoro') {
       renderPomodoro();
       setInterval(renderPomodoro, 1000);
+    } else if (WG_TYPE === 'citation') {
+      renderCitation();
     }
   }
 
@@ -19699,6 +19706,43 @@ function wgCopyLink() {
       '<div class="wg-title">'+(running?'Session de travail':'Prêt')+'</div>',
       '<div class="wg-time">'+sessions+' session'+(sessions>1?'s':'')+' aujourd\'hui</div></div>',
       '<div class="wg-cd"><div class="wg-cd-val">'+pad(mm)+':'+pad(ss)+'</div><div class="wg-cd-lbl">'+(running?'restant':'pause')+'</div></div>',
+    ].join('');
+  }
+
+  /* ── Renderer citation ── */
+  function renderCitation() {
+    var body = document.getElementById('wgBody');
+    if (!body) return;
+    var citations = [
+      {q:'Le succès, c\'est tomber sept fois et se relever huit.', a:'Proverbe japonais'},
+      {q:'L\'éducation est l\'arme la plus puissante pour changer le monde.', a:'Nelson Mandela'},
+      {q:'Investis dans ton savoir, il rapporte le meilleur intérêt.', a:'Benjamin Franklin'},
+      {q:'Le génie, c\'est 1% d\'inspiration et 99% de transpiration.', a:'Edison'},
+      {q:'La connaissance s\'acquiert par l\'expérience, tout le reste n\'est que de l\'information.', a:'Einstein'},
+      {q:'Chaque expert a d\'abord été un débutant.', a:'Helen Hayes'},
+      {q:'Ce n\'est pas parce que les choses sont difficiles qu\'on n\'ose pas, c\'est parce qu\'on n\'ose pas qu\'elles sont difficiles.', a:'Sénèque'},
+      {q:'Le moment de planter un arbre était il y a 20 ans. Le second meilleur moment, c\'est maintenant.', a:'Proverbe chinois'},
+      {q:'Votre temps est limité. Ne le gâchez pas en vivant la vie de quelqu\'un d\'autre.', a:'Steve Jobs'},
+      {q:'La discipline est le pont entre les objectifs et les accomplissements.', a:'Jim Rohn'},
+      {q:'Il n\'y a pas de raccourci vers un endroit qui vaut le détour.', a:'Beverly Sills'},
+      {q:'Le travail éloigne de nous trois grands maux : l\'ennui, le vice et le besoin.', a:'Voltaire'},
+      {q:'Commence là où tu es. Utilise ce que tu as. Fais ce que tu peux.', a:'Arthur Ashe'},
+      {q:'La réussite appartient à tout le monde. C\'est au travail collectif qu\'elle revient.', a:'Franck Piccard'},
+      {q:'On ne récolte que ce que l\'on sème.', a:'Proverbe'},
+      {q:'Sois le changement que tu veux voir dans le monde.', a:'Gandhi'},
+      {q:'La seule façon de faire du bon travail est d\'aimer ce que vous faites.', a:'Steve Jobs'},
+      {q:'Tout ce que l\'esprit peut concevoir et croire, il peut l\'accomplir.', a:'Napoleon Hill'},
+      {q:'Le succès n\'est pas final, l\'échec n\'est pas fatal : c\'est le courage de continuer qui compte.', a:'Churchill'},
+      {q:'Apprendre sans réfléchir est vain, réfléchir sans apprendre est dangereux.', a:'Confucius'},
+    ];
+    var idx = Math.floor(new Date().getTime() / 86400000) % citations.length;
+    var c = citations[idx];
+    body.innerHTML = [
+      '<div>',
+        '<div class="wg-label">Citation du jour</div>',
+        '<div style="font-size:11px;font-weight:600;color:#fff;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;font-style:italic">"'+c.q+'"</div>',
+      '</div>',
+      '<div class="wg-time" style="margin-top:0">— '+c.a+'</div>',
     ].join('');
   }
 })();
