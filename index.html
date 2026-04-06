@@ -7067,6 +7067,7 @@ aside.sidebar {
               </div>
               <div class="prof-actions">
                 <button class="prof-btn" id="profCorrectionBtn" onclick="corrigerCopie()">✨ Corriger comme à Dauphine</button>
+                <button class="prof-btn ghost" type="button" onclick="resetProfCorrection()">🗑️ Réinitialiser</button>
               </div>
             </div>
             <div class="prof-card" id="profCorrectionResult">
@@ -7162,6 +7163,7 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profArretBtn" onclick="generateArretSheet()">📋 Générer la fiche d'arrêt</button>
+                  <button class="prof-btn ghost" type="button" onclick="resetProfArret()">🗑️ Réinitialiser</button>
                 </div>
               </div>
               <div class="prof-card" id="profArretResult">
@@ -7191,6 +7193,7 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profDissertationBtn" onclick="generateDissertationPlan()">📐 Générer le plan</button>
+                  <button class="prof-btn ghost" type="button" onclick="resetProfDissertation()">🗑️ Réinitialiser</button>
                 </div>
               </div>
               <div class="prof-card" id="profDissertationResult">
@@ -7216,6 +7219,7 @@ aside.sidebar {
                 </div>
                 <div class="prof-actions">
                   <button class="prof-btn" id="profFicheBtn" onclick="generateRevisionSheet()">📚 Générer la fiche</button>
+                  <button class="prof-btn ghost" type="button" onclick="resetProfRevisionSheet()">🗑️ Réinitialiser</button>
                 </div>
               </div>
               <div class="prof-card" id="profFicheResult">
@@ -20064,6 +20068,48 @@ function resetProfExam() {
   profTutorState.examSecondsLeft = profTutorState.examDurationMinutes * 60;
   document.getElementById('profExamCopy').value = '';
   profShowExamStage('profExamSetup');
+}
+
+function resetProfCorrection() {
+  var mat = document.getElementById('profCorrectionMatiere');
+  var crit = document.getElementById('profCorrectionCriteres');
+  var txt = document.getElementById('profCorrectionTexte');
+  var res = document.getElementById('profCorrectionResult');
+  if (mat) mat.value = '';
+  if (crit) crit.value = '';
+  if (txt) txt.value = '';
+  if (res) {
+    res.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">📋</div><strong>La correction apparaîtra ici</strong><span>Choisis une matière, colle ta copie et lance la correction.</span></div></div>';
+  }
+}
+
+function resetProfArret() {
+  var input = document.getElementById('profArretInput');
+  var res = document.getElementById('profArretResult');
+  if (input) input.value = '';
+  if (res) {
+    res.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⚖️</div><strong>La fiche d\'arrêt apparaîtra ici</strong><span>Colle un arrêt et l\'outil recompose automatiquement la méthode.</span></div></div>';
+  }
+}
+
+function resetProfDissertation() {
+  var sujet = document.getElementById('profDissertationSujet');
+  var cours = document.getElementById('profDissertationCours');
+  var res = document.getElementById('profDissertationResult');
+  if (sujet) sujet.value = '';
+  if (cours) cours.value = '';
+  if (res) {
+    res.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧭</div><strong>Le plan apparaîtra ici</strong><span>Entre un sujet et laisse l\'outil construire une vraie colonne vertébrale.</span></div></div>';
+  }
+}
+
+function resetProfRevisionSheet() {
+  var input = document.getElementById('profFicheCours');
+  var res = document.getElementById('profFicheResult');
+  if (input) input.value = '';
+  if (res) {
+    res.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>La fiche de révision apparaîtra ici</strong><span>Une synthèse exploitable tout de suite, avec questions de vérification.</span></div></div>';
+  }
 }
 
 async function generateArretSheet() {
