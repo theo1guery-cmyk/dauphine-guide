@@ -19847,12 +19847,11 @@ async function profRequest(prompt, maxTokens, temperature) {
 }
 
 async function profRequestXXL(prompt, maxTokens, temperature) {
-  // clé gérée par le Worker Cloudflare
   var res = await fetch(GROQ_PROXY, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + xxlKey
+      'X-Groq-Tier': 'xxl'
     },
     body: JSON.stringify({
       model: GROQ_MODEL,
