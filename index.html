@@ -13679,7 +13679,8 @@ function startMorphAnimation() {
     {e:'📰',l:'News',       page:'news',       c:'rgba(0,188,212,.6)'}
   ];
   var total    = sections.length;
-  var isMobile = window.innerWidth < 600;
+  var isTouch  = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  var isMobile = window.innerWidth < 600 || (isTouch && window.innerWidth < 1100);
   var vw = window.innerWidth, vh = window.innerHeight;
   var cx = vw/2, cy = vh/2;
 
@@ -13716,6 +13717,20 @@ function startMorphAnimation() {
   }
 
   /* ══ VERSION DESKTOP : Animation complète ══ */
+  /* Filet de sécurité : si l'animation ne se termine pas (bug Safari/WebKit), forcer la fin après 16s */
+  var _safetyTimer = setTimeout(function() {
+    try {
+      var o = document.getElementById('morphOverlay');
+      if (o && o.classList.contains('active')) {
+        o.style.cssText = 'display:none';
+        o.classList.remove('active');
+        window._orbitalRunning = false;
+        document.querySelectorAll('#morphGhostSidebar,.m-ghost-item,.m-ghost-scan,.m-ghost-head,.m-wave,.m-wipe,.m-trail,.m-preview,.m-shard').forEach(function(e){e.remove();});
+        if (typeof initOnboarding === 'function') initOnboarding();
+      }
+    } catch(e) {}
+  }, 16000);
+
   /* Reset */
   overlay.classList.remove('fade-out','phase-zoom');
   overlay.style.cssText = '';
@@ -14012,6 +14027,7 @@ function startMorphAnimation() {
 
   /* ══ FIN ══ */
   function onAllArrived(){
+    clearTimeout(_safetyTimer);
     scan.style.opacity='0';
     if(buildLabel){buildLabel.style.color='rgba(77,255,160,.9)';buildLabel.textContent='✓ Construction terminée !';}
     if(buildFill) buildFill.style.background='linear-gradient(90deg,#00a86b,#4dffc2)';
