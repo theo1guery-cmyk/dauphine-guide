@@ -13631,6 +13631,18 @@ function hideLoginScreen() {
 function startMorphAnimation() {
   window._orbitalRunning = true;
 
+  /* Force-hide the splash screen immediately — on Safari/iPad the CSS
+     transition can stall and leave it stuck above the morph overlay */
+  (function() {
+    var s = document.getElementById('splashScreen');
+    if (s && s.style.display !== 'none') {
+      s.style.transition = 'none';
+      s.style.opacity = '0';
+      s.style.pointerEvents = 'none';
+      setTimeout(function() { s.style.display = 'none'; }, 50);
+    }
+  })();
+
   var overlay    = document.getElementById('morphOverlay');
   var scene      = document.getElementById('mScene');
   var logo       = document.getElementById('mLogo');
