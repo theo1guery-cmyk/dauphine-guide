@@ -4787,6 +4787,19 @@ aside.sidebar {
 [data-theme="dark"] .ai-msg.ai .ai-bubble{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#e2e8f0}
 
 .ai-action-done{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#16a34a;background:#dcfce7;border-radius:99px;padding:3px 9px;margin-top:5px;font-family:'Figtree',sans-serif}
+.ai-action-fail{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#b91c1c;background:#fee2e2;border-radius:99px;padding:3px 9px;margin-top:5px;font-family:'Figtree',sans-serif}
+.ai-action-card{margin-top:8px;padding:10px 12px;border-radius:14px;background:var(--g50,#f8fafc);border:1px solid var(--g100,#f1f5f9);min-width:240px}
+[data-theme="dark"] .ai-action-card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08)}
+.ai-action-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--g400,#94a3b8);margin-bottom:8px}
+.ai-action-list{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:5px}
+.ai-action-list li{font-size:12px;line-height:1.45;color:var(--text-main,#111)}
+[data-theme="dark"] .ai-action-list li{color:#e2e8f0}
+.ai-action-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ai-action-btn{border:none;border-radius:999px;padding:7px 11px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:transform .15s ease,opacity .15s ease}
+.ai-action-btn:hover{transform:translateY(-1px)}
+.ai-action-btn.primary{background:var(--blue,#0057ad);color:#fff}
+.ai-action-btn.secondary{background:var(--g100,#f1f5f9);color:var(--g600,#475569)}
+[data-theme="dark"] .ai-action-btn.secondary{background:rgba(255,255,255,.08);color:#e2e8f0}
 
 .ai-thinking{display:flex;gap:4px;padding:10px 14px;background:var(--g50,#f8fafc);border:1px solid var(--g100,#f1f5f9);border-radius:16px 16px 16px 4px;align-self:flex-start}
 .ai-thinking span{width:6px;height:6px;border-radius:50%;background:var(--g300,#cbd5e1);animation:aiDot 1.2s ease-in-out infinite}
@@ -22072,6 +22085,10 @@ var AI_OPEN = false;
 var AI_THINKING = false;
 var AI_HISTORY = []; // {role, content}
 var AI_CUR_PAGE = 'home';
+var AI_ACTION_LOG = [];
+var AI_PENDING_CONFIRMATION = null;
+var AI_LAST_UNDO_GROUP = null;
+var AI_LAST_RUN = null;
 
 // ── Afficher le bouton après l'animation ──
 (function waitReady(){
@@ -22211,6 +22228,26 @@ function aiGetContext() {
     }
   } catch(e) {}
 
+  // Notes
+  try {
+    if (typeof notes !== 'undefined' && Array.isArray(notes) && notes.length) {
+      lines.push('NOTES: ' + notes.length + ' note' + (notes.length > 1 ? 's' : ''));
+      if (typeof activeNoteId !== 'undefined' && activeNoteId) {
+        var active = notes.find(function(n){ return n.id === activeNoteId; });
+        if (active) lines.push('NOTE ACTIVE: ' + (active.title || 'Sans titre') + (active.mat ? ' [' + active.mat + ']' : ''));
+      }
+    }
+  } catch(e) {}
+
+  // Historique récent des actions IA
+  try {
+    if (AI_ACTION_LOG.length) {
+      lines.push('DERNIÈRES ACTIONS IA: ' + AI_ACTION_LOG.slice(0, 4).map(function(entry){
+        return entry.status.toUpperCase() + ' → ' + entry.items.join(', ');
+      }).join(' | '));
+    }
+  } catch(e) {}
+
   return lines.join('\n');
 }
 
@@ -22238,18 +22275,29 @@ function aiSystemPrompt() {
     'Exemple pour 3 séances:\n' +
     '@@ACTIONS:[{"type":"add_event","date":"'+todayStr+'","time":"14:00","end":"15:30","summary":"Révision Droit"},{"type":"add_event","date":"2026-04-11","time":"10:00","end":"11:30","summary":"Révision Maths"},{"type":"add_event","date":"2026-04-12","time":"14:00","end":"15:30","summary":"Révision Macro"}]:ENDACTIONS@@\n\n' +
     'Types disponibles:\n' +
-    '- add_event: ajouter un événement au planning (le type doit être EXACTEMENT "add_event" avec underscore). Champs: date (YYYY-MM-DD), time (HH:MM), end (HH:MM), summary (texte)\n' +
+    '- add_event: ajouter un événement au planning. Champs: date (YYYY-MM-DD), time (HH:MM), end (HH:MM), summary (texte)\n' +
+    '- delete_event: supprimer un créneau manuel. Champs conseillés: date (YYYY-MM-DD) + time (HH:MM) + summary (texte) pour identifier le bon créneau\n' +
     '- navigate: aller à une section. Champ "page" — valeurs exactes:\n' +
     '  home, planning, simulateur, flashcards, apprendre, pomodoro, notes, prof, oral,\n' +
     '  caspratiques, culture, news, chat, campus, ressources, assos, bonsplans, stage, pslsport, bu, faq\n' +
-    '- add_flashcard: créer une flashcard. Champs: recto (question), verso (réponse)\n\n' +
+    '- add_flashcard: créer une flashcard. Champs: recto (question), verso (réponse), matiere (optionnel)\n' +
+    '- create_note: créer une note. Champs: title, matiere, content, section (optionnel)\n' +
+    '- update_note: modifier une note. Champs: target ("active" si la note ouverte doit être modifiée), title (optionnel), matiere (optionnel), content, mode ("replace" ou "append")\n' +
+    '- delete_note: supprimer une note. Champs: title (optionnel) ou target:"active"\n' +
+    '- open_note: ouvrir une note existante. Champs: title (optionnel), matiere (optionnel) ou target:"active"\n' +
+    '- set_theme: changer le thème. Champ: theme = "dark" ou "light"\n' +
+    '- start_pomodoro: lancer un pomodoro. Champs: duration (minutes), label (optionnel)\n' +
+    '- open_background_customizer: ouvrir la personnalisation du fond\n' +
+    '- open_profile: ouvrir le profil utilisateur\n\n' +
     '=== RÈGLE ABSOLUE SUR LES ACTIONS ===\n' +
     'NE JAMAIS inclure de bloc @@ACTIONS@@ sauf si le message contient UN de ces mots déclencheurs EXACTS :\n' +
-    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule"\n' +
+    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule", "supprime", "ouvre", "lance", "active", "change"\n' +
     'Questions informatives (quoi, quand, comment, explique, résume, montre, c\'est quoi...) → réponse texte UNIQUEMENT, ZÉRO action.\n' +
     'Exemples :\n' +
     '✅ "ajoute une révision de maths demain" → inclure @@ACTIONS@@\n' +
     '✅ "crée-moi des flashcards sur le Lagrangien" → inclure @@ACTIONS@@\n' +
+    '✅ "crée une note de droit constit et ouvre-la" → inclure @@ACTIONS@@\n' +
+    '✅ "supprime ma séance de macro vendredi" → inclure @@ACTIONS@@\n' +
     '❌ "qu\'est-ce que j\'ai demain ?" → réponse texte seule, PAS d\'action\n' +
     '❌ "quand est mon prochain exam ?" → réponse texte seule, PAS d\'action\n' +
     '❌ "explique-moi le Lagrangien" → réponse texte seule, PAS d\'action\n\n' +
@@ -22257,6 +22305,7 @@ function aiSystemPrompt() {
     '- Réponds en français, sois concis et direct\n' +
     '- Utilise le contexte pour personnaliser les réponses\n' +
     '- Quand tu génères un planning de révision, inclus TOUTES les séances en un seul bloc @@ACTIONS@@\n' +
+    '- Pour les modifications importantes ou suppressions, le client affichera une confirmation : tu peux quand même proposer les actions normalement\n' +
     '- Après avoir ajouté des événements, liste-les brièvement\n' +
     '- Pour les questions informatives, tu PEUX proposer à la fin : "Je peux ajouter ça à ton planning si tu veux ?"';
 }
@@ -22339,36 +22388,209 @@ window.aiSend = function() {
   aiCallGroq();
 };
 
-function aiAddMsg(role, text, actions) {
+function aiEscapeHtml(text) {
+  return String(text || '').replace(/[&<>"']/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+function aiFormatBubble(text) {
+  return aiEscapeHtml(text).replace(/\n/g,'<br>').replace(/\*(.*?)\*/g,'<strong>$1</strong>').replace(/_(.*?)_/g,'<em>$1</em>');
+}
+
+function aiNormText(value) {
+  return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+
+function aiNormalizeAction(action) {
+  if (!action || typeof action !== 'object') return { type:'' };
+  var a = {};
+  Object.keys(action).forEach(function(k){ a[k] = action[k]; });
+  if (typeof a.type === 'string') {
+    a.type = a.type.toLowerCase().replace(/[-\s]/g,'_');
+    if (a.type === 'addevent' || a.type === 'event') a.type = 'add_event';
+    if (a.type === 'addflashcard' || a.type === 'flashcard' || a.type === 'create_flashcard') a.type = 'add_flashcard';
+    if (a.type === 'deletenote' || a.type === 'remove_note') a.type = 'delete_note';
+    if (a.type === 'deleteevent' || a.type === 'remove_event') a.type = 'delete_event';
+    if (a.type === 'createnote' || a.type === 'add_note') a.type = 'create_note';
+    if (a.type === 'updatenote' || a.type === 'edit_note' || a.type === 'write_note') a.type = 'update_note';
+    if (a.type === 'opennote') a.type = 'open_note';
+    if (a.type === 'settheme' || a.type === 'theme') a.type = 'set_theme';
+    if (a.type === 'openprofile' || a.type === 'profile') a.type = 'open_profile';
+    if (a.type === 'openbackgroundcustomizer' || a.type === 'background_customizer') a.type = 'open_background_customizer';
+    if (a.type === 'startpomodoro' || a.type === 'pomodoro') a.type = 'start_pomodoro';
+  }
+  return a;
+}
+
+function aiDescribeAction(action) {
+  if (!action || !action.type) return 'Action inconnue';
+  if (action.type === 'navigate') return 'Navigation vers ' + (AI_PAGE_LABELS[action.page] || action.page || 'une section');
+  if (action.type === 'add_event') return 'Ajouter "' + (action.summary || 'séance') + '" le ' + (action.date || '?') + (action.time ? ' à ' + action.time : '');
+  if (action.type === 'delete_event') return 'Supprimer le créneau "' + (action.summary || 'séance') + '"' + (action.date ? ' du ' + action.date : '');
+  if (action.type === 'add_flashcard') return 'Créer une flashcard' + (action.matiere ? ' de ' + action.matiere : '');
+  if (action.type === 'create_note') return 'Créer la note "' + (action.title || 'Nouvelle note') + '"';
+  if (action.type === 'update_note') return 'Mettre à jour la note "' + (action.title || action.target || 'active') + '"';
+  if (action.type === 'delete_note') return 'Supprimer la note "' + (action.title || action.target || 'active') + '"';
+  if (action.type === 'open_note') return 'Ouvrir la note "' + (action.title || action.matiere || action.target || 'active') + '"';
+  if (action.type === 'set_theme') return 'Passer en mode ' + (action.theme === 'dark' ? 'sombre' : 'clair');
+  if (action.type === 'open_background_customizer') return 'Ouvrir la personnalisation du fond';
+  if (action.type === 'open_profile') return 'Ouvrir le profil';
+  if (action.type === 'start_pomodoro') return 'Lancer un pomodoro de ' + (action.duration || 25) + ' min';
+  return action.type;
+}
+
+function aiLogActionRun(status, actions) {
+  if (!actions || !actions.length) return;
+  AI_ACTION_LOG.unshift({
+    at: Date.now(),
+    status: status,
+    items: actions.map(aiDescribeAction)
+  });
+  AI_ACTION_LOG = AI_ACTION_LOG.slice(0, 12);
+}
+
+function aiIsWriteAction(action) {
+  return ['add_event','delete_event','add_flashcard','create_note','update_note','delete_note','set_theme','start_pomodoro'].indexOf(action.type) !== -1;
+}
+
+function aiNeedsConfirmation(action) {
+  return ['delete_event','delete_note'].indexOf(action.type) !== -1 || action.confirm === true;
+}
+
+function aiNeedsPreview(actions) {
+  var writeCount = actions.filter(aiIsWriteAction).length;
+  return actions.some(aiNeedsConfirmation) || writeCount >= 3;
+}
+
+function aiFindNote(action) {
+  if (typeof notes === 'undefined' || !Array.isArray(notes)) return null;
+  if ((action.target === 'active' || action.active === true) && typeof activeNoteId !== 'undefined' && activeNoteId) {
+    return notes.find(function(n){ return n.id === activeNoteId; }) || null;
+  }
+  var title = aiNormText(action.title || action.note_title || action.name);
+  var mat = aiNormText(action.matiere || action.mat || action.section);
+  var exact = notes.find(function(n){
+    return (title && aiNormText(n.title) === title) || (mat && aiNormText(n.mat) === mat);
+  });
+  if (exact) return exact;
+  return notes.find(function(n){
+    return (title && aiNormText(n.title).indexOf(title) !== -1) || (mat && aiNormText(n.mat).indexOf(mat) !== -1);
+  }) || null;
+}
+
+function aiEnsureNoteSection(name) {
+  var sectionName = (name || 'General').trim();
+  if (typeof noteSections === 'undefined' || !Array.isArray(noteSections)) noteSections = [];
+  if (!noteSections.length) noteSections = [{id:1,title:'General',collapsed:false}];
+  var found = noteSections.find(function(s){ return aiNormText(s.title) === aiNormText(sectionName); });
+  if (found) return found;
+  found = { id: Date.now() + noteSections.length + 1, title: sectionName, collapsed: false };
+  noteSections.push(found);
+  if (typeof saveNotes === 'function') saveNotes();
+  return found;
+}
+
+function aiFindManualEvent(action) {
+  if (typeof manualEvents === 'undefined' || !Array.isArray(manualEvents)) return null;
+  if (action.manualId) {
+    return manualEvents.find(function(evt){ return evt.manualId === action.manualId; }) || null;
+  }
+  var summary = aiNormText(action.summary || action.title || action.name);
+  var date = action.date || '';
+  var time = action.time || '';
+  var candidates = manualEvents.filter(function(evt){
+    if (date && evt.date !== date) return false;
+    if (time && evt.time !== time) return false;
+    if (summary && aiNormText(evt.summary).indexOf(summary) === -1) return false;
+    return true;
+  });
+  return candidates[0] || null;
+}
+
+function aiRenderActionChips(container, actions, className) {
+  if (!actions || !actions.length) return;
+  var groups = {};
+  actions.forEach(function(action){
+    var key = action.type || 'other';
+    groups[key] = (groups[key] || 0) + 1;
+  });
+  Object.keys(groups).forEach(function(type){
+    var chip = document.createElement('div');
+    chip.className = className;
+    var count = groups[type];
+    if (type === 'add_event') chip.textContent = '✅ ' + count + ' séance' + (count > 1 ? 's' : '') + ' planifiée' + (count > 1 ? 's' : '');
+    else if (type === 'delete_event') chip.textContent = '🗑️ ' + count + ' créneau' + (count > 1 ? 'x' : '') + ' supprimé' + (count > 1 ? 's' : '');
+    else if (type === 'add_flashcard') chip.textContent = '🃏 ' + count + ' flashcard' + (count > 1 ? 's' : '') + ' créée' + (count > 1 ? 's' : '');
+    else if (type === 'create_note') chip.textContent = '📝 ' + count + ' note' + (count > 1 ? 's' : '') + ' créée' + (count > 1 ? 's' : '');
+    else if (type === 'update_note') chip.textContent = '✏️ ' + count + ' note' + (count > 1 ? 's' : '') + ' mise' + (count > 1 ? 's' : '') + ' à jour';
+    else if (type === 'delete_note') chip.textContent = '🗑️ ' + count + ' note' + (count > 1 ? 's' : '') + ' supprimée' + (count > 1 ? 's' : '');
+    else if (type === 'navigate') chip.textContent = '→ Navigation effectuée';
+    else if (type === 'set_theme') chip.textContent = '🎨 Thème mis à jour';
+    else if (type === 'start_pomodoro') chip.textContent = '⏱️ Pomodoro lancé';
+    else chip.textContent = '✅ ' + count + ' action' + (count > 1 ? 's' : '') + ' exécutée' + (count > 1 ? 's' : '');
+    container.appendChild(chip);
+  });
+}
+
+function aiRenderActionCard(title, actions, buttons) {
+  var card = document.createElement('div');
+  card.className = 'ai-action-card';
+  var head = document.createElement('div');
+  head.className = 'ai-action-title';
+  head.textContent = title;
+  card.appendChild(head);
+  var list = document.createElement('ul');
+  list.className = 'ai-action-list';
+  (actions || []).forEach(function(action){
+    var li = document.createElement('li');
+    li.textContent = aiDescribeAction(action);
+    list.appendChild(li);
+  });
+  card.appendChild(list);
+  if (buttons && buttons.length) {
+    var btns = document.createElement('div');
+    btns.className = 'ai-action-btns';
+    buttons.forEach(function(conf){
+      var btn = document.createElement('button');
+      btn.className = 'ai-action-btn ' + (conf.variant || 'secondary');
+      btn.textContent = conf.label;
+      btn.onclick = conf.onClick;
+      btns.appendChild(btn);
+    });
+    card.appendChild(btns);
+  }
+  return card;
+}
+
+function aiAddMsg(role, text, meta) {
+  if (Array.isArray(meta)) meta = { executedActions: meta };
+  meta = meta || {};
   var msgs = document.getElementById('aiMsgs');
   var div = document.createElement('div');
   div.className = 'ai-msg ' + role;
   var bubble = document.createElement('div');
   bubble.className = 'ai-bubble';
-  bubble.innerHTML = text.replace(/\n/g,'<br>').replace(/\*(.*?)\*/g,'<strong>$1</strong>').replace(/_(.*?)_/g,'<em>$1</em>');
+  bubble.innerHTML = aiFormatBubble(text);
   div.appendChild(bubble);
-  if (actions && actions.length) {
-    var evtCount = actions.filter(function(a){ return a.type==='add_event'; }).length;
-    var fcCount  = actions.filter(function(a){ return a.type==='add_flashcard'; }).length;
-    var navCount = actions.filter(function(a){ return a.type==='navigate'; }).length;
-    if (evtCount > 0) {
-      var chip = document.createElement('div');
-      chip.className = 'ai-action-done';
-      chip.textContent = '✅ ' + evtCount + ' séance' + (evtCount>1?'s':'') + ' ajoutée' + (evtCount>1?'s':'') + ' au planning';
-      div.appendChild(chip);
-    }
-    if (fcCount > 0) {
-      var chip2 = document.createElement('div');
-      chip2.className = 'ai-action-done';
-      chip2.textContent = '✅ ' + fcCount + ' flashcard' + (fcCount>1?'s':'') + ' créée' + (fcCount>1?'s':'');
-      div.appendChild(chip2);
-    }
-    if (navCount > 0) {
-      var chip3 = document.createElement('div');
-      chip3.className = 'ai-action-done';
-      chip3.textContent = '→ Navigation effectuée';
-      div.appendChild(chip3);
-    }
+  if (meta.executedActions && meta.executedActions.length) aiRenderActionChips(div, meta.executedActions, 'ai-action-done');
+  if (meta.failedActions && meta.failedActions.length) {
+    var failChip = document.createElement('div');
+    failChip.className = 'ai-action-fail';
+    failChip.textContent = '⚠️ ' + meta.failedActions.length + ' action' + (meta.failedActions.length > 1 ? 's' : '') + ' incomplète' + (meta.failedActions.length > 1 ? 's' : '');
+    div.appendChild(failChip);
+    div.appendChild(aiRenderActionCard('À vérifier', meta.failedActions.map(function(item){ return item.action || item; })));
+  }
+  if (meta.pendingActions && meta.pendingActions.length) {
+    div.appendChild(aiRenderActionCard('Confirmation requise', meta.pendingActions, [
+      { label:'Confirmer', variant:'primary', onClick:function(){ window.aiConfirmPendingActions(); } },
+      { label:'Annuler', variant:'secondary', onClick:function(){ window.aiCancelPendingActions(); } }
+    ]));
+  }
+  if (meta.canUndo) {
+    div.appendChild(aiRenderActionCard('Annulation disponible', meta.executedActions || [], [
+      { label:'Annuler ces actions', variant:'secondary', onClick:function(){ window.aiUndoLastActionGroup(); } }
+    ]));
   }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -22404,6 +22626,361 @@ function aiUserWantsWrite(userMsg) {
   return AI_WRITE_TRIGGERS.test(userMsg);
 }
 
+function aiResult(ok, action, extra) {
+  var out = { ok: ok, action: action };
+  if (extra) Object.keys(extra).forEach(function(k){ out[k] = extra[k]; });
+  return out;
+}
+
+function aiExecuteAddEvents(actions) {
+  function normT(t){ if(!t)return null; var p=String(t).trim().match(/^(\d{1,2}):(\d{2})$/); if(!p)return null; return(p[1].length<2?'0'+p[1]:p[1])+':'+p[2]; }
+  function normD(d){ if(!d)return null; var p=String(d).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(!p)return null; return p[1]+'-'+(p[2].length<2?'0'+p[2]:p[2])+'-'+(p[3].length<2?'0'+p[3]:p[3]); }
+  if (typeof manualEvents === 'undefined') return { executedActions: [], failedActions: actions.map(function(action){ return aiResult(false, action, { error:'planning indisponible' }); }), undoItems: [] };
+  var addedEntries = [];
+  var failed = [];
+  var baseId = Date.now();
+  actions.forEach(function(rawAction, i) {
+    var action = aiNormalizeAction(rawAction);
+    var date = normD(action.date);
+    var time = normT(action.time);
+    if (!date || !time || !action.summary) {
+      failed.push(aiResult(false, action, { error:'créneau incomplet' }));
+      return;
+    }
+    var end = normT(action.end) || (function(){
+      var s=time.split(':');
+      var m=parseInt(s[0],10)*60+parseInt(s[1],10)+90;
+      return (Math.floor(m/60)<10?'0':'')+Math.floor(m/60)+':'+(m%60<10?'0':'')+(m%60);
+    })();
+    var duplicate = manualEvents.find(function(evt){
+      return evt.date===date && evt.time===time && evt.end===end && aiNormText(evt.summary)===aiNormText(action.summary);
+    });
+    if (duplicate) {
+      failed.push(aiResult(false, action, { error:'créneau déjà présent' }));
+      return;
+    }
+    var entry = {
+      manualId: baseId + i,
+      date: date,
+      time: time,
+      end: end,
+      summary: action.summary,
+      location: action.location || '',
+      color:'#f3e8ff',
+      border:'#a855f7',
+      slotType:'revision',
+      cat:'autre'
+    };
+    manualEvents.push(entry);
+    action.manualId = entry.manualId;
+    addedEntries.push({ entry: entry, action: action });
+  });
+  if (addedEntries.length) {
+    if (typeof saveManualEvents === 'function') saveManualEvents();
+    if (typeof renderWeek === 'function') renderWeek();
+    if (typeof renderAgenda === 'function') renderAgenda();
+    if (typeof toast === 'function') toast(addedEntries.length + ' séance' + (addedEntries.length>1?'s':'') + ' ajoutée' + (addedEntries.length>1?'s':'') + ' au planning !', '📅');
+  }
+  return {
+    executedActions: addedEntries.map(function(item){ return item.action; }),
+    failedActions: failed,
+    undoItems: addedEntries.length ? [function(){
+      var ids = addedEntries.map(function(item){ return item.entry.manualId; });
+      manualEvents = manualEvents.filter(function(evt){ return ids.indexOf(evt.manualId) === -1; });
+      if (typeof saveManualEvents === 'function') saveManualEvents();
+      if (typeof renderWeek === 'function') renderWeek();
+      if (typeof renderAgenda === 'function') renderAgenda();
+    }] : []
+  };
+}
+
+var AI_ACTION_REGISTRY = {
+  navigate: {
+    execute: function(action) {
+      if (!action.page || typeof showPage !== 'function') return aiResult(false, action, { error:'section introuvable' });
+      setTimeout(function(){ showPage(action.page, null); }, 180);
+      return aiResult(true, action);
+    }
+  },
+  add_event: {
+    executeMany: aiExecuteAddEvents
+  },
+  delete_event: {
+    execute: function(action) {
+      var target = aiFindManualEvent(action);
+      if (!target) return aiResult(false, action, { error:'créneau manuel introuvable' });
+      var snapshot = JSON.parse(JSON.stringify(target));
+      manualEvents = manualEvents.filter(function(evt){ return evt.manualId !== target.manualId; });
+      if (typeof saveManualEvents === 'function') saveManualEvents();
+      if (typeof renderWeek === 'function') renderWeek();
+      if (typeof renderAgenda === 'function') renderAgenda();
+      if (typeof toast === 'function') toast('Créneau supprimé.', '🗑️');
+      action.manualId = target.manualId;
+      action.summary = target.summary;
+      action.date = target.date;
+      action.time = target.time;
+      return aiResult(true, action, { undo: function(){
+        manualEvents.push(snapshot);
+        if (typeof saveManualEvents === 'function') saveManualEvents();
+        if (typeof renderWeek === 'function') renderWeek();
+        if (typeof renderAgenda === 'function') renderAgenda();
+      } });
+    }
+  },
+  add_flashcard: {
+    execute: function(action) {
+      if (!action.recto || !action.verso || typeof deck === 'undefined') return aiResult(false, action, { error:'flashcard incomplète' });
+      var exists = deck.find(function(card){
+        return aiNormText(card.q) === aiNormText(action.recto) && aiNormText(card.r) === aiNormText(action.verso);
+      });
+      if (exists) return aiResult(false, action, { error:'flashcard déjà présente' });
+      var created = Date.now();
+      var card = { cat: action.matiere || 'IA', q: action.recto, r: action.verso, status: 'none', created: created };
+      deck.push(card);
+      if (typeof saveDeck === 'function') saveDeck();
+      if (typeof toast==='function') toast('Flashcard ajoutée !', '🃏');
+      return aiResult(true, action, { undo: function(){
+        deck = deck.filter(function(item){ return item.created !== created; });
+        if (typeof saveDeck === 'function') saveDeck();
+      } });
+    }
+  },
+  create_note: {
+    execute: function(action) {
+      if (typeof notes === 'undefined') return aiResult(false, action, { error:'module notes indisponible' });
+      var existing = aiFindNote({ title: action.title, matiere: action.matiere });
+      if (existing && action.force_new !== true) {
+        if (action.content) {
+          existing.content = action.content;
+          existing.updated = Date.now();
+          if (action.matiere) existing.mat = action.matiere;
+          if (typeof saveNotes === 'function') saveNotes();
+          if (typeof renderNotesList === 'function') renderNotesList();
+        }
+        if (typeof showPage === 'function') showPage('notes', null);
+        if (typeof openNote === 'function') openNote(existing.id);
+        action.title = existing.title;
+        return aiResult(true, action);
+      }
+      var section = aiEnsureNoteSection(action.section || action.matiere || 'General');
+      var note = {
+        id: Date.now() + notes.length + 1,
+        sectionId: section.id,
+        title: action.title || ('Note ' + (action.matiere || 'IA')),
+        mat: action.matiere || '',
+        content: action.content || '',
+        updated: Date.now()
+      };
+      notes.unshift(note);
+      if (typeof saveNotes === 'function') saveNotes();
+      if (typeof renderNotesList === 'function') renderNotesList();
+      if (typeof showPage === 'function') showPage('notes', null);
+      if (typeof openNote === 'function') openNote(note.id);
+      action.title = note.title;
+      return aiResult(true, action, { undo: function(){
+        notes = notes.filter(function(item){ return item.id !== note.id; });
+        if (typeof saveNotes === 'function') saveNotes();
+        if (typeof renderNotesList === 'function') renderNotesList();
+      } });
+    }
+  },
+  update_note: {
+    execute: function(action) {
+      var note = aiFindNote(action);
+      if (!note) {
+        if (action.create_if_missing) return AI_ACTION_REGISTRY.create_note.execute(action);
+        return aiResult(false, action, { error:'note introuvable' });
+      }
+      var before = JSON.parse(JSON.stringify(note));
+      if (action.section) {
+        var sec = aiEnsureNoteSection(action.section);
+        note.sectionId = sec.id;
+      }
+      if (action.title) note.title = action.title;
+      if (action.matiere) note.mat = action.matiere;
+      var mode = String(action.mode || (action.append ? 'append' : 'replace')).toLowerCase();
+      if (typeof action.content === 'string') {
+        note.content = mode === 'append' && note.content ? (note.content.replace(/\s*$/,'') + '\n\n' + action.content) : action.content;
+      }
+      note.updated = Date.now();
+      if (typeof saveNotes === 'function') saveNotes();
+      if (typeof renderNotesList === 'function') renderNotesList();
+      if (typeof showPage === 'function') showPage('notes', null);
+      if (typeof openNote === 'function') openNote(note.id);
+      action.title = note.title;
+      return aiResult(true, action, { undo: function(){
+        Object.keys(before).forEach(function(key){ note[key] = before[key]; });
+        if (typeof saveNotes === 'function') saveNotes();
+        if (typeof renderNotesList === 'function') renderNotesList();
+        if (typeof openNote === 'function') openNote(note.id);
+      } });
+    }
+  },
+  delete_note: {
+    execute: function(action) {
+      var note = aiFindNote(action);
+      if (!note) return aiResult(false, action, { error:'note introuvable' });
+      var snapshot = JSON.parse(JSON.stringify(note));
+      notes = notes.filter(function(item){ return item.id !== note.id; });
+      if (typeof saveNotes === 'function') saveNotes();
+      if (typeof renderNotesList === 'function') renderNotesList();
+      if (typeof activeNoteId !== 'undefined' && activeNoteId === note.id) {
+        activeNoteId = null;
+        var emptyState = document.getElementById('notesEmptyState');
+        var editor = document.getElementById('notesActiveEditor');
+        if (emptyState) emptyState.style.display='flex';
+        if (editor) editor.style.display='none';
+      }
+      if (typeof toast === 'function') toast('Note supprimée.', '🗑️');
+      action.title = note.title;
+      return aiResult(true, action, { undo: function(){
+        notes.unshift(snapshot);
+        if (typeof saveNotes === 'function') saveNotes();
+        if (typeof renderNotesList === 'function') renderNotesList();
+        if (typeof showPage === 'function') showPage('notes', null);
+        if (typeof openNote === 'function') openNote(snapshot.id);
+      } });
+    }
+  },
+  open_note: {
+    execute: function(action) {
+      var note = aiFindNote(action);
+      if (!note) return aiResult(false, action, { error:'note introuvable' });
+      if (typeof showPage === 'function') showPage('notes', null);
+      if (typeof openNote === 'function') openNote(note.id);
+      action.title = note.title;
+      return aiResult(true, action);
+    }
+  },
+  set_theme: {
+    execute: function(action) {
+      var target = action.theme === 'dark' ? 'dark' : 'light';
+      var before = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      if (before === target) return aiResult(true, action);
+      if (target === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', target);
+      if (typeof updateThemeBtn === 'function') updateThemeBtn();
+      return aiResult(true, action, { undo: function(){
+        if (before === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+        else document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', before);
+        if (typeof updateThemeBtn === 'function') updateThemeBtn();
+      } });
+    }
+  },
+  open_background_customizer: {
+    execute: function(action) {
+      if (typeof openBackgroundCustomizer !== 'function') return aiResult(false, action, { error:'personnalisation indisponible' });
+      openBackgroundCustomizer();
+      return aiResult(true, action);
+    }
+  },
+  open_profile: {
+    execute: function(action) {
+      if (typeof openProfil !== 'function') return aiResult(false, action, { error:'profil indisponible' });
+      openProfil();
+      return aiResult(true, action);
+    }
+  },
+  start_pomodoro: {
+    execute: function(action) {
+      var duration = parseInt(action.duration || action.minutes || 25, 10);
+      if (isNaN(duration) || duration <= 0) duration = 25;
+      var previous = localStorage.getItem('dg_pomo_state');
+      localStorage.setItem('dg_pomo_state', JSON.stringify({
+        running: true,
+        remaining: duration * 60,
+        duration: duration * 60,
+        sessions: 0,
+        label: action.label || 'Pomodoro IA',
+        startedAt: Date.now()
+      }));
+      if (typeof showPage === 'function') showPage('pomodoro', null);
+      if (typeof renderPomodoro === 'function') renderPomodoro();
+      return aiResult(true, action, { undo: function(){
+        if (previous === null) localStorage.removeItem('dg_pomo_state');
+        else localStorage.setItem('dg_pomo_state', previous);
+        if (typeof renderPomodoro === 'function') renderPomodoro();
+      } });
+    }
+  }
+};
+
+function aiRunActions(actions) {
+  var executed = [];
+  var failed = [];
+  var undoItems = [];
+  var batchedEvents = actions.filter(function(action){ return action.type === 'add_event'; });
+  var singles = actions.filter(function(action){ return action.type !== 'add_event'; });
+  if (batchedEvents.length) {
+    var eventRes = AI_ACTION_REGISTRY.add_event.executeMany(batchedEvents);
+    executed = executed.concat(eventRes.executedActions || []);
+    failed = failed.concat(eventRes.failedActions || []);
+    undoItems = undoItems.concat(eventRes.undoItems || []);
+  }
+  singles.forEach(function(action){
+    var reg = AI_ACTION_REGISTRY[action.type];
+    if (!reg || typeof reg.execute !== 'function') {
+      failed.push(aiResult(false, action, { error:'action non supportée' }));
+      return;
+    }
+    try {
+      var res = reg.execute(action);
+      if (res && res.ok) {
+        executed.push(res.action || action);
+        if (typeof res.undo === 'function') undoItems.push(res.undo);
+      } else {
+        failed.push(res || aiResult(false, action, { error:'échec inconnu' }));
+      }
+    } catch (e) {
+      failed.push(aiResult(false, action, { error:e && e.message ? e.message : 'erreur' }));
+    }
+  });
+  AI_LAST_RUN = { executedActions: executed, failedActions: failed };
+  if (undoItems.length) {
+    AI_LAST_UNDO_GROUP = {
+      actions: executed.slice(),
+      undoItems: undoItems
+    };
+  } else {
+    AI_LAST_UNDO_GROUP = null;
+  }
+  return { executedActions: executed, failedActions: failed, undoItems: undoItems };
+}
+
+window.aiConfirmPendingActions = function() {
+  if (!AI_PENDING_CONFIRMATION || !AI_PENDING_CONFIRMATION.actions || !AI_PENDING_CONFIRMATION.actions.length) return;
+  var pending = AI_PENDING_CONFIRMATION;
+  AI_PENDING_CONFIRMATION = null;
+  var outcome = aiRunActions(pending.actions);
+  if (outcome.executedActions.length) aiLogActionRun('done', outcome.executedActions);
+  if (outcome.failedActions.length) aiLogActionRun('failed', outcome.failedActions.map(function(item){ return item.action || item; }));
+  aiAddMsg('ai', outcome.executedActions.length ? '✅ C’est fait.' : 'Je n’ai finalement rien modifié.', {
+    executedActions: outcome.executedActions,
+    failedActions: outcome.failedActions,
+    canUndo: !!outcome.undoItems.length
+  });
+};
+
+window.aiCancelPendingActions = function() {
+  if (!AI_PENDING_CONFIRMATION) return;
+  aiLogActionRun('cancelled', AI_PENDING_CONFIRMATION.actions);
+  AI_PENDING_CONFIRMATION = null;
+  aiAddMsg('ai', 'D’accord, je n’ai rien modifié.');
+};
+
+window.aiUndoLastActionGroup = function() {
+  if (!AI_LAST_UNDO_GROUP || !AI_LAST_UNDO_GROUP.undoItems || !AI_LAST_UNDO_GROUP.undoItems.length) return;
+  var group = AI_LAST_UNDO_GROUP;
+  AI_LAST_UNDO_GROUP = null;
+  group.undoItems.slice().reverse().forEach(function(fn){
+    try { fn(); } catch(e) {}
+  });
+  aiLogActionRun('undone', group.actions);
+  aiAddMsg('ai', '↩️ J’ai annulé les dernières actions.');
+};
+
 // ── Appel Groq ──
 async function aiCallGroq() {
   var userMsg = AI_HISTORY.length ? AI_HISTORY[AI_HISTORY.length - 1].content : '';
@@ -22422,21 +22999,25 @@ async function aiCallGroq() {
     var data = await res.json();
     var raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || 'Désolé, je n\'ai pas pu répondre.';
     aiHideThinking();
-    // Garde-fou client : si pas de mot déclencheur d'écriture,
-    // supprimer UNIQUEMENT les add_event et add_flashcard — laisser navigate passer
     if (!aiUserWantsWrite(userMsg)) {
       raw = raw.replace(/@@ACTIONS:([\s\S]*?):ENDACTIONS@@/g, function(_, json) {
         try {
           var actions = JSON.parse(json);
           if (!Array.isArray(actions)) actions = [actions];
-          var safe = actions.filter(function(a){ return a.type === 'navigate'; });
+          var safe = actions.map(aiNormalizeAction).filter(function(action){
+            return !aiIsWriteAction(action) && !aiNeedsConfirmation(action);
+          });
           return safe.length ? '@@ACTIONS:' + JSON.stringify(safe) + ':ENDACTIONS@@' : '';
         } catch(e) { return ''; }
-      });
-      raw = raw.trim();
+      }).trim();
     }
     var parsed = aiParseResponse(raw);
-    aiAddMsg('ai', parsed.text, parsed.executedActions);
+    aiAddMsg('ai', parsed.text, {
+      executedActions: parsed.executedActions,
+      failedActions: parsed.failedActions,
+      pendingActions: parsed.pendingActions,
+      canUndo: parsed.canUndo
+    });
     AI_HISTORY.push({ role:'assistant', content: parsed.text });
   } catch(e) {
     aiHideThinking();
@@ -22447,90 +23028,39 @@ async function aiCallGroq() {
 // ── Parser la réponse et exécuter les actions ──
 function aiParseResponse(raw) {
   var text = raw;
-  var executedActions = [];
+  var parsed = { text: raw, executedActions: [], failedActions: [], pendingActions: [], canUndo: false };
   var match = raw.match(/@@ACTIONS:([\s\S]*?):ENDACTIONS@@/);
-  if (match) {
-    text = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
+  if (!match) return parsed;
+  parsed.text = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
+  try {
+    var jsonStr = match[1].trim();
+    var actions;
     try {
-      var jsonStr = match[1].trim();
-      var actions;
-      try {
-        actions = JSON.parse(jsonStr);
-      } catch(jsonErr) {
-        // JSON tronqué (max_tokens atteint) : récupère les objets complets
-        var lastBrace = jsonStr.lastIndexOf('}');
-        var recovered = lastBrace >= 0 ? jsonStr.slice(0, lastBrace + 1) + ']' : '[]';
-        try { actions = JSON.parse(recovered); } catch(e2) { actions = []; }
-      }
-      if (!Array.isArray(actions)) actions = [actions];
-      // Normalise les variantes de type que l'IA peut écrire
-      actions.forEach(function(a) {
-        if (typeof a.type === 'string') {
-          a.type = a.type.toLowerCase().replace(/[-\s]/g,'_'); // addevent → add_event
-          if (a.type === 'addevent' || a.type === 'add-event' || a.type === 'event') a.type = 'add_event';
-          if (a.type === 'addflashcard' || a.type === 'flashcard') a.type = 'add_flashcard';
-        }
-      });
-      // Separate add_event from other actions and batch them
-      var eventsToAdd = [];
-      actions.forEach(function(a) {
-        try {
-          if (a.type === 'add_event') {
-            eventsToAdd.push(a);
-          } else {
-            aiExecuteAction(a, false);
-            executedActions.push(a);
-          }
-        } catch(e) {}
-      });
-      // Add all events in one batch, then render once
-      if (eventsToAdd.length > 0) {
-        var added = aiBatchAddEvents(eventsToAdd);
-        added.forEach(function(a){ executedActions.push(a); });
-      }
-    } catch(e) { console.warn('AI action parse error:', e, match[1]); }
-  }
-  return { text: text, executedActions: executedActions };
-}
-
-// ── Ajouter des événements en batch ──
-function aiBatchAddEvents(events) {
-  function normT(t){ if(!t)return null; var p=String(t).trim().match(/^(\d{1,2}):(\d{2})$/); if(!p)return null; return(p[1].length<2?'0'+p[1]:p[1])+':'+p[2]; }
-  function normD(d){ if(!d)return null; var p=String(d).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(!p)return null; return p[1]+'-'+(p[2].length<2?'0'+p[2]:p[2])+'-'+(p[3].length<2?'0'+p[3]:p[3]); }
-  var added = [];
-  var baseId = Date.now();
-  events.forEach(function(action, i) {
-    var date = normD(action.date);
-    var time = normT(action.time);
-    if (!date || !time || !action.summary) return;
-    var end = normT(action.end) || (function(){ var s=time.split(':'); var m=parseInt(s[0])*60+parseInt(s[1])+90; return(Math.floor(m/60)<10?'0':'')+Math.floor(m/60)+':'+(m%60<10?'0':'')+(m%60); })();
-    if (typeof manualEvents !== 'undefined') {
-      manualEvents.push({ manualId: baseId + i, date:date, time:time, end:end, summary:action.summary, location:'', color:'#f3e8ff', border:'#a855f7', slotType:'revision', cat:'autre' });
-      added.push(action);
+      actions = JSON.parse(jsonStr);
+    } catch(jsonErr) {
+      var lastBrace = jsonStr.lastIndexOf('}');
+      var recovered = lastBrace >= 0 ? jsonStr.slice(0, lastBrace + 1) + ']' : '[]';
+      try { actions = JSON.parse(recovered); } catch(e2) { actions = []; }
     }
-  });
-  if (added.length > 0 && typeof manualEvents !== 'undefined') {
-    if (typeof saveManualEvents==='function') saveManualEvents();
-    if (typeof renderWeek==='function') renderWeek();
-    if (typeof renderAgenda==='function') renderAgenda();
-    if (typeof toast==='function') toast(added.length + ' séance' + (added.length>1?'s':'') + ' ajoutée' + (added.length>1?'s':'') + ' au planning !', '📅');
-  }
-  return added;
-}
-
-// ── Exécuter une action non-event ──
-function aiExecuteAction(action) {
-  if (action.type === 'navigate') {
-    if (action.page && typeof showPage === 'function') {
-      setTimeout(function(){ showPage(action.page, null); }, 300);
+    if (!Array.isArray(actions)) actions = [actions];
+    actions = actions.map(aiNormalizeAction).filter(function(action){ return action && action.type; });
+    if (!actions.length) return parsed;
+    if (aiNeedsPreview(actions)) {
+      AI_PENDING_CONFIRMATION = { createdAt: Date.now(), actions: actions };
+      parsed.pendingActions = actions;
+      aiLogActionRun('pending', actions);
+      return parsed;
     }
-  } else if (action.type === 'add_flashcard') {
-    if (action.recto && action.verso && typeof deck !== 'undefined') {
-      deck.push({ cat: action.matiere || 'IA', q: action.recto, r: action.verso, status: 'none', created: Date.now() });
-      if (typeof saveDeck === 'function') saveDeck();
-      if (typeof toast==='function') toast('Flashcard ajoutée !', '🃏');
-    }
+    var outcome = aiRunActions(actions);
+    parsed.executedActions = outcome.executedActions;
+    parsed.failedActions = outcome.failedActions;
+    parsed.canUndo = !!outcome.undoItems.length;
+    if (outcome.executedActions.length) aiLogActionRun('done', outcome.executedActions);
+    if (outcome.failedActions.length) aiLogActionRun('failed', outcome.failedActions.map(function(item){ return item.action || item; }));
+  } catch(e) {
+    console.warn('AI action parse error:', e, match[1]);
   }
+  return parsed;
 }
 
 // Init suggestions
