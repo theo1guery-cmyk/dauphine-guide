@@ -22338,7 +22338,7 @@ function aiHideThinking() {
 }
 
 // Mots déclencheurs qui autorisent l'exécution d'actions
-var AI_ACTION_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|genère|générer|génère|genere|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer)\b/i;
+var AI_ACTION_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer|va|aller|ouvre|ouvrir|affiche|afficher|montre|montrer|navigue|naviguer|emmène|emmener|porte|amène|amener|accède|acceder|accéder|ouvrez|allez|mène|mener)\b/i;
 
 function aiUserWantsAction(userMsg) {
   return AI_ACTION_TRIGGERS.test(userMsg);
