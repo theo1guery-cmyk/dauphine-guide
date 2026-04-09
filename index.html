@@ -11058,7 +11058,21 @@ openManage=function(){
     var saved=localStorage.getItem('dauphine_deck_v1');
     if(saved){
       var parsed=JSON.parse(saved);
-      if(Array.isArray(parsed)&&parsed.length){deck=parsed;}
+      if(Array.isArray(parsed)&&parsed.length){
+        // Migration : corriger les cartes créées par l'agent IA avec mauvais champs
+        var dirty=false;
+        parsed=parsed.map(function(c){
+          // a → r (champ réponse mal nommé)
+          if(c.a!==undefined && c.r===undefined){ c.r=c.a; delete c.a; dirty=true; }
+          // cat manquant ou undefined
+          if(!c.cat || c.cat==='undefined'){ c.cat='Divers'; dirty=true; }
+          // status manquant
+          if(!c.status){ c.status='none'; dirty=true; }
+          return c;
+        });
+        deck=parsed;
+        if(dirty){ try{localStorage.setItem('dauphine_deck_v1',JSON.stringify(deck));}catch(e){} }
+      }
     }
   }catch(e){}
 })();
