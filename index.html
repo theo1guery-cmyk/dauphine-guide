@@ -22189,27 +22189,39 @@ function aiGetContext() {
 
 // ── System prompt ──
 function aiSystemPrompt() {
+  var today = new Date();
+  var todayStr = today.toISOString().slice(0,10);
+  // Pre-compute next 14 days with day names for date resolution
+  var dayNames = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  var dateRef = '';
+  for (var i = 0; i <= 13; i++) {
+    var d = new Date(today); d.setDate(d.getDate() + i);
+    var ds = d.toISOString().slice(0,10);
+    dateRef += (i===0?'aujourd\'hui':i===1?'demain':dayNames[d.getDay()]+' prochain') + ' = ' + ds + ' | ';
+  }
+
   return 'Tu es l\'assistant IA de DauphineGuide, intégré dans l\'app d\'un étudiant en L1 Droit-Éco à Paris-Dauphine PSL.\n\n' +
     '=== CONTEXTE ===\n' + aiGetContext() + '\n\n' +
+    '=== RÉFÉRENCE DATES (pour calculer les dates absolues) ===\n' +
+    dateRef + '\n\n' +
     '=== ACTIONS DISPONIBLES ===\n' +
-    'Si l\'utilisateur te demande d\'effectuer une action, inclus à la FIN de ta réponse un bloc JSON entre @@ACTIONS: et :ENDACTIONS@@\n' +
-    'Format: @@ACTIONS:[{"type":"add_event","date":"YYYY-MM-DD","time":"HH:MM","end":"HH:MM","summary":"Titre séance"}]:ENDACTIONS@@\n' +
+    'Si l\'utilisateur te demande d\'effectuer des actions, inclus à la FIN de ta réponse un bloc JSON entre @@ACTIONS: et :ENDACTIONS@@\n' +
+    'IMPORTANT: utilise TOUJOURS des dates absolues YYYY-MM-DD (ex: '+todayStr+'), JAMAIS de dates relatives.\n' +
+    'Pour plusieurs événements, mets-les TOUS dans le même tableau JSON.\n' +
+    'Exemple pour 3 séances:\n' +
+    '@@ACTIONS:[{"type":"add_event","date":"'+todayStr+'","time":"14:00","end":"15:30","summary":"Révision Droit"},{"type":"add_event","date":"2026-04-11","time":"10:00","end":"11:30","summary":"Révision Maths"},{"type":"add_event","date":"2026-04-12","time":"14:00","end":"15:30","summary":"Révision Macro"}]:ENDACTIONS@@\n\n' +
     'Types disponibles:\n' +
-    '- add_event: ajouter un événement au planning (date,time,end,summary obligatoires)\n' +
-    '- navigate: aller à une section. Valeurs exactes pour "page":\n' +
-    '  home (accueil), planning (emploi du temps), simulateur (simulateur de moyenne),\n' +
-    '  flashcards (flashcards), apprendre (mode apprendre), pomodoro (minuteur pomodoro),\n' +
-    '  notes (prise de notes), prof (prof particulier IA), oral (simulateur d\'oral IA),\n' +
-    '  caspratiques (cas pratiques), culture (culture générale), news (news juridiques),\n' +
-    '  chat (chat étudiant), campus (plan du campus), ressources (ressources pédagogiques),\n' +
-    '  assos (associations), bonsplans (bons plans étudiant), stage (trouver un stage),\n' +
-    '  pslsport (PSL sport), bu (bibliothèque universitaire), faq (guide et FAQ)\n' +
-    '- add_flashcard: créer une flashcard (recto,verso)\n\n' +
+    '- add_event: ajouter un événement au planning. Champs: date (YYYY-MM-DD), time (HH:MM), end (HH:MM), summary (texte)\n' +
+    '- navigate: aller à une section. Champ "page" — valeurs exactes:\n' +
+    '  home, planning, simulateur, flashcards, apprendre, pomodoro, notes, prof, oral,\n' +
+    '  caspratiques, culture, news, chat, campus, ressources, assos, bonsplans, stage, pslsport, bu, faq\n' +
+    '- add_flashcard: créer une flashcard. Champs: recto (question), verso (réponse)\n\n' +
     '=== INSTRUCTIONS ===\n' +
-    '- Réponds en français, sois concis et direct (3-4 lignes max sauf si l\'user demande une explication)\n' +
+    '- Réponds en français, sois concis et direct\n' +
     '- Utilise le contexte pour personnaliser les réponses\n' +
     '- N\'inclus des actions QUE si l\'utilisateur te le demande explicitement\n' +
-    '- Si tu ajoutes un événement, dis-le naturellement dans ta réponse\n' +
+    '- Quand tu génères un planning de révision, inclus TOUTES les séances demandées en un seul bloc @@ACTIONS@@\n' +
+    '- Si tu ajoutes des événements, liste-les brièvement dans ta réponse\n' +
     '- Tu peux suggérer des actions ("Je peux ajouter ça à ton planning si tu veux")';
 }
 
@@ -22240,13 +22252,27 @@ function aiAddMsg(role, text, actions) {
   bubble.innerHTML = text.replace(/\n/g,'<br>').replace(/\*(.*?)\*/g,'<strong>$1</strong>').replace(/_(.*?)_/g,'<em>$1</em>');
   div.appendChild(bubble);
   if (actions && actions.length) {
-    actions.forEach(function(a) {
+    var evtCount = actions.filter(function(a){ return a.type==='add_event'; }).length;
+    var fcCount  = actions.filter(function(a){ return a.type==='add_flashcard'; }).length;
+    var navCount = actions.filter(function(a){ return a.type==='navigate'; }).length;
+    if (evtCount > 0) {
       var chip = document.createElement('div');
       chip.className = 'ai-action-done';
-      var labels = { add_event:'✅ Ajouté au planning', navigate:'→ Navigation', add_flashcard:'✅ Flashcard créée' };
-      chip.textContent = labels[a.type] || '✅ Action effectuée';
+      chip.textContent = '✅ ' + evtCount + ' séance' + (evtCount>1?'s':'') + ' ajoutée' + (evtCount>1?'s':'') + ' au planning';
       div.appendChild(chip);
-    });
+    }
+    if (fcCount > 0) {
+      var chip2 = document.createElement('div');
+      chip2.className = 'ai-action-done';
+      chip2.textContent = '✅ ' + fcCount + ' flashcard' + (fcCount>1?'s':'') + ' créée' + (fcCount>1?'s':'');
+      div.appendChild(chip2);
+    }
+    if (navCount > 0) {
+      var chip3 = document.createElement('div');
+      chip3.className = 'ai-action-done';
+      chip3.textContent = '→ Navigation effectuée';
+      div.appendChild(chip3);
+    }
   }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -22310,35 +22336,57 @@ function aiParseResponse(raw) {
     text = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
     try {
       var actions = JSON.parse(match[1]);
-      if (Array.isArray(actions)) {
-        actions.forEach(function(a) {
-          try {
-            aiExecuteAction(a);
+      if (!Array.isArray(actions)) actions = [actions];
+      // Separate add_event from other actions and batch them
+      var eventsToAdd = [];
+      actions.forEach(function(a) {
+        try {
+          if (a.type === 'add_event') {
+            eventsToAdd.push(a);
+          } else {
+            aiExecuteAction(a, false);
             executedActions.push(a);
-          } catch(e) {}
-        });
+          }
+        } catch(e) {}
+      });
+      // Add all events in one batch, then render once
+      if (eventsToAdd.length > 0) {
+        var added = aiBatchAddEvents(eventsToAdd);
+        added.forEach(function(a){ executedActions.push(a); });
       }
-    } catch(e) {}
+    } catch(e) { console.warn('AI action parse error:', e, match[1]); }
   }
   return { text: text, executedActions: executedActions };
 }
 
-// ── Exécuter une action ──
-function aiExecuteAction(action) {
-  if (action.type === 'add_event') {
-    function normT(t){ if(!t)return null; var p=t.trim().match(/^(\d{1,2}):(\d{2})$/); if(!p)return null; return(p[1].length<2?'0'+p[1]:p[1])+':'+p[2]; }
-    function normD(d){ if(!d)return null; var p=d.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(!p)return null; return p[1]+'-'+(p[2].length<2?'0'+p[2]:p[2])+'-'+(p[3].length<2?'0'+p[3]:p[3]); }
-    var date = normD(String(action.date||''));
-    var time = normT(String(action.time||''));
+// ── Ajouter des événements en batch ──
+function aiBatchAddEvents(events) {
+  function normT(t){ if(!t)return null; var p=String(t).trim().match(/^(\d{1,2}):(\d{2})$/); if(!p)return null; return(p[1].length<2?'0'+p[1]:p[1])+':'+p[2]; }
+  function normD(d){ if(!d)return null; var p=String(d).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(!p)return null; return p[1]+'-'+(p[2].length<2?'0'+p[2]:p[2])+'-'+(p[3].length<2?'0'+p[3]:p[3]); }
+  var added = [];
+  var baseId = Date.now();
+  events.forEach(function(action, i) {
+    var date = normD(action.date);
+    var time = normT(action.time);
     if (!date || !time || !action.summary) return;
-    var end = normT(String(action.end||'')) || (function(){ var s=time.split(':'); var m=parseInt(s[0])*60+parseInt(s[1])+90; return(Math.floor(m/60)<10?'0':'')+Math.floor(m/60)+':'+(m%60<10?'0':'')+(m%60); })();
+    var end = normT(action.end) || (function(){ var s=time.split(':'); var m=parseInt(s[0])*60+parseInt(s[1])+90; return(Math.floor(m/60)<10?'0':'')+Math.floor(m/60)+':'+(m%60<10?'0':'')+(m%60); })();
     if (typeof manualEvents !== 'undefined') {
-      manualEvents.push({ manualId:Date.now(), date:date, time:time, end:end, summary:action.summary, location:'', color:'#f3e8ff', border:'#a855f7', slotType:'revision', cat:'autre' });
-      if (typeof saveManualEvents==='function') saveManualEvents();
-      if (typeof renderWeek==='function') renderWeek();
-      if (typeof renderAgenda==='function') renderAgenda();
+      manualEvents.push({ manualId: baseId + i, date:date, time:time, end:end, summary:action.summary, location:'', color:'#f3e8ff', border:'#a855f7', slotType:'revision', cat:'autre' });
+      added.push(action);
     }
-  } else if (action.type === 'navigate') {
+  });
+  if (added.length > 0 && typeof manualEvents !== 'undefined') {
+    if (typeof saveManualEvents==='function') saveManualEvents();
+    if (typeof renderWeek==='function') renderWeek();
+    if (typeof renderAgenda==='function') renderAgenda();
+    if (typeof toast==='function') toast(added.length + ' séance' + (added.length>1?'s':'') + ' ajoutée' + (added.length>1?'s':'') + ' au planning !', '📅');
+  }
+  return added;
+}
+
+// ── Exécuter une action non-event ──
+function aiExecuteAction(action) {
+  if (action.type === 'navigate') {
     if (action.page && typeof showPage === 'function') {
       setTimeout(function(){ showPage(action.page, null); }, 300);
     }
@@ -22346,6 +22394,7 @@ function aiExecuteAction(action) {
     if (action.recto && action.verso && typeof deck !== 'undefined') {
       deck.push({ q: action.recto, a: action.verso, rating: 0, created: Date.now() });
       if (typeof saveDeck === 'function') saveDeck();
+      if (typeof toast==='function') toast('Flashcard ajoutée !', '🃏');
     }
   }
 }
