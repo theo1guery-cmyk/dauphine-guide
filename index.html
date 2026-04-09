@@ -15551,12 +15551,21 @@ async function planningIAGenerate() {
 
   var today = new Date().toISOString().split('T')[0];
 
-  var upcomingExams = (typeof devoirs !== 'undefined' ? devoirs : [])
+  // Examens depuis les devoirs manuels
+  var devoirsExams = (typeof devoirs !== 'undefined' ? devoirs : [])
     .filter(function(d){ return d.date >= today && !d.done; })
     .sort(function(a,b){ return a.date > b.date ? 1 : -1; })
     .slice(0, 10)
-    .map(function(d){ return '- ' + (d.mat || d.title) + ' (deadline : ' + d.date + ', priorité : ' + (d.prio || 'normale') + ')'; })
-    .join('\n');
+    .map(function(d){ return '- ' + (d.mat || d.title) + ' (deadline : ' + d.date + ', priorité : ' + (d.prio || 'normale') + ')'; });
+
+  // Examens depuis l'EDT officiel — TOUS les events commençant par "EX:"
+  var edtExams = (typeof getActiveEvents === 'function' ? getActiveEvents() :
+    ((typeof userEvents !== 'undefined' && userEvents) ? userEvents : (typeof EVENTS !== 'undefined' ? EVENTS : [])))
+    .filter(function(e){ return e.date >= today && (e.summary || '').startsWith('EX:'); })
+    .sort(function(a,b){ return a.date > b.date ? 1 : -1; })
+    .map(function(e){ return '- ' + e.summary.slice(3).trim() + ' (EXAMEN OFFICIEL, le ' + e.date + (e.time ? ' à ' + e.time : '') + ')'; });
+
+  var upcomingExams = devoirsExams.concat(edtExams).join('\n');
 
   var manualExams = (typeof manualEvents !== 'undefined' ? manualEvents : [])
     .filter(function(e){ return e.date >= today && (e.slotType === 'exam' || e.slotType === 'revision'); })
@@ -15592,7 +15601,7 @@ async function planningIAGenerate() {
     + 'Date d\'aujourd\'hui : ' + today + '\n\n'
     + 'CHARGE DE TRAVAIL ESTIMÉE : ' + estimatedHours + ' heures de révision au total\n'
     + '→ Répartis ces ' + estimatedHours + 'h en séances de ' + sessionDuration + ' min (max ' + maxSessions + ' créneaux).\n\n'
-    + (upcomingExams ? 'DEVOIRS ET EXAMENS À VENIR (respecte impérativement ces deadlines) :\n' + upcomingExams + '\n\n' : 'Aucun examen renseigné dans l\'agenda.\n\n')
+    + (upcomingExams ? '⚠️ EXAMENS ET DEADLINES (PRIORITÉ ABSOLUE — place des révisions AVANT chaque examen) :\n' + upcomingExams + '\n\nNOTE : les événements marqués "EXAMEN OFFICIEL" proviennent directement de l\'emploi du temps et sont certifiés — construis le planning de révision en remontant depuis ces dates.\n\n' : 'Aucun examen renseigné dans l\'agenda.\n\n')
     + (manualExams   ? 'CRÉNEAUX PLANIFIÉS (examens/révisions) :\n' + manualExams + '\n\n' : '')
     + (coursSlots    ? 'COURS PLANIFIÉS (créneaux OBLIGATOIREMENT à éviter — ne place AUCUNE révision pendant ces horaires) :\n' + coursSlots + '\n\n' : '')
     + (notesCtx      ? 'NOTES DE COURS DISPONIBLES :\n' + notesCtx + '\n\n' : 'Pas encore de notes créées.\n\n')
@@ -22153,9 +22162,13 @@ function aiGetContext() {
       return e.date + ' ' + (e.time||'') + (e.end?'-'+e.end:'') + ' — ' + e.summary + (e.location?' ('+e.location+')':'');
     });
     if (nextCours.length) lines.push('PROCHAINS COURS (5 suivants, heure locale): ' + nextCours.join(' | '));
-    // Examens
-    var exams = all.filter(function(e){ return /^EX:|exam|partiel|contrôle|DS|CC/i.test(e.summary); }).slice(0,5);
-    if (exams.length) lines.push('EXAMENS À VENIR: ' + exams.map(function(e){ return e.date+' '+e.summary; }).join(' | '));
+    // Examens : priorité aux events "EX:" du planning officiel + tous les autres mots-clés
+    var exams = all.filter(function(e){
+      var s = e.summary || '';
+      return s.startsWith('EX:') || /exam|partiel|contrôle|DS\b|CC\b/i.test(s);
+    }); // PAS de slice — tous les examens sont importants
+    if (exams.length) lines.push('⚠️ EXAMENS À VENIR (IMPORTANT — planifie des révisions avant ces dates): ' +
+      exams.map(function(e){ return e.date+' '+e.time+' — '+(e.summary.startsWith('EX:')?e.summary.slice(3).trim():e.summary)+(e.location?' ('+e.location+')':''); }).join(' | '));
   } catch(e) {}
 
   // Simulateur: résumé des notes
