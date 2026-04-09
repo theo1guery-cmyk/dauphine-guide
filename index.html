@@ -22337,8 +22337,16 @@ function aiHideThinking() {
   if (t) t.remove();
 }
 
+// Mots déclencheurs qui autorisent l'exécution d'actions
+var AI_ACTION_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|genère|générer|génère|genere|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer)\b/i;
+
+function aiUserWantsAction(userMsg) {
+  return AI_ACTION_TRIGGERS.test(userMsg);
+}
+
 // ── Appel Groq ──
 async function aiCallGroq() {
+  var userMsg = AI_HISTORY.length ? AI_HISTORY[AI_HISTORY.length - 1].content : '';
   var messages = [{ role:'system', content: aiSystemPrompt() }].concat(AI_HISTORY.slice(-10));
   try {
     var res = await fetch('https://shiny-lake-f66d.theo1-guery.workers.dev', {
@@ -22354,6 +22362,10 @@ async function aiCallGroq() {
     var data = await res.json();
     var raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || 'Désolé, je n\'ai pas pu répondre.';
     aiHideThinking();
+    // Garde-fou client : supprimer les actions si l'utilisateur n'a pas utilisé un mot déclencheur
+    if (!aiUserWantsAction(userMsg)) {
+      raw = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
+    }
     var parsed = aiParseResponse(raw);
     aiAddMsg('ai', parsed.text, parsed.executedActions);
     AI_HISTORY.push({ role:'assistant', content: parsed.text });
