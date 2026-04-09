@@ -22267,6 +22267,55 @@ window.aiSendText = function(text) {
   aiSend();
 };
 
+// ── Navigation locale instantanée ──
+var AI_NAV_PAGES = {
+  home:        ['accueil','home'],
+  planning:    ['planning','emploi du temps','edt','agenda','calendrier','semaine'],
+  simulateur:  ['simulateur','moyenne','notes','simulation','calcul'],
+  flashcards:  ['flashcard','flashcards','cartes','carte'],
+  apprendre:   ['apprendre','mode apprendre','apprentissage'],
+  pomodoro:    ['pomodoro','timer','minuteur','chrono'],
+  notes:       ['prise de notes','bloc-notes','bloc note'],
+  prof:        ['prof particulier','prof part'],
+  oral:        ['simulateur oral','oral','oral ia'],
+  caspratiques:['cas pratiques','cas prat'],
+  culture:     ['culture g','culture generale','culture générale'],
+  news:        ['news','actualites','actualités','nouvelles','actu'],
+  chat:        ['chat etudiant','chat étudiant','chat'],
+  campus:      ['plan du campus','campus','plan','salles'],
+  ressources:  ['ressources','polycopies','polycop'],
+  assos:       ['assos','associations'],
+  bonsplans:   ['bons plans','bon plan','bonsplans','reduction','réduction'],
+  stage:       ['stage','stages'],
+  pslsport:    ['sport','psl sport','pslsport'],
+  bu:          ['bu','bibliotheque','bibliothèque','bib'],
+  faq:         ['faq','guide','aide','help']
+};
+var AI_NAV_VERBS = /\b(va|vas|aller|ouvre|ouvrir|affiche|afficher|montre|montrer|navigue|naviguer|accede|acceder|accède|accéder|emmene|emmener|emmène|emmener|section|page|ouvre-moi|montre-moi|amene|amène)\b/i;
+
+function aiTryLocalNav(msg) {
+  var norm = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if (!AI_NAV_VERBS.test(norm)) return null;
+  for (var page in AI_NAV_PAGES) {
+    var aliases = AI_NAV_PAGES[page];
+    for (var i = 0; i < aliases.length; i++) {
+      var alias = aliases[i].normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      if (norm.indexOf(alias) !== -1) return page;
+    }
+  }
+  return null;
+}
+
+var AI_PAGE_LABELS = {
+  home:'Accueil', planning:'Planning', simulateur:'Simulateur de moyenne',
+  flashcards:'Flashcards', apprendre:'Mode Apprendre', pomodoro:'Pomodoro',
+  notes:'Prise de notes', prof:'Prof particulier', oral:'Simulateur d\'oral',
+  caspratiques:'Cas pratiques', culture:'Culture G', news:'News juridiques',
+  chat:'Chat étudiant', campus:'Plan du campus', ressources:'Ressources',
+  assos:'Assos Dauphine', bonsplans:'Bons plans', stage:'Trouver un stage',
+  pslsport:'PSL Sport', bu:'BU Dauphine', faq:'Guide & FAQ'
+};
+
 window.aiSend = function() {
   if (AI_THINKING) return;
   var inp = document.getElementById('aiInp');
@@ -22275,6 +22324,17 @@ window.aiSend = function() {
   inp.value = '';
   aiAddMsg('user', text);
   AI_HISTORY.push({ role:'user', content: text });
+
+  // Navigation locale : pas besoin d'appeler l'API
+  var navPage = aiTryLocalNav(text);
+  if (navPage && typeof showPage === 'function') {
+    showPage(navPage, null);
+    var label = AI_PAGE_LABELS[navPage] || navPage;
+    aiAddMsg('ai', '→ Direction **' + label + '** !');
+    AI_HISTORY.push({ role:'assistant', content: '→ Navigation vers ' + label });
+    return;
+  }
+
   aiShowThinking();
   aiCallGroq();
 };
