@@ -22211,7 +22211,7 @@ function aiSystemPrompt() {
     'Exemple pour 3 séances:\n' +
     '@@ACTIONS:[{"type":"add_event","date":"'+todayStr+'","time":"14:00","end":"15:30","summary":"Révision Droit"},{"type":"add_event","date":"2026-04-11","time":"10:00","end":"11:30","summary":"Révision Maths"},{"type":"add_event","date":"2026-04-12","time":"14:00","end":"15:30","summary":"Révision Macro"}]:ENDACTIONS@@\n\n' +
     'Types disponibles:\n' +
-    '- add_event: ajouter un événement au planning. Champs: date (YYYY-MM-DD), time (HH:MM), end (HH:MM), summary (texte)\n' +
+    '- add_event: ajouter un événement au planning (le type doit être EXACTEMENT "add_event" avec underscore). Champs: date (YYYY-MM-DD), time (HH:MM), end (HH:MM), summary (texte)\n' +
     '- navigate: aller à une section. Champ "page" — valeurs exactes:\n' +
     '  home, planning, simulateur, flashcards, apprendre, pomodoro, notes, prof, oral,\n' +
     '  caspratiques, culture, news, chat, campus, ressources, assos, bonsplans, stage, pslsport, bu, faq\n' +
@@ -22310,7 +22310,7 @@ async function aiCallGroq() {
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'llama-3.1-8b-instant',
-        max_tokens:600,
+        max_tokens:1200,
         temperature:0.7,
         messages: messages
       })
@@ -22337,6 +22337,14 @@ function aiParseResponse(raw) {
     try {
       var actions = JSON.parse(match[1]);
       if (!Array.isArray(actions)) actions = [actions];
+      // Normalise les variantes de type que l'IA peut écrire
+      actions.forEach(function(a) {
+        if (typeof a.type === 'string') {
+          a.type = a.type.toLowerCase().replace(/[-\s]/g,'_'); // addevent → add_event
+          if (a.type === 'addevent' || a.type === 'add-event' || a.type === 'event') a.type = 'add_event';
+          if (a.type === 'addflashcard' || a.type === 'flashcard') a.type = 'add_flashcard';
+        }
+      });
       // Separate add_event from other actions and batch them
       var eventsToAdd = [];
       actions.forEach(function(a) {
