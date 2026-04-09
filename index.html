@@ -22337,11 +22337,11 @@ function aiHideThinking() {
   if (t) t.remove();
 }
 
-// Mots déclencheurs qui autorisent l'exécution d'actions
-var AI_ACTION_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer|va|aller|ouvre|ouvrir|affiche|afficher|montre|montrer|navigue|naviguer|emmène|emmener|porte|amène|amener|accède|acceder|accéder|ouvrez|allez|mène|mener)\b/i;
+// Mots déclencheurs pour les actions qui MODIFIENT des données
+var AI_WRITE_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer)\b/i;
 
-function aiUserWantsAction(userMsg) {
-  return AI_ACTION_TRIGGERS.test(userMsg);
+function aiUserWantsWrite(userMsg) {
+  return AI_WRITE_TRIGGERS.test(userMsg);
 }
 
 // ── Appel Groq ──
@@ -22362,9 +22362,18 @@ async function aiCallGroq() {
     var data = await res.json();
     var raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || 'Désolé, je n\'ai pas pu répondre.';
     aiHideThinking();
-    // Garde-fou client : supprimer les actions si l'utilisateur n'a pas utilisé un mot déclencheur
-    if (!aiUserWantsAction(userMsg)) {
-      raw = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
+    // Garde-fou client : si pas de mot déclencheur d'écriture,
+    // supprimer UNIQUEMENT les add_event et add_flashcard — laisser navigate passer
+    if (!aiUserWantsWrite(userMsg)) {
+      raw = raw.replace(/@@ACTIONS:([\s\S]*?):ENDACTIONS@@/g, function(_, json) {
+        try {
+          var actions = JSON.parse(json);
+          if (!Array.isArray(actions)) actions = [actions];
+          var safe = actions.filter(function(a){ return a.type === 'navigate'; });
+          return safe.length ? '@@ACTIONS:' + JSON.stringify(safe) + ':ENDACTIONS@@' : '';
+        } catch(e) { return ''; }
+      });
+      raw = raw.trim();
     }
     var parsed = aiParseResponse(raw);
     aiAddMsg('ai', parsed.text, parsed.executedActions);
