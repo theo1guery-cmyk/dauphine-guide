@@ -22124,10 +22124,13 @@ window.toggleAIPanel = function() {
 function aiGetContext() {
   var today = new Date();
   var todayStr = today.toISOString().slice(0,10);
+  // current time as "HH:MM" for filtering past events today
+  var nowHHMM = (today.getHours() < 10 ? '0' : '') + today.getHours() + ':' + (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
   var prof = typeof getProfil === 'function' ? getProfil() : {};
   var prenom = prof.prenom || 'l\'étudiant';
   var lines = [
     'DATE AUJOURD\'HUI: ' + todayStr + ' (' + today.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}) + ')',
+    'HEURE ACTUELLE: ' + nowHHMM,
     'ÉTUDIANT: ' + prenom,
     'PAGE ACTIVE: ' + AI_CUR_PAGE
   ];
@@ -22137,12 +22140,19 @@ function aiGetContext() {
     var evts = typeof getActiveEvents === 'function' ? getActiveEvents() :
                ((typeof userEvents !== 'undefined' && userEvents) ? userEvents : (typeof EVENTS !== 'undefined' ? EVENTS : []));
     var manual = typeof manualEvents !== 'undefined' ? manualEvents : [];
-    var all = evts.concat(manual).filter(function(e){ return e.date >= todayStr; });
-    all.sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
-    var nextCours = all.slice(0,5).map(function(e){
-      return e.date + ' ' + (e.time||'') + ' — ' + e.summary + (e.location?' ('+e.location+')':'');
+    var all = evts.concat(manual).filter(function(e){
+      // garder uniquement les événements futurs : date > aujourd'hui OU (date = aujourd'hui ET heure fin > maintenant)
+      if (e.date > todayStr) return true;
+      if (e.date < todayStr) return false;
+      // même jour : comparer l'heure de fin (ou heure de début si pas de fin)
+      var endTime = e.end || e.time || '00:00';
+      return endTime > nowHHMM;
     });
-    if (nextCours.length) lines.push('PROCHAINS COURS (5 suivants): ' + nextCours.join(' | '));
+    all.sort(function(a,b){ return (a.date+(a.time||'')).localeCompare(b.date+(b.time||'')); });
+    var nextCours = all.slice(0,5).map(function(e){
+      return e.date + ' ' + (e.time||'') + (e.end?'-'+e.end:'') + ' — ' + e.summary + (e.location?' ('+e.location+')':'');
+    });
+    if (nextCours.length) lines.push('PROCHAINS COURS (5 suivants, heure locale): ' + nextCours.join(' | '));
     // Examens
     var exams = all.filter(function(e){ return /^EX:|exam|partiel|contrôle|DS|CC/i.test(e.summary); }).slice(0,5);
     if (exams.length) lines.push('EXAMENS À VENIR: ' + exams.map(function(e){ return e.date+' '+e.summary; }).join(' | '));
@@ -22186,7 +22196,14 @@ function aiSystemPrompt() {
     'Format: @@ACTIONS:[{"type":"add_event","date":"YYYY-MM-DD","time":"HH:MM","end":"HH:MM","summary":"Titre séance"}]:ENDACTIONS@@\n' +
     'Types disponibles:\n' +
     '- add_event: ajouter un événement au planning (date,time,end,summary obligatoires)\n' +
-    '- navigate: aller à une section (page: planning|simulateur|flashcards|pomodoro|notes|prof|oral)\n' +
+    '- navigate: aller à une section. Valeurs exactes pour "page":\n' +
+    '  home (accueil), planning (emploi du temps), simulateur (simulateur de moyenne),\n' +
+    '  flashcards (flashcards), apprendre (mode apprendre), pomodoro (minuteur pomodoro),\n' +
+    '  notes (prise de notes), prof (prof particulier IA), oral (simulateur d\'oral IA),\n' +
+    '  caspratiques (cas pratiques), culture (culture générale), news (news juridiques),\n' +
+    '  chat (chat étudiant), campus (plan du campus), ressources (ressources pédagogiques),\n' +
+    '  assos (associations), bonsplans (bons plans étudiant), stage (trouver un stage),\n' +
+    '  pslsport (PSL sport), bu (bibliothèque universitaire), faq (guide et FAQ)\n' +
     '- add_flashcard: créer une flashcard (recto,verso)\n\n' +
     '=== INSTRUCTIONS ===\n' +
     '- Réponds en français, sois concis et direct (3-4 lignes max sauf si l\'user demande une explication)\n' +
