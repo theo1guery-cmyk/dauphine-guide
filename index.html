@@ -22323,7 +22323,7 @@ async function aiCallGroq() {
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model:'llama-3.1-8b-instant',
-        max_tokens:1200,
+        max_tokens:2000,
         temperature:0.7,
         messages: messages
       })
@@ -22348,7 +22348,16 @@ function aiParseResponse(raw) {
   if (match) {
     text = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
     try {
-      var actions = JSON.parse(match[1]);
+      var jsonStr = match[1].trim();
+      var actions;
+      try {
+        actions = JSON.parse(jsonStr);
+      } catch(jsonErr) {
+        // JSON tronqué (max_tokens atteint) : récupère les objets complets
+        var lastBrace = jsonStr.lastIndexOf('}');
+        var recovered = lastBrace >= 0 ? jsonStr.slice(0, lastBrace + 1) + ']' : '[]';
+        try { actions = JSON.parse(recovered); } catch(e2) { actions = []; }
+      }
       if (!Array.isArray(actions)) actions = [actions];
       // Normalise les variantes de type que l'IA peut écrire
       actions.forEach(function(a) {
