@@ -22422,7 +22422,7 @@ function aiExecuteAction(action) {
     }
   } else if (action.type === 'add_flashcard') {
     if (action.recto && action.verso && typeof deck !== 'undefined') {
-      deck.push({ q: action.recto, a: action.verso, rating: 0, created: Date.now() });
+      deck.push({ cat: action.matiere || 'IA', q: action.recto, r: action.verso, status: 'none', created: Date.now() });
       if (typeof saveDeck === 'function') saveDeck();
       if (typeof toast==='function') toast('Flashcard ajoutée !', '🃏');
     }
