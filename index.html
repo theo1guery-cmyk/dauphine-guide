@@ -4755,6 +4755,64 @@ aside.sidebar {
   .prof-empty{min-height:260px}
 }
 
+/* ══════════════════════════════════════
+   AI ASSISTANT FLOTTANT
+══════════════════════════════════════ */
+#aiBubbleBtn{position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#0057ad,#4d9fff);border:none;cursor:pointer;z-index:3000;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(0,87,173,.4),0 2px 8px rgba(0,0,0,.18);transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease;opacity:0;pointer-events:none}
+#aiBubbleBtn.ready{opacity:1;pointer-events:auto}
+#aiBubbleBtn:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(0,87,173,.6)}
+#aiBubbleBtn.thinking{animation:aiPulse 1.2s ease-in-out infinite}
+@keyframes aiPulse{0%,100%{box-shadow:0 4px 20px rgba(0,87,173,.4);transform:scale(1)}50%{box-shadow:0 4px 36px rgba(77,159,255,.85);transform:scale(1.06)}}
+.ai-notif-dot{position:absolute;top:3px;right:3px;width:10px;height:10px;background:#ef4444;border-radius:50%;border:2px solid #fff;display:none}
+.ai-notif-dot.show{display:block}
+
+#aiPanel{position:fixed;right:0;bottom:0;width:390px;max-width:100vw;height:570px;max-height:84vh;background:var(--bg-card,#fff);border-radius:20px 0 0 0;box-shadow:-6px 0 40px rgba(0,0,0,.13),0 -4px 20px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:2998;transform:translateY(100%) translateX(30px);opacity:0;transition:transform .38s cubic-bezier(.22,1,.36,1),opacity .3s ease;pointer-events:none}
+#aiPanel.open{transform:none;opacity:1;pointer-events:auto}
+.ai-ph{display:flex;align-items:center;gap:10px;padding:15px 15px 11px;border-bottom:1px solid var(--g100,#f1f5f9);flex-shrink:0}
+.ai-ph-icon{width:32px;height:32px;background:linear-gradient(135deg,#0057ad,#4d9fff);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ai-ph-title{font-family:'Figtree',sans-serif;font-weight:800;font-size:14.5px;color:var(--text-main,#111);flex:1}
+.ai-ctx-badge{font-size:11px;font-weight:700;color:var(--blue,#0057ad);background:var(--blue-pale,#e8f0fe);border-radius:99px;padding:3px 9px;font-family:'Figtree',sans-serif;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-ph-close{background:none;border:none;cursor:pointer;color:var(--g400,#94a3b8);font-size:17px;padding:4px 6px;border-radius:8px;transition:background .15s,color .15s;line-height:1}
+.ai-ph-close:hover{background:var(--g100,#f1f5f9);color:var(--text-main)}
+
+.ai-msgs{flex:1;overflow-y:auto;padding:14px 13px 8px;display:flex;flex-direction:column;gap:9px;scroll-behavior:smooth}
+.ai-msgs::-webkit-scrollbar{width:3px}
+.ai-msgs::-webkit-scrollbar-thumb{background:var(--g200,#e2e8f0);border-radius:3px}
+.ai-msg{display:flex;flex-direction:column;max-width:87%}
+.ai-msg.user{align-self:flex-end;align-items:flex-end}
+.ai-msg.ai{align-self:flex-start;align-items:flex-start}
+.ai-bubble{padding:9px 13px;border-radius:16px;font-size:13px;line-height:1.55;font-family:'Figtree',sans-serif}
+.ai-msg.user .ai-bubble{background:linear-gradient(135deg,#0057ad,#4d9fff);color:#fff;border-radius:16px 16px 4px 16px}
+.ai-msg.ai .ai-bubble{background:var(--g50,#f8fafc);color:var(--text-main,#111);border-radius:16px 16px 16px 4px;border:1px solid var(--g100,#f1f5f9)}
+[data-theme="dark"] .ai-msg.ai .ai-bubble{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#e2e8f0}
+
+.ai-action-done{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#16a34a;background:#dcfce7;border-radius:99px;padding:3px 9px;margin-top:5px;font-family:'Figtree',sans-serif}
+
+.ai-thinking{display:flex;gap:4px;padding:10px 14px;background:var(--g50,#f8fafc);border:1px solid var(--g100,#f1f5f9);border-radius:16px 16px 16px 4px;align-self:flex-start}
+.ai-thinking span{width:6px;height:6px;border-radius:50%;background:var(--g300,#cbd5e1);animation:aiDot 1.2s ease-in-out infinite}
+.ai-thinking span:nth-child(2){animation-delay:.2s}
+.ai-thinking span:nth-child(3){animation-delay:.4s}
+@keyframes aiDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+
+.ai-sugg{display:flex;gap:6px;flex-wrap:wrap;padding:6px 13px 8px;flex-shrink:0;border-top:1px solid var(--g100,#f1f5f9)}
+.ai-sugg-chip{font-size:11.5px;padding:5px 10px;border-radius:99px;border:1px solid var(--g200,#e2e8f0);background:var(--bg-card,#fff);color:var(--g500,#64748b);cursor:pointer;font-family:'Figtree',sans-serif;font-weight:600;transition:all .15s;white-space:nowrap}
+.ai-sugg-chip:hover{background:var(--blue-pale,#e8f0fe);border-color:#93c5fd;color:var(--blue,#0057ad)}
+
+.ai-iw{display:flex;gap:8px;padding:9px 13px 13px;border-top:1px solid var(--g100,#f1f5f9);flex-shrink:0}
+.ai-inp{flex:1;border:1.5px solid var(--g200,#e2e8f0);border-radius:20px;padding:8px 14px;font-size:13px;font-family:'Figtree',sans-serif;outline:none;background:var(--bg-card,#fff);color:var(--text-main,#111);transition:border-color .15s}
+.ai-inp:focus{border-color:var(--blue,#0057ad)}
+[data-theme="dark"] .ai-inp{background:rgba(255,255,255,.07);color:#e2e8f0;border-color:rgba(255,255,255,.12)}
+[data-theme="dark"] .ai-inp:focus{border-color:#4d9fff}
+.ai-send{width:37px;height:37px;border-radius:50%;background:linear-gradient(135deg,#0057ad,#4d9fff);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s,opacity .15s}
+.ai-send:hover{transform:scale(1.1)}
+.ai-send:disabled{opacity:.45;cursor:default;transform:none}
+.ai-send svg{width:15px;height:15px;fill:#fff}
+
+@media(max-width:480px){
+  #aiPanel{width:100vw;border-radius:20px 20px 0 0;height:72vh}
+  #aiBubbleBtn{bottom:16px;right:16px;width:50px;height:50px}
+}
+
 </style>
 </head>
 <body>
@@ -21952,6 +22010,333 @@ function wgCopyLink() {
   }
 })();
 
+
+</script>
+
+<!-- ══════════════ AI ASSISTANT FLOTTANT ══════════════ -->
+<button id="aiBubbleBtn" onclick="toggleAIPanel()" title="Assistant IA">
+  <span style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.3))">🧠</span>
+  <span class="ai-notif-dot" id="aiNotifDot"></span>
+</button>
+
+<div id="aiPanel">
+  <div class="ai-ph">
+    <div class="ai-ph-icon">🧠</div>
+    <div class="ai-ph-title">Assistant IA</div>
+    <span class="ai-ctx-badge" id="aiCtxBadge">Accueil</span>
+    <button class="ai-ph-close" onclick="toggleAIPanel()">✕</button>
+  </div>
+  <div class="ai-msgs" id="aiMsgs">
+    <div class="ai-msg ai">
+      <div class="ai-bubble">Bonjour ! 👋 Je connais ton planning, tes notes et tes lacunes.<br><br>Tu peux me demander :<br>· <em>"Quand est mon prochain exam ?"</em><br>· <em>"Ajoute une révision de maths demain à 14h"</em><br>· <em>"Explique-moi le Lagrangien en 2 min"</em></div>
+    </div>
+  </div>
+  <div class="ai-sugg" id="aiSugg"></div>
+  <div class="ai-iw">
+    <input class="ai-inp" id="aiInp" placeholder="Pose une question…" maxlength="500"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSend()}">
+    <button class="ai-send" id="aiSendBtn" onclick="aiSend()">
+      <svg viewBox="0 0 16 16"><path d="M1.5 8.5L14 2 11.5 14 8 10.5l-3 2.5 1-4.5-4.5-3z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ══════════════ AI ASSISTANT ══════════════
+(function(){
+
+var AI_OPEN = false;
+var AI_THINKING = false;
+var AI_HISTORY = []; // {role, content}
+var AI_CUR_PAGE = 'home';
+
+// ── Afficher le bouton après l'animation ──
+(function waitReady(){
+  if (window._orbitalRunning) { setTimeout(waitReady, 300); return; }
+  var btn = document.getElementById('aiBubbleBtn');
+  if (btn) setTimeout(function(){ btn.classList.add('ready'); }, 800);
+})();
+
+// ── Track page changes ──
+var _aiOrigShowPage = typeof showPage === 'function' ? showPage : null;
+if (_aiOrigShowPage) {
+  showPage = function(pageId, btn) {
+    _aiOrigShowPage(pageId, btn);
+    AI_CUR_PAGE = pageId;
+    aiUpdateCtxBadge();
+    aiUpdateSuggestions();
+  };
+}
+
+function aiUpdateCtxBadge() {
+  var labels = {
+    home:'Accueil', simulateur:'Simulateur', flashcards:'Flashcards',
+    planning:'Planning', notes:'Notes', prof:'Prof particulier',
+    pomodoro:'Pomodoro', chat:'Chat', campus:'Campus',
+    ressources:'Ressources', news:'News', assos:'Assos',
+    bonsplans:'Bons plans', stage:'Stage', faq:'FAQ',
+    caspratiques:'Cas pratiques', apprendre:'Apprendre',
+    culture:'Culture G', pslsport:'PSL Sport', bu:'BU', oral:'Simulateur oral'
+  };
+  var badge = document.getElementById('aiCtxBadge');
+  if (badge) badge.textContent = labels[AI_CUR_PAGE] || AI_CUR_PAGE;
+}
+
+// ── Suggestions contextuelles ──
+var AI_SUGGESTIONS = {
+  home:       ['📅 Mon prochain cours ?','📊 Ma moyenne actuelle ?','🎯 Que réviser ce soir ?'],
+  planning:   ['📅 Mes examens à venir ?','➕ Ajoute une révision demain','📆 Résume ma semaine'],
+  simulateur: ['📈 Comment améliorer ma moyenne ?','⚠️ Mes matières à risque ?','🎯 Quelle note pour valider ?'],
+  flashcards: ['➕ Crée une flashcard sur le Lagrangien','📚 Mes lacunes actuelles ?','🔄 Plan de révision flashcards'],
+  prof:       ['📝 Que réviser en priorité ?','💡 Technique de mémo pour le droit ?','⏱️ Combien de temps pour préparer ?'],
+  pomodoro:   ['⏱️ Combine de Pomodoros pour réviser ?','📖 Que réviser pendant cette session ?'],
+  notes:      ['✏️ Résume ce chapitre','🔑 Points clés à retenir ?','📋 Crée un plan de révision'],
+  default:    ['📅 Mon prochain cours ?','📊 Ma moyenne actuelle ?','💡 Conseils de révision ?']
+};
+
+function aiUpdateSuggestions() {
+  var sugg = document.getElementById('aiSugg');
+  if (!sugg) return;
+  var list = AI_SUGGESTIONS[AI_CUR_PAGE] || AI_SUGGESTIONS.default;
+  sugg.innerHTML = list.map(function(s){
+    return '<button class="ai-sugg-chip" onclick="aiSendText(\''+s.replace(/'/g,"\\'")+'\')">'+ s +'</button>';
+  }).join('');
+}
+
+// ── Toggle panel ──
+window.toggleAIPanel = function() {
+  AI_OPEN = !AI_OPEN;
+  var panel = document.getElementById('aiPanel');
+  if (panel) {
+    if (AI_OPEN) {
+      panel.classList.add('open');
+      aiUpdateSuggestions();
+      aiUpdateCtxBadge();
+      document.getElementById('aiNotifDot').classList.remove('show');
+      setTimeout(function(){ document.getElementById('aiInp').focus(); }, 350);
+    } else {
+      panel.classList.remove('open');
+    }
+  }
+};
+
+// ── Build context ──
+function aiGetContext() {
+  var today = new Date();
+  var todayStr = today.toISOString().slice(0,10);
+  var prof = typeof getProfil === 'function' ? getProfil() : {};
+  var prenom = prof.prenom || 'l\'étudiant';
+  var lines = [
+    'DATE AUJOURD\'HUI: ' + todayStr + ' (' + today.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}) + ')',
+    'ÉTUDIANT: ' + prenom,
+    'PAGE ACTIVE: ' + AI_CUR_PAGE
+  ];
+
+  // Planning: prochain cours + examens à venir
+  try {
+    var evts = typeof getActiveEvents === 'function' ? getActiveEvents() :
+               ((typeof userEvents !== 'undefined' && userEvents) ? userEvents : (typeof EVENTS !== 'undefined' ? EVENTS : []));
+    var manual = typeof manualEvents !== 'undefined' ? manualEvents : [];
+    var all = evts.concat(manual).filter(function(e){ return e.date >= todayStr; });
+    all.sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
+    var nextCours = all.slice(0,5).map(function(e){
+      return e.date + ' ' + (e.time||'') + ' — ' + e.summary + (e.location?' ('+e.location+')':'');
+    });
+    if (nextCours.length) lines.push('PROCHAINS COURS (5 suivants): ' + nextCours.join(' | '));
+    // Examens
+    var exams = all.filter(function(e){ return /^EX:|exam|partiel|contrôle|DS|CC/i.test(e.summary); }).slice(0,5);
+    if (exams.length) lines.push('EXAMENS À VENIR: ' + exams.map(function(e){ return e.date+' '+e.summary; }).join(' | '));
+  } catch(e) {}
+
+  // Simulateur: résumé des notes
+  try {
+    if (typeof MATIERES !== 'undefined' && MATIERES) {
+      var notesSummary = [];
+      MATIERES.filter(function(m){ return m.coef > 0; }).forEach(function(m){
+        var cc = parseFloat(localStorage.getItem('sim_cc_'+m.id));
+        var ex = parseFloat(localStorage.getItem('sim_ex_'+m.id));
+        if (!isNaN(cc) || !isNaN(ex)) {
+          var parts = [];
+          if (!isNaN(cc)) parts.push('CC:'+cc);
+          if (!isNaN(ex)) parts.push('EX:'+ex);
+          notesSummary.push(m.nom.split(' ').slice(0,3).join(' ')+' ('+parts.join(',')+')');
+        }
+      });
+      if (notesSummary.length) lines.push('NOTES SAISIES: ' + notesSummary.join(' | '));
+    }
+  } catch(e) {}
+
+  // Flashcards
+  try {
+    if (typeof deck !== 'undefined' && deck && deck.length) {
+      var weak = deck.filter(function(c){ return c.rating <= 1; }).length;
+      lines.push('FLASHCARDS: ' + deck.length + ' cartes, ' + weak + ' à retravailler');
+    }
+  } catch(e) {}
+
+  return lines.join('\n');
+}
+
+// ── System prompt ──
+function aiSystemPrompt() {
+  return 'Tu es l\'assistant IA de DauphineGuide, intégré dans l\'app d\'un étudiant en L1 Droit-Éco à Paris-Dauphine PSL.\n\n' +
+    '=== CONTEXTE ===\n' + aiGetContext() + '\n\n' +
+    '=== ACTIONS DISPONIBLES ===\n' +
+    'Si l\'utilisateur te demande d\'effectuer une action, inclus à la FIN de ta réponse un bloc JSON entre @@ACTIONS: et :ENDACTIONS@@\n' +
+    'Format: @@ACTIONS:[{"type":"add_event","date":"YYYY-MM-DD","time":"HH:MM","end":"HH:MM","summary":"Titre séance"}]:ENDACTIONS@@\n' +
+    'Types disponibles:\n' +
+    '- add_event: ajouter un événement au planning (date,time,end,summary obligatoires)\n' +
+    '- navigate: aller à une section (page: planning|simulateur|flashcards|pomodoro|notes|prof|oral)\n' +
+    '- add_flashcard: créer une flashcard (recto,verso)\n\n' +
+    '=== INSTRUCTIONS ===\n' +
+    '- Réponds en français, sois concis et direct (3-4 lignes max sauf si l\'user demande une explication)\n' +
+    '- Utilise le contexte pour personnaliser les réponses\n' +
+    '- N\'inclus des actions QUE si l\'utilisateur te le demande explicitement\n' +
+    '- Si tu ajoutes un événement, dis-le naturellement dans ta réponse\n' +
+    '- Tu peux suggérer des actions ("Je peux ajouter ça à ton planning si tu veux")';
+}
+
+// ── Envoyer message ──
+window.aiSendText = function(text) {
+  document.getElementById('aiInp').value = text;
+  aiSend();
+};
+
+window.aiSend = function() {
+  if (AI_THINKING) return;
+  var inp = document.getElementById('aiInp');
+  var text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  aiAddMsg('user', text);
+  AI_HISTORY.push({ role:'user', content: text });
+  aiShowThinking();
+  aiCallGroq();
+};
+
+function aiAddMsg(role, text, actions) {
+  var msgs = document.getElementById('aiMsgs');
+  var div = document.createElement('div');
+  div.className = 'ai-msg ' + role;
+  var bubble = document.createElement('div');
+  bubble.className = 'ai-bubble';
+  bubble.innerHTML = text.replace(/\n/g,'<br>').replace(/\*(.*?)\*/g,'<strong>$1</strong>').replace(/_(.*?)_/g,'<em>$1</em>');
+  div.appendChild(bubble);
+  if (actions && actions.length) {
+    actions.forEach(function(a) {
+      var chip = document.createElement('div');
+      chip.className = 'ai-action-done';
+      var labels = { add_event:'✅ Ajouté au planning', navigate:'→ Navigation', add_flashcard:'✅ Flashcard créée' };
+      chip.textContent = labels[a.type] || '✅ Action effectuée';
+      div.appendChild(chip);
+    });
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function aiShowThinking() {
+  AI_THINKING = true;
+  var btn = document.getElementById('aiBubbleBtn');
+  if (btn) btn.classList.add('thinking');
+  document.getElementById('aiSendBtn').disabled = true;
+  var msgs = document.getElementById('aiMsgs');
+  var t = document.createElement('div');
+  t.className = 'ai-thinking';
+  t.id = 'aiThinkingEl';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(t);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function aiHideThinking() {
+  AI_THINKING = false;
+  var btn = document.getElementById('aiBubbleBtn');
+  if (btn) btn.classList.remove('thinking');
+  document.getElementById('aiSendBtn').disabled = false;
+  var t = document.getElementById('aiThinkingEl');
+  if (t) t.remove();
+}
+
+// ── Appel Groq ──
+async function aiCallGroq() {
+  var messages = [{ role:'system', content: aiSystemPrompt() }].concat(AI_HISTORY.slice(-10));
+  try {
+    var res = await fetch('https://shiny-lake-f66d.theo1-guery.workers.dev', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'llama-3.1-8b-instant',
+        max_tokens:600,
+        temperature:0.7,
+        messages: messages
+      })
+    });
+    var data = await res.json();
+    var raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || 'Désolé, je n\'ai pas pu répondre.';
+    aiHideThinking();
+    var parsed = aiParseResponse(raw);
+    aiAddMsg('ai', parsed.text, parsed.executedActions);
+    AI_HISTORY.push({ role:'assistant', content: parsed.text });
+  } catch(e) {
+    aiHideThinking();
+    aiAddMsg('ai', 'Erreur de connexion. Réessaie dans un instant.');
+  }
+}
+
+// ── Parser la réponse et exécuter les actions ──
+function aiParseResponse(raw) {
+  var text = raw;
+  var executedActions = [];
+  var match = raw.match(/@@ACTIONS:([\s\S]*?):ENDACTIONS@@/);
+  if (match) {
+    text = raw.replace(/@@ACTIONS:[\s\S]*?:ENDACTIONS@@/g, '').trim();
+    try {
+      var actions = JSON.parse(match[1]);
+      if (Array.isArray(actions)) {
+        actions.forEach(function(a) {
+          try {
+            aiExecuteAction(a);
+            executedActions.push(a);
+          } catch(e) {}
+        });
+      }
+    } catch(e) {}
+  }
+  return { text: text, executedActions: executedActions };
+}
+
+// ── Exécuter une action ──
+function aiExecuteAction(action) {
+  if (action.type === 'add_event') {
+    function normT(t){ if(!t)return null; var p=t.trim().match(/^(\d{1,2}):(\d{2})$/); if(!p)return null; return(p[1].length<2?'0'+p[1]:p[1])+':'+p[2]; }
+    function normD(d){ if(!d)return null; var p=d.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(!p)return null; return p[1]+'-'+(p[2].length<2?'0'+p[2]:p[2])+'-'+(p[3].length<2?'0'+p[3]:p[3]); }
+    var date = normD(String(action.date||''));
+    var time = normT(String(action.time||''));
+    if (!date || !time || !action.summary) return;
+    var end = normT(String(action.end||'')) || (function(){ var s=time.split(':'); var m=parseInt(s[0])*60+parseInt(s[1])+90; return(Math.floor(m/60)<10?'0':'')+Math.floor(m/60)+':'+(m%60<10?'0':'')+(m%60); })();
+    if (typeof manualEvents !== 'undefined') {
+      manualEvents.push({ manualId:Date.now(), date:date, time:time, end:end, summary:action.summary, location:'', color:'#f3e8ff', border:'#a855f7', slotType:'revision', cat:'autre' });
+      if (typeof saveManualEvents==='function') saveManualEvents();
+      if (typeof renderWeek==='function') renderWeek();
+      if (typeof renderAgenda==='function') renderAgenda();
+    }
+  } else if (action.type === 'navigate') {
+    if (action.page && typeof showPage === 'function') {
+      setTimeout(function(){ showPage(action.page, null); }, 300);
+    }
+  } else if (action.type === 'add_flashcard') {
+    if (action.recto && action.verso && typeof deck !== 'undefined') {
+      deck.push({ q: action.recto, a: action.verso, rating: 0, created: Date.now() });
+      if (typeof saveDeck === 'function') saveDeck();
+    }
+  }
+}
+
+// Init suggestions
+aiUpdateSuggestions();
+
+})();
 </script>
 
 </body></html>
