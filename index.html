@@ -22243,13 +22243,22 @@ function aiSystemPrompt() {
     '  home, planning, simulateur, flashcards, apprendre, pomodoro, notes, prof, oral,\n' +
     '  caspratiques, culture, news, chat, campus, ressources, assos, bonsplans, stage, pslsport, bu, faq\n' +
     '- add_flashcard: créer une flashcard. Champs: recto (question), verso (réponse)\n\n' +
+    '=== RÈGLE ABSOLUE SUR LES ACTIONS ===\n' +
+    'NE JAMAIS inclure de bloc @@ACTIONS@@ sauf si le message contient UN de ces mots déclencheurs EXACTS :\n' +
+    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule"\n' +
+    'Questions informatives (quoi, quand, comment, explique, résume, montre, c\'est quoi...) → réponse texte UNIQUEMENT, ZÉRO action.\n' +
+    'Exemples :\n' +
+    '✅ "ajoute une révision de maths demain" → inclure @@ACTIONS@@\n' +
+    '✅ "crée-moi des flashcards sur le Lagrangien" → inclure @@ACTIONS@@\n' +
+    '❌ "qu\'est-ce que j\'ai demain ?" → réponse texte seule, PAS d\'action\n' +
+    '❌ "quand est mon prochain exam ?" → réponse texte seule, PAS d\'action\n' +
+    '❌ "explique-moi le Lagrangien" → réponse texte seule, PAS d\'action\n\n' +
     '=== INSTRUCTIONS ===\n' +
     '- Réponds en français, sois concis et direct\n' +
     '- Utilise le contexte pour personnaliser les réponses\n' +
-    '- N\'inclus des actions QUE si l\'utilisateur te le demande explicitement\n' +
-    '- Quand tu génères un planning de révision, inclus TOUTES les séances demandées en un seul bloc @@ACTIONS@@\n' +
-    '- Si tu ajoutes des événements, liste-les brièvement dans ta réponse\n' +
-    '- Tu peux suggérer des actions ("Je peux ajouter ça à ton planning si tu veux")';
+    '- Quand tu génères un planning de révision, inclus TOUTES les séances en un seul bloc @@ACTIONS@@\n' +
+    '- Après avoir ajouté des événements, liste-les brièvement\n' +
+    '- Pour les questions informatives, tu PEUX proposer à la fin : "Je peux ajouter ça à ton planning si tu veux ?"';
 }
 
 // ── Envoyer message ──
