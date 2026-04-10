@@ -24617,7 +24617,6 @@ window.mmSearch = function(term) {
 };
 function mmSearchRefresh() {
   var wrap = document.getElementById('mmSearchWrap');
-  var si = document.getElementById('mmSearchInput');
   if (wrap) wrap.classList.toggle('mm-search-active', !!mmSearchTerm);
   var svg = document.getElementById('mmSvgWrap') && document.getElementById('mmSvgWrap').querySelector('svg');
   if (!svg) return;
