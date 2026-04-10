@@ -4826,6 +4826,150 @@ aside.sidebar {
   #aiBubbleBtn{bottom:16px;right:16px;width:50px;height:50px}
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   MIND MAP IA
+═══════════════════════════════════════════════════════════════ */
+.mm-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+@media(max-width:900px){.mm-layout{grid-template-columns:1fr}}
+.mm-map-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shs);overflow:hidden;position:relative;min-height:420px;display:flex;flex-direction:column}
+[data-theme="dark"] .mm-map-card{background:var(--bg-card);border-color:var(--border-col)}
+.mm-svg-wrap{flex:1;overflow:hidden;cursor:grab;user-select:none;min-height:400px}
+.mm-svg-wrap:active{cursor:grabbing}
+.mm-svg-wrap svg{display:block;width:100%;height:100%}
+.mm-controls{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--g100);flex-wrap:wrap;align-items:center}
+[data-theme="dark"] .mm-controls{border-color:var(--border-col)}
+.mm-ctrl-btn{padding:5px 12px;font-size:12px;font-weight:600;border:1.5px solid var(--g200);background:#fff;color:var(--g700);border-radius:8px;cursor:pointer;transition:all .15s;font-family:'Figtree',sans-serif}
+.mm-ctrl-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+[data-theme="dark"] .mm-ctrl-btn{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
+.mm-empty{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;text-align:center;color:var(--g400)}
+.mm-empty>div{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mm-empty strong{font-size:15px;color:var(--text-main)}
+.mm-empty span{font-size:13px}
+.mm-loading{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px}
+.mm-loading-spinner{width:40px;height:40px;border:3px solid var(--g100);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mm-loading-label{font-size:13px;color:var(--g500);font-weight:600}
+/* SVG node classes */
+.mm-node-root rect{fill:var(--blue);stroke:none;rx:14}
+.mm-node-root text{fill:#fff;font-weight:700;font-size:14px}
+.mm-node-l1 rect{rx:10}
+.mm-node-l2 rect{rx:8}
+.mm-node-l3 rect{rx:6}
+.mm-link{fill:none;stroke-width:2;opacity:.7}
+
+/* ═══════════════════════════════════════════════════════════════
+   SALLE D'ÉTUDE CO-POMODORO
+═══════════════════════════════════════════════════════════════ */
+.salle-hero{text-align:center;max-width:600px;margin:0 auto 40px}
+.salle-entry-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:680px;margin:0 auto}
+@media(max-width:640px){.salle-entry-cards{grid-template-columns:1fr}}
+.salle-entry-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:28px 24px;box-shadow:var(--shs);display:flex;flex-direction:column;gap:14px}
+[data-theme="dark"] .salle-entry-card{background:var(--bg-card);border-color:var(--border-col)}
+.salle-entry-card h3{font-size:16px;font-weight:700;color:var(--text-main);margin:0}
+.salle-entry-card p{font-size:13px;color:var(--g500);margin:0;line-height:1.5}
+.salle-input{width:100%;box-sizing:border-box;padding:10px 14px;border:1.5px solid var(--g200);border-radius:10px;font-size:14px;font-family:'Figtree',sans-serif;color:var(--text-main);background:var(--bg-card,#fff);outline:none;transition:border-color .15s}
+.salle-input:focus{border-color:var(--blue)}
+.salle-btn{padding:11px 18px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .2s;box-shadow:0 4px 14px rgba(0,61,122,.2)}
+.salle-btn:hover{background:#0057ad;transform:translateY(-1px)}
+.salle-btn-ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue);box-shadow:none}
+.salle-btn-ghost:hover{background:rgba(0,61,122,.06)}
+[data-theme="dark"] .salle-btn-ghost{background:transparent;color:#5aadff;border-color:#5aadff}
+/* Room active layout */
+.salle-room-wrap{display:flex;flex-direction:column;gap:16px;max-width:900px;margin:0 auto}
+.salle-room-header{background:var(--blue);color:#fff;border-radius:var(--r);padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.salle-room-code-badge{font-size:18px;font-weight:800;letter-spacing:.12em;background:rgba(255,255,255,.18);padding:5px 14px;border-radius:8px}
+.salle-room-name{flex:1;font-size:15px;font-weight:600}
+.salle-room-body{display:grid;grid-template-columns:1fr 320px;gap:16px}
+@media(max-width:780px){.salle-room-body{grid-template-columns:1fr}}
+.salle-timer-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:28px 24px;box-shadow:var(--shs);display:flex;flex-direction:column;align-items:center;gap:16px}
+[data-theme="dark"] .salle-timer-card{background:var(--bg-card);border-color:var(--border-col)}
+.salle-mode-lbl{font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+.salle-ring{position:relative;width:160px;height:160px}
+.salle-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.salle-ring-bg{fill:none;stroke:var(--g100);stroke-width:8}
+.salle-ring-fill{fill:none;stroke:var(--blue);stroke-width:8;stroke-linecap:round;stroke-dasharray:452;transition:stroke-dashoffset .8s linear}
+.salle-ring-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.salle-time-num{font-size:30px;font-weight:800;color:var(--text-main);font-variant-numeric:tabular-nums}
+.salle-timer-btns{display:flex;gap:8px}
+.salle-presence-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:32px}
+.salle-avatar{width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;position:relative;flex-shrink:0}
+.salle-avatar-name{font-size:10px;position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);white-space:nowrap;color:var(--g500);font-weight:600}
+.salle-presence-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:8px}
+/* Chat card */
+.salle-chat-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shs);display:flex;flex-direction:column;overflow:hidden}
+[data-theme="dark"] .salle-chat-card{background:var(--bg-card);border-color:var(--border-col)}
+.salle-chat-head{padding:12px 16px;border-bottom:1px solid var(--g100);font-size:13px;font-weight:700;color:var(--text-main)}
+[data-theme="dark"] .salle-chat-head{border-color:var(--border-col)}
+.salle-chat-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-height:200px;max-height:340px}
+.salle-chat-msgs::-webkit-scrollbar{width:3px}
+.salle-chat-msgs::-webkit-scrollbar-thumb{background:var(--g200);border-radius:2px}
+.salle-msg{display:flex;flex-direction:column;gap:2px}
+.salle-msg-meta{font-size:10px;color:var(--g400);font-weight:600}
+.salle-msg-bubble{background:var(--g50);border-radius:10px;padding:6px 10px;font-size:13px;color:var(--text-main);line-height:1.45;display:inline-block;max-width:100%;word-break:break-word}
+.salle-msg.mine .salle-msg-meta{text-align:right}
+.salle-msg.mine .salle-msg-bubble{background:var(--blue);color:#fff;align-self:flex-end}
+.salle-chat-foot{padding:10px 12px;border-top:1px solid var(--g100);display:flex;gap:8px}
+[data-theme="dark"] .salle-chat-foot{border-color:var(--border-col)}
+.salle-chat-foot input{flex:1;padding:8px 12px;border:1.5px solid var(--g200);border-radius:8px;font-size:13px;font-family:'Figtree',sans-serif;outline:none;background:var(--bg-card,#fff);color:var(--text-main);transition:border-color .15s}
+.salle-chat-foot input:focus{border-color:var(--blue)}
+.salle-chat-foot button{padding:8px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Figtree',sans-serif;font-weight:700;transition:background .15s}
+.salle-chat-foot button:hover{background:#0057ad}
+/* Break mode */
+.salle-mode-work .salle-ring-fill{stroke:var(--blue)}
+.salle-mode-short .salle-ring-fill{stroke:#10b981}
+.salle-mode-long .salle-ring-fill{stroke:#f59e0b}
+/* Not-logged in notice */
+.salle-noauth{background:#fff;border:1.5px dashed var(--g200);border-radius:var(--r);padding:40px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:480px;margin:40px auto}
+[data-theme="dark"] .salle-noauth{background:var(--bg-card);border-color:var(--border-col)}
+.salle-noauth-ic{font-size:42px}
+.salle-noauth strong{font-size:16px;color:var(--text-main)}
+.salle-noauth span{font-size:13px;color:var(--g500);line-height:1.5}
+/* Pomodoro cycle dots */
+.salle-cycles{display:flex;gap:6px;justify-content:center}
+.salle-cycle-dot{width:8px;height:8px;border-radius:50%;background:var(--g200);transition:background .3s}
+.salle-cycle-dot.done{background:var(--blue)}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANALYSEUR D'ANNALES
+═══════════════════════════════════════════════════════════════ */
+.annales-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:860px){.annales-grid{grid-template-columns:1fr}}
+/* Reuse .prof-card, .prof-card-title, .prof-card-sub, .prof-btn, .prof-actions etc. */
+.annales-result-empty{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.annales-result-empty>div{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--g400)}
+.annales-result-empty strong{font-size:15px;color:var(--text-main)}
+.annales-result-empty span{font-size:13px}
+/* Top 10 themes */
+.annales-themes{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.annales-theme{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--g50);border-radius:10px;border-left:3px solid var(--blue)}
+[data-theme="dark"] .annales-theme{background:#1a2235}
+.annales-theme-rank{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.annales-theme-rank.top3{background:#f59e0b}
+.annales-theme-body{flex:1}
+.annales-theme-title{font-size:13px;font-weight:700;color:var(--text-main);margin-bottom:3px}
+.annales-theme-meta{display:flex;gap:8px;flex-wrap:wrap}
+.annales-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(0,61,122,.08);color:var(--blue)}
+.annales-tag.freq{background:#fef3c7;color:#92400e}
+.annales-tag.type{background:#d1fae5;color:#065f46}
+.annales-conseil{font-size:12px;color:var(--g500);margin-top:4px;line-height:1.45}
+/* Types pie */
+.annales-types-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.annales-type-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;background:var(--g100);color:var(--g700)}
+[data-theme="dark"] .annales-type-pill{background:#1e2d42;color:var(--text-main)}
+/* Formulations */
+.annales-formulation{background:#f0f4ff;border-left:3px solid #818cf8;border-radius:0 8px 8px 0;padding:8px 12px;font-size:13px;font-style:italic;color:var(--text-main);margin-bottom:6px}
+[data-theme="dark"] .annales-formulation{background:#1a2040}
+/* Flashcard suggestions */
+.annales-flash-suggestions{display:flex;flex-direction:column;gap:8px}
+.annales-flash-item{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:10px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+[data-theme="dark"] .annales-flash-item{background:var(--bg-card);border-color:var(--border-col)}
+.annales-flash-q{font-size:12px;font-weight:600;color:var(--text-main);flex:1;line-height:1.4}
+.annales-flash-add{padding:4px 10px;font-size:11px;font-weight:700;border:1.5px solid var(--blue);background:#fff;color:var(--blue);border-radius:7px;cursor:pointer;white-space:nowrap;font-family:'Figtree',sans-serif;transition:all .15s;flex-shrink:0}
+.annales-flash-add:hover{background:var(--blue);color:#fff}
+[data-theme="dark"] .annales-flash-add{background:transparent;border-color:#5aadff;color:#5aadff}
+[data-theme="dark"] .annales-flash-add:hover{background:#1e40af}
+.annales-section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);margin-bottom:10px;margin-top:18px}
+
 </style>
 </head>
 <body>
@@ -5103,6 +5247,8 @@ aside.sidebar {
     <button class="sidebar-item" data-page="caspratiques" onclick="showPage(&#39;caspratiques&#39;,this)"><span class="s-ic">⚖️</span> Cas pratiques</button>
     <button class="sidebar-item" data-page="prof" onclick="showPage(&#39;prof&#39;,this)"><span class="s-ic">🧑‍🏫</span> Prof particulier</button>
     <button class="sidebar-item" data-page="oral" onclick="showPage(&#39;oral&#39;,this)"><span class="s-ic">🎙️</span> Simulateur d'oral</button>
+    <button class="sidebar-item" data-page="mindmap" onclick="showPage(&#39;mindmap&#39;,this)"><span class="s-ic">🗺️</span> Mind Map IA<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
+    <button class="sidebar-item" data-page="annales" onclick="showPage(&#39;annales&#39;,this)"><span class="s-ic">🔍</span> Analyseur d'annales<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
     <div class="sidebar-section-label">Organisation</div>
     <button class="sidebar-item" data-page="planning" onclick="showPage(&#39;planning&#39;,this)"><span class="s-ic">📅</span> Planning<span class="sb-badge" id="sidebarUrgentBadge">0</span></button>
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
@@ -5111,6 +5257,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="news" onclick="showPage(&#39;news&#39;,this)"><span class="s-ic">📰</span> News juridiques</button>
     <div class="sidebar-section-label">Communauté</div>
     <button class="sidebar-item" data-page="chat" onclick="showPage('chat',this)"><span class="s-ic">💬</span> Chat étudiant</button>
+    <button class="sidebar-item" data-page="salle" onclick="showPage(&#39;salle&#39;,this)"><span class="s-ic">🧑‍🤝‍🧑</span> Salle d'étude live<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
     <div class="sidebar-section-label">Campus</div>
     <button class="sidebar-item" data-page="campus" onclick="showPage(&#39;campus&#39;,this)"><span class="s-ic">🗺️</span> Plan du campus</button>
     <button class="sidebar-item" data-page="pslsport" onclick="showPage(&#39;pslsport&#39;,this)"><span class="s-ic">🏃</span> PSL Sport</button>
@@ -9217,6 +9364,248 @@ aside.sidebar {
       <div class="rev-modal-actions" style="margin-top:10px">
         <button class="rev-modal-cancel" onclick="document.getElementById('notesGenStep1').style.display='';document.getElementById('notesGenStep2').style.display='none'">← Retour</button>
         <button class="rev-modal-save" onclick="notesGenImport()">✨ Importer les flashcards</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MIND MAP IA ══ -->
+<div class="page-section" id="page-mindmap">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">🗺️</div>
+      <div>
+        <div class="section-header-title">Mind Map IA</div>
+        <div class="section-header-sub">Visualise ton cours en carte mentale interactive</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-mindmap"></div>
+  </div>
+  <div class="wrap" style="padding-top:48px;padding-bottom:64px">
+    <div class="rev" style="margin-bottom:28px">
+      <div class="slbl">Intelligence artificielle · Carte mentale</div>
+      <div class="sh2">Transforme ton cours en <em>mind map</em> interactive</div>
+      <p class="sdesc">Colle n'importe quel chapitre de cours — l'IA (modèle 70B) génère instantanément une carte mentale radiale animée. Clique sur les nœuds pour explorer, zoom et export SVG inclus.</p>
+    </div>
+    <div class="mm-layout">
+      <!-- Input panel -->
+      <div class="prof-card">
+        <div class="prof-card-title">📚 Cours à cartographier</div>
+        <div class="prof-card-sub">Colle ici un chapitre, un résumé ou une liste de notions. L'IA structure et visualise automatiquement.</div>
+        <div class="prof-field">
+          <label for="mmMatiere">Matière <span>optionnel</span></label>
+          <select class="prof-select" id="mmMatiere">
+            <option value="">— Choisir une matière —</option>
+            <option value="Droit constitutionnel">Droit constitutionnel</option>
+            <option value="Droit pénal">Droit pénal</option>
+            <option value="Droit européen">Droit européen</option>
+            <option value="Introduction au Droit">Introduction au Droit</option>
+            <option value="Microéconomie">Microéconomie</option>
+            <option value="Macroéconomie">Macroéconomie</option>
+            <option value="Comptabilité">Comptabilité</option>
+            <option value="Mathématiques">Mathématiques</option>
+            <option value="Sciences politiques">Sciences politiques</option>
+            <option value="Sociologie">Sociologie</option>
+            <option value="Gestion">Gestion</option>
+            <option value="Anglais">Anglais</option>
+          </select>
+        </div>
+        <div class="prof-field">
+          <label for="mmInput">Contenu du cours</label>
+          <textarea class="prof-textarea tall" id="mmInput" placeholder="Exemple : La Constitution du 4 octobre 1958. La séparation des pouvoirs : pouvoir exécutif (Président de la République, Premier ministre), pouvoir législatif (Assemblée nationale, Sénat), pouvoir judiciaire. Le Conseil constitutionnel. Le contrôle de constitutionnalité a priori et a posteriori (QPC)…"></textarea>
+        </div>
+        <div class="prof-actions">
+          <button class="prof-btn" id="mmGenBtn" onclick="mmGenerate()">🧠 Générer la Mind Map</button>
+          <button class="prof-btn ghost" type="button" onclick="mmReset()">🗑️ Réinitialiser</button>
+        </div>
+      </div>
+      <!-- Map panel -->
+      <div class="mm-map-card" id="mmMapCard">
+        <div class="mm-empty" id="mmEmpty">
+          <div>
+            <div style="font-size:42px">🗺️</div>
+            <strong>Ta Mind Map apparaîtra ici</strong>
+            <span>Colle un cours et clique sur Générer.</span>
+          </div>
+        </div>
+        <div id="mmLoadingPanel" style="display:none" class="mm-loading">
+          <div class="mm-loading-spinner"></div>
+          <div class="mm-loading-label" id="mmLoadingLabel">Analyse du cours en cours…</div>
+        </div>
+        <div id="mmControls" class="mm-controls" style="display:none">
+          <button class="mm-ctrl-btn" onclick="mmZoomIn()">＋ Zoom</button>
+          <button class="mm-ctrl-btn" onclick="mmZoomOut()">－ Zoom</button>
+          <button class="mm-ctrl-btn" onclick="mmFit()">⊞ Ajuster</button>
+          <button class="mm-ctrl-btn" onclick="mmExportSvg()">📥 Export SVG</button>
+          <button class="mm-ctrl-btn" onclick="mmExportPng()">🖼️ Export PNG</button>
+          <span id="mmNodeCount" style="font-size:11px;color:var(--g400);margin-left:auto"></span>
+        </div>
+        <div class="mm-svg-wrap" id="mmSvgWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SALLE D'ÉTUDE CO-POMODORO ══ -->
+<div class="page-section" id="page-salle">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">🧑‍🤝‍🧑</div>
+      <div>
+        <div class="section-header-title">Salle d'étude live</div>
+        <div class="section-header-sub">Étudie en sync avec tes camarades · Co-Pomodoro Firebase</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-salle"></div>
+  </div>
+  <div class="wrap" style="padding-top:48px;padding-bottom:64px">
+
+    <!-- Not logged in -->
+    <div id="salleNoAuth" style="display:none">
+      <div class="salle-noauth">
+        <div class="salle-noauth-ic">🔒</div>
+        <strong>Connexion requise</strong>
+        <span>Connecte-toi depuis le Chat étudiant pour rejoindre ou créer une salle d'étude.</span>
+        <button class="salle-btn" onclick="showPage('chat',document.querySelector('[data-page=chat]'))">💬 Aller au Chat →</button>
+      </div>
+    </div>
+
+    <!-- Entry screen -->
+    <div id="salleEntry">
+      <div class="salle-hero rev">
+        <div class="slbl">Concentration partagée · Firebase temps réel</div>
+        <div class="sh2">Étudie <em>ensemble</em>, même à distance</div>
+        <p class="sdesc">Crée une salle ou rejoins celle d'un ami. Le timer Pomodoro se synchronise en temps réel pour tout le monde. Chat intégré pendant les pauses.</p>
+      </div>
+      <div class="salle-entry-cards">
+        <div class="salle-entry-card">
+          <h3>🆕 Créer une salle</h3>
+          <p>Tu deviens l'hôte et contrôles le timer. Partage le code à tes camarades.</p>
+          <input class="salle-input" id="salleNomInput" placeholder="Nom de la session (ex : Révisions Droit pénal)" maxlength="60">
+          <button class="salle-btn" id="salleCreateBtn" onclick="salleCreate()">Créer la salle →</button>
+        </div>
+        <div class="salle-entry-card">
+          <h3>🚪 Rejoindre une salle</h3>
+          <p>Entre le code partagé par le créateur de la salle.</p>
+          <input class="salle-input" id="salleCodeInput" placeholder="Code : DAU-XXXXX" maxlength="10" style="text-transform:uppercase;letter-spacing:.1em;font-weight:700" oninput="this.value=this.value.toUpperCase()">
+          <div id="salleJoinError" style="font-size:12px;color:#ef4444;display:none;margin-top:-6px">Code introuvable. Vérifie et réessaie.</div>
+          <button class="salle-btn salle-btn-ghost" id="salleJoinBtn" onclick="salleJoin()">Rejoindre →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active room -->
+    <div id="salleRoom" style="display:none">
+      <div class="salle-room-wrap">
+        <!-- Header -->
+        <div class="salle-room-header">
+          <div class="salle-room-code-badge" id="salleRoomCodeBadge">DAU-XXXXX</div>
+          <div class="salle-room-name" id="salleRoomNameLabel">Salle d'étude</div>
+          <button class="salle-btn salle-btn-ghost" style="margin-left:auto;padding:7px 14px;font-size:13px" onclick="salleLeave()">← Quitter la salle</button>
+        </div>
+        <div class="salle-room-body">
+          <!-- Timer card -->
+          <div class="salle-timer-card" id="salleTimerCard">
+            <div class="salle-mode-lbl" id="salleModeLabel">🎯 Travail</div>
+            <div class="salle-ring" id="salleRing">
+              <svg viewBox="0 0 160 160" width="160" height="160">
+                <circle class="salle-ring-bg" cx="80" cy="80" r="72"/>
+                <circle class="salle-ring-fill" id="salleRingFill" cx="80" cy="80" r="72" stroke-dashoffset="452"/>
+              </svg>
+              <div class="salle-ring-time">
+                <div class="salle-time-num" id="salleTimeNum">25:00</div>
+                <div style="font-size:11px;color:var(--g400);font-weight:600" id="salleTimeLbl">minutes</div>
+              </div>
+            </div>
+            <div class="salle-cycles" id="salleCyclesRow"></div>
+            <div class="salle-timer-btns">
+              <button class="salle-btn" id="salleStartBtn" onclick="salleTimerToggle()" style="padding:9px 18px">▶ Démarrer</button>
+              <button class="salle-btn salle-btn-ghost" onclick="salleTimerSkip()" style="padding:9px 14px">⏭</button>
+              <button class="salle-btn salle-btn-ghost" onclick="salleTimerReset()" style="padding:9px 14px">↺</button>
+            </div>
+            <div id="sallePresenceWrap" style="margin-top:4px;width:100%">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g400);text-align:center;margin-bottom:10px">Participants</div>
+              <div class="salle-presence-row" id="sallePresenceRow"></div>
+            </div>
+            <div id="sallePomoCount" style="font-size:12px;color:var(--g500);font-weight:600">Pomodoros : 0</div>
+          </div>
+          <!-- Chat card -->
+          <div class="salle-chat-card">
+            <div class="salle-chat-head">💬 Chat de la salle</div>
+            <div class="salle-chat-msgs" id="salleChatMsgs">
+              <div style="text-align:center;font-size:12px;color:var(--g400);padding:16px 0">Personne n'a encore écrit. Dis bonjour ! 👋</div>
+            </div>
+            <div class="salle-chat-foot">
+              <input id="salleChatInput" placeholder="Écris un message…" maxlength="280" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();salleSendMsg()}">
+              <button onclick="salleSendMsg()">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ ANALYSEUR D'ANNALES ══ -->
+<div class="page-section" id="page-annales">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">🔍</div>
+      <div>
+        <div class="section-header-title">Analyseur d'annales</div>
+        <div class="section-header-sub">Top 10 des incontournables · Patterns récurrents · Suggestions de flashcards</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-annales"></div>
+  </div>
+  <div class="wrap" style="padding-top:48px;padding-bottom:64px">
+    <div class="rev" style="margin-bottom:28px">
+      <div class="slbl">IA · Analyse prédictive des examens</div>
+      <div class="sh2">Sais ce qui va <em>vraiment</em> tomber</div>
+      <p class="sdesc">Colle les sujets des 2–3 dernières années (ou une seule annale). Le modèle 70B analyse les patterns récurrents, les thèmes incontournables, les formulations favorites du prof et te génère une liste de flashcards à créer en priorité.</p>
+    </div>
+    <div class="annales-grid">
+      <div class="prof-card">
+        <div class="prof-card-title">📋 Sujets d'annales</div>
+        <div class="prof-card-sub">Colle le texte des sujets (2 ou 3 ans de sujets si possible). Un seul sujet fonctionne aussi.</div>
+        <div class="prof-field">
+          <label for="annalesMatiere">Matière</label>
+          <select class="prof-select" id="annalesMatiere">
+            <option value="">— Choisir une matière —</option>
+            <option value="Droit constitutionnel">Droit constitutionnel</option>
+            <option value="Droit pénal">Droit pénal</option>
+            <option value="Droit européen">Droit européen</option>
+            <option value="Introduction au Droit">Introduction au Droit</option>
+            <option value="Institutions administratives et judiciaires">Institutions administratives et judiciaires</option>
+            <option value="Sciences politiques">Sciences politiques</option>
+            <option value="Microéconomie">Microéconomie</option>
+            <option value="Macroéconomie">Macroéconomie</option>
+            <option value="Comptabilité financière">Comptabilité financière</option>
+            <option value="Mathématiques">Mathématiques</option>
+            <option value="Sociologie">Sociologie</option>
+            <option value="Enjeux écologiques">Enjeux écologiques</option>
+            <option value="Gestion">Gestion</option>
+            <option value="Anglais">Anglais</option>
+          </select>
+        </div>
+        <div class="prof-field">
+          <label for="annalesInput">Texte des annales</label>
+          <textarea class="prof-textarea tall" id="annalesInput" placeholder="Colle ici les sujets d'examen (dissertations, cas pratiques, QCM…). Ex :&#10;&#10;Session 2023 :&#10;Sujet 1 : Le bicamérisme sous la Ve République&#10;Sujet 2 : Le contrôle de constitutionnalité...&#10;&#10;Session 2024 :&#10;..."></textarea>
+        </div>
+        <div class="prof-actions">
+          <button class="prof-btn" id="annalesBtn" onclick="analyseAnnales()">🔍 Analyser les annales</button>
+          <button class="prof-btn ghost" type="button" onclick="annalesReset()">🗑️ Réinitialiser</button>
+        </div>
+      </div>
+      <div class="prof-card" id="annalesResult" style="min-height:300px">
+        <div class="annales-result-empty">
+          <div>
+            <div style="font-size:42px">🔍</div>
+            <strong>L'analyse apparaîtra ici</strong>
+            <span>Choisis une matière, colle tes annales et lance l'analyse.</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -16765,7 +17154,7 @@ async function uploadFile(file) {
 
 // ── Init Firebase ──
 const { initializeApp }   = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-const { getDatabase, ref, push, onChildAdded, serverTimestamp, get, set, remove } =
+const { getDatabase, ref, push, onChildAdded, serverTimestamp, get, set, remove, onValue, onDisconnect, update } =
   await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signInWithPopup, GoogleAuthProvider, onAuthStateChanged,
@@ -16776,7 +17165,7 @@ const app  = initializeApp(firebaseConfig);
 db   = getDatabase(app);
 auth = getAuth(app);
 firebaseOk = true;
-window._fb = { db, ref, push, onChildAdded, serverTimestamp, get, set, remove };
+window._fb = { db, ref, push, onChildAdded, serverTimestamp, get, set, remove, onValue, onDisconnect, update };
 
 // ── Auth state ──
 onAuthStateChanged(auth, async fbUser => {
@@ -23181,6 +23570,943 @@ function aiParseResponse(raw) {
 
 // Init suggestions
 aiUpdateSuggestions();
+
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MIND MAP IA — JavaScript
+══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+'use strict';
+
+// ── State ──
+var mmData = null;          // parsed JSON tree
+var mmScale = 1;
+var mmOffsetX = 0, mmOffsetY = 0;
+var mmDragging = false, mmDragStartX = 0, mmDragStartY = 0, mmDragStartOX = 0, mmDragStartOY = 0;
+var mmSVG = null;
+var mmAllNodes = [];        // flat list for quick access
+
+// ── Color palette per level ──
+var MM_COLORS = [
+  '#003d7a', // root — Dauphine blue
+  ['#0057ad','#1d4ed8','#0891b2','#7c3aed','#059669','#d97706','#dc2626','#db2777'],
+  ['#bfdbfe','#e0f2fe','#ddd6fe','#d1fae5','#fef3c7','#fee2e2','#fce7f3'],
+  ['#eff6ff','#f0f9ff','#f5f3ff','#ecfdf5','#fffbeb','#fff1f2','#fdf4ff']
+];
+
+// ── Entry ──
+window.mmGenerate = async function() {
+  var input = document.getElementById('mmInput').value.trim();
+  if (!input) { toast('Colle d\'abord un cours', '⚠️'); return; }
+  var matiere = document.getElementById('mmMatiere').value;
+
+  profSetButtonLoading('mmGenBtn', true, '🧠 Génération…', '🧠 Générer la Mind Map');
+  document.getElementById('mmEmpty').style.display = 'none';
+  document.getElementById('mmControls').style.display = 'none';
+  document.getElementById('mmSvgWrap').innerHTML = '';
+  document.getElementById('mmLoadingPanel').style.display = 'flex';
+  document.getElementById('mmLoadingLabel').textContent = 'Analyse du cours avec le modèle 70B…';
+
+  var matiereCtx = matiere ? ' La matière est : ' + matiere + '.' : '';
+
+  var prompt = 'Tu es un expert pédagogique. Analyse ce cours et génère une carte mentale structurée en JSON.' + matiereCtx + '\n\n'
+    + 'COURS :\n' + input.slice(0, 5000) + '\n\n'
+    + 'Génère un JSON représentant la carte mentale. Format STRICT — réponds UNIQUEMENT avec le JSON, sans aucun texte avant ou après :\n'
+    + '{"label":"Titre principal du cours","children":[\n'
+    + '  {"label":"Grand thème 1","children":[\n'
+    + '    {"label":"Notion 1.1","children":[]},\n'
+    + '    {"label":"Notion 1.2","children":[]}\n'
+    + '  ]},\n'
+    + '  {"label":"Grand thème 2","children":[...]}\n'
+    + ']}\n\n'
+    + 'RÈGLES :\n'
+    + '- Maximum 7 enfants directs par nœud\n'
+    + '- Maximum 3 niveaux de profondeur\n'
+    + '- Labels courts : 2-5 mots maximum\n'
+    + '- Entre 4 et 7 grands thèmes au niveau 1\n'
+    + '- Chaque grand thème doit avoir 2-5 sous-notions\n'
+    + '- Réponds UNIQUEMENT avec le JSON valide, rien d\'autre';
+
+  try {
+    var raw = await profRequestXXL(prompt, 1200, 0.2);
+    document.getElementById('mmLoadingLabel').textContent = 'Construction de la carte…';
+    var data = profParseJson(raw);
+    if (!data || !data.label) throw new Error('Format JSON invalide');
+    mmData = data;
+    mmRender();
+  } catch(e) {
+    document.getElementById('mmLoadingPanel').style.display = 'none';
+    document.getElementById('mmEmpty').style.display = 'flex';
+    document.getElementById('mmEmpty').querySelector('strong').textContent = 'Génération impossible';
+    document.getElementById('mmEmpty').querySelector('span').textContent = e.message;
+    toast('Erreur de génération', '❌');
+  }
+  profSetButtonLoading('mmGenBtn', false, '🧠 Génération…', '🧠 Générer la Mind Map');
+};
+
+window.mmReset = function() {
+  mmData = null; mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
+  document.getElementById('mmEmpty').style.display = 'flex';
+  document.getElementById('mmEmpty').querySelector('strong').textContent = 'Ta Mind Map apparaîtra ici';
+  document.getElementById('mmEmpty').querySelector('span').textContent = 'Colle un cours et clique sur Générer.';
+  document.getElementById('mmControls').style.display = 'none';
+  document.getElementById('mmLoadingPanel').style.display = 'none';
+  document.getElementById('mmSvgWrap').innerHTML = '';
+  document.getElementById('mmInput').value = '';
+  document.getElementById('mmMatiere').value = '';
+};
+
+// ── Layout algorithm ──
+function mmCountLeaves(node) {
+  if (!node.children || !node.children.length) return 1;
+  return node.children.reduce(function(s, c) { return s + mmCountLeaves(c); }, 0);
+}
+
+function mmLayoutNode(node, cx, cy, angleStart, angleEnd, radius, depth) {
+  var midAngle = (angleStart + angleEnd) / 2;
+  node._x = cx + (depth === 0 ? 0 : radius * Math.cos(midAngle));
+  node._y = cy + (depth === 0 ? 0 : radius * Math.sin(midAngle));
+  node._depth = depth;
+  node._midAngle = midAngle;
+
+  if (!node.children || !node.children.length) return;
+
+  var totalLeaves = mmCountLeaves(node);
+  var radii = [0, 170, 310, 430];
+  var childRadius = radii[depth + 1] || radii[radii.length - 1];
+
+  // Spread children: root fans 360°, others keep their subtree arc
+  var arcStart = depth === 0 ? 0 : angleStart;
+  var arcEnd   = depth === 0 ? Math.PI * 2 : angleEnd;
+  var totalArc = arcEnd - arcStart;
+
+  var cur = arcStart;
+  node.children.forEach(function(child) {
+    var leaves = mmCountLeaves(child);
+    var childArc = (leaves / totalLeaves) * totalArc;
+    mmLayoutNode(child, cx, cy, cur, cur + childArc, childRadius, depth + 1);
+    cur += childArc;
+  });
+}
+
+function mmFlattenNodes(node, list) {
+  list.push(node);
+  if (node.children) node.children.forEach(function(c) { mmFlattenNodes(c, list); });
+}
+
+// ── Render ──
+function mmRender() {
+  if (!mmData) return;
+
+  var W = 800, H = 640, CX = W / 2, CY = H / 2;
+  mmLayoutNode(mmData, CX, CY, 0, Math.PI * 2, 0, 0);
+
+  mmAllNodes = [];
+  mmFlattenNodes(mmData, mmAllNodes);
+
+  var totalNodes = mmAllNodes.length;
+  document.getElementById('mmNodeCount').textContent = totalNodes + ' nœuds';
+
+  // Build SVG
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  svg.style.cssText = 'width:100%;height:100%;overflow:visible';
+
+  // Defs for gradient/shadow
+  var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  var filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+  filter.setAttribute('id', 'mmShadow');
+  var feDropShadow = document.createElementNS('http://www.w3.org/2000/svg', 'feDropShadow');
+  feDropShadow.setAttribute('dx','0'); feDropShadow.setAttribute('dy','2');
+  feDropShadow.setAttribute('stdDeviation','3'); feDropShadow.setAttribute('flood-opacity','0.12');
+  filter.appendChild(feDropShadow);
+  defs.appendChild(filter);
+  svg.appendChild(defs);
+
+  var gMain = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  gMain.setAttribute('id', 'mmMain');
+  gMain.setAttribute('transform', 'translate(0,0) scale(1)');
+  svg.appendChild(gMain);
+
+  // Draw links first (behind nodes)
+  var gLinks = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  gMain.appendChild(gLinks);
+  var gNodes = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  gMain.appendChild(gNodes);
+
+  function drawLinks(node) {
+    if (!node.children || !node.children.length) return;
+    var d = node._depth;
+    node.children.forEach(function(child) {
+      var strokeColor = d === 0 ? MM_COLORS[1][child._depth === 1 ? node.children.indexOf(child) % MM_COLORS[1].length : 0] : '#cbd5e1';
+      // Cubic bezier from parent to child
+      var dx = (child._x - node._x) * 0.5;
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      var d_attr = 'M' + node._x + ',' + node._y
+        + ' C' + (node._x + dx) + ',' + node._y
+        + ' ' + (child._x - dx) + ',' + child._y
+        + ' ' + child._x + ',' + child._y;
+      path.setAttribute('d', d_attr);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', d === 0 ? MM_COLORS[1][node.children.indexOf(child) % MM_COLORS[1].length] : '#94a3b8');
+      path.setAttribute('stroke-width', d === 0 ? '2.5' : '1.5');
+      path.setAttribute('opacity', '0.7');
+      path.setAttribute('stroke-linecap', 'round');
+      gLinks.appendChild(path);
+      drawLinks(child);
+    });
+  }
+  drawLinks(mmData);
+
+  // Draw nodes
+  function drawNode(node) {
+    var depth = node._depth;
+    var label = String(node.label || '');
+    var maxChars = depth === 0 ? 28 : depth === 1 ? 18 : 14;
+    var displayLabel = label.length > maxChars ? label.slice(0, maxChars - 1) + '…' : label;
+    var fontSize = depth === 0 ? 13 : depth === 1 ? 11 : 10;
+    var padding = depth === 0 ? 14 : depth === 1 ? 10 : 7;
+    var textW = displayLabel.length * fontSize * 0.58;
+    var rectW = textW + padding * 2;
+    var rectH = fontSize + padding * 1.4;
+    var rx = depth === 0 ? 14 : depth === 1 ? 10 : 8;
+
+    var bgColor, textColor;
+    if (depth === 0) {
+      bgColor = '#003d7a'; textColor = '#fff';
+    } else if (depth === 1) {
+      // Find index among siblings of root
+      var rootChildren = mmData.children || [];
+      var idx = rootChildren.indexOf(node);
+      if (idx === -1) {
+        // fallback: search
+        for (var i = 0; i < rootChildren.length; i++) {
+          if (rootChildren[i] === node) { idx = i; break; }
+        }
+      }
+      bgColor = MM_COLORS[1][idx % MM_COLORS[1].length];
+      textColor = '#fff';
+    } else if (depth === 2) {
+      // Match parent color, lighter
+      var parentIdx = 0;
+      var rc = mmData.children || [];
+      for (var i = 0; i < rc.length; i++) {
+        if ((rc[i].children || []).indexOf(node) !== -1) { parentIdx = i; break; }
+      }
+      bgColor = MM_COLORS[2][parentIdx % MM_COLORS[2].length] || '#e0f2fe';
+      textColor = '#1e293b';
+    } else {
+      bgColor = '#f8fafc'; textColor = '#475569';
+    }
+
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(' + (node._x - rectW/2) + ',' + (node._y - rectH/2) + ')');
+    g.style.cursor = (node.children && node.children.length) ? 'pointer' : 'default';
+    if (depth > 0) g.setAttribute('filter', 'url(#mmShadow)');
+
+    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('width', rectW); rect.setAttribute('height', rectH);
+    rect.setAttribute('rx', rx); rect.setAttribute('fill', bgColor);
+    if (depth >= 2) { rect.setAttribute('stroke', '#e2e8f0'); rect.setAttribute('stroke-width','1'); }
+    g.appendChild(rect);
+
+    var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', rectW / 2); text.setAttribute('y', rectH / 2 + fontSize * 0.35);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', textColor);
+    text.setAttribute('font-size', fontSize);
+    text.setAttribute('font-family', 'Figtree, sans-serif');
+    text.setAttribute('font-weight', depth <= 1 ? '700' : '600');
+    text.textContent = displayLabel;
+    g.appendChild(text);
+
+    // Collapse indicator
+    if (node.children && node.children.length && depth > 0) {
+      var ind = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      ind.setAttribute('cx', rectW - 5); ind.setAttribute('cy', 5);
+      ind.setAttribute('r', 4);
+      ind.setAttribute('fill', textColor); ind.setAttribute('opacity', '0.4');
+      g.appendChild(ind);
+    }
+
+    if (node.children && node.children.length) {
+      g.addEventListener('click', function(e) {
+        e.stopPropagation();
+        node._collapsed = !node._collapsed;
+        if (node._collapsed) {
+          node._savedChildren = node.children;
+          node.children = [];
+        } else {
+          node.children = node._savedChildren || [];
+          delete node._savedChildren;
+        }
+        mmRender();
+      });
+    }
+
+    gNodes.appendChild(g);
+    if (node.children) node.children.forEach(drawNode);
+  }
+  drawNode(mmData);
+
+  // Setup pan/zoom
+  var wrap = document.getElementById('mmSvgWrap');
+  wrap.innerHTML = '';
+  wrap.appendChild(svg);
+  mmSVG = svg;
+  mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
+  mmApplyTransform();
+  mmSetupInteraction(wrap);
+
+  document.getElementById('mmLoadingPanel').style.display = 'none';
+  document.getElementById('mmControls').style.display = 'flex';
+}
+
+function mmApplyTransform() {
+  if (!mmSVG) return;
+  var g = mmSVG.getElementById('mmMain');
+  if (g) g.setAttribute('transform', 'translate(' + mmOffsetX + ',' + mmOffsetY + ') scale(' + mmScale + ')');
+}
+
+function mmSetupInteraction(wrap) {
+  // Wheel zoom
+  wrap.onwheel = function(e) {
+    e.preventDefault();
+    var delta = e.deltaY > 0 ? 0.85 : 1.18;
+    mmScale = Math.max(0.3, Math.min(3, mmScale * delta));
+    mmApplyTransform();
+  };
+  // Drag pan
+  wrap.onmousedown = function(e) {
+    if (e.button !== 0) return;
+    mmDragging = true;
+    mmDragStartX = e.clientX; mmDragStartY = e.clientY;
+    mmDragStartOX = mmOffsetX; mmDragStartOY = mmOffsetY;
+  };
+  window.addEventListener('mousemove', function(e) {
+    if (!mmDragging) return;
+    mmOffsetX = mmDragStartOX + (e.clientX - mmDragStartX);
+    mmOffsetY = mmDragStartOY + (e.clientY - mmDragStartY);
+    mmApplyTransform();
+  });
+  window.addEventListener('mouseup', function() { mmDragging = false; });
+  // Touch
+  var lastTouchDist = null, lastTouchMX = 0, lastTouchMY = 0;
+  wrap.ontouchstart = function(e) {
+    if (e.touches.length === 1) {
+      mmDragging = true;
+      mmDragStartX = e.touches[0].clientX; mmDragStartY = e.touches[0].clientY;
+      mmDragStartOX = mmOffsetX; mmDragStartOY = mmOffsetY;
+    } else if (e.touches.length === 2) {
+      lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  };
+  wrap.ontouchmove = function(e) {
+    e.preventDefault();
+    if (e.touches.length === 1 && mmDragging) {
+      mmOffsetX = mmDragStartOX + (e.touches[0].clientX - mmDragStartX);
+      mmOffsetY = mmDragStartOY + (e.touches[0].clientY - mmDragStartY);
+      mmApplyTransform();
+    } else if (e.touches.length === 2 && lastTouchDist !== null) {
+      var newDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      mmScale = Math.max(0.3, Math.min(3, mmScale * (newDist / lastTouchDist)));
+      lastTouchDist = newDist;
+      mmApplyTransform();
+    }
+  };
+  wrap.ontouchend = function() { mmDragging = false; lastTouchDist = null; };
+}
+
+window.mmZoomIn  = function() { mmScale = Math.min(3, mmScale * 1.2); mmApplyTransform(); };
+window.mmZoomOut = function() { mmScale = Math.max(0.3, mmScale / 1.2); mmApplyTransform(); };
+window.mmFit     = function() { mmScale = 1; mmOffsetX = 0; mmOffsetY = 0; mmApplyTransform(); };
+
+window.mmExportSvg = function() {
+  if (!mmSVG) return;
+  var serializer = new XMLSerializer();
+  var src = serializer.serializeToString(mmSVG);
+  var blob = new Blob([src], { type: 'image/svg+xml' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href = url; a.download = 'mindmap.svg';
+  a.click(); URL.revokeObjectURL(url);
+  toast('SVG exporté ! 🗺️', '✅');
+};
+
+window.mmExportPng = function() {
+  if (!mmSVG) return;
+  var canvas = document.createElement('canvas');
+  canvas.width = 1600; canvas.height = 1280;
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  var serializer = new XMLSerializer();
+  var src = serializer.serializeToString(mmSVG);
+  var blob = new Blob([src], { type: 'image/svg+xml;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var img = new Image();
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    var link = document.createElement('a');
+    link.download = 'mindmap.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    toast('PNG exporté ! 🖼️', '✅');
+  };
+  img.src = url;
+};
+
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SALLE D'ÉTUDE CO-POMODORO — JavaScript
+══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+'use strict';
+
+// ── Constants ──
+var SALLE_WORK_S  = 25 * 60;
+var SALLE_SHORT_S = 5  * 60;
+var SALLE_LONG_S  = 15 * 60;
+var SALLE_CYCLES_MAX = 4;
+var SALLE_CIRC = 452; // 2π × 72
+
+// ── State ──
+var salleRoomCode   = null;
+var salleRoomRef    = null;
+var sallePresenceRef = null;
+var salleTimerUnsub = null;
+var salleChatUnsub  = null;
+var sallePresenceUnsub = null;
+var salleLocalTick  = null;
+var salleLocalState = { mode: 'work', running: false, remaining: SALLE_WORK_S, cycles: 0 };
+var salleIsHost     = false;
+var salleLastRenderedMsgId = null;
+
+// ── Called when entering the page ──
+window.salleInit = function() {
+  var user = window._chatCurrentUser;
+  var noAuth = document.getElementById('salleNoAuth');
+  var entry  = document.getElementById('salleEntry');
+  if (!window._fb || !user) {
+    if (noAuth) noAuth.style.display = '';
+    if (entry)  entry.style.display  = 'none';
+  } else {
+    if (noAuth) noAuth.style.display = 'none';
+    if (entry)  entry.style.display  = '';
+    // If already in a room, re-show it
+    if (salleRoomCode) salleShowRoom();
+  }
+};
+
+// Observe page switch
+(function patchShowPage() {
+  var _orig = window.showPage;
+  window.showPage = function(pageId, btn) {
+    if (_orig) _orig(pageId, btn);
+    if (pageId === 'salle') {
+      setTimeout(salleInit, 100);
+    }
+  };
+})();
+
+// ── Generate a room code ──
+function salleGenCode() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code = 'DAU-';
+  for (var i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// ── Create room ──
+window.salleCreate = async function() {
+  var user = window._chatCurrentUser;
+  if (!user) { toast('Connecte-toi d\'abord via le Chat', '🔒'); return; }
+  if (!window._fb || !window._fb.db) { toast('Firebase non disponible', '⚠️'); return; }
+
+  var nom = (document.getElementById('salleNomInput').value.trim()) || 'Salle d\'étude';
+  var code = salleGenCode();
+  var btn = document.getElementById('salleCreateBtn');
+  btn.disabled = true; btn.textContent = 'Création…';
+
+  try {
+    var { db, ref, set, serverTimestamp, onValue, onDisconnect } = window._fb;
+    var roomRef = ref(db, 'study-rooms/' + code);
+    await set(roomRef, {
+      meta: { name: nom, hostUid: user.uid, createdAt: Date.now() },
+      timer: {
+        mode: 'work', running: false,
+        startedAt: null, pausedRemaining: SALLE_WORK_S,
+        workS: SALLE_WORK_S, shortS: SALLE_SHORT_S, longS: SALLE_LONG_S,
+        cycles: 0, cyclesMax: SALLE_CYCLES_MAX,
+        updatedBy: user.uid
+      }
+    });
+    salleIsHost = true;
+    await salleEnterRoom(code);
+  } catch(e) {
+    toast('Erreur de création : ' + e.message, '❌');
+  }
+  btn.disabled = false; btn.textContent = 'Créer la salle →';
+};
+
+// ── Join room ──
+window.salleJoin = async function() {
+  var user = window._chatCurrentUser;
+  if (!user) { toast('Connecte-toi d\'abord via le Chat', '🔒'); return; }
+  if (!window._fb || !window._fb.db) { toast('Firebase non disponible', '⚠️'); return; }
+
+  var raw = document.getElementById('salleCodeInput').value.trim().toUpperCase();
+  var code = raw.startsWith('DAU-') ? raw : 'DAU-' + raw;
+  var errDiv = document.getElementById('salleJoinError');
+  errDiv.style.display = 'none';
+
+  var btn = document.getElementById('salleJoinBtn');
+  btn.disabled = true; btn.textContent = 'Vérification…';
+
+  try {
+    var { db, ref, get: fbGet } = window._fb;
+    var snap = await fbGet(ref(db, 'study-rooms/' + code + '/meta'));
+    if (!snap.exists()) {
+      errDiv.style.display = '';
+      btn.disabled = false; btn.textContent = 'Rejoindre →';
+      return;
+    }
+    var meta = snap.val();
+    salleIsHost = (meta.hostUid === user.uid);
+    await salleEnterRoom(code);
+  } catch(e) {
+    toast('Erreur : ' + e.message, '❌');
+  }
+  btn.disabled = false; btn.textContent = 'Rejoindre →';
+};
+
+async function salleEnterRoom(code) {
+  var user = window._chatCurrentUser;
+  var { db, ref, set, onValue, onDisconnect: fbOD, onChildAdded, serverTimestamp, push } = window._fb;
+
+  salleRoomCode = code;
+  salleRoomRef  = ref(db, 'study-rooms/' + code);
+  sallePresenceRef = ref(db, 'study-rooms/' + code + '/presence/' + user.uid);
+
+  // Write presence
+  var presData = { pseudo: user.pseudo, promo: user.promo || '', lastSeen: Date.now(), photo: user.photo || null };
+  await set(sallePresenceRef, presData);
+  // Remove on disconnect
+  fbOD(sallePresenceRef).remove();
+
+  salleShowRoom();
+
+  // Load room meta
+  var metaSnap = await (window._fb.get)(ref(db, 'study-rooms/' + code + '/meta'));
+  if (metaSnap.exists()) {
+    document.getElementById('salleRoomNameLabel').textContent = metaSnap.val().name || 'Salle d\'étude';
+  }
+  document.getElementById('salleRoomCodeBadge').textContent = code;
+
+  // Subscribe to timer
+  if (salleTimerUnsub) salleTimerUnsub();
+  salleTimerUnsub = onValue(ref(db, 'study-rooms/' + code + '/timer'), function(snap) {
+    if (!snap.exists()) return;
+    var t = snap.val();
+    salleApplyTimerState(t);
+  });
+
+  // Subscribe to presence
+  if (sallePresenceUnsub) sallePresenceUnsub();
+  sallePresenceUnsub = onValue(ref(db, 'study-rooms/' + code + '/presence'), function(snap) {
+    var participants = [];
+    if (snap.exists()) {
+      snap.forEach(function(child) {
+        participants.push(Object.assign({ uid: child.key }, child.val()));
+      });
+    }
+    salleRenderPresence(participants);
+  });
+
+  // Subscribe to chat messages
+  if (salleChatUnsub) salleChatUnsub();
+  var chatRef = ref(db, 'study-rooms/' + code + '/messages');
+  salleChatUnsub = onChildAdded(chatRef, function(snap) {
+    var msg = snap.val();
+    msg._key = snap.key;
+    sallePushChatMsg(msg);
+  });
+}
+
+function salleShowRoom() {
+  document.getElementById('salleEntry').style.display = 'none';
+  document.getElementById('salleRoom').style.display  = '';
+  document.getElementById('salleNoAuth').style.display = 'none';
+}
+
+// ── Leave room ──
+window.salleLeave = async function() {
+  var { db, ref, remove } = window._fb || {};
+  if (sallePresenceRef && remove) remove(sallePresenceRef);
+  if (salleTimerUnsub) { salleTimerUnsub(); salleTimerUnsub = null; }
+  if (sallePresenceUnsub) { sallePresenceUnsub(); sallePresenceUnsub = null; }
+  if (salleChatUnsub) { salleChatUnsub(); salleChatUnsub = null; }
+  if (salleLocalTick) { clearInterval(salleLocalTick); salleLocalTick = null; }
+  salleRoomCode = null; salleRoomRef = null; sallePresenceRef = null;
+  salleLastRenderedMsgId = null;
+  document.getElementById('salleRoom').style.display  = 'none';
+  document.getElementById('salleEntry').style.display = '';
+  document.getElementById('salleChatMsgs').innerHTML = '<div style="text-align:center;font-size:12px;color:var(--g400);padding:16px 0">Personne n\'a encore écrit. Dis bonjour ! 👋</div>';
+  document.getElementById('sallePresenceRow').innerHTML = '';
+  document.getElementById('salleCodeInput').value = '';
+  document.getElementById('salleNomInput').value = '';
+};
+
+// ── Apply timer state from Firebase ──
+function salleApplyTimerState(t) {
+  if (salleLocalTick) clearInterval(salleLocalTick);
+
+  var now = Date.now();
+  var remaining;
+  if (t.running && t.startedAt) {
+    remaining = Math.max(0, t.pausedRemaining - Math.floor((now - t.startedAt) / 1000));
+  } else {
+    remaining = t.pausedRemaining != null ? t.pausedRemaining : SALLE_WORK_S;
+  }
+
+  salleLocalState = {
+    mode: t.mode || 'work',
+    running: !!t.running,
+    remaining: remaining,
+    cycles: t.cycles || 0,
+    workS: t.workS || SALLE_WORK_S,
+    shortS: t.shortS || SALLE_SHORT_S,
+    longS: t.longS || SALLE_LONG_S,
+    cyclesMax: t.cyclesMax || SALLE_CYCLES_MAX,
+    startedAt: t.startedAt || null,
+    pausedRemaining: t.pausedRemaining != null ? t.pausedRemaining : SALLE_WORK_S
+  };
+
+  salleUpdateDisplay();
+
+  // Start local tick if running
+  if (t.running && t.startedAt) {
+    salleLocalTick = setInterval(function() {
+      var nowT = Date.now();
+      var rem = Math.max(0, salleLocalState.pausedRemaining - Math.floor((nowT - salleLocalState.startedAt) / 1000));
+      salleLocalState.remaining = rem;
+      salleUpdateDisplay();
+      if (rem === 0) {
+        clearInterval(salleLocalTick);
+        // Only host advances the timer
+        if (salleIsHost) salleAdvanceMode();
+      }
+    }, 500);
+  }
+}
+
+function salleUpdateDisplay() {
+  var s = salleLocalState;
+  var m = Math.floor(s.remaining / 60);
+  var sec = s.remaining % 60;
+  document.getElementById('salleTimeNum').textContent = (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+
+  var modeText = s.mode === 'work' ? '🎯 Travail' : s.mode === 'short' ? '☕ Pause courte' : '🌿 Pause longue';
+  document.getElementById('salleModeLabel').textContent = modeText;
+
+  var startBtn = document.getElementById('salleStartBtn');
+  if (startBtn) startBtn.textContent = s.running ? '⏸ Pause' : '▶ Démarrer';
+
+  // Ring progress
+  var total = s.mode === 'work' ? s.workS : s.mode === 'short' ? s.shortS : s.longS;
+  if (!total) total = SALLE_WORK_S;
+  var pct = Math.min(1, s.remaining / total);
+  var offset = SALLE_CIRC * (1 - pct);
+  var ringFill = document.getElementById('salleRingFill');
+  if (ringFill) ringFill.setAttribute('stroke-dashoffset', offset);
+
+  // Cycle dots
+  var row = document.getElementById('salleCyclesRow');
+  if (row) {
+    row.innerHTML = '';
+    for (var i = 0; i < (s.cyclesMax || SALLE_CYCLES_MAX); i++) {
+      var dot = document.createElement('div');
+      dot.className = 'salle-cycle-dot' + (i < s.cycles ? ' done' : '');
+      row.appendChild(dot);
+    }
+  }
+
+  // Pomo count
+  var pc = document.getElementById('sallePomoCount');
+  if (pc) pc.textContent = 'Pomodoros complétés : ' + (s.cycles || 0);
+}
+
+// ── Timer controls (write to Firebase if host, else toast) ──
+window.salleTimerToggle = async function() {
+  if (!salleRoomCode) return;
+  if (!salleIsHost) { toast('Seul l\'hôte peut contrôler le timer', '🔒'); return; }
+  var { db, ref, set } = window._fb;
+  var s = salleLocalState;
+  if (s.running) {
+    // Pause
+    await set(ref(db, 'study-rooms/' + salleRoomCode + '/timer'), Object.assign({}, salleLocalState, {
+      running: false, startedAt: null,
+      pausedRemaining: s.remaining,
+      workS: s.workS, shortS: s.shortS, longS: s.longS, cyclesMax: s.cyclesMax
+    }));
+  } else {
+    // Start
+    await set(ref(db, 'study-rooms/' + salleRoomCode + '/timer'), Object.assign({}, salleLocalState, {
+      running: true, startedAt: Date.now(),
+      pausedRemaining: s.remaining,
+      workS: s.workS, shortS: s.shortS, longS: s.longS, cyclesMax: s.cyclesMax
+    }));
+  }
+};
+
+window.salleTimerReset = async function() {
+  if (!salleRoomCode) return;
+  if (!salleIsHost) { toast('Seul l\'hôte peut contrôler le timer', '🔒'); return; }
+  var { db, ref, set } = window._fb;
+  var s = salleLocalState;
+  var total = s.mode === 'work' ? s.workS : s.mode === 'short' ? s.shortS : s.longS;
+  await set(ref(db, 'study-rooms/' + salleRoomCode + '/timer'), Object.assign({}, salleLocalState, {
+    running: false, startedAt: null, pausedRemaining: total
+  }));
+};
+
+window.salleTimerSkip = async function() {
+  if (!salleRoomCode) return;
+  if (!salleIsHost) { toast('Seul l\'hôte peut contrôler le timer', '🔒'); return; }
+  await salleAdvanceMode();
+};
+
+async function salleAdvanceMode() {
+  if (!salleRoomCode) return;
+  var { db, ref, set } = window._fb;
+  var s = salleLocalState;
+  var newCycles = s.cycles;
+  var newMode;
+  if (s.mode === 'work') {
+    newCycles = s.cycles + 1;
+    newMode = (newCycles % (s.cyclesMax || SALLE_CYCLES_MAX) === 0) ? 'long' : 'short';
+  } else {
+    newMode = 'work';
+  }
+  var newTotal = newMode === 'work' ? s.workS : newMode === 'short' ? s.shortS : s.longS;
+  await set(ref(db, 'study-rooms/' + salleRoomCode + '/timer'), {
+    mode: newMode, running: false,
+    startedAt: null, pausedRemaining: newTotal,
+    workS: s.workS, shortS: s.shortS, longS: s.longS,
+    cycles: newCycles, cyclesMax: s.cyclesMax
+  });
+  toast(newMode === 'work' ? '🎯 Travail !' : newMode === 'short' ? '☕ Pause courte !' : '🌿 Grande pause !', '⏰');
+}
+
+// ── Render presence ──
+function salleRenderPresence(participants) {
+  var row = document.getElementById('sallePresenceRow');
+  if (!row) return;
+  row.innerHTML = '';
+  participants.forEach(function(p) {
+    var wrap = document.createElement('div');
+    wrap.className = 'salle-presence-wrap';
+    var av = document.createElement('div');
+    av.className = 'salle-avatar';
+    if (p.photo) {
+      av.style.backgroundImage = 'url(' + p.photo + ')';
+      av.style.backgroundSize = 'cover';
+      av.style.backgroundPosition = 'center';
+    } else {
+      av.textContent = (p.pseudo || '?')[0].toUpperCase();
+    }
+    var name = document.createElement('div');
+    name.className = 'salle-avatar-name';
+    name.textContent = (p.pseudo || '?').slice(0, 10);
+    wrap.appendChild(av);
+    wrap.appendChild(name);
+    row.appendChild(wrap);
+  });
+}
+
+// ── Chat ──
+window.salleSendMsg = async function() {
+  var user = window._chatCurrentUser;
+  if (!user || !salleRoomCode) return;
+  var input = document.getElementById('salleChatInput');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  var { db, ref, push, serverTimestamp } = window._fb;
+  await push(ref(db, 'study-rooms/' + salleRoomCode + '/messages'), {
+    pseudo: user.pseudo, promo: user.promo || '', text: text, ts: Date.now()
+  });
+};
+
+function sallePushChatMsg(msg) {
+  var user = window._chatCurrentUser;
+  var isMine = user && msg.pseudo === user.pseudo;
+  var msgs = document.getElementById('salleChatMsgs');
+  if (!msgs) return;
+  // Remove placeholder if any
+  var placeholder = msgs.querySelector('div[style*="color:var(--g400)"]');
+  if (placeholder) placeholder.remove();
+  var div = document.createElement('div');
+  div.className = 'salle-msg' + (isMine ? ' mine' : '');
+  var meta = document.createElement('div');
+  meta.className = 'salle-msg-meta';
+  var d = new Date(msg.ts || Date.now());
+  meta.textContent = msg.pseudo + ' · ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+  var bubble = document.createElement('div');
+  bubble.className = 'salle-msg-bubble';
+  bubble.textContent = msg.text || '';
+  div.appendChild(meta);
+  div.appendChild(bubble);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ANALYSEUR D'ANNALES — JavaScript
+══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+'use strict';
+
+window.analyseAnnales = async function() {
+  var matiere = document.getElementById('annalesMatiere').value;
+  var input   = document.getElementById('annalesInput').value.trim();
+  var result  = document.getElementById('annalesResult');
+
+  if (!input) { toast('Colle d\'abord le texte des annales', '⚠️'); return; }
+  if (!matiere) { toast('Choisis une matière', '⚠️'); return; }
+
+  profSetButtonLoading('annalesBtn', true, '🔍 Analyse…', '🔍 Analyser les annales');
+  result.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--g500)">'
+    + '<div style="width:32px;height:32px;border:3px solid var(--g100);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite"></div>'
+    + '<span style="font-weight:600">Analyse des patterns en cours avec le modèle 70B…</span></div>';
+
+  var prompt = 'Tu es un expert en analyse d\'annales d\'examens universitaires français. Matière : ' + matiere + '.\n\n'
+    + 'ANNALES :\n' + input.slice(0, 6000) + '\n\n'
+    + 'Analyse ce corpus et fournis UNIQUEMENT ce JSON (aucun texte avant/après) :\n'
+    + '{\n'
+    + '  "themes": [\n'
+    + '    {"rank":1,"titre":"Titre du thème","freq":"2x","annees":"2022,2023","conseil":"Conseil de révision concis","type":"Dissertation"},\n'
+    + '    ... (exactement 8 thèmes)\n'
+    + '  ],\n'
+    + '  "types": [{"type":"Dissertation","pct":60},{"type":"Cas pratique","pct":30},{"type":"QCM","pct":10}],\n'
+    + '  "formulations": ["Formulation typique du prof 1","Formulation 2","Formulation 3","Formulation 4","Formulation 5"],\n'
+    + '  "flashcards": [\n'
+    + '    {"q":"Question courte ?","r":"Réponse concise."},\n'
+    + '    ... (exactement 6 flashcards prioritaires)\n'
+    + '  ]\n'
+    + '}\n\n'
+    + 'RÈGLES : themes = 8 éléments, flashcards = 6 éléments, formulations = 5 éléments max. Réponds UNIQUEMENT avec le JSON.';
+
+  try {
+    var raw = await profRequestXXL(prompt, 1800, 0.25);
+    var data = profParseJson(raw);
+    if (!data || !Array.isArray(data.themes)) throw new Error('Format de réponse inattendu. Réessaie.');
+    result.innerHTML = annalesRenderResult(data, matiere);
+    // Add flash card buttons handler
+    result.querySelectorAll('.annales-flash-add').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var q = btn.dataset.q, r = btn.dataset.r, mat = btn.dataset.mat;
+        annalesAddFlashcard(q, r, mat);
+        btn.textContent = '✓ Ajoutée';
+        btn.disabled = true;
+      });
+    });
+  } catch(e) {
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Analyse impossible</strong><span>' + profEscapeHtml(e.message) + '</span></div></div>';
+    toast('Erreur d\'analyse', '❌');
+  }
+  profSetButtonLoading('annalesBtn', false, '🔍 Analyse…', '🔍 Analyser les annales');
+};
+
+function annalesRenderResult(data, matiere) {
+  var html = '';
+  var themes   = Array.isArray(data.themes)      ? data.themes      : [];
+  var types    = Array.isArray(data.types)        ? data.types       : [];
+  var forms    = Array.isArray(data.formulations) ? data.formulations : [];
+  var flashes  = Array.isArray(data.flashcards)   ? data.flashcards  : [];
+
+  // Top themes
+  if (themes.length) {
+    html += '<div class="annales-section-label">🏆 Top ' + themes.length + ' thèmes incontournables</div>';
+    html += '<div class="annales-themes">';
+    themes.forEach(function(t, i) {
+      var isTop = i < 3;
+      html += '<div class="annales-theme">';
+      html += '<div class="annales-theme-rank' + (isTop ? ' top3' : '') + '">' + (t.rank || i + 1) + '</div>';
+      html += '<div class="annales-theme-body">';
+      html += '<div class="annales-theme-title">' + profEscapeHtml(t.titre || '') + '</div>';
+      html += '<div class="annales-theme-meta">';
+      if (t.freq) html += '<span class="annales-tag freq">📊 ' + profEscapeHtml(t.freq) + '</span>';
+      if (t.annees) html += '<span class="annales-tag">📅 ' + profEscapeHtml(t.annees) + '</span>';
+      if (t.type) html += '<span class="annales-tag type">' + profEscapeHtml(t.type) + '</span>';
+      html += '</div>';
+      if (t.conseil) html += '<div class="annales-conseil">💡 ' + profEscapeHtml(t.conseil) + '</div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  }
+
+  // Question types
+  if (types.length) {
+    html += '<div class="annales-section-label">📐 Types de sujets</div>';
+    html += '<div class="annales-types-row">';
+    types.forEach(function(t) {
+      html += '<div class="annales-type-pill">' + profEscapeHtml(t.type || '') + (t.pct ? ' · <strong>' + t.pct + '%</strong>' : '') + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Favorite formulations
+  if (forms.length) {
+    html += '<div class="annales-section-label">🖊️ Formulations favorites du prof</div>';
+    forms.forEach(function(f) {
+      html += '<div class="annales-formulation">"' + profEscapeHtml(f) + '"</div>';
+    });
+  }
+
+  // Flashcard suggestions
+  if (flashes.length) {
+    html += '<div class="annales-section-label">🃏 Flashcards à créer en priorité</div>';
+    html += '<div class="annales-flash-suggestions">';
+    flashes.forEach(function(f) {
+      html += '<div class="annales-flash-item">';
+      html += '<div class="annales-flash-q">' + profEscapeHtml(f.q || '') + '</div>';
+      html += '<button class="annales-flash-add" data-q="' + profEscapeHtml(f.q || '') + '" data-r="' + profEscapeHtml(f.r || '') + '" data-mat="' + profEscapeHtml(matiere) + '">+ Ajouter</button>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  return html || '<div class="prof-empty"><div><div style="font-size:38px">⚠️</div><strong>Résultat vide</strong><span>Réessaie avec un texte d\'annales plus complet.</span></div></div>';
+}
+
+function annalesAddFlashcard(q, r, matiere) {
+  if (!q || !r) return;
+  var mat = matiere || 'Annales';
+  var newCard = { id: Date.now(), cat: mat, q: q, r: r, sm2_n: 0, sm2_ef: 2.5, sm2_next: 0 };
+  var cards = [];
+  try { cards = JSON.parse(localStorage.getItem('flashcards') || '[]'); } catch(e) {}
+  cards.unshift(newCard);
+  localStorage.setItem('flashcards', JSON.stringify(cards));
+  toast('Flashcard ajoutée ! 🃏', '✅');
+}
+
+window.annalesReset = function() {
+  document.getElementById('annalesInput').value = '';
+  document.getElementById('annalesMatiere').value = '';
+  document.getElementById('annalesResult').innerHTML = '<div class="annales-result-empty"><div><div style="font-size:42px">🔍</div><strong>L\'analyse apparaîtra ici</strong><span>Choisis une matière, colle tes annales et lance l\'analyse.</span></div></div>';
+};
 
 })();
 </script>
