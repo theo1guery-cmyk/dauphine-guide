@@ -5,5 +5,5 @@
     </style>
   </defs>
   <rect width='512' height='512' rx='120' fill='#003d7a'/>
-  <text x='256' y='368' text-anchor='middle' fill='white' font-size='320'>D</text>
+  <text x='256' y='368' text-anchor='middle' fill='white' font-size='320' font-family='Georgia, serif' font-style='italic'>D</text>
 </svg>
