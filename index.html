@@ -22291,16 +22291,23 @@ function aiSystemPrompt() {
     '- set_theme: changer le thème. Champ: theme = "dark" ou "light"\n' +
     '- start_pomodoro: lancer un pomodoro. Champs: duration (minutes), label (optionnel)\n' +
     '- open_background_customizer: ouvrir la personnalisation du fond\n' +
-    '- open_profile: ouvrir le profil utilisateur\n\n' +
+    '- open_profile: ouvrir le profil utilisateur\n' +
+    '- set_grade: enregistrer une note dans le simulateur de moyenne. Champs: matiere (nom ou id, ex: "maths1", "Mathématiques"), type_note ("cc" ou "ex"), note (nombre entre 0 et 20), semestre (1 ou 2, optionnel)\n' +
+    '  Exemple: {"type":"set_grade","matiere":"maths1","type_note":"cc","note":6,"semestre":1}\n' +
+    '- send_chat_message: envoyer un message dans le chat étudiant au nom du client. Champs: text (message à envoyer), salon (optionnel: "general", "annonces", "achatvente", "tickets", "echangecours" — défaut: "general")\n' +
+    '  Exemple: {"type":"send_chat_message","text":"Salut tout le monde !","salon":"general"}\n\n' +
     '=== RÈGLE ABSOLUE SUR LES ACTIONS ===\n' +
     'NE JAMAIS inclure de bloc @@ACTIONS@@ sauf si le message contient UN de ces mots déclencheurs EXACTS :\n' +
-    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule", "supprime", "ouvre", "lance", "active", "change"\n' +
+    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule", "supprime", "ouvre", "lance", "active", "change", "rentre", "entre", "enregistre", "envoie", "poste"\n' +
     'Questions informatives (quoi, quand, comment, explique, résume, montre, c\'est quoi...) → réponse texte UNIQUEMENT, ZÉRO action.\n' +
     'Exemples :\n' +
     '✅ "ajoute une révision de maths demain" → inclure @@ACTIONS@@\n' +
     '✅ "crée-moi des flashcards sur le Lagrangien" → inclure @@ACTIONS@@\n' +
     '✅ "crée une note de droit constit et ouvre-la" → inclure @@ACTIONS@@\n' +
     '✅ "supprime ma séance de macro vendredi" → inclure @@ACTIONS@@\n' +
+    '✅ "rentre ma note de 6 en CC de maths S1" → inclure @@ACTIONS@@ avec type set_grade\n' +
+    '✅ "j\'ai eu 14 à l\'examen d\'intro au droit" → inclure @@ACTIONS@@ avec type set_grade\n' +
+    '✅ "envoie \'salut\' dans le chat général" → inclure @@ACTIONS@@ avec type send_chat_message\n' +
     '❌ "qu\'est-ce que j\'ai demain ?" → réponse texte seule, PAS d\'action\n' +
     '❌ "quand est mon prochain exam ?" → réponse texte seule, PAS d\'action\n' +
     '❌ "explique-moi le Lagrangien" → réponse texte seule, PAS d\'action\n\n' +
@@ -22310,7 +22317,11 @@ function aiSystemPrompt() {
     '- Quand tu génères un planning de révision, inclus TOUTES les séances en un seul bloc @@ACTIONS@@\n' +
     '- Pour les modifications importantes ou suppressions, le client affichera une confirmation : tu peux quand même proposer les actions normalement\n' +
     '- Après avoir ajouté des événements, liste-les brièvement\n' +
-    '- Pour les questions informatives, tu PEUX proposer à la fin : "Je peux ajouter ça à ton planning si tu veux ?"';
+    '- Pour les questions informatives, tu PEUX proposer à la fin : "Je peux ajouter ça à ton planning si tu veux ?"\n' +
+    '- Pour set_grade : utilise toujours l\'ID exact de la matière (ex: maths1, maths2, droit_intro, etc.) quand possible. type_note doit être exactement "cc" ou "ex".\n' +
+    '- IDs matières S1 : socio, macro_data, micro1, gestion1, compta1, info, ethique, anglais1, maths1, culture_eco, droit_intro, institutions\n' +
+    '- IDs matières S2 : sciences_po, macro2, micro2, gestion2, compta2, maths2, eco_eco, anglais2, droit_constit, droit_penal, droit_euro\n' +
+    '- Pour send_chat_message : envoie le message EXACTEMENT tel que demandé par l\'utilisateur, sans ajouter ni modifier quoi que ce soit';
 }
 
 // ── Envoyer message ──
@@ -22323,21 +22334,21 @@ window.aiSendText = function(text) {
 var AI_NAV_PAGES = {
   home:        ['accueil','home'],
   planning:    ['planning','emploi du temps','edt','agenda','calendrier','semaine'],
-  simulateur:  ['simulateur','moyenne','notes','simulation','calcul'],
+  simulateur:  ['simulateur de moyenne','simulateur moyenne','simulateur','moyenne','simulation','calcul moyenne'],
   flashcards:  ['flashcard','flashcards','cartes','carte'],
   apprendre:   ['apprendre','mode apprendre','apprentissage'],
   pomodoro:    ['pomodoro','timer','minuteur','chrono'],
-  notes:       ['prise de notes','bloc-notes','bloc note'],
+  notes:       ['prise de notes','prise de note','bloc-notes','bloc note','notes de cours'],
   prof:        ['prof particulier','prof part'],
   oral:        ['simulateur oral','oral','oral ia'],
   caspratiques:['cas pratiques','cas prat'],
   culture:     ['culture g','culture generale','culture générale'],
   news:        ['news','actualites','actualités','nouvelles','actu'],
   chat:        ['chat etudiant','chat étudiant','chat'],
-  campus:      ['plan du campus','campus','plan','salles'],
+  bonsplans:   ['bons plans','bon plan','bonsplans','reduction','réduction','bons plan'],
+  campus:      ['plan du campus','campus','salles','plan campus'],
   ressources:  ['ressources','polycopies','polycop'],
   assos:       ['assos','associations'],
-  bonsplans:   ['bons plans','bon plan','bonsplans','reduction','réduction'],
   stage:       ['stage','stages'],
   pslsport:    ['sport','psl sport','pslsport'],
   bu:          ['bu','bibliotheque','bibliothèque','bib'],
@@ -22348,12 +22359,17 @@ var AI_NAV_VERBS = /\b(va|vas|aller|ouvre|ouvrir|affiche|afficher|montre|montrer
 function aiTryLocalNav(msg) {
   var norm = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   if (!AI_NAV_VERBS.test(norm)) return null;
+  // Collect all (alias, page) pairs and sort longest first to prefer specific matches
+  var candidates = [];
   for (var page in AI_NAV_PAGES) {
     var aliases = AI_NAV_PAGES[page];
     for (var i = 0; i < aliases.length; i++) {
-      var alias = aliases[i].normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      if (norm.indexOf(alias) !== -1) return page;
+      candidates.push({ alias: aliases[i].normalize('NFD').replace(/[\u0300-\u036f]/g,''), page: page });
     }
+  }
+  candidates.sort(function(a, b) { return b.alias.length - a.alias.length; });
+  for (var j = 0; j < candidates.length; j++) {
+    if (norm.indexOf(candidates[j].alias) !== -1) return candidates[j].page;
   }
   return null;
 }
@@ -22422,6 +22438,8 @@ function aiNormalizeAction(action) {
     if (a.type === 'openprofile' || a.type === 'profile') a.type = 'open_profile';
     if (a.type === 'openbackgroundcustomizer' || a.type === 'background_customizer') a.type = 'open_background_customizer';
     if (a.type === 'startpomodoro' || a.type === 'pomodoro') a.type = 'start_pomodoro';
+    if (a.type === 'setgrade' || a.type === 'entergrade' || a.type === 'add_grade' || a.type === 'note_simulateur' || a.type === 'noter' || a.type === 'saisir_note') a.type = 'set_grade';
+    if (a.type === 'sendchatmessage' || a.type === 'sendmessage' || a.type === 'send_message' || a.type === 'chat_message' || a.type === 'envoyer_message') a.type = 'send_chat_message';
   }
   return a;
 }
@@ -22437,6 +22455,8 @@ function aiDescribeAction(action) {
   if (action.type === 'delete_note') return 'Supprimer la note "' + (action.title || action.target || 'active') + '"';
   if (action.type === 'open_note') return 'Ouvrir la note "' + (action.title || action.matiere || action.target || 'active') + '"';
   if (action.type === 'set_theme') return 'Passer en mode ' + (action.theme === 'dark' ? 'sombre' : 'clair');
+  if (action.type === 'set_grade') return 'Enregistrer ' + (action.note !== undefined ? action.note + '/20' : 'note') + ' en ' + (action.type_note === 'cc' ? 'CC' : action.type_note === 'ex' ? 'examen' : action.type_note || 'note') + ' pour ' + (action.matiere || 'matière inconnue');
+  if (action.type === 'send_chat_message') return 'Envoyer "' + (action.text || '').substring(0, 50) + '" dans ' + (action.salon ? '#' + action.salon : 'le chat général');
   if (action.type === 'open_background_customizer') return 'Ouvrir la personnalisation du fond';
   if (action.type === 'open_profile') return 'Ouvrir le profil';
   if (action.type === 'start_pomodoro') return 'Lancer un pomodoro de ' + (action.duration || 25) + ' min';
@@ -22454,7 +22474,7 @@ function aiLogActionRun(status, actions) {
 }
 
 function aiIsWriteAction(action) {
-  return ['add_event','delete_event','add_flashcard','create_note','update_note','delete_note','set_theme','start_pomodoro'].indexOf(action.type) !== -1;
+  return ['add_event','delete_event','add_flashcard','create_note','update_note','delete_note','set_theme','start_pomodoro','set_grade','send_chat_message'].indexOf(action.type) !== -1;
 }
 
 function aiNeedsConfirmation(action) {
@@ -22530,6 +22550,8 @@ function aiRenderActionChips(container, actions, className) {
     else if (type === 'delete_note') chip.textContent = '🗑️ ' + count + ' note' + (count > 1 ? 's' : '') + ' supprimée' + (count > 1 ? 's' : '');
     else if (type === 'navigate') chip.textContent = '→ Navigation effectuée';
     else if (type === 'set_theme') chip.textContent = '🎨 Thème mis à jour';
+    else if (type === 'set_grade') chip.textContent = '📊 ' + count + ' note' + (count > 1 ? 's' : '') + ' enregistrée' + (count > 1 ? 's' : '') + ' dans le simulateur';
+    else if (type === 'send_chat_message') chip.textContent = '💬 ' + count + ' message' + (count > 1 ? 's' : '') + ' envoyé' + (count > 1 ? 's' : '');
     else if (type === 'start_pomodoro') chip.textContent = '⏱️ Pomodoro lancé';
     else chip.textContent = '✅ ' + count + ' action' + (count > 1 ? 's' : '') + ' exécutée' + (count > 1 ? 's' : '');
     container.appendChild(chip);
@@ -22623,7 +22645,7 @@ function aiHideThinking() {
 }
 
 // Mots déclencheurs pour les actions qui MODIFIENT des données
-var AI_WRITE_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer)\b/i;
+var AI_WRITE_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer|rentre|rentrer|entre|entrer|enregistre|enregistrer|envoie|envoyer|poste|poster)\b/i;
 
 function aiUserWantsWrite(userMsg) {
   return AI_WRITE_TRIGGERS.test(userMsg);
@@ -22906,6 +22928,82 @@ var AI_ACTION_REGISTRY = {
         else localStorage.setItem('dg_pomo_state', previous);
         if (typeof renderPomodoro === 'function') renderPomodoro();
       } });
+    }
+  },
+  set_grade: {
+    execute: function(action) {
+      if (typeof MATIERES === 'undefined' || !Array.isArray(MATIERES)) return aiResult(false, action, { error:'simulateur indisponible' });
+      var noteVal = parseFloat(action.note);
+      if (isNaN(noteVal) || noteVal < 0 || noteVal > 20) return aiResult(false, action, { error:'note invalide (doit être entre 0 et 20)' });
+      var typeNote = aiNormText(action.type_note || action.note_type || '');
+      if (typeNote !== 'cc' && typeNote !== 'ex' && typeNote !== 'examen' && typeNote !== 'exam') {
+        return aiResult(false, action, { error:'type de note invalide (cc ou ex)' });
+      }
+      var isCC = (typeNote === 'cc');
+      var searchName = aiNormText(action.matiere || action.mat || action.subject || '');
+      if (!searchName) return aiResult(false, action, { error:'matière non précisée' });
+      var mat = null;
+      // Match by id first
+      mat = MATIERES.find(function(m){ return aiNormText(m.id) === searchName; });
+      if (!mat) mat = MATIERES.find(function(m){ return aiNormText(m.nom) === searchName; });
+      if (!mat) mat = MATIERES.find(function(m){ return aiNormText(m.nom).indexOf(searchName) !== -1 || searchName.split(' ').some(function(w){ return w.length > 3 && aiNormText(m.nom).indexOf(w) !== -1; }); });
+      if (!mat) return aiResult(false, action, { error:'matière "' + (action.matiere || '') + '" introuvable' });
+      // Check if CC is allowed for this matiere
+      if (isCC && mat.cc === 0) return aiResult(false, action, { error:mat.nom + ' n\'a pas de CC' });
+      var key = isCC ? 'sim_cc_' + mat.id : 'sim_ex_' + mat.id;
+      var previousVal = localStorage.getItem(key);
+      localStorage.setItem(key, String(noteVal));
+      // Switch to correct semester if needed
+      if (typeof simSemester !== 'undefined' && mat.sem !== simSemester) {
+        if (typeof simSem === 'function') {
+          var tabBtn = document.querySelector('.sim-tab[onclick*="simSem(' + mat.sem + '"]');
+          simSem(mat.sem, tabBtn || document.createElement('button'));
+        }
+      }
+      if (typeof showPage === 'function') showPage('simulateur', null);
+      if (typeof renderSimTable === 'function') renderSimTable();
+      if (typeof computeAvg === 'function') computeAvg();
+      if (typeof toast === 'function') toast((isCC ? 'CC' : 'Examen') + ' ' + mat.nom.split(' ').slice(0,3).join(' ') + ' : ' + noteVal + '/20 enregistré !', '📊');
+      action.matiere = mat.nom;
+      return aiResult(true, action, { undo: function(){
+        if (previousVal === null) localStorage.removeItem(key);
+        else localStorage.setItem(key, previousVal);
+        if (typeof renderSimTable === 'function') renderSimTable();
+        if (typeof computeAvg === 'function') computeAvg();
+      } });
+    }
+  },
+  send_chat_message: {
+    execute: function(action) {
+      var text = (action.text || action.message || '').trim();
+      if (!text) return aiResult(false, action, { error:'message vide' });
+      if (typeof currentUser === 'undefined' || !currentUser) return aiResult(false, action, { error:'connecte-toi au chat étudiant d\'abord' });
+      // Map salon name to id
+      var salonMap = {
+        'general': 'general', 'général': 'general', 'generaux': 'general',
+        'annonces': 'annonces', 'annonce': 'annonces',
+        'achat': 'achatvente', 'vente': 'achatvente', 'achat vente': 'achatvente', 'achatvente': 'achatvente',
+        'tickets': 'tickets', 'ticket': 'tickets',
+        'echange': 'echangecours', 'cours': 'echangecours', 'echange de cours': 'echangecours', 'échange de cours': 'echangecours'
+      };
+      var rawSalon = aiNormText(action.salon || 'general');
+      var salonId = salonMap[rawSalon] || 'general';
+      if (typeof showPage === 'function') showPage('chat', null);
+      setTimeout(function(){
+        try {
+          if (typeof switchSalon === 'function' && salonId !== (typeof currentSalon !== 'undefined' ? currentSalon : 'general')) {
+            var salonEl = document.querySelector('.salon-item[onclick*="\'' + salonId + '\'"]');
+            switchSalon(salonId, salonEl, '', '', '');
+          }
+          var input = document.getElementById('msg-input');
+          if (!input) return;
+          input.value = text;
+          if (typeof sendMessage === 'function') sendMessage();
+        } catch(e) {}
+      }, 400);
+      action.text = text;
+      action.salon = salonId;
+      return aiResult(true, action);
     }
   }
 };
