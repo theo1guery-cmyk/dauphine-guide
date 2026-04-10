@@ -22294,8 +22294,9 @@ function aiSystemPrompt() {
     '- open_profile: ouvrir le profil utilisateur\n' +
     '- set_grade: enregistrer une note dans le simulateur de moyenne. Champs: matiere (nom ou id, ex: "maths1", "Mathématiques"), type_note ("cc" ou "ex"), note (nombre entre 0 et 20), semestre (1 ou 2, optionnel)\n' +
     '  Exemple: {"type":"set_grade","matiere":"maths1","type_note":"cc","note":6,"semestre":1}\n' +
-    '- send_chat_message: envoyer un message dans le chat étudiant au nom du client. Champs: text (message à envoyer), salon (optionnel: "general", "annonces", "achatvente", "tickets", "echangecours" — défaut: "general")\n' +
-    '  Exemple: {"type":"send_chat_message","text":"Salut tout le monde !","salon":"general"}\n\n' +
+    '- send_chat_message: envoyer un message dans le chat étudiant au nom du client. Champs: text (message à envoyer), salon (optionnel: "general", "annonces", "achatvente", "tickets", "echangecours", "promo" (salon de la promo de l\'utilisateur) — défaut: "general")\n' +
+    '  Exemple: {"type":"send_chat_message","text":"Salut tout le monde !","salon":"general"}\n' +
+    '  Pour envoyer dans le salon de la promo : {"type":"send_chat_message","text":"Qui a le partiel demain ?","salon":"promo"}\n\n' +
     '=== RÈGLE ABSOLUE SUR LES ACTIONS ===\n' +
     'NE JAMAIS inclure de bloc @@ACTIONS@@ sauf si le message contient UN de ces mots déclencheurs EXACTS :\n' +
     '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule", "supprime", "ouvre", "lance", "active", "change", "rentre", "entre", "enregistre", "envoie", "poste"\n' +
@@ -22979,12 +22980,16 @@ var AI_ACTION_REGISTRY = {
       if (!text) return aiResult(false, action, { error:'message vide' });
       if (typeof currentUser === 'undefined' || !currentUser) return aiResult(false, action, { error:'connecte-toi au chat étudiant d\'abord' });
       // Map salon name to id
+      var userPromo = (typeof currentUser !== 'undefined' && currentUser && currentUser.promo) ? currentUser.promo : '';
+      var promoSalonId = userPromo ? 'promo-' + userPromo : 'general';
       var salonMap = {
         'general': 'general', 'général': 'general', 'generaux': 'general',
         'annonces': 'annonces', 'annonce': 'annonces',
         'achat': 'achatvente', 'vente': 'achatvente', 'achat vente': 'achatvente', 'achatvente': 'achatvente',
         'tickets': 'tickets', 'ticket': 'tickets',
-        'echange': 'echangecours', 'cours': 'echangecours', 'echange de cours': 'echangecours', 'échange de cours': 'echangecours'
+        'echange': 'echangecours', 'cours': 'echangecours', 'echange de cours': 'echangecours', 'échange de cours': 'echangecours',
+        'promo': promoSalonId, 'ma promo': promoSalonId, 'salon promo': promoSalonId, 'chat promo': promoSalonId,
+        'salon de la promo': promoSalonId, 'chat de la promo': promoSalonId
       };
       var rawSalon = aiNormText(action.salon || 'general');
       var salonId = salonMap[rawSalon] || 'general';
@@ -22992,14 +22997,15 @@ var AI_ACTION_REGISTRY = {
       setTimeout(function(){
         try {
           if (typeof switchSalon === 'function' && salonId !== (typeof currentSalon !== 'undefined' ? currentSalon : 'general')) {
-            var salonEl = document.querySelector('.salon-item[onclick*="\'' + salonId + '\'"]');
-            switchSalon(salonId, salonEl, '', '', '');
+            var salonEl = document.getElementById('sb-' + salonId);
+            if (salonEl) switchSalon(salonId, salonEl, '', '', '');
+            else if (typeof currentSalon !== 'undefined') currentSalon = salonId;
           }
           var input = document.getElementById('msg-input');
           if (!input) return;
           input.value = text;
           if (typeof sendMessage === 'function') sendMessage();
-        } catch(e) {}
+        } catch(e) { console.error('[AI send_chat_message]', e); }
       }, 400);
       action.text = text;
       action.salon = salonId;
