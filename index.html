@@ -4927,6 +4927,69 @@ aside.sidebar {
 .mm-focus-pill{cursor:pointer}
 .mm-focus-pill rect{transition:opacity .15s}
 .mm-focus-pill:hover rect{opacity:.9}
+/* ── Mind Map: Cascade entrance animation ── */
+@keyframes mmNodeIn{from{opacity:0}to{opacity:1}}
+/* ── Mind Map: Branch highlight on L1 hover ── */
+.mm-branch-dim{transition:opacity .22s cubic-bezier(0.16,1,0.3,1)}
+/* ── Mind Map: History panel ── */
+.mm-history-panel{margin-top:20px;background:#fff;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shs);overflow:hidden}
+[data-theme="dark"] .mm-history-panel{background:var(--bg-card);border-color:var(--border-col)}
+.mm-history-head{display:flex;align-items:center;padding:12px 16px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;gap:8px;transition:background .15s}
+.mm-history-head:hover{background:var(--g50,#f8fafc)}
+[data-theme="dark"] .mm-history-head:hover{background:#1a2235}
+.mm-history-head-left{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text-main);flex:1}
+.mm-history-count{font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;background:var(--blue);color:#fff}
+.mm-history-chevron{font-size:11px;color:var(--g400);transition:transform .22s;flex-shrink:0}
+.mm-history-panel.open .mm-history-chevron{transform:rotate(180deg)}
+.mm-history-body{display:none;padding:10px 12px;flex-direction:column;gap:8px}
+.mm-history-panel.open .mm-history-body{display:flex}
+.mm-history-empty{text-align:center;color:var(--g400);font-size:12px;padding:16px 0}
+.mm-history-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g50,#f8fafc);border-radius:10px;border-left:3px solid var(--blue);cursor:pointer;transition:background .15s}
+[data-theme="dark"] .mm-history-item{background:#1a2235}
+.mm-history-item:hover{background:var(--g100,#f1f5f9)}
+[data-theme="dark"] .mm-history-item:hover{background:#1e2d42}
+.mm-history-item-info{flex:1;min-width:0}
+.mm-history-item-title{font-size:13px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mm-history-item-meta{font-size:10px;color:var(--g400);font-weight:600;margin-top:2px}
+.mm-history-item-del{padding:4px 9px;border:1.5px solid var(--g200);background:#fff;color:var(--g400);border-radius:7px;cursor:pointer;font-size:11px;font-family:'Figtree',sans-serif;transition:all .15s;flex-shrink:0}
+.mm-history-item-del:hover{border-color:#ef4444;color:#ef4444}
+[data-theme="dark"] .mm-history-item-del{background:var(--bg-card);border-color:var(--border-col)}
+/* ── Mind Map: Search input ── */
+.mm-search-wrap{display:flex;align-items:center;position:relative;flex:1;min-width:80px;max-width:180px}
+.mm-search-input{width:100%;padding:4px 22px 4px 24px;border:1.5px solid var(--g200);border-radius:8px;font-size:11px;font-family:'Figtree',sans-serif;color:var(--text-main);background:var(--bg-card,#fff);outline:none;transition:border-color .15s;box-sizing:border-box}
+.mm-search-input:focus{border-color:var(--blue)}
+[data-theme="dark"] .mm-search-input{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
+.mm-search-icon{position:absolute;left:7px;font-size:10px;color:var(--g400);pointer-events:none}
+.mm-search-clear{position:absolute;right:6px;font-size:10px;cursor:pointer;color:var(--g400);padding:2px;line-height:1;opacity:0;pointer-events:none;transition:opacity .15s}
+.mm-search-active .mm-search-clear{opacity:1;pointer-events:auto}
+/* ── Mind Map: Focus action buttons ── */
+.mm-focus-actions{display:flex;gap:8px;padding:8px 16px 10px;flex-wrap:wrap;border-top:1px solid var(--g100)}
+[data-theme="dark"] .mm-focus-actions{border-color:var(--border-col)}
+.mm-focus-action-btn{padding:6px 12px;font-size:11.5px;font-weight:700;border:1.5px solid var(--g200);background:#fff;color:var(--g700);border-radius:8px;cursor:pointer;transition:all .15s;font-family:'Figtree',sans-serif;white-space:nowrap}
+.mm-focus-action-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+[data-theme="dark"] .mm-focus-action-btn{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
+/* ── Mind Map: Quiz panel ── */
+.mm-quiz-panel{background:var(--g50,#f8fafc);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:9px;border:1px solid var(--g100);margin-top:2px}
+[data-theme="dark"] .mm-quiz-panel{background:#1a2235;border-color:var(--border-col)}
+.mm-quiz-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--g400)}
+.mm-quiz-question{font-size:13.5px;font-weight:700;color:var(--text-main);line-height:1.45}
+.mm-quiz-opts{display:flex;flex-direction:column;gap:5px}
+.mm-quiz-opt{padding:8px 12px;border:1.5px solid var(--g200);border-radius:9px;background:#fff;color:var(--text-main);text-align:left;font-size:12px;font-family:'Figtree',sans-serif;cursor:pointer;transition:all .15s;font-weight:500;line-height:1.35;width:100%}
+[data-theme="dark"] .mm-quiz-opt{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
+.mm-quiz-opt:hover:not(:disabled){border-color:var(--blue);background:rgba(0,61,122,.04)}
+.mm-quiz-opt.correct{border-color:#10b981!important;background:#d1fae5!important;color:#065f46!important}
+.mm-quiz-opt.wrong{border-color:#ef4444!important;background:#fee2e2!important;color:#991b1b!important}
+.mm-quiz-opt.reveal{border-color:#10b981!important;background:#d1fae5!important;color:#065f46!important}
+.mm-quiz-opt:disabled{cursor:default}
+.mm-quiz-nav{display:flex;align-items:center;gap:8px;margin-top:2px}
+.mm-quiz-counter{font-size:10.5px;font-weight:700;color:var(--g400);flex:1}
+.mm-quiz-next-btn{padding:6px 12px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:background .15s}
+.mm-quiz-next-btn:hover{background:#0057ad}
+.mm-quiz-loading{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g400);padding:6px 0}
+.mm-quiz-spinner{width:16px;height:16px;border:2px solid var(--g100);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.mm-quiz-score{text-align:center;font-size:14px;font-weight:700;color:var(--text-main);padding:10px 0 4px}
+/* ── Mind Map: active layout btn ── */
+.mm-ctrl-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 
 /* ═══════════════════════════════════════════════════════════════
    SALLE D'ÉTUDE CO-POMODORO
@@ -9542,9 +9605,15 @@ aside.sidebar {
           <button class="mm-ctrl-btn" onclick="mmZoomIn()">＋ Zoom</button>
           <button class="mm-ctrl-btn" onclick="mmZoomOut()">－ Zoom</button>
           <button class="mm-ctrl-btn" onclick="mmFit()">⊞ Ajuster</button>
-          <button class="mm-ctrl-btn" onclick="mmExportSvg()">📥 Export SVG</button>
-          <button class="mm-ctrl-btn" onclick="mmExportPng()">🖼️ Export PNG</button>
-          <span id="mmNodeCount" style="font-size:11px;color:var(--g400);margin-left:auto"></span>
+          <button class="mm-ctrl-btn active" id="mmLayoutToggleBtn" onclick="mmToggleLayout()" title="Changer de layout">🌐 Radial</button>
+          <button class="mm-ctrl-btn" onclick="mmExportSvg()">📥 SVG</button>
+          <button class="mm-ctrl-btn" onclick="mmExportPng()">🖼️ PNG</button>
+          <div class="mm-search-wrap" id="mmSearchWrap">
+            <span class="mm-search-icon">🔍</span>
+            <input class="mm-search-input" id="mmSearchInput" placeholder="Rechercher…" oninput="mmSearch(this.value)">
+            <span class="mm-search-clear" onclick="mmClearSearch()">✕</span>
+          </div>
+          <span id="mmNodeCount" style="font-size:11px;color:var(--g400);margin-left:4px"></span>
         </div>
         <div class="mm-svg-wrap" id="mmSvgWrap"></div>
         <!-- Focus Branch View -->
@@ -9560,13 +9629,29 @@ aside.sidebar {
               <div class="mm-focus-badge" id="mmFocusBadge">FOCUS</div>
             </div>
             <div class="mm-focus-body" id="mmFocusBody"></div>
+            <div class="mm-focus-actions" id="mmFocusActions" style="display:none">
+              <button class="mm-focus-action-btn" onclick="mmSendToFlashcards()">🃏 Créer flashcards</button>
+              <button class="mm-focus-action-btn" id="mmQuizBtn" onclick="mmStartQuiz()">📝 Me tester</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- History panel -->
+    <div class="mm-history-panel" id="mmHistoryPanel" style="max-width:100%">
+      <div class="mm-history-head" onclick="mmHistoryToggle()">
+        <div class="mm-history-head-left">
+          <span>📌</span> Mes cartes sauvegardées
+          <span class="mm-history-count" id="mmHistoryCount">0</span>
+        </div>
+        <span class="mm-history-chevron">▾</span>
+      </div>
+      <div class="mm-history-body" id="mmHistoryBody">
+        <div class="mm-history-empty" id="mmHistoryEmpty">Génère ta première carte pour la retrouver ici.</div>
+      </div>
+    </div>
   </div>
 </div>
-<!-- Tooltip for full node labels -->
 <div id="mmTooltip"></div>
 
 <!-- ══ SALLE D'ÉTUDE CO-POMODORO ══ -->
@@ -23795,6 +23880,14 @@ var mmDragging = false, mmDragStartX = 0, mmDragStartY = 0, mmDragStartOX = 0, m
 var mmSVG = null;
 var mmAllNodes = [];        // flat list for quick access
 var mmCourseContent = '';   // original course text for focus generation
+var mmLayoutMode = 'radial'; // 'radial' | 'tree'
+var mmFocusNode = null;     // currently focused node
+var mmFocusColor = '';      // focused branch color
+var mmSearchTerm = '';      // active search term
+var mmQuizData = null;      // current quiz questions {questions:[{q,opts,correct}]}
+var mmQuizIdx = 0;          // current question index
+var mmQuizScore = 0;        // correct answers count
+var mmQuizAnswered = false;  // whether current Q answered
 
 // ── Color palette per level ──
 var MM_COLORS = [
@@ -23856,6 +23949,7 @@ window.mmGenerate = async function() {
     if (!data || !data.label) throw new Error('Format JSON invalide');
     mmData = data;
     mmRender();
+    mmSaveToHistory(data, input, matiere);
   } catch(e) {
     document.getElementById('mmLoadingPanel').style.display = 'none';
     document.getElementById('mmEmpty').style.display = 'flex';
@@ -23868,6 +23962,8 @@ window.mmGenerate = async function() {
 
 window.mmReset = function() {
   mmData = null; mmCourseContent = ''; mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
+  mmFocusNode = null; mmFocusColor = ''; mmSearchTerm = '';
+  mmQuizData = null; mmQuizIdx = 0; mmQuizScore = 0; mmQuizAnswered = false;
   document.getElementById('mmEmpty').style.display = 'flex';
   document.getElementById('mmEmpty').querySelector('strong').textContent = 'Ta Mind Map apparaîtra ici';
   document.getElementById('mmEmpty').querySelector('span').textContent = 'Colle un cours et clique sur Générer.';
@@ -23877,6 +23973,10 @@ window.mmReset = function() {
   document.getElementById('mmSvgWrap').innerHTML = '';
   var fv = document.getElementById('mmFocusView');
   fv.style.display = 'none'; fv.className = '';
+  var fa = document.getElementById('mmFocusActions');
+  if (fa) fa.style.display = 'none';
+  var si = document.getElementById('mmSearchInput');
+  if (si) si.value = '';
   document.getElementById('mmInput').value = '';
   document.getElementById('mmMatiere').value = '';
 };
@@ -23906,9 +24006,10 @@ function mmLayoutNode(node, cx, cy, angleStart, angleEnd, radius, depth) {
   var totalArc = arcEnd - arcStart;
 
   var cur = arcStart;
-  node.children.forEach(function(child) {
+  node.children.forEach(function(child, i) {
     var leaves = mmCountLeaves(child);
     var childArc = (leaves / totalLeaves) * totalArc;
+    child._l1idx = depth === 0 ? i : (node._l1idx !== undefined ? node._l1idx : 0);
     mmLayoutNode(child, cx, cy, cur, cur + childArc, childRadius, depth + 1);
     cur += childArc;
   });
@@ -23956,8 +24057,10 @@ function mmRender() {
 
   // Draw links first (behind nodes)
   var gLinks = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  gLinks.setAttribute('id', 'mmLinksG');
   gMain.appendChild(gLinks);
   var gNodes = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  gNodes.setAttribute('id', 'mmNodesG');
   gMain.appendChild(gNodes);
 
   function drawLinks(node) {
@@ -23978,6 +24081,7 @@ function mmRender() {
       path.setAttribute('stroke-width', d === 0 ? '2.5' : '1.5');
       path.setAttribute('opacity', '0.7');
       path.setAttribute('stroke-linecap', 'round');
+      path.setAttribute('data-l1', d === 0 ? String(node.children.indexOf(child)) : String(child._l1idx !== undefined ? child._l1idx : 0));
       gLinks.appendChild(path);
       drawLinks(child);
     });
@@ -24029,6 +24133,10 @@ function mmRender() {
     g.setAttribute('transform', 'translate(' + (node._x - rectW/2) + ',' + (node._y - rectH/2) + ')');
     g.style.cursor = (node.children && node.children.length) ? 'pointer' : 'default';
     if (depth > 0) g.setAttribute('filter', 'url(#mmShadow)');
+    // Data attributes for animation + highlight + search
+    var nodeL1 = depth === 0 ? '-1' : String(node._l1idx !== undefined ? node._l1idx : 0);
+    g.setAttribute('data-l1', nodeL1);
+    g.setAttribute('data-depth', depth);
 
     var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     rect.setAttribute('width', rectW); rect.setAttribute('height', rectH);
@@ -24101,6 +24209,14 @@ function mmRender() {
       });
     })(label);
 
+    // Branch highlight on L1 node hover
+    if (depth === 1) {
+      (function(myL1, svgRef) {
+        g.addEventListener('mouseenter', function() { mmHighlightBranch(myL1, svgRef); });
+        g.addEventListener('mouseleave', function() { mmUnhighlightBranch(svgRef); });
+      })(node._l1idx !== undefined ? node._l1idx : 0, svg);
+    }
+
     if (node.children && node.children.length) {
       g.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -24129,6 +24245,9 @@ function mmRender() {
   mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
   mmApplyTransform();
   mmSetupInteraction(wrap);
+  mmAnimateEntrance(gNodes, gLinks);
+  mmHistoryRefresh();
+  if (mmSearchTerm) mmSearchRefresh();
 
   document.getElementById('mmLoadingPanel').style.display = 'none';
   document.getElementById('mmControls').style.display = 'flex';
@@ -24244,6 +24363,13 @@ function mmBranchToText(node, depth) {
 
 // ── Focus Branch ──
 window.mmFocusBranch = function(node, color) {
+  mmFocusNode = node;
+  mmFocusColor = color;
+  mmQuizData = null; mmQuizIdx = 0; mmQuizScore = 0; mmQuizAnswered = false;
+  var fa = document.getElementById('mmFocusActions');
+  if (fa) fa.style.display = 'none';
+  var qb = document.getElementById('mmQuizBtn');
+  if (qb) qb.textContent = '📝 Me tester';
   var courseText = mmCourseContent || document.getElementById('mmInput').value;
   var controls = document.getElementById('mmControls');
   var svgWrap  = document.getElementById('mmSvgWrap');
@@ -24295,6 +24421,10 @@ window.mmFocusBranch = function(node, color) {
 };
 
 window.mmBackFromFocus = function() {
+  mmFocusNode = null; mmFocusColor = '';
+  mmQuizData = null; mmQuizIdx = 0; mmQuizScore = 0; mmQuizAnswered = false;
+  var fa = document.getElementById('mmFocusActions');
+  if (fa) fa.style.display = 'none';
   var fv = document.getElementById('mmFocusView');
   fv.classList.add('exiting');
 
@@ -24410,11 +24540,400 @@ async function mmGenerateFocusContent(node, color, courseText) {
     document.getElementById('mmFocusLoading').style.display = 'none';
     var content = document.getElementById('mmFocusContent');
     content.style.display = 'flex';
+    var fa = document.getElementById('mmFocusActions');
+    if (fa) fa.style.display = 'flex';
   } catch(e) {
     lbl.textContent = 'Erreur de génération — réessaie';
     toast('Erreur focus branche — réessaie', '❌');
   }
 }
+
+// ── Cascade entrance animation ──
+function mmAnimateEntrance(gNodes, gLinks) {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var nodeEls = Array.from(gNodes.children);
+  var linkEls = Array.from(gLinks.children);
+  // Track per-depth counts for stagger
+  var depthCounts = {};
+  nodeEls.forEach(function(g) {
+    var depth = parseInt(g.getAttribute('data-depth') || '0');
+    if (!depthCounts[depth]) depthCounts[depth] = 0;
+    var seqInDepth = depthCounts[depth]++;
+    var base = depth === 0 ? 0 : depth === 1 ? 80 : depth === 2 ? 200 : 290;
+    var stride = depth === 0 ? 0 : depth === 1 ? 80 : depth === 2 ? 45 : 28;
+    var delay = base + (seqInDepth % 30) * stride;
+    g.style.opacity = '0';
+    (function(el, d) {
+      setTimeout(function() {
+        el.style.transition = 'opacity 380ms cubic-bezier(0.16,1,0.3,1)';
+        el.style.opacity = '1';
+      }, d);
+    })(g, delay);
+  });
+  linkEls.forEach(function(path, idx) {
+    try {
+      var len = path.getTotalLength();
+      if (!len) return;
+      var depth = parseInt(path.getAttribute('data-depth') || '0') || 0;
+      var delay = (depth === 0 ? 60 : 180) + (idx % 20) * 55;
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+      (function(el, d) {
+        setTimeout(function() {
+          el.style.transition = 'stroke-dashoffset 420ms cubic-bezier(0.16,1,0.3,1)';
+          el.style.strokeDashoffset = '0';
+        }, d);
+      })(path, delay);
+    } catch(e) {}
+  });
+}
+
+// ── Branch highlight helpers ──
+function mmHighlightBranch(l1idx, svg) {
+  var all = Array.from(svg.querySelectorAll('[data-l1]'));
+  all.forEach(function(el) {
+    var el1 = el.getAttribute('data-l1');
+    if (el1 === '-1' || el1 === String(l1idx)) {
+      el.style.opacity = '1';
+      el.style.transition = 'opacity .22s';
+    } else {
+      el.style.opacity = '0.12';
+      el.style.transition = 'opacity .22s';
+    }
+  });
+}
+function mmUnhighlightBranch(svg) {
+  var all = Array.from(svg.querySelectorAll('[data-l1]'));
+  all.forEach(function(el) {
+    el.style.opacity = '';
+    el.style.transition = 'opacity .22s';
+  });
+}
+
+// ── Search ──
+window.mmSearch = function(term) {
+  mmSearchTerm = (term || '').trim().toLowerCase();
+  mmSearchRefresh();
+};
+function mmSearchRefresh() {
+  var wrap = document.getElementById('mmSearchWrap');
+  var si = document.getElementById('mmSearchInput');
+  if (wrap) wrap.classList.toggle('mm-search-active', !!mmSearchTerm);
+  var svg = document.getElementById('mmSvgWrap') && document.getElementById('mmSvgWrap').querySelector('svg');
+  if (!svg) return;
+  var nodeEls = Array.from(svg.querySelectorAll('g[data-depth]'));
+  nodeEls.forEach(function(g) {
+    if (!mmSearchTerm) {
+      g.style.opacity = '';
+      var r = g.querySelector('rect');
+      if (r) r.style.stroke = r.getAttribute('stroke') || '';
+      return;
+    }
+    var textEl = g.querySelector('text');
+    var lbl = textEl ? textEl.textContent.replace(/…$/, '').toLowerCase() : '';
+    var depth = parseInt(g.getAttribute('data-depth') || '0');
+    if (depth === 0) { g.style.opacity = '1'; return; }
+    if (lbl.includes(mmSearchTerm)) {
+      g.style.opacity = '1';
+      var r = g.querySelector('rect');
+      if (r) { r.style.stroke = '#f59e0b'; r.style.strokeWidth = '2.5'; }
+    } else {
+      g.style.opacity = '0.15';
+      var r = g.querySelector('rect');
+      if (r) { r.style.stroke = r.getAttribute('stroke') || ''; r.style.strokeWidth = r.getAttribute('stroke-width') || ''; }
+    }
+  });
+}
+window.mmClearSearch = function() {
+  mmSearchTerm = '';
+  var si = document.getElementById('mmSearchInput');
+  if (si) si.value = '';
+  var wrap = document.getElementById('mmSearchWrap');
+  if (wrap) wrap.classList.remove('mm-search-active');
+  mmSearchRefresh();
+};
+
+// ── Tree layout ──
+function mmTreeLayout(root) {
+  var totalLeaves = mmCountLeaves(root);
+  var leafH = Math.max(18, Math.min(44, 580 / Math.max(1, totalLeaves)));
+  var xCols = [80, 230, 400, 560, 680];
+  var totalLeafH = totalLeaves * leafH;
+  var leafCounter = {v: 0};
+  var startY = (640 - totalLeafH) / 2 + leafH / 2;
+  function layout(node, depth) {
+    node._depth = depth;
+    node._x = xCols[depth] !== undefined ? xCols[depth] : xCols[xCols.length - 1];
+    node._midAngle = 0; // unused in tree mode, set for safety
+    var children = node.children || [];
+    if (!children.length) {
+      node._y = startY + leafCounter.v * leafH;
+      leafCounter.v++;
+      return;
+    }
+    var startIdx = leafCounter.v;
+    children.forEach(function(child, i) {
+      child._l1idx = depth === 0 ? i : (node._l1idx !== undefined ? node._l1idx : 0);
+      layout(child, depth + 1);
+    });
+    var endIdx = leafCounter.v;
+    node._y = startY + (startIdx + endIdx - 1) / 2 * leafH;
+  }
+  layout(root, 0);
+}
+
+window.mmToggleLayout = function() {
+  mmLayoutMode = mmLayoutMode === 'radial' ? 'tree' : 'radial';
+  var btn = document.getElementById('mmLayoutToggleBtn');
+  if (btn) {
+    btn.textContent = mmLayoutMode === 'radial' ? '🌐 Radial' : '🌳 Arbre';
+    btn.classList.toggle('active', mmLayoutMode === 'radial');
+  }
+  if (mmData) mmRender();
+};
+
+// ── Tree layout integration ──
+// Patch mmLayoutNode to be a no-op when tree mode is active
+// (coordinates are already set by mmTreeLayout before mmRender runs).
+(function() {
+  var _origLayout = mmLayoutNode;
+  mmLayoutNode = function(node, cx, cy, angleStart, angleEnd, radius, depth) {
+    if (mmLayoutMode === 'tree') return;
+    _origLayout(node, cx, cy, angleStart, angleEnd, radius, depth);
+  };
+  var _origRender = mmRender;
+  mmRender = function() {
+    if (mmLayoutMode === 'tree' && mmData) mmTreeLayout(mmData);
+    _origRender();
+  };
+}());
+
+// ── History ──
+var MM_HISTORY_KEY = 'mm_history_v1';
+var MM_HISTORY_MAX = 5;
+
+function mmSaveToHistory(data, courseText, matiere) {
+  try {
+    var saved = JSON.parse(localStorage.getItem(MM_HISTORY_KEY) || '[]');
+    var entry = {
+      label: data.label || 'Carte sans titre',
+      matiere: matiere || '',
+      courseText: (courseText || '').slice(0, 2000),
+      date: new Date().toLocaleDateString('fr-FR', {day:'numeric',month:'short'}),
+      ts: Date.now(),
+      data: data
+    };
+    // Remove duplicate by label
+    saved = saved.filter(function(e) { return e.label !== entry.label; });
+    saved.unshift(entry);
+    if (saved.length > MM_HISTORY_MAX) saved = saved.slice(0, MM_HISTORY_MAX);
+    localStorage.setItem(MM_HISTORY_KEY, JSON.stringify(saved));
+    mmHistoryRefresh();
+  } catch(e) {}
+}
+
+function mmHistoryRefresh() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(MM_HISTORY_KEY) || '[]');
+    var countEl = document.getElementById('mmHistoryCount');
+    var bodyEl = document.getElementById('mmHistoryBody');
+    var emptyEl = document.getElementById('mmHistoryEmpty');
+    if (!bodyEl) return;
+    if (countEl) countEl.textContent = saved.length;
+    // Remove old items (keep the empty placeholder)
+    Array.from(bodyEl.querySelectorAll('.mm-history-item')).forEach(function(el) { el.remove(); });
+    if (!saved.length) {
+      if (emptyEl) emptyEl.style.display = '';
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+    saved.forEach(function(entry, idx) {
+      var item = document.createElement('div');
+      item.className = 'mm-history-item';
+      item.innerHTML = '<div class="mm-history-item-info">'
+        + '<div class="mm-history-item-title">' + (entry.label || 'Carte').replace(/</g,'&lt;') + '</div>'
+        + '<div class="mm-history-item-meta">'
+          + (entry.matiere ? entry.matiere + ' · ' : '') + entry.date
+        + '</div>'
+        + '</div>'
+        + '<button class="mm-history-item-del" title="Supprimer" onclick="mmHistoryDelete(' + idx + ');event.stopPropagation()">✕</button>';
+      item.addEventListener('click', function() { mmHistoryLoad(idx); });
+      bodyEl.appendChild(item);
+    });
+  } catch(e) {}
+}
+
+window.mmHistoryToggle = function() {
+  var panel = document.getElementById('mmHistoryPanel');
+  if (panel) panel.classList.toggle('open');
+};
+
+window.mmHistoryLoad = function(idx) {
+  try {
+    var saved = JSON.parse(localStorage.getItem(MM_HISTORY_KEY) || '[]');
+    var entry = saved[idx];
+    if (!entry) return;
+    mmData = entry.data;
+    mmCourseContent = entry.courseText || '';
+    mmLayoutMode = 'radial';
+    var btn = document.getElementById('mmLayoutToggleBtn');
+    if (btn) { btn.textContent = '🌐 Radial'; btn.classList.add('active'); }
+    // Restore matiere in select if available
+    var sel = document.getElementById('mmMatiere');
+    if (sel && entry.matiere) {
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === entry.matiere) { sel.value = entry.matiere; break; }
+      }
+    }
+    document.getElementById('mmEmpty').style.display = 'none';
+    document.getElementById('mmLoadingPanel').style.display = 'none';
+    mmRender();
+    toast('Carte « ' + (entry.label || 'Carte') + ' » restaurée 📌', '✅');
+  } catch(e) { toast('Erreur de restauration', '❌'); }
+};
+
+window.mmHistoryDelete = function(idx) {
+  try {
+    var saved = JSON.parse(localStorage.getItem(MM_HISTORY_KEY) || '[]');
+    saved.splice(idx, 1);
+    localStorage.setItem(MM_HISTORY_KEY, JSON.stringify(saved));
+    mmHistoryRefresh();
+  } catch(e) {}
+};
+
+// ── Flashcard extraction ──
+window.mmSendToFlashcards = function() {
+  if (!mmFocusNode) return;
+  // Build a text summary of the branch nodes
+  var lines = [];
+  function collectLabels(node) {
+    lines.push(node.label);
+    var actual = node._savedChildren || node.children || [];
+    actual.forEach(collectLabels);
+  }
+  collectLabels(mmFocusNode);
+  var summary = lines.join(', ');
+  // Pre-fill flashcards textarea and navigate
+  var flashInput = document.getElementById('flashInput');
+  if (flashInput) flashInput.value = summary;
+  var matSelect = document.getElementById('flashMatiereSelect');
+  if (matSelect && mmFocusNode.label) {
+    // Try to match subject from mmMatiere select
+    var mmSel = document.getElementById('mmMatiere');
+    if (mmSel && mmSel.value) {
+      for (var i = 0; i < matSelect.options.length; i++) {
+        if (matSelect.options[i].value === mmSel.value) { matSelect.value = mmSel.value; break; }
+      }
+    }
+  }
+  showPage('flashcards', document.querySelector('[data-page="flashcards"]'));
+  toast('Notions copiées vers Flashcards 🃏', '✅');
+};
+
+// ── Quiz mode ──
+window.mmStartQuiz = function() {
+  if (!mmFocusNode) return;
+  var body = document.getElementById('mmFocusBody');
+  if (!body) return;
+  // Remove any existing quiz panel
+  var existing = body.querySelector('.mm-quiz-panel');
+  if (existing) { existing.remove(); mmQuizData = null; return; }
+  // Show loading
+  var panel = document.createElement('div');
+  panel.className = 'mm-quiz-panel';
+  panel.innerHTML = '<div class="mm-quiz-loading"><div class="mm-quiz-spinner"></div><span>Génération du quiz…</span></div>';
+  body.appendChild(panel);
+  body.scrollTop = body.scrollHeight;
+  var qb = document.getElementById('mmQuizBtn');
+  if (qb) qb.textContent = '⏳ Génération…';
+  mmGenerateQuiz(mmFocusNode, mmFocusColor, panel);
+};
+
+async function mmGenerateQuiz(node, color, panel) {
+  var branchLines = mmBranchToText(node);
+  var branchOutline = branchLines.join('\n');
+  var courseText = mmCourseContent || document.getElementById('mmInput').value;
+  var prompt = 'Tu es un professeur universitaire.\n\n'
+    + 'COURS (source) :\n"""\n' + courseText.slice(0, 3000) + '\n"""\n\n'
+    + 'BRANCHE DE LA CARTE MENTALE :\n"""\n' + branchOutline + '\n"""\n\n'
+    + 'MISSION : Génère exactement 3 questions QCM sur la branche « ' + node.label + ' » en t\'appuyant UNIQUEMENT sur le cours. Chaque question a 4 options (A/B/C/D), une seule bonne réponse.\n\n'
+    + 'FORMAT JSON STRICT — réponds UNIQUEMENT avec du JSON valide :\n'
+    + '{"questions":[{"q":"...","opts":["A","B","C","D"],"correct":0}]}';
+  try {
+    var raw = await profRequestXXL(prompt, 600, 0.3);
+    var data = profParseJson(raw);
+    if (!data || !Array.isArray(data.questions) || !data.questions.length) throw new Error('Format invalide');
+    mmQuizData = data;
+    mmQuizIdx = 0; mmQuizScore = 0; mmQuizAnswered = false;
+    mmRenderQuizQuestion(panel, color);
+    var qb = document.getElementById('mmQuizBtn');
+    if (qb) qb.textContent = '📝 Fermer quiz';
+  } catch(e) {
+    panel.innerHTML = '<div style="color:#ef4444;font-size:12px;padding:6px">Erreur quiz — réessaie.</div>';
+    var qb = document.getElementById('mmQuizBtn');
+    if (qb) qb.textContent = '📝 Me tester';
+  }
+}
+
+function mmRenderQuizQuestion(panel, color) {
+  if (!mmQuizData || mmQuizIdx >= mmQuizData.questions.length) {
+    // Show score
+    panel.innerHTML = '<div class="mm-quiz-label">Quiz terminé 🎉</div>'
+      + '<div class="mm-quiz-score">' + mmQuizScore + ' / ' + mmQuizData.questions.length + ' correct' + (mmQuizScore > 1 ? 's' : '') + '</div>'
+      + '<button class="mm-quiz-next-btn" style="width:100%" onclick="mmRestartQuiz()">↺ Recommencer</button>';
+    return;
+  }
+  var q = mmQuizData.questions[mmQuizIdx];
+  var html = '<div class="mm-quiz-label">Question ' + (mmQuizIdx + 1) + ' / ' + mmQuizData.questions.length + '</div>'
+    + '<div class="mm-quiz-question">' + (q.q || '').replace(/</g,'&lt;') + '</div>'
+    + '<div class="mm-quiz-opts">';
+  (q.opts || []).forEach(function(opt, i) {
+    html += '<button class="mm-quiz-opt" onclick="mmQuizAnswer(' + i + ')">' + opt.replace(/</g,'&lt;') + '</button>';
+  });
+  html += '</div><div class="mm-quiz-nav"><span class="mm-quiz-counter"></span><button class="mm-quiz-next-btn" id="mmQuizNextBtn" style="display:none" onclick="mmQuizNext()">Suivant →</button></div>';
+  panel.innerHTML = html;
+  var body = document.getElementById('mmFocusBody');
+  if (body) body.scrollTop = body.scrollHeight;
+  // Store color for visual feedback
+  panel.setAttribute('data-color', color || '#003d7a');
+}
+
+window.mmQuizAnswer = function(optIdx) {
+  if (mmQuizAnswered) return;
+  mmQuizAnswered = true;
+  if (!mmQuizData) return;
+  var q = mmQuizData.questions[mmQuizIdx];
+  var correct = q.correct;
+  var panel = document.querySelector('.mm-quiz-panel');
+  if (!panel) return;
+  var opts = panel.querySelectorAll('.mm-quiz-opt');
+  opts.forEach(function(btn) { btn.disabled = true; });
+  if (optIdx === correct) {
+    opts[optIdx].classList.add('correct');
+    mmQuizScore++;
+  } else {
+    opts[optIdx].classList.add('wrong');
+    if (opts[correct]) opts[correct].classList.add('reveal');
+  }
+  var next = document.getElementById('mmQuizNextBtn');
+  if (next) next.style.display = '';
+  var counter = panel.querySelector('.mm-quiz-counter');
+  if (counter) counter.textContent = optIdx === correct ? '✅ Bonne réponse !' : '❌ Raté';
+};
+
+window.mmQuizNext = function() {
+  mmQuizIdx++;
+  mmQuizAnswered = false;
+  var panel = document.querySelector('.mm-quiz-panel');
+  if (panel) mmRenderQuizQuestion(panel, panel.getAttribute('data-color'));
+};
+
+window.mmRestartQuiz = function() {
+  if (!mmFocusNode) return;
+  mmQuizIdx = 0; mmQuizScore = 0; mmQuizAnswered = false;
+  var panel = document.querySelector('.mm-quiz-panel');
+  if (panel) mmRenderQuizQuestion(panel, panel.getAttribute('data-color'));
+};
 
 })();
 </script>
