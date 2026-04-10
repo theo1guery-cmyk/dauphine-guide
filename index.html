@@ -20743,12 +20743,19 @@ function profFindMatterName(matterId) {
 
 function profParseJson(raw) {
   if (!raw) return null;
-  var clean = String(raw).trim().replace(/```json/gi, '').replace(/```/g, '');
+  var clean = String(raw).trim().replace(/```json/gi, '').replace(/```/g, '').trim();
   try { return JSON.parse(clean); } catch (error) {}
+  // Try to extract a {...} object
   var start = clean.indexOf('{');
   var end = clean.lastIndexOf('}');
   if (start !== -1 && end > start) {
     try { return JSON.parse(clean.slice(start, end + 1)); } catch (error2) {}
+  }
+  // Try to extract a [...] array
+  var aStart = clean.indexOf('[');
+  var aEnd = clean.lastIndexOf(']');
+  if (aStart !== -1 && aEnd > aStart) {
+    try { return JSON.parse(clean.slice(aStart, aEnd + 1)); } catch (error3) {}
   }
   return null;
 }
@@ -24329,7 +24336,7 @@ async function mmGenerateFocusContent(branchLabel, color, courseText) {
     + '{"intro":"...","sections":[{"title":"...","body":"...","points":["...","..."]}]}';
 
   try {
-    var raw = await profRequestXXL(prompt, 900, 0.25);
+    var raw = await profRequestXXL(prompt, 1400, 0.25);
     var data = profParseJson(raw);
     if (!data || !Array.isArray(data.sections)) throw new Error('Format JSON invalide');
 
@@ -24382,8 +24389,8 @@ async function mmGenerateFocusContent(branchLabel, color, courseText) {
     var content = document.getElementById('mmFocusContent');
     content.style.display = 'flex';
   } catch(e) {
-    lbl.textContent = 'Erreur : ' + e.message;
-    toast('Erreur focus branche', '❌');
+    lbl.textContent = 'Erreur de génération — réessaie';
+    toast('Erreur focus branche — réessaie', '❌');
   }
 }
 
