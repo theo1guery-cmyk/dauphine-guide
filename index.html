@@ -5058,7 +5058,74 @@ aside.sidebar {
       </div>
       <div class="onb-title">C'est <em>parti</em> !</div>
       <div class="onb-desc">Tu peux relancer ce guide à tout moment depuis la section FAQ. Bonne L1 à toi 🎓</div>
-      <button class="onb-start-btn" onclick="closeOnboarding()">Commencer →</button>
+      <button class="onb-start-btn" onclick="onbNavigate(1)">Configurer mon profil →</button>
+    </div>
+
+    <!-- SLIDE 13 — Configuration du profil -->
+    <div class="onb-slide" id="onb-s12">
+      <div class="onb-anim" style="flex-direction:column;gap:0;height:auto;min-height:170px;padding:20px 24px">
+        <div style="font-size:32px;margin-bottom:8px">✨</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">30 secondes pour personnaliser</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5)">Ces infos restent dans ton navigateur.</div>
+      </div>
+      <div class="onb-title" style="margin-bottom:6px">Ton <em>profil</em></div>
+      <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;margin-top:10px">
+        <!-- Prénom -->
+        <div style="text-align:left">
+          <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Prénom</label>
+          <input id="obPrenomNew" type="text" maxlength="30" placeholder="Ex: Marie, Théo…" autocomplete="given-name"
+            style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:14px;font-family:'Figtree',sans-serif;outline:none"
+            oninput="onbSetupCheck()" onfocus="this.style.borderColor='rgba(77,159,255,.7)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
+        </div>
+        <!-- Groupe + Promo -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="text-align:left">
+            <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Groupe TD</label>
+            <select id="obGroupeNew"
+              style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(30,36,51,.85);color:#fff;font-size:14px;font-family:'Figtree',sans-serif;outline:none;cursor:pointer"
+              onfocus="this.style.borderColor='rgba(77,159,255,.7)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
+              <option value="">-- Choisir --</option>
+              <option value="1">Groupe 1</option><option value="2">Groupe 2</option><option value="3">Groupe 3</option>
+              <option value="4">Groupe 4</option><option value="5">Groupe 5</option><option value="6">Groupe 6</option>
+              <option value="7">Groupe 7</option><option value="8">Groupe 8</option><option value="9">Groupe 9</option>
+              <option value="10">Groupe 10</option><option value="11">Groupe 11</option><option value="12">Groupe 12</option>
+              <option value="13">Groupe 13</option><option value="14">Groupe 14</option><option value="15">Groupe 15</option>
+              <option value="16">Groupe 16</option><option value="17">Groupe 17</option><option value="18">Groupe 18</option>
+              <option value="19">Groupe 19</option><option value="20">Groupe 20</option><option value="21">Groupe 21</option>
+              <option value="22">Groupe 22</option>
+            </select>
+          </div>
+          <div style="text-align:left">
+            <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Promotion</label>
+            <select id="obPromoNew"
+              style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(30,36,51,.85);color:#fff;font-size:14px;font-family:'Figtree',sans-serif;outline:none;cursor:pointer"
+              onfocus="this.style.borderColor='rgba(77,159,255,.7)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
+              <option value="">-- Choisir --</option>
+              <option value="2025-2026">2025-2026</option>
+              <option value="2026-2027">2026-2027</option>
+              <option value="2027-2028">2027-2028</option>
+            </select>
+          </div>
+        </div>
+        <!-- ICS Upload -->
+        <div style="text-align:left">
+          <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Emploi du temps ADE <span style="font-weight:400;color:rgba(255,255,255,.4)">(optionnel)</span></label>
+          <label id="obIcsZoneNew" for="obIcsFileNew"
+            style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1.5px dashed rgba(255,255,255,.25);background:rgba(255,255,255,.06);cursor:pointer;transition:border-color .15s,background .15s"
+            ondragover="handleIcsDrag(event,true,'obIcsZoneNew')" ondragleave="handleIcsDrag(event,false,'obIcsZoneNew')" ondrop="handleIcsDrop(event,'obIcsZoneNew')"
+            onmouseover="this.style.borderColor='rgba(77,159,255,.6)';this.style.background='rgba(77,159,255,.08)'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,.25)';this.style.background='rgba(255,255,255,.06)'">
+            <span style="font-size:20px">📅</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.85)">Importer mon .ics depuis ADE</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4)">Glisse-dépose ou clique pour choisir</div>
+            </div>
+            <input type="file" id="obIcsFileNew" accept=".ics" style="display:none" onchange="handleIcsFile(this,'obIcsStatusNew')">
+          </label>
+          <div id="obIcsStatusNew" class="ics-status" style="margin-top:6px;font-size:11px"></div>
+        </div>
+      </div>
+      <button class="onb-start-btn" id="obStartBtn" onclick="finishSetupAndClose()" style="margin-top:18px;min-width:180px">C'est parti ! 🎓</button>
     </div>
 
     <div class="onb-nav">
@@ -5131,7 +5198,7 @@ aside.sidebar {
         <span>🎨</span>
         <span>Fond d'écran</span>
       </button>
-      <button class="sidebar-profil-btn" onclick="openProfil();return false;" title="Théo — Mon profil" id="sidebarProfilBtn">
+      <button class="sidebar-profil-btn" onclick="openProfil();return false;" title="Mon profil" id="sidebarProfilBtn">
         👤
       </button>
     </div>
@@ -5222,7 +5289,7 @@ aside.sidebar {
     <section class="hero" style="background:none!important;padding-top:0!important;min-height:460px">
       <div class="hero-in">
         <div>
-          <span class="badge"><span class="badge-dot"></span>Mis à jour · S2 Mars 2026 · Gr. 22</span>
+          <span class="badge"><span class="badge-dot"></span>Mis à jour · S2 2025-2026 · <span id="heroBadgeGroupe">Dauphine L1</span></span>
           <h1>Le guide <em>officieux</em><br>des L1 Droit-Éco<br>Dauphine</h1>
           <p>Cours, simulateur de moyenne, flashcards IA, emploi du temps réel et plan du campus — tout pour réussir ta L1.</p>
           <div class="hbtns">
@@ -5238,7 +5305,7 @@ aside.sidebar {
         </div>
         <div class="hstats">
           <div class="hstat"><div class="hstat-ic">📚</div><div><div class="hstat-v">25 UE</div><div class="hstat-l">Matières S1+S2 avec coefficients réels</div></div></div>
-          <div class="hstat"><div class="hstat-ic">📅</div><div><div class="hstat-v" id="heroCreneaux">84 créneaux</div><div class="hstat-l" id="heroCreneauxLbl">Emploi du temps Gr.22 · Cursus Juridique</div></div></div>
+          <div class="hstat"><div class="hstat-ic">📅</div><div><div class="hstat-v" id="heroCreneaux">–</div><div class="hstat-l" id="heroCreneauxLbl">Emploi du temps · Dauphine L1</div></div></div>
           <div class="hstat"><div class="hstat-ic">🃏</div><div><div class="hstat-v" id="heroFlashcards">22 flashcards</div><div class="hstat-l">+ génération IA illimitée</div></div></div>
         </div>
       </div>
@@ -5249,7 +5316,7 @@ aside.sidebar {
 
     <!-- GREETING -->
     <div class="home-greet-row">
-      <div class="home-greet-text" id="homeGreeting">Bonjour, Théo ! ☀️</div>
+      <div class="home-greet-text" id="homeGreeting">Bonjour ! ☀️</div>
       <div class="home-clock" id="homeTime">11:24:50</div>
     </div>
 
@@ -5478,7 +5545,7 @@ aside.sidebar {
       </div>
       <div class="home-footer-bottom">
         <span>© 2026 DauphineGuide — Projet étudiant non affilié à l'Université Paris-Dauphine PSL</span>
-        <span>ADE exporté 13/03/2026 · Gr. 22 · Cursus Juridique</span>
+        <span>ADE · Dauphine L1 Droit-Éco</span>
       </div>
     </footer>
   </div>
@@ -5500,7 +5567,7 @@ aside.sidebar {
   <div class="rev" style="margin-bottom:24px">
     <div class="slbl">Ressources pédagogiques</div>
     <div class="sh2">Toutes les <em>matières</em> du S2</div>
-    <p class="sdesc">Cours résumés, annales et corrigés — accès direct aux dossiers Drive de ton groupe 22.</p>
+    <p class="sdesc">Cours résumés, annales et corrigés — accès direct aux dossiers Drive.</p>
   </div>
   <div class="tabs rev" id="matTabs">
     <button class="tab on" onclick="filterMat(&#39;all&#39;,this)">Tout voir</button>
@@ -6157,7 +6224,7 @@ aside.sidebar {
         <div>
           <div class="slbl" id="planSourceLabel">ADE · Emploi du temps</div>
           <div class="sh2">Ton <em>planning</em> en temps reel</div>
-          <p class="sdesc" id="planSourceDesc">Importe ton .ics depuis ADE pour voir ton EDT perso. Sinon l'EDT du Gr.22 est affiche par defaut.</p>
+          <p class="sdesc" id="planSourceDesc">Importe ton .ics depuis ADE pour voir ton EDT perso.</p>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0;margin-top:4px">
           <label class="ics-import-btn" for="planIcsFile">📅 Importer .ics
@@ -8839,7 +8906,7 @@ aside.sidebar {
       <!-- Infos perso -->
       <div class="profil-section">
         <div class="profil-section-title">👤 Informations</div>
-        <div class="profil-field"><label>Prénom</label><input type="text" id="pPrenom" placeholder="Ex: Théo" maxlength="30"></div>
+        <div class="profil-field"><label>Prénom</label><input type="text" id="pPrenom" placeholder="Ex: Marie, Théo…" maxlength="30"></div>
         <div class="profil-field"><label>Groupe TD</label>
           <select id="pGroupe">
             <option value="">-- Choisir --</option>
@@ -8865,6 +8932,14 @@ aside.sidebar {
             <option value="20">Groupe 20</option>
             <option value="21">Groupe 21</option>
             <option value="22">Groupe 22</option>
+          </select>
+        </div>
+        <div class="profil-field"><label>Promotion</label>
+          <select id="pPromo">
+            <option value="">-- Choisir --</option>
+            <option value="2025-2026">2025-2026</option>
+            <option value="2026-2027">2026-2027</option>
+            <option value="2027-2028">2027-2028</option>
           </select>
         </div>
         <div class="profil-field"><label>Objectif de moyenne (sur 20)</label><input type="number" id="pObjectif" min="10" max="20" step="0.5" placeholder="Ex: 13"></div>
@@ -11110,7 +11185,7 @@ function updateHeroStats(){
     if(typeof userEvents !== 'undefined' && userEvents && userEvents.length){
       if(elCrenLbl) elCrenLbl.textContent = 'Emploi du temps importé depuis ADE';
     } else {
-      if(elCrenLbl) elCrenLbl.textContent = 'Emploi du temps Gr.22 · Cursus Juridique';
+      if(elCrenLbl) { var _p=typeof getProfil==='function'?getProfil():{};elCrenLbl.textContent = _p.groupe ? 'Emploi du temps Gr.'+_p.groupe : 'Emploi du temps · Dauphine L1'; }
     }
   }
 }
@@ -11725,6 +11800,7 @@ function saveProfil() {
   var prof = {
     prenom: document.getElementById('pPrenom').value.trim(),
     groupe: document.getElementById('pGroupe').value,
+    promo:  document.getElementById('pPromo') ? document.getElementById('pPromo').value : '',
     objectif: parseFloat(document.getElementById('pObjectif').value) || 10,
     sound: document.getElementById('pSoundToggle').checked,
     notifs: {}
@@ -11741,9 +11817,13 @@ function saveProfil() {
 
 function updateNavProfil() {
   var prof = getProfil();
-  // Only update old nav button, not sidebar profil btn
-  var btn = document.querySelector('[onclick="openProfil()"]');
-  if(btn && btn.id !== 'sidebarProfilBtn' && prof.prenom) btn.textContent = '👤 ' + prof.prenom;
+  var btn = document.getElementById('sidebarProfilBtn');
+  if (btn) {
+    btn.title = prof.prenom ? prof.prenom + ' — Mon profil' : 'Mon profil';
+  }
+  // Update badge in hero
+  var badgeGroupe = document.getElementById('heroBadgeGroupe');
+  if (badgeGroupe) badgeGroupe.textContent = prof.groupe ? 'Gr. ' + prof.groupe : 'Dauphine L1';
 }
 
 function openProfil() {
@@ -11754,6 +11834,7 @@ function openProfil() {
   // Fill fields
   document.getElementById('pPrenom').value = prof.prenom || '';
   document.getElementById('pGroupe').value = prof.groupe || '';
+  if (document.getElementById('pPromo')) document.getElementById('pPromo').value = prof.promo || '';
   document.getElementById('pObjectif').value = prof.objectif || '';
   document.getElementById('pSoundToggle').checked = prof.sound || false;
   
@@ -11778,7 +11859,7 @@ function openProfil() {
   
   // Display name
   document.getElementById('profilNameDisplay').textContent = prof.prenom || 'Mon Profil';
-  document.getElementById('profilSubDisplay').textContent = (prof.groupe ? 'Groupe ' + prof.groupe + ' · ' : '') + 'Dauphine L1 Droit-Éco';
+  document.getElementById('profilSubDisplay').textContent = (prof.groupe ? 'Groupe ' + prof.groupe + ' · ' : '') + (prof.promo ? prof.promo + ' · ' : '') + 'Dauphine L1 Droit-Éco';
   
   // Notifications list
   var exams = [
@@ -11909,7 +11990,7 @@ function handleIcsDrop(e,zoneId){
   var z=document.getElementById(zoneId);
   if(z)z.classList.remove('drag-over');
   var file=e.dataTransfer.files[0];
-  if(file)processIcsFile(file,zoneId==='obIcsZone'?'obIcsStatus':'planIcsStatus');
+  if(file)processIcsFile(file,zoneId==='obIcsZone'?'obIcsStatus':zoneId==='obIcsZoneNew'?'obIcsStatusNew':'planIcsStatus');
 }
 function handleIcsFile(input,statusId){
   var file=input.files[0];
@@ -18498,7 +18579,7 @@ window.clearSalon = function() {
    ONBOARDING
 ══════════════════════════════════════ */
 var onbIndex = 0;
-var onbTotal = 12;
+var onbTotal = 13;
 var onbAnimTimers = [];
 
 function initOnboarding() {
@@ -18589,6 +18670,7 @@ function onbPlaySlide(idx) {
   else if (idx === 9) onbPlayFan();
   else if (idx === 10) onbPlayTl();
   else if (idx === 11) onbPlayFinish();
+  else if (idx === 12) onbPlaySetup();
 }
 
 /* S1 — Welcome */
@@ -18757,6 +18839,45 @@ function onbPlayFinish() {
       }, idx * 60));
     })(i);
   }
+}
+
+/* S13 — Setup profil */
+function onbPlaySetup() {
+  var prenom = document.getElementById('obPrenomNew');
+  var prof = typeof getProfil === 'function' ? getProfil() : {};
+  if (prenom && !prenom.value && prof.prenom) prenom.value = prof.prenom;
+  var groupe = document.getElementById('obGroupeNew');
+  if (groupe && !groupe.value && prof.groupe) groupe.value = prof.groupe;
+  var promo = document.getElementById('obPromoNew');
+  if (promo && !promo.value && prof.promo) promo.value = prof.promo;
+  onbSetupCheck();
+  if (prenom) setTimeout(function(){ prenom.focus(); }, 200);
+}
+
+function onbSetupCheck() {
+  var prenom = document.getElementById('obPrenomNew');
+  var btn = document.getElementById('obStartBtn');
+  if (!btn) return;
+  var ok = prenom && prenom.value.trim().length >= 1;
+  btn.style.opacity = ok ? '1' : '0.55';
+}
+
+function finishSetupAndClose() {
+  var prenom = (document.getElementById('obPrenomNew') || {}).value || '';
+  var groupe = (document.getElementById('obGroupeNew') || {}).value || '';
+  var promo  = (document.getElementById('obPromoNew')  || {}).value || '';
+  prenom = prenom.trim();
+  if (prenom || groupe || promo) {
+    var prof = typeof getProfil === 'function' ? getProfil() : {};
+    if (prenom) prof.prenom = prenom;
+    if (groupe) prof.groupe = groupe;
+    if (promo)  prof.promo  = promo;
+    try { localStorage.setItem('dauphine_profil_v1', JSON.stringify(prof)); } catch(e) {}
+    if (typeof updateNavProfil === 'function') updateNavProfil();
+    if (typeof updateHomeGreeting === 'function') updateHomeGreeting();
+    if (typeof updateHomeStats === 'function') updateHomeStats();
+  }
+  closeOnboarding();
 }
 
 // Init on load — seulement si pas d'animation orbitale en cours
