@@ -4885,6 +4885,49 @@ aside.sidebar {
 .mm-node-l3 rect{rx:6}
 .mm-link{fill:none;stroke-width:2;opacity:.7}
 
+/* ── Mind Map: Tooltip ── */
+#mmTooltip{position:fixed;background:#0f172a;color:#f8fafc;padding:5px 11px;border-radius:8px;font-size:12px;font-weight:600;pointer-events:none;z-index:9999;white-space:nowrap;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s cubic-bezier(0.16,1,0.3,1);font-family:'Figtree',sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.22);letter-spacing:.01em}
+#mmTooltip.show{opacity:1;transform:translateY(0)}
+[data-theme="dark"] #mmTooltip{background:#e2e8f0;color:#0f172a}
+/* ── Mind Map: Focus View Transitions ── */
+@keyframes mmMapZoomOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.14)}}
+@keyframes mmFocusSlideIn{from{opacity:0;transform:translateY(52px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mmFocusSlideOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-30px)}}
+@keyframes mmMapZoomIn{from{opacity:0;transform:scale(0.91)}to{opacity:1;transform:scale(1)}}
+@keyframes mmSectionReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){@keyframes mmMapZoomOut{to{opacity:0}}@keyframes mmFocusSlideIn{from{opacity:0}to{opacity:1}}@keyframes mmFocusSlideOut{to{opacity:0}}@keyframes mmMapZoomIn{from{opacity:0}to{opacity:1}}@keyframes mmSectionReveal{from{opacity:0}to{opacity:1}}}
+.mm-map-exiting{animation:mmMapZoomOut 370ms cubic-bezier(0.7,0,0.84,0) forwards!important}
+.mm-map-returning{animation:mmMapZoomIn 500ms cubic-bezier(0.16,1,0.3,1) forwards!important}
+/* ── Mind Map: Focus View ── */
+.mm-focus-view{display:flex;flex-direction:column;flex:1;overflow:hidden;animation:mmFocusSlideIn 520ms cubic-bezier(0.16,1,0.3,1) both}
+.mm-focus-view.exiting{animation:mmFocusSlideOut 280ms cubic-bezier(0.7,0,0.84,0) forwards}
+.mm-focus-header{display:flex;align-items:center;gap:10px;padding:14px 18px 13px;border-bottom:1px solid var(--g100);flex-wrap:wrap}
+[data-theme="dark"] .mm-focus-header{border-color:var(--border-col)}
+.mm-focus-back{display:flex;align-items:center;gap:5px;padding:5px 11px;font-size:11.5px;font-weight:700;border:1.5px solid var(--g200);background:#fff;color:var(--g700);border-radius:8px;cursor:pointer;transition:background .15s,border-color .15s;font-family:'Figtree',sans-serif;white-space:nowrap;flex-shrink:0}
+.mm-focus-back:hover{background:var(--g50,#f8fafc);border-color:var(--g400)}
+[data-theme="dark"] .mm-focus-back{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
+.mm-focus-title{font-size:15px;font-weight:800;color:var(--text-main);flex:1;min-width:0;line-height:1.25;word-break:break-word}
+.mm-focus-badge{padding:3px 9px;border-radius:20px;font-size:9.5px;font-weight:800;color:#fff;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
+.mm-focus-body{flex:1;overflow-y:auto;padding:16px 18px 28px;display:flex;flex-direction:column;gap:13px}
+.mm-focus-intro{font-size:12.5px;color:var(--g500);line-height:1.7;font-style:italic;padding:12px 14px;background:var(--g50,#f8fafc);border-radius:10px}
+[data-theme="dark"] .mm-focus-intro{background:rgba(255,255,255,.05);color:var(--g400)}
+.mm-focus-section{background:#fff;border:1px solid var(--g100);border-radius:11px;padding:14px 16px;opacity:0;animation:mmSectionReveal 400ms cubic-bezier(0.16,1,0.3,1) both}
+[data-theme="dark"] .mm-focus-section{background:var(--bg-card);border-color:var(--border-col)}
+.mm-focus-section-title{font-size:12.5px;font-weight:800;margin-bottom:6px}
+.mm-focus-section-body{font-size:12px;color:var(--g600);line-height:1.72;margin:0}
+[data-theme="dark"] .mm-focus-section-body{color:var(--g400)}
+.mm-focus-points{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:4px}
+.mm-focus-points li{font-size:11.5px;color:var(--g500);padding-left:14px;position:relative;line-height:1.55}
+.mm-focus-points li::before{content:'·';position:absolute;left:2px;font-weight:900;color:var(--blue);font-size:15px;line-height:1.1}
+[data-theme="dark"] .mm-focus-points li{color:var(--g400)}
+.mm-focus-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:48px 24px;flex:1}
+.mm-focus-spinner{width:36px;height:36px;border:2.5px solid var(--g100);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+.mm-focus-loading-lbl{font-size:12.5px;color:var(--g400);font-weight:600}
+/* ── Mind Map: Focus trigger button on L1 nodes ── */
+.mm-focus-pill{cursor:pointer}
+.mm-focus-pill rect{transition:opacity .15s}
+.mm-focus-pill:hover rect{opacity:.9}
+
 /* ═══════════════════════════════════════════════════════════════
    SALLE D'ÉTUDE CO-POMODORO
 ═══════════════════════════════════════════════════════════════ */
@@ -9504,10 +9547,27 @@ aside.sidebar {
           <span id="mmNodeCount" style="font-size:11px;color:var(--g400);margin-left:auto"></span>
         </div>
         <div class="mm-svg-wrap" id="mmSvgWrap"></div>
+        <!-- Focus Branch View -->
+        <div id="mmFocusView" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+          <div id="mmFocusLoading" class="mm-focus-loading">
+            <div class="mm-focus-spinner"></div>
+            <div class="mm-focus-loading-lbl" id="mmFocusLoadingLbl">Analyse approfondie…</div>
+          </div>
+          <div id="mmFocusContent" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+            <div class="mm-focus-header">
+              <button class="mm-focus-back" onclick="mmBackFromFocus()">← Carte</button>
+              <div class="mm-focus-title" id="mmFocusTitle"></div>
+              <div class="mm-focus-badge" id="mmFocusBadge">FOCUS</div>
+            </div>
+            <div class="mm-focus-body" id="mmFocusBody"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<!-- Tooltip for full node labels -->
+<div id="mmTooltip"></div>
 
 <!-- ══ SALLE D'ÉTUDE CO-POMODORO ══ -->
 <div class="page-section" id="page-salle">
@@ -23727,6 +23787,7 @@ var mmOffsetX = 0, mmOffsetY = 0;
 var mmDragging = false, mmDragStartX = 0, mmDragStartY = 0, mmDragStartOX = 0, mmDragStartOY = 0;
 var mmSVG = null;
 var mmAllNodes = [];        // flat list for quick access
+var mmCourseContent = '';   // original course text for focus generation
 
 // ── Color palette per level ──
 var MM_COLORS = [
@@ -23741,6 +23802,7 @@ window.mmGenerate = async function() {
   var input = document.getElementById('mmInput').value.trim();
   if (!input) { toast('Colle d\'abord un cours', '⚠️'); return; }
   var matiere = document.getElementById('mmMatiere').value;
+  mmCourseContent = input;
 
   profSetButtonLoading('mmGenBtn', true, '🧠 Génération…', '🧠 Générer la Mind Map');
   document.getElementById('mmEmpty').style.display = 'none';
@@ -23798,13 +23860,16 @@ window.mmGenerate = async function() {
 };
 
 window.mmReset = function() {
-  mmData = null; mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
+  mmData = null; mmCourseContent = ''; mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
   document.getElementById('mmEmpty').style.display = 'flex';
   document.getElementById('mmEmpty').querySelector('strong').textContent = 'Ta Mind Map apparaîtra ici';
   document.getElementById('mmEmpty').querySelector('span').textContent = 'Colle un cours et clique sur Générer.';
   document.getElementById('mmControls').style.display = 'none';
   document.getElementById('mmLoadingPanel').style.display = 'none';
+  document.getElementById('mmSvgWrap').style.display = '';
   document.getElementById('mmSvgWrap').innerHTML = '';
+  var fv = document.getElementById('mmFocusView');
+  fv.style.display = 'none'; fv.className = '';
   document.getElementById('mmInput').value = '';
   document.getElementById('mmMatiere').value = '';
 };
@@ -23974,14 +24039,60 @@ function mmRender() {
     text.textContent = displayLabel;
     g.appendChild(text);
 
-    // Collapse indicator
-    if (node.children && node.children.length && depth > 0) {
+    // Collapse indicator (only for non-L1 with children, since L1 gets the focus pill instead)
+    if (node.children && node.children.length && depth > 1) {
       var ind = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       ind.setAttribute('cx', rectW - 5); ind.setAttribute('cy', 5);
       ind.setAttribute('r', 4);
       ind.setAttribute('fill', textColor); ind.setAttribute('opacity', '0.4');
       g.appendChild(ind);
     }
+
+    // ⚡ Focus pill — always visible on L1 nodes
+    if (depth === 1) {
+      var pillG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      pillG.setAttribute('class', 'mm-focus-pill');
+      var pillW = 36, pillH = 14, pillRx = 7;
+      var pillX = rectW - pillW - 2, pillY = -pillH - 3;
+      var pillRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      pillRect.setAttribute('x', pillX); pillRect.setAttribute('y', pillY);
+      pillRect.setAttribute('width', pillW); pillRect.setAttribute('height', pillH);
+      pillRect.setAttribute('rx', pillRx); pillRect.setAttribute('fill', bgColor);
+      pillRect.setAttribute('opacity', '0.92');
+      pillG.appendChild(pillRect);
+      var pillText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      pillText.setAttribute('x', pillX + pillW / 2); pillText.setAttribute('y', pillY + pillH / 2 + 3.8);
+      pillText.setAttribute('text-anchor', 'middle');
+      pillText.setAttribute('fill', '#fff'); pillText.setAttribute('font-size', '8');
+      pillText.setAttribute('font-family', 'Figtree, sans-serif');
+      pillText.setAttribute('font-weight', '800');
+      pillText.setAttribute('letter-spacing', '0.3');
+      pillText.textContent = '⚡ Focus';
+      pillG.appendChild(pillText);
+      (function(n, c) {
+        pillG.addEventListener('click', function(e) { e.stopPropagation(); mmFocusBranch(n, c); });
+      })(node, bgColor);
+      g.appendChild(pillG);
+    }
+
+    // Hover tooltip — show full label on any node
+    (function(fullLabel) {
+      g.addEventListener('mouseenter', function() {
+        if (fullLabel === displayLabel) return; // no truncation, skip
+        var tip = document.getElementById('mmTooltip');
+        tip.textContent = fullLabel;
+        tip.classList.add('show');
+      });
+      g.addEventListener('mousemove', function(e) {
+        if (fullLabel === displayLabel) return;
+        var tip = document.getElementById('mmTooltip');
+        tip.style.left = (e.clientX + 16) + 'px';
+        tip.style.top  = (e.clientY - 38) + 'px';
+      });
+      g.addEventListener('mouseleave', function() {
+        document.getElementById('mmTooltip').classList.remove('show');
+      });
+    })(label);
 
     if (node.children && node.children.length) {
       g.addEventListener('click', function(e) {
@@ -24109,6 +24220,172 @@ window.mmExportPng = function() {
   };
   img.src = url;
 };
+
+// ── Focus Branch ──
+window.mmFocusBranch = function(node, color) {
+  var courseText = mmCourseContent || document.getElementById('mmInput').value;
+  var controls = document.getElementById('mmControls');
+  var svgWrap  = document.getElementById('mmSvgWrap');
+
+  // Compute transform-origin toward the clicked node (within the SVG wrap)
+  var wrapRect = svgWrap.getBoundingClientRect();
+  var nodeScreenX = node._x * mmScale + mmOffsetX;
+  var nodeScreenY = node._y * mmScale + mmOffsetY;
+  var relX = nodeScreenX;
+  var relY = nodeScreenY;
+  svgWrap.style.transformOrigin = relX + 'px ' + relY + 'px';
+  controls.style.transformOrigin = '50% 50%';
+
+  // Animate out: zoom into the branch node
+  var dur = '370ms';
+  var easeIn = 'cubic-bezier(0.7,0,0.84,0)';
+  [controls, svgWrap].forEach(function(el) {
+    el.style.transition = 'opacity ' + dur + ' ' + easeIn + ', transform ' + dur + ' ' + easeIn;
+    el.style.opacity = '0';
+    el.style.transform = 'scale(1.13)';
+    el.style.pointerEvents = 'none';
+  });
+
+  setTimeout(function() {
+    // Reset inline styles
+    [controls, svgWrap].forEach(function(el) {
+      el.style.transition = '';
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.pointerEvents = '';
+      el.style.transformOrigin = '';
+    });
+    controls.style.display = 'none';
+    svgWrap.style.display = 'none';
+
+    // Show focus view
+    var fv = document.getElementById('mmFocusView');
+    fv.style.display = 'flex';
+    fv.className = 'mm-focus-view';
+    document.getElementById('mmFocusLoading').style.display = 'flex';
+    document.getElementById('mmFocusContent').style.display = 'none';
+
+    // Set badge color immediately
+    document.getElementById('mmFocusBadge').style.background = color;
+    document.getElementById('mmFocusTitle').textContent = '';
+
+    mmGenerateFocusContent(node.label, color, courseText);
+  }, 380);
+};
+
+window.mmBackFromFocus = function() {
+  var fv = document.getElementById('mmFocusView');
+  fv.classList.add('exiting');
+
+  setTimeout(function() {
+    fv.style.display = 'none';
+    fv.className = '';
+
+    var controls = document.getElementById('mmControls');
+    var svgWrap  = document.getElementById('mmSvgWrap');
+    controls.style.display = 'flex';
+    svgWrap.style.display = '';
+
+    // Animate in: zoom from slightly smaller
+    var easeOut = 'cubic-bezier(0.16,1,0.3,1)';
+    [controls, svgWrap].forEach(function(el) {
+      el.style.opacity = '0';
+      el.style.transform = 'scale(0.92)';
+    });
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        [controls, svgWrap].forEach(function(el) {
+          el.style.transition = 'opacity 500ms ' + easeOut + ', transform 500ms ' + easeOut;
+          el.style.opacity = '1';
+          el.style.transform = 'scale(1)';
+        });
+        setTimeout(function() {
+          [controls, svgWrap].forEach(function(el) {
+            el.style.transition = '';
+            el.style.opacity = '';
+            el.style.transform = '';
+          });
+        }, 520);
+      });
+    });
+  }, 290);
+};
+
+async function mmGenerateFocusContent(branchLabel, color, courseText) {
+  var lbl = document.getElementById('mmFocusLoadingLbl');
+  lbl.textContent = 'Approfondissement de "' + branchLabel + '"…';
+
+  var prompt = 'Tu es un expert pédagogique universitaire.\n\nVoici un extrait de cours :\n\n'
+    + courseText.slice(0, 4500) + '\n\n'
+    + 'MISSION : Génère un approfondissement détaillé et pédagogique sur le concept « ' + branchLabel + ' » extrait de ce cours.\n\n'
+    + 'RÈGLES :\n'
+    + '- intro : 1 à 2 phrases qui définissent ou contextualisent le concept dans le cours\n'
+    + '- 3 à 5 sections thématiques avec :\n'
+    + '  · title : titre de section précis (3-6 mots)\n'
+    + '  · body : paragraphe explicatif de 2 à 4 phrases, pédagogique et fidèle au cours\n'
+    + '  · points : 2 à 4 points clés très courts (une ligne chacun), optionnel\n'
+    + '- Reste fidèle au contenu du cours. Ne dépasse pas le cadre du texte fourni.\n\n'
+    + 'FORMAT JSON STRICT — réponds UNIQUEMENT avec du JSON valide, sans aucun texte avant ni après :\n'
+    + '{"intro":"...","sections":[{"title":"...","body":"...","points":["...","..."]}]}';
+
+  try {
+    var raw = await profRequestXXL(prompt, 900, 0.25);
+    var data = profParseJson(raw);
+    if (!data || !Array.isArray(data.sections)) throw new Error('Format JSON invalide');
+
+    // Populate header
+    document.getElementById('mmFocusTitle').textContent = branchLabel;
+
+    // Populate body
+    var body = document.getElementById('mmFocusBody');
+    body.innerHTML = '';
+
+    if (data.intro) {
+      var introEl = document.createElement('p');
+      introEl.className = 'mm-focus-intro';
+      introEl.textContent = data.intro;
+      body.appendChild(introEl);
+    }
+
+    data.sections.forEach(function(sec, i) {
+      var card = document.createElement('div');
+      card.className = 'mm-focus-section';
+      card.style.animationDelay = (i * 65 + 60) + 'ms';
+
+      var titleEl = document.createElement('div');
+      titleEl.className = 'mm-focus-section-title';
+      titleEl.style.color = color;
+      titleEl.textContent = sec.title || '';
+
+      var bodyEl = document.createElement('p');
+      bodyEl.className = 'mm-focus-section-body';
+      bodyEl.textContent = sec.body || '';
+
+      card.appendChild(titleEl);
+      card.appendChild(bodyEl);
+
+      if (sec.points && sec.points.length) {
+        var ul = document.createElement('ul');
+        ul.className = 'mm-focus-points';
+        sec.points.forEach(function(pt) {
+          var li = document.createElement('li');
+          li.textContent = pt;
+          ul.appendChild(li);
+        });
+        card.appendChild(ul);
+      }
+
+      body.appendChild(card);
+    });
+
+    document.getElementById('mmFocusLoading').style.display = 'none';
+    var content = document.getElementById('mmFocusContent');
+    content.style.display = 'flex';
+  } catch(e) {
+    lbl.textContent = 'Erreur : ' + e.message;
+    toast('Erreur focus branche', '❌');
+  }
+}
 
 })();
 </script>
