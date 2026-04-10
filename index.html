@@ -4,7 +4,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>if(new URLSearchParams(window.location.search).has('widget')){document.documentElement.classList.add('widget-mode');}</script>
-<style>.widget-mode body>*:not(#dg-widget){display:none!important}.widget-mode #loginScreen{display:none!important}.widget-mode #onb-overlay{display:none!important}.widget-mode #splash-screen{display:none!important}.widget-mode .morph-overlay{display:none!important}.widget-mode body,.widget-mode html{background:transparent!important}</style>
+<style>.widget-mode body>*:not(#dg-widget){display:none!important}.widget-mode #loginScreen{display:none!important}.widget-mode #onb-overlay{display:none!important}.widget-mode #splash-screen{display:none!important}.widget-mode .morph-overlay{display:none!important}.widget-mode #setupModal{display:none!important}.widget-mode body,.widget-mode html{background:transparent!important}</style>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23003d7a'/><text x='32' y='48' text-anchor='middle' fill='white' font-size='36' font-family='georgia' font-style='italic'>D</text></svg>">
 <title>DauphineGuide — L1 Droit-Éco Dauphine</title>
@@ -800,6 +800,34 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 [data-theme="dark"] .profil-panel{background:var(--bg-card)}
 [data-theme="dark"] .profil-stat,.profil-notif-row{background:var(--g50);border-color:var(--border-col)}
 [data-theme="dark"] .profil-field input,[data-theme="dark"] .profil-field select{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
+
+/* ════ FIRST-VISIT SETUP MODAL ════ */
+#setupModal{display:none;position:fixed;inset:0;background:rgba(0,10,30,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9900;align-items:center;justify-content:center;padding:20px;animation:setupModalIn .35s ease}
+#setupModal.open{display:flex}
+@keyframes setupModalIn{from{opacity:0}to{opacity:1}}
+.setup-card{background:var(--bg-card,#fff);border-radius:24px;width:100%;max-width:480px;box-shadow:0 32px 96px rgba(0,0,0,.32),0 8px 32px rgba(0,0,0,.1);overflow:hidden;animation:setupCardIn .4s cubic-bezier(.34,1.4,.64,1)}
+@keyframes setupCardIn{from{transform:translateY(32px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.setup-head{background:linear-gradient(135deg,#08284d 0%,#0057ad 100%);padding:28px 28px 22px;position:relative}
+.setup-head-ic{font-size:32px;margin-bottom:10px}
+.setup-head-title{font-family:var(--font-serif,serif);font-size:22px;font-style:italic;color:#fff;line-height:1.2;margin-bottom:6px}
+.setup-head-sub{font-size:12px;color:rgba(255,255,255,.6);line-height:1.5}
+.setup-head-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:30px;height:30px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.setup-head-close:hover{background:rgba(255,255,255,.28)}
+.setup-body{padding:22px 28px 24px;display:flex;flex-direction:column;gap:14px}
+.setup-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.setup-ics-zone{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1.5px dashed var(--g200);background:var(--g50,#f8fafc);cursor:pointer;transition:border-color .15s,background .15s}
+.setup-ics-zone:hover,.setup-ics-zone.drag-over{border-color:var(--blue);background:var(--blue-pale,#e8f0fb)}
+.setup-ics-ic{font-size:22px;flex-shrink:0}
+.setup-ics-lbl{font-size:12px;font-weight:600;color:var(--text-main)}
+.setup-ics-sub{font-size:10px;color:var(--g400);margin-top:1px}
+.setup-actions{display:flex;gap:10px;margin-top:4px}
+.setup-btn-skip{flex:1;padding:11px;border:1.5px solid var(--g200);background:transparent;color:var(--g600);border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
+.setup-btn-skip:hover{border-color:var(--g400);color:var(--g800)}
+.setup-btn-save{flex:2;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:background .15s}
+.setup-btn-save:hover{background:var(--blue-mid)}
+[data-theme="dark"] .setup-card{background:var(--bg-card)}
+[data-theme="dark"] .setup-ics-zone{background:var(--g50);border-color:var(--border-col)}
+[data-theme="dark"] .setup-btn-skip{border-color:var(--border-col);color:var(--g400)}
 
 /* ════ BACKGROUND CUSTOMIZER ════ */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);z-index:4000;align-items:center;justify-content:center;padding:20px;animation:fadeInOverlay .25s ease-out}
@@ -5058,74 +5086,7 @@ aside.sidebar {
       </div>
       <div class="onb-title">C'est <em>parti</em> !</div>
       <div class="onb-desc">Tu peux relancer ce guide à tout moment depuis la section FAQ. Bonne L1 à toi 🎓</div>
-      <button class="onb-start-btn" onclick="onbNavigate(1)">Configurer mon profil →</button>
-    </div>
-
-    <!-- SLIDE 13 — Configuration du profil -->
-    <div class="onb-slide" id="onb-s12">
-      <div class="onb-anim" style="flex-direction:column;gap:0;height:auto;min-height:170px;padding:20px 24px">
-        <div style="font-size:32px;margin-bottom:8px">✨</div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">30 secondes pour personnaliser</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.5)">Ces infos restent dans ton navigateur.</div>
-      </div>
-      <div class="onb-title" style="margin-bottom:6px">Ton <em>profil</em></div>
-      <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;margin-top:10px">
-        <!-- Prénom -->
-        <div style="text-align:left">
-          <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Prénom</label>
-          <input id="obPrenomNew" type="text" maxlength="30" placeholder="Ex: Marie, Théo…" autocomplete="given-name"
-            style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:14px;font-family:'Figtree',sans-serif;outline:none"
-            oninput="onbSetupCheck()" onfocus="this.style.borderColor='rgba(77,159,255,.7)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
-        </div>
-        <!-- Groupe + Promo -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div style="text-align:left">
-            <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Groupe TD</label>
-            <select id="obGroupeNew"
-              style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(30,36,51,.85);color:#fff;font-size:14px;font-family:'Figtree',sans-serif;outline:none;cursor:pointer"
-              onfocus="this.style.borderColor='rgba(77,159,255,.7)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
-              <option value="">-- Choisir --</option>
-              <option value="1">Groupe 1</option><option value="2">Groupe 2</option><option value="3">Groupe 3</option>
-              <option value="4">Groupe 4</option><option value="5">Groupe 5</option><option value="6">Groupe 6</option>
-              <option value="7">Groupe 7</option><option value="8">Groupe 8</option><option value="9">Groupe 9</option>
-              <option value="10">Groupe 10</option><option value="11">Groupe 11</option><option value="12">Groupe 12</option>
-              <option value="13">Groupe 13</option><option value="14">Groupe 14</option><option value="15">Groupe 15</option>
-              <option value="16">Groupe 16</option><option value="17">Groupe 17</option><option value="18">Groupe 18</option>
-              <option value="19">Groupe 19</option><option value="20">Groupe 20</option><option value="21">Groupe 21</option>
-              <option value="22">Groupe 22</option>
-            </select>
-          </div>
-          <div style="text-align:left">
-            <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Promotion</label>
-            <select id="obPromoNew"
-              style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(30,36,51,.85);color:#fff;font-size:14px;font-family:'Figtree',sans-serif;outline:none;cursor:pointer"
-              onfocus="this.style.borderColor='rgba(77,159,255,.7)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
-              <option value="">-- Choisir --</option>
-              <option value="2025-2026">2025-2026</option>
-              <option value="2026-2027">2026-2027</option>
-              <option value="2027-2028">2027-2028</option>
-            </select>
-          </div>
-        </div>
-        <!-- ICS Upload -->
-        <div style="text-align:left">
-          <label style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px">Emploi du temps ADE <span style="font-weight:400;color:rgba(255,255,255,.4)">(optionnel)</span></label>
-          <label id="obIcsZoneNew" for="obIcsFileNew"
-            style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1.5px dashed rgba(255,255,255,.25);background:rgba(255,255,255,.06);cursor:pointer;transition:border-color .15s,background .15s"
-            ondragover="handleIcsDrag(event,true,'obIcsZoneNew')" ondragleave="handleIcsDrag(event,false,'obIcsZoneNew')" ondrop="handleIcsDrop(event,'obIcsZoneNew')"
-            onmouseover="this.style.borderColor='rgba(77,159,255,.6)';this.style.background='rgba(77,159,255,.08)'"
-            onmouseout="this.style.borderColor='rgba(255,255,255,.25)';this.style.background='rgba(255,255,255,.06)'">
-            <span style="font-size:20px">📅</span>
-            <div>
-              <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.85)">Importer mon .ics depuis ADE</div>
-              <div style="font-size:10px;color:rgba(255,255,255,.4)">Glisse-dépose ou clique pour choisir</div>
-            </div>
-            <input type="file" id="obIcsFileNew" accept=".ics" style="display:none" onchange="handleIcsFile(this,'obIcsStatusNew')">
-          </label>
-          <div id="obIcsStatusNew" class="ics-status" style="margin-top:6px;font-size:11px"></div>
-        </div>
-      </div>
-      <button class="onb-start-btn" id="obStartBtn" onclick="finishSetupAndClose()" style="margin-top:18px;min-width:180px">C'est parti ! 🎓</button>
+      <button class="onb-start-btn" onclick="closeOnboarding()">Commencer →</button>
     </div>
 
     <div class="onb-nav">
@@ -8885,6 +8846,71 @@ aside.sidebar {
   <div class="nfb-swatch" style="background:#ea580c" title="Orange" data-tc="#ea580c"></div>
 
 <!-- PROFIL MODAL -->
+<!-- ══════════════ SETUP MODAL (PREMIER LANCEMENT) ══════════════ -->
+<div id="setupModal" onclick="if(event.target===this)closeSetupModal(false)">
+  <div class="setup-card">
+    <div class="setup-head">
+      <button class="setup-head-close" onclick="closeSetupModal(false)" title="Passer">✕</button>
+      <div class="setup-head-ic">🎓</div>
+      <div class="setup-head-title">Configure ton <em>profil</em></div>
+      <div class="setup-head-sub">Ces informations personnalisent ton expérience et restent dans ton navigateur.</div>
+    </div>
+    <div class="setup-body">
+      <!-- Prénom -->
+      <div class="profil-field">
+        <label>Prénom</label>
+        <input type="text" id="smPrenom" maxlength="30" placeholder="Ex: Marie, Théo…" autocomplete="given-name">
+      </div>
+      <!-- Groupe + Promo -->
+      <div class="setup-row">
+        <div class="profil-field" style="margin-bottom:0">
+          <label>Groupe TD</label>
+          <select id="smGroupe">
+            <option value="">-- Choisir --</option>
+            <option value="1">Groupe 1</option><option value="2">Groupe 2</option><option value="3">Groupe 3</option>
+            <option value="4">Groupe 4</option><option value="5">Groupe 5</option><option value="6">Groupe 6</option>
+            <option value="7">Groupe 7</option><option value="8">Groupe 8</option><option value="9">Groupe 9</option>
+            <option value="10">Groupe 10</option><option value="11">Groupe 11</option><option value="12">Groupe 12</option>
+            <option value="13">Groupe 13</option><option value="14">Groupe 14</option><option value="15">Groupe 15</option>
+            <option value="16">Groupe 16</option><option value="17">Groupe 17</option><option value="18">Groupe 18</option>
+            <option value="19">Groupe 19</option><option value="20">Groupe 20</option><option value="21">Groupe 21</option>
+            <option value="22">Groupe 22</option>
+          </select>
+        </div>
+        <div class="profil-field" style="margin-bottom:0">
+          <label>Promotion</label>
+          <select id="smPromo">
+            <option value="">-- Choisir --</option>
+            <option value="2025-2026">2025-2026</option>
+            <option value="2026-2027">2026-2027</option>
+            <option value="2027-2028">2027-2028</option>
+          </select>
+        </div>
+      </div>
+      <!-- ICS upload -->
+      <div class="profil-field" style="margin-bottom:0">
+        <label>Emploi du temps ADE <span style="font-weight:400;color:var(--g400)">(optionnel)</span></label>
+        <label class="setup-ics-zone" id="smIcsZone" for="smIcsFile"
+          ondragover="handleIcsDrag(event,true,'smIcsZone')" ondragleave="handleIcsDrag(event,false,'smIcsZone')" ondrop="handleIcsDrop(event,'smIcsZone')">
+          <span class="setup-ics-ic">📅</span>
+          <div>
+            <div class="setup-ics-lbl">Importer mon .ics depuis ADE</div>
+            <div class="setup-ics-sub">Glisse-dépose ou clique pour choisir</div>
+          </div>
+          <input type="file" id="smIcsFile" accept=".ics" style="display:none" onchange="handleIcsFile(this,'smIcsStatus')">
+        </label>
+        <div id="smIcsStatus" class="ics-status" style="margin-top:6px"></div>
+      </div>
+      <!-- Actions -->
+      <div class="setup-actions">
+        <button class="setup-btn-skip" onclick="closeSetupModal(false)">Passer</button>
+        <button class="setup-btn-save" onclick="saveSetupModal()">C'est parti ! 🎓</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ══════════════ FIN SETUP MODAL ══════════════ -->
+
 <div class="profil-overlay" id="profilOverlay" onclick="if(event.target===this)closeProfil()">
   <div class="profil-panel">
     <div class="profil-header">
@@ -11990,7 +12016,7 @@ function handleIcsDrop(e,zoneId){
   var z=document.getElementById(zoneId);
   if(z)z.classList.remove('drag-over');
   var file=e.dataTransfer.files[0];
-  if(file)processIcsFile(file,zoneId==='obIcsZone'?'obIcsStatus':zoneId==='obIcsZoneNew'?'obIcsStatusNew':'planIcsStatus');
+  if(file)processIcsFile(file,zoneId==='obIcsZone'?'obIcsStatus':zoneId==='smIcsZone'?'smIcsStatus':'planIcsStatus');
 }
 function handleIcsFile(input,statusId){
   var file=input.files[0];
@@ -18579,7 +18605,7 @@ window.clearSalon = function() {
    ONBOARDING
 ══════════════════════════════════════ */
 var onbIndex = 0;
-var onbTotal = 13;
+var onbTotal = 12;
 var onbAnimTimers = [];
 
 function initOnboarding() {
@@ -18603,7 +18629,12 @@ function closeOnboarding() {
   var el = document.getElementById('onb-overlay');
   el.classList.remove('show');
   setTimeout(function(){ el.classList.add('hidden'); }, 400);
+  var isFirstTime = !localStorage.getItem('onb_done_v1');
   localStorage.setItem('onb_done_v1', '1');
+  // Ouvrir la modale de profil à la première visite, avec un léger délai
+  if (isFirstTime) {
+    setTimeout(function(){ openSetupModal(); }, 500);
+  }
 }
 
 function onbBuildDots() {
@@ -18670,7 +18701,6 @@ function onbPlaySlide(idx) {
   else if (idx === 9) onbPlayFan();
   else if (idx === 10) onbPlayTl();
   else if (idx === 11) onbPlayFinish();
-  else if (idx === 12) onbPlaySetup();
 }
 
 /* S1 — Welcome */
@@ -18841,31 +18871,33 @@ function onbPlayFinish() {
   }
 }
 
-/* S13 — Setup profil */
-function onbPlaySetup() {
-  var prenom = document.getElementById('obPrenomNew');
+// ════ SETUP MODAL (PREMIER LANCEMENT) ════
+function openSetupModal() {
+  var modal = document.getElementById('setupModal');
+  if (!modal) return;
+  // Pré-remplir si un profil existe déjà
   var prof = typeof getProfil === 'function' ? getProfil() : {};
-  if (prenom && !prenom.value && prof.prenom) prenom.value = prof.prenom;
-  var groupe = document.getElementById('obGroupeNew');
-  if (groupe && !groupe.value && prof.groupe) groupe.value = prof.groupe;
-  var promo = document.getElementById('obPromoNew');
-  if (promo && !promo.value && prof.promo) promo.value = prof.promo;
-  onbSetupCheck();
-  if (prenom) setTimeout(function(){ prenom.focus(); }, 200);
+  var smP = document.getElementById('smPrenom');
+  var smG = document.getElementById('smGroupe');
+  var smPr = document.getElementById('smPromo');
+  if (smP && !smP.value && prof.prenom) smP.value = prof.prenom;
+  if (smG && !smG.value && prof.groupe) smG.value = prof.groupe;
+  if (smPr && !smPr.value && prof.promo) smPr.value = prof.promo;
+  modal.classList.add('open');
+  if (smP) setTimeout(function(){ smP.focus(); }, 250);
 }
 
-function onbSetupCheck() {
-  var prenom = document.getElementById('obPrenomNew');
-  var btn = document.getElementById('obStartBtn');
-  if (!btn) return;
-  var ok = prenom && prenom.value.trim().length >= 1;
-  btn.style.opacity = ok ? '1' : '0.55';
+function closeSetupModal(saved) {
+  var modal = document.getElementById('setupModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  try { localStorage.setItem('dauphine_setup_done', '1'); } catch(e) {}
 }
 
-function finishSetupAndClose() {
-  var prenom = (document.getElementById('obPrenomNew') || {}).value || '';
-  var groupe = (document.getElementById('obGroupeNew') || {}).value || '';
-  var promo  = (document.getElementById('obPromoNew')  || {}).value || '';
+function saveSetupModal() {
+  var prenom = (document.getElementById('smPrenom') || {}).value || '';
+  var groupe = (document.getElementById('smGroupe') || {}).value || '';
+  var promo  = (document.getElementById('smPromo')  || {}).value || '';
   prenom = prenom.trim();
   if (prenom || groupe || promo) {
     var prof = typeof getProfil === 'function' ? getProfil() : {};
@@ -18877,7 +18909,7 @@ function finishSetupAndClose() {
     if (typeof updateHomeGreeting === 'function') updateHomeGreeting();
     if (typeof updateHomeStats === 'function') updateHomeStats();
   }
-  closeOnboarding();
+  closeSetupModal(true);
 }
 
 // Init on load — seulement si pas d'animation orbitale en cours
