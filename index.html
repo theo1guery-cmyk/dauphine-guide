@@ -24228,6 +24228,20 @@ window.mmExportPng = function() {
   img.src = url;
 };
 
+// ── Branch subtree serializer ──
+function mmBranchToText(node, depth) {
+  depth = depth || 0;
+  var indent = '';
+  for (var i = 0; i < depth; i++) indent += '  ';
+  var lines = [indent + node.label];
+  if (node.children && node.children.length) {
+    node.children.forEach(function(c) {
+      lines = lines.concat(mmBranchToText(c, depth + 1));
+    });
+  }
+  return lines;
+}
+
 // ── Focus Branch ──
 window.mmFocusBranch = function(node, color) {
   var courseText = mmCourseContent || document.getElementById('mmInput').value;
@@ -24276,7 +24290,7 @@ window.mmFocusBranch = function(node, color) {
     document.getElementById('mmFocusBadge').style.background = color;
     document.getElementById('mmFocusTitle').textContent = '';
 
-    mmGenerateFocusContent(node.label, color, courseText);
+    mmGenerateFocusContent(node, color, courseText);
   }, 380);
 };
 
@@ -24318,20 +24332,28 @@ window.mmBackFromFocus = function() {
   }, 290);
 };
 
-async function mmGenerateFocusContent(branchLabel, color, courseText) {
+async function mmGenerateFocusContent(node, color, courseText) {
+  var branchLabel = node.label;
+  var branchLines = mmBranchToText(node);
+  var branchOutline = branchLines.join('\n');
+
   var lbl = document.getElementById('mmFocusLoadingLbl');
   lbl.textContent = 'Approfondissement de "' + branchLabel + '"…';
 
-  var prompt = 'Tu es un expert pédagogique universitaire.\n\nVoici un extrait de cours :\n\n'
-    + courseText.slice(0, 4500) + '\n\n'
-    + 'MISSION : Génère un approfondissement détaillé et pédagogique sur le concept « ' + branchLabel + ' » extrait de ce cours.\n\n'
-    + 'RÈGLES :\n'
-    + '- intro : 1 à 2 phrases qui définissent ou contextualisent le concept dans le cours\n'
-    + '- 3 à 5 sections thématiques avec :\n'
-    + '  · title : titre de section précis (3-6 mots)\n'
-    + '  · body : paragraphe explicatif de 2 à 4 phrases, pédagogique et fidèle au cours\n'
-    + '  · points : 2 à 4 points clés très courts (une ligne chacun), optionnel\n'
-    + '- Reste fidèle au contenu du cours. Ne dépasse pas le cadre du texte fourni.\n\n'
+  var prompt = 'Tu es un assistant pédagogique universitaire.\n\n'
+    + 'COURS (source unique — ne te réfère à AUCUNE connaissance extérieure) :\n'
+    + '"""\n' + courseText.slice(0, 4500) + '\n"""\n\n'
+    + 'STRUCTURE DE LA BRANCHE sélectionnée (tu dois couvrir TOUS ces éléments) :\n'
+    + '"""\n' + branchOutline + '\n"""\n\n'
+    + 'MISSION : Génère un approfondissement pédagogique sur la branche « ' + branchLabel + ' » en t\'appuyant UNIQUEMENT sur le cours fourni.\n\n'
+    + 'RÈGLES ABSOLUES :\n'
+    + '- N\'utilise AUCUNE source externe : tout doit provenir exclusivement du cours fourni.\n'
+    + '- Chaque sous-notion listée dans la structure de branche doit apparaître dans le contenu généré.\n'
+    + '- intro : 1 à 2 phrases qui définissent ou contextualisent le concept en citant le cours\n'
+    + '- 3 à 5 sections thématiques couvrant l\'ensemble des sous-notions de la branche, avec :\n'
+    + '  · title : titre de section précis (3-6 mots), idéalement reprenant une sous-notion de la branche\n'
+    + '  · body : paragraphe explicatif de 2 à 4 phrases, fidèle au cours\n'
+    + '  · points : 2 à 4 points clés très courts (une ligne chacun), optionnel\n\n'
     + 'FORMAT JSON STRICT — réponds UNIQUEMENT avec du JSON valide, sans aucun texte avant ni après :\n'
     + '{"intro":"...","sections":[{"title":"...","body":"...","points":["...","..."]}]}';
 
