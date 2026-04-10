@@ -22296,10 +22296,11 @@ function aiSystemPrompt() {
     '  Exemple: {"type":"set_grade","matiere":"maths1","type_note":"cc","note":6,"semestre":1}\n' +
     '- send_chat_message: envoyer un message dans le chat étudiant au nom du client. Champs: text (message à envoyer), salon (optionnel: "general", "annonces", "achatvente", "tickets", "echangecours", "promo" (salon de la promo de l\'utilisateur) — défaut: "general")\n' +
     '  Exemple: {"type":"send_chat_message","text":"Salut tout le monde !","salon":"general"}\n' +
-    '  Pour envoyer dans le salon de la promo : {"type":"send_chat_message","text":"Qui a le partiel demain ?","salon":"promo"}\n\n' +
+    '  Pour envoyer dans le salon de la promo : {"type":"send_chat_message","text":"Qui a le partiel demain ?","salon":"promo"}\n' +
+    '  ⚠️ RÈGLE CRITIQUE send_chat_message : tout message contenant "envoie", "envoi", "dis", "écris", "poste", "balance" suivi d\'un texte entre guillemets ou d\'un message → TOUJOURS générer @@ACTIONS@@ avec send_chat_message. NE JAMAIS répondre "Je peux envoyer..." — TOUJOURS envoyer directement.\n\n' +
     '=== RÈGLE ABSOLUE SUR LES ACTIONS ===\n' +
     'NE JAMAIS inclure de bloc @@ACTIONS@@ sauf si le message contient UN de ces mots déclencheurs EXACTS :\n' +
-    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule", "supprime", "ouvre", "lance", "active", "change", "rentre", "entre", "enregistre", "envoie", "poste"\n' +
+    '"ajoute", "crée", "génère", "planifie", "mets", "inscris", "programme", "rajoute", "schedule", "supprime", "ouvre", "lance", "active", "change", "rentre", "entre", "enregistre", "envoie", "envoi", "poste", "dis", "écris", "balance"\n' +
     'Questions informatives (quoi, quand, comment, explique, résume, montre, c\'est quoi...) → réponse texte UNIQUEMENT, ZÉRO action.\n' +
     'Exemples :\n' +
     '✅ "ajoute une révision de maths demain" → inclure @@ACTIONS@@\n' +
@@ -22309,20 +22310,24 @@ function aiSystemPrompt() {
     '✅ "rentre ma note de 6 en CC de maths S1" → inclure @@ACTIONS@@ avec type set_grade\n' +
     '✅ "j\'ai eu 14 à l\'examen d\'intro au droit" → inclure @@ACTIONS@@ avec type set_grade\n' +
     '✅ "envoie \'salut\' dans le chat général" → inclure @@ACTIONS@@ avec type send_chat_message\n' +
+    '✅ "envoi \'salut\' dans le général de la promo" → inclure @@ACTIONS@@ avec type send_chat_message salon:"promo"\n' +
+    '✅ "dis \'bonjour\' dans le chat" → inclure @@ACTIONS@@ avec type send_chat_message\n' +
+    '✅ "poste \'qui révise ce soir ?\' dans la promo" → inclure @@ACTIONS@@ avec type send_chat_message salon:"promo"\n' +
     '❌ "qu\'est-ce que j\'ai demain ?" → réponse texte seule, PAS d\'action\n' +
     '❌ "quand est mon prochain exam ?" → réponse texte seule, PAS d\'action\n' +
-    '❌ "explique-moi le Lagrangien" → réponse texte seule, PAS d\'action\n\n' +
+    '❌ "explique-moi le Lagrangien" → réponse texte seule, PAS d\'action\n' +
+    '❌ "tu peux envoyer un message ?" → réponse texte seule (question sur capacité, pas un ordre)\n\n' +
     '=== INSTRUCTIONS ===\n' +
     '- Réponds en français, sois concis et direct\n' +
     '- Utilise le contexte pour personnaliser les réponses\n' +
     '- Quand tu génères un planning de révision, inclus TOUTES les séances en un seul bloc @@ACTIONS@@\n' +
     '- Pour les modifications importantes ou suppressions, le client affichera une confirmation : tu peux quand même proposer les actions normalement\n' +
     '- Après avoir ajouté des événements, liste-les brièvement\n' +
-    '- Pour les questions informatives, tu PEUX proposer à la fin : "Je peux ajouter ça à ton planning si tu veux ?"\n' +
+    '- Pour les questions informatives (PAS pour les envois de message), tu PEUX proposer à la fin : "Je peux ajouter ça à ton planning si tu veux ?"\n' +
     '- Pour set_grade : utilise toujours l\'ID exact de la matière (ex: maths1, maths2, droit_intro, etc.) quand possible. type_note doit être exactement "cc" ou "ex".\n' +
     '- IDs matières S1 : socio, macro_data, micro1, gestion1, compta1, info, ethique, anglais1, maths1, culture_eco, droit_intro, institutions\n' +
     '- IDs matières S2 : sciences_po, macro2, micro2, gestion2, compta2, maths2, eco_eco, anglais2, droit_constit, droit_penal, droit_euro\n' +
-    '- Pour send_chat_message : envoie le message EXACTEMENT tel que demandé par l\'utilisateur, sans ajouter ni modifier quoi que ce soit';
+    '- Pour send_chat_message : envoie le message EXACTEMENT tel que demandé par l\'utilisateur, sans ajouter ni modifier quoi que ce soit. Ne jamais dire "Je peux envoyer..." — exécuter directement l\'action.';
 }
 
 // ── Envoyer message ──
@@ -22646,7 +22651,7 @@ function aiHideThinking() {
 }
 
 // Mots déclencheurs pour les actions qui MODIFIENT des données
-var AI_WRITE_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer|rentre|rentrer|entre|entrer|enregistre|enregistrer|envoie|envoyer|poste|poster)\b/i;
+var AI_WRITE_TRIGGERS = /\b(ajoute|ajouter|rajoute|rajouter|crée|créer|cree|creer|génère|générer|genère|generer|planifie|planifier|mets|mettre|inscris|inscrire|programme|programmer|schedule|supprime|supprimer|rentre|rentrer|entre|entrer|enregistre|enregistrer|envoie|envoyer|envoi|poste|poster|dis|ecris|écris|balance)\b/i;
 
 function aiUserWantsWrite(userMsg) {
   return AI_WRITE_TRIGGERS.test(userMsg);
@@ -22987,13 +22992,15 @@ var AI_ACTION_REGISTRY = {
         'annonces': 'annonces', 'annonce': 'annonces',
         'achat': 'achatvente', 'vente': 'achatvente', 'achat vente': 'achatvente', 'achatvente': 'achatvente',
         'tickets': 'tickets', 'ticket': 'tickets',
-        'echange': 'echangecours', 'cours': 'echangecours', 'echange de cours': 'echangecours', 'échange de cours': 'echangecours',
+        'echange': 'echangecours', 'cours': 'echangecours', 'echange de cours': 'echangecours', 'echange cours': 'echangecours',
         'promo': promoSalonId, 'ma promo': promoSalonId, 'salon promo': promoSalonId, 'chat promo': promoSalonId,
-        'salon de la promo': promoSalonId, 'chat de la promo': promoSalonId
+        'salon de la promo': promoSalonId, 'chat de la promo': promoSalonId,
+        'general de la promo': promoSalonId, 'général de la promo': promoSalonId, 'general promo': promoSalonId
       };
       var rawSalon = aiNormText(action.salon || 'general');
       var salonId = salonMap[rawSalon] || 'general';
       if (typeof showPage === 'function') showPage('chat', null);
+      var delay = (typeof currentSalon !== 'undefined' && currentSalon === salonId) ? 200 : 600;
       setTimeout(function(){
         try {
           if (typeof switchSalon === 'function' && salonId !== (typeof currentSalon !== 'undefined' ? currentSalon : 'general')) {
@@ -23002,11 +23009,12 @@ var AI_ACTION_REGISTRY = {
             else if (typeof currentSalon !== 'undefined') currentSalon = salonId;
           }
           var input = document.getElementById('msg-input');
-          if (!input) return;
+          if (!input) { console.error('[AI send_chat_message] msg-input introuvable'); return; }
           input.value = text;
+          input.dispatchEvent(new Event('input'));
           if (typeof sendMessage === 'function') sendMessage();
         } catch(e) { console.error('[AI send_chat_message]', e); }
-      }, 400);
+      }, delay);
       action.text = text;
       action.salon = salonId;
       return aiResult(true, action);
