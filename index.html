@@ -23072,4 +23072,480 @@ aiUpdateSuggestions();
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════
+     WOW ANIMATIONS — DauphineGuide
+     Effets visuels premium : reveal blur, cursor glow,
+     tilt 3D, shimmer, ripple, compteurs, stagger, magnétisme
+     ═══════════════════════════════════════════════ -->
+<style id="dg-wow-css">
+
+/* ── ENHANCED SCROLL REVEAL (override with blur) ── */
+.rev {
+  opacity: 0;
+  transform: translateY(38px) scale(0.97);
+  filter: blur(5px);
+  transition:
+    opacity   0.72s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+    filter    0.60s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rev.vis {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
+}
+
+/* ── CURSOR GLOW ── */
+#dg-cursor-glow {
+  position: fixed;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0,87,173,0.065) 0%, transparent 68%);
+  will-change: left, top;
+  transition: opacity 0.5s ease;
+}
+[data-theme="dark"] #dg-cursor-glow {
+  background: radial-gradient(circle, rgba(77,159,255,0.07) 0%, transparent 68%);
+}
+@media (hover: none) { #dg-cursor-glow { display: none; } }
+
+/* ── SCROLL PROGRESS BAR ── */
+#dg-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue, #003d7a), var(--blue-mid, #0057ad));
+  z-index: 10001;
+  width: 0%;
+  pointer-events: none;
+  opacity: 0.75;
+  transition: width 0.08s linear;
+}
+
+/* ── RIPPLE ── */
+.btn, .pomo-btn, .flash-btn, .tab, .deck-btn, .btn-ac,
+.sidebar-item, .qlink, .ncta, .sim-tab {
+  position: relative;
+  overflow: hidden;
+}
+.dg-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.26);
+  pointer-events: none;
+  transform: scale(0);
+  opacity: 1;
+  animation: dg-ripple-out 0.65s cubic-bezier(0, 0.5, 0, 1) forwards;
+}
+.btn-w .dg-ripple, .deck-btn .dg-ripple, .tab .dg-ripple {
+  background: rgba(0, 61, 122, 0.10);
+}
+@keyframes dg-ripple-out {
+  to { transform: scale(4.5); opacity: 0; }
+}
+
+/* ── 3D TILT SUPPORT ── */
+.dg-tilt {
+  will-change: transform;
+  transition: transform 0.10s ease-out, box-shadow 0.25s ease !important;
+}
+.dg-tilt:hover {
+  box-shadow: 0 20px 52px rgba(0, 61, 122, 0.16), 0 4px 14px rgba(0,0,0,0.07) !important;
+}
+[data-theme="dark"] .dg-tilt:hover {
+  box-shadow: 0 20px 52px rgba(0,0,0,0.45), 0 4px 14px rgba(0,0,0,0.3) !important;
+}
+
+/* ── SHIMMER SWEEP ── */
+.dg-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.dg-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 32%,
+    rgba(255,255,255,0.20) 50%,
+    transparent 68%
+  );
+  transform: translateX(-110%);
+  pointer-events: none;
+  transition: transform 0.55s ease;
+}
+.dg-shimmer:hover::after {
+  transform: translateX(110%);
+}
+[data-theme="dark"] .dg-shimmer::after {
+  background: linear-gradient(
+    108deg,
+    transparent 32%,
+    rgba(255,255,255,0.06) 50%,
+    transparent 68%
+  );
+}
+
+/* ── MAGNETIC BUTTON ── */
+.dg-magnetic {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* ── BADGE DOT PING ── */
+.badge-dot {
+  position: relative;
+}
+.badge-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: #4ade80;
+  opacity: 0;
+  animation: dg-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes dg-ping {
+  0%   { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* ── STAT PULSE ENTRANCE ── */
+@keyframes dg-stat-pop {
+  0%   { transform: scale(0.75); opacity: 0; }
+  65%  { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.dg-stat-animated {
+  animation: dg-stat-pop 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── SIDEBAR ITEM SLIDE ── */
+.sidebar-item {
+  transition: background 0.17s, color 0.17s, transform 0.18s cubic-bezier(0.22,1,0.36,1) !important;
+}
+.sidebar-item:not(.active):hover {
+  transform: translateX(4px) !important;
+}
+
+/* ── STAGGERED GRID CARD ── */
+.dg-grid-stagger > * {
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  filter: blur(3px);
+  transition:
+    opacity   0.60s cubic-bezier(0.22,1,0.36,1),
+    transform 0.60s cubic-bezier(0.22,1,0.36,1),
+    filter    0.50s cubic-bezier(0.22,1,0.36,1);
+}
+.dg-grid-stagger.dg-revealed > * {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* ── HERO HEADING REVEAL ── */
+@keyframes dg-hero-word {
+  from { opacity: 0; transform: translateY(18px) skewY(2deg); }
+  to   { opacity: 1; transform: translateY(0) skewY(0deg); }
+}
+
+/* ── NAV LINK UNDERLINE SLIDE ── */
+.nlinks a {
+  position: relative;
+}
+.nlinks a::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 8px;
+  right: 8px;
+  height: 1.5px;
+  background: var(--blue, #003d7a);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1);
+}
+.nlinks a:hover::after {
+  transform: scaleX(1);
+}
+
+/* ── CTA BAND SHIMMER ── */
+.cta-band {
+  position: relative;
+  overflow: hidden;
+}
+.cta-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.06) 50%,
+    transparent 70%
+  );
+  animation: dg-cta-shimmer 4s ease-in-out infinite;
+}
+@keyframes dg-cta-shimmer {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── CARD FOCUS GLOW (inputs) ── */
+.mnote:focus, .flash-textarea:focus, .flash-select:focus,
+.flash-autre:focus, .flash-input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 87, 173, 0.14) !important;
+}
+[data-theme="dark"] .mnote:focus, [data-theme="dark"] .flash-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(77, 159, 255, 0.18) !important;
+}
+
+/* ── REDUCED MOTION OVERRIDE ── */
+@media (prefers-reduced-motion: reduce) {
+  .rev, .rev.vis {
+    filter: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+  .dg-shimmer::after,
+  .cta-band::before,
+  .badge-dot::after,
+  .dg-tilt,
+  .dg-magnetic,
+  .dg-ripple {
+    animation: none !important;
+    transition: none !important;
+  }
+  #dg-cursor-glow { display: none !important; }
+  .dg-grid-stagger > * {
+    transition: opacity 0.25s ease !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+
+</style>
+
+<div id="dg-cursor-glow" aria-hidden="true"></div>
+<div id="dg-scroll-progress" aria-hidden="true"></div>
+
+<script id="dg-wow-js">
+(function () {
+  'use strict';
+  if (window._dgWowInit) return;
+  window._dgWowInit = true;
+
+  var PM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var IS_TOUCH = window.matchMedia('(hover: none)').matches;
+
+  /* ── 1. CURSOR GLOW ── */
+  if (!PM && !IS_TOUCH) {
+    var glow = document.getElementById('dg-cursor-glow');
+    if (glow) {
+      var cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+      var tx = cx, ty = cy;
+      var glowRaf;
+      document.addEventListener('mousemove', function (e) {
+        tx = e.clientX;
+        ty = e.clientY;
+      }, { passive: true });
+      (function animGlow() {
+        cx += (tx - cx) * 0.072;
+        cy += (ty - cy) * 0.072;
+        glow.style.left = cx + 'px';
+        glow.style.top  = cy + 'px';
+        glowRaf = requestAnimationFrame(animGlow);
+      }());
+    }
+  }
+
+  /* ── 2. SCROLL PROGRESS BAR ── */
+  var progressEl = document.getElementById('dg-scroll-progress');
+  var mainEl = null;
+  function updateProgress() {
+    if (!progressEl) return;
+    mainEl = mainEl || document.querySelector('.main-content');
+    if (!mainEl) return;
+    var sh = mainEl.scrollHeight - mainEl.clientHeight;
+    progressEl.style.width = (sh > 0 ? (mainEl.scrollTop / sh) * 100 : 0) + '%';
+  }
+  setTimeout(function () {
+    mainEl = document.querySelector('.main-content');
+    if (mainEl) mainEl.addEventListener('scroll', updateProgress, { passive: true });
+  }, 1000);
+
+  /* ── 3. RIPPLE ON CLICK ── */
+  function spawnRipple(e) {
+    var el = e.currentTarget;
+    var rect = el.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height) * 1.6;
+    var r = document.createElement('span');
+    r.className = 'dg-ripple';
+    r.style.cssText = [
+      'width:'  + size + 'px',
+      'height:' + size + 'px',
+      'left:'   + (e.clientX - rect.left  - size / 2) + 'px',
+      'top:'    + (e.clientY - rect.top   - size / 2) + 'px'
+    ].join(';');
+    el.appendChild(r);
+    r.addEventListener('animationend', function () { r.remove(); }, { once: true });
+  }
+  var RIPPLE_SEL = '.btn,.pomo-btn,.flash-btn,.tab,.deck-btn,.btn-ac,.qlink,.sim-tab';
+  function bindRipples(root) {
+    (root || document).querySelectorAll(RIPPLE_SEL).forEach(function (el) {
+      if (!el._dgR) { el._dgR = true; el.addEventListener('mousedown', spawnRipple); }
+    });
+  }
+  bindRipples();
+
+  /* ── 4. 3D TILT + SHIMMER ── */
+  var TILT_SEL = '.mat-card,.bp-card,.cc,.ac,.cinfo-card,.pomo-card,.prog-card,.flash-gen,.flash-deck,.annual-box,.hstat';
+  function applyTilt(el) {
+    if (el._dgT || IS_TOUCH || PM) return;
+    el._dgT = true;
+    el.classList.add('dg-tilt', 'dg-shimmer');
+    var MAX = el.classList.contains('annual-box') ? 5 : 9;
+    el.addEventListener('mousemove', function (e) {
+      var r  = el.getBoundingClientRect();
+      var dx = ((e.clientX - r.left)  / r.width  - 0.5) * 2;
+      var dy = ((e.clientY - r.top)   / r.height - 0.5) * 2;
+      el.style.transform = [
+        'perspective(700px)',
+        'rotateY('  + (dx * MAX)  + 'deg)',
+        'rotateX('  + (-dy * MAX) + 'deg)',
+        'translateY(-3px)',
+        'scale(1.012)'
+      ].join(' ');
+    }, { passive: true });
+    el.addEventListener('mouseleave', function () {
+      el.style.transform = '';
+    });
+  }
+  function bindTilts(root) {
+    (root || document).querySelectorAll(TILT_SEL).forEach(applyTilt);
+  }
+  bindTilts();
+
+  /* ── 5. MAGNETIC BUTTONS ── */
+  var MAG_SEL = '.btn-w,.btn-g,.ncta,.pomo-btn-main,.flash-btn';
+  function applyMagnetic(el) {
+    if (el._dgM || IS_TOUCH || PM) return;
+    el._dgM = true;
+    el.classList.add('dg-magnetic');
+    el.addEventListener('mousemove', function (e) {
+      var r  = el.getBoundingClientRect();
+      var dx = e.clientX - (r.left + r.width  / 2);
+      var dy = e.clientY - (r.top  + r.height / 2);
+      el.style.transform = 'translate(' + (dx * 0.20) + 'px,' + (dy * 0.20) + 'px)';
+    }, { passive: true });
+    el.addEventListener('mouseleave', function () {
+      el.style.transform = '';
+    });
+  }
+  function bindMagnetic(root) {
+    (root || document).querySelectorAll(MAG_SEL).forEach(applyMagnetic);
+  }
+  bindMagnetic();
+
+  /* ── 6. HERO STAT COUNTERS ── */
+  function animateCount(el, rawText) {
+    if (el._dgC) return;
+    el._dgC = true;
+    var m = rawText.match(/^(\d+)([\s\S]*)$/);
+    if (!m) return;
+    var target   = parseInt(m[1], 10);
+    var suffix   = m[2];
+    var duration = 1100;
+    var t0       = null;
+    el.classList.add('dg-stat-animated');
+    (function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / duration, 1);
+      // ease-out-quart
+      var e = 1 - Math.pow(1 - p, 4);
+      el.textContent = Math.round(e * target) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }(performance.now()));
+  }
+  var statObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        statObs.unobserve(el);
+        animateCount(el, el.textContent.trim());
+      }
+    });
+  }, { threshold: 0.85 });
+  document.querySelectorAll('.hstat-v').forEach(function (el) { statObs.observe(el); });
+
+  /* ── 7. STAGGERED GRID REVEALS ── */
+  var GRID_SEL = '.mat-grid,.bp-grid,.cons-grid,.asso-grid,.prog-grid,.faq-grid,.flash-layout,.pomo-layout,.sim-wrap,.campus-layout';
+  var gridObs  = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      gridObs.unobserve(entry.target);
+      var grid = entry.target;
+      grid.classList.add('dg-grid-stagger');
+      // small delay before triggering so CSS is applied
+      setTimeout(function () {
+        grid.classList.add('dg-revealed');
+        // stagger each child via transition-delay
+        Array.prototype.forEach.call(grid.children, function (child, i) {
+          child.style.transitionDelay = (i * 70) + 'ms';
+        });
+      }, 40);
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+  function bindGridStagger(root) {
+    (root || document).querySelectorAll(GRID_SEL).forEach(function (el) {
+      if (!el._dgG) { el._dgG = true; gridObs.observe(el); }
+    });
+  }
+  bindGridStagger();
+
+  /* ── 8. RE-BIND on page switch ── */
+  var _origShow = window.showPage;
+  if (typeof _origShow === 'function') {
+    window.showPage = function (pageId, btn) {
+      _origShow.apply(this, arguments);
+      setTimeout(function () {
+        bindRipples();
+        bindTilts();
+        bindMagnetic();
+        bindGridStagger();
+        document.querySelectorAll('.hstat-v').forEach(function (el) {
+          if (!el._dgC) statObs.observe(el);
+        });
+      }, 120);
+    };
+  }
+
+  /* ── 9. HERO WORD-BY-WORD REVEAL ── */
+  setTimeout(function () {
+    var h1 = document.querySelector('#page-home .hero h1');
+    if (!h1 || h1._dgHero) return;
+    h1._dgHero = true;
+    var words = h1.innerHTML.split(/(<[^>]+>|\s+)/);
+    // Just animate the whole h1 with a nice entrance
+    h1.style.animation = 'none';
+    h1.style.opacity   = '0';
+    h1.style.transform = 'translateY(22px)';
+    h1.style.filter    = 'blur(4px)';
+    h1.style.transition = 'opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1), filter .65s cubic-bezier(.22,1,.36,1)';
+    setTimeout(function () {
+      h1.style.opacity   = '1';
+      h1.style.transform = 'translateY(0)';
+      h1.style.filter    = 'blur(0px)';
+    }, 200);
+  }, 900);
+
+}());
+</script>
+
 </body></html>
