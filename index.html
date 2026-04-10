@@ -21650,7 +21650,10 @@ function wgGetType() {
   return localStorage.getItem('dg_widget_type') || 'cours';
 }
 function wgGetLink() {
-  var base = window.location.href.split('?')[0];
+  var baseUrl = new URL(window.location.href);
+  baseUrl.search = '';
+  baseUrl.hash = '';
+  var base = baseUrl.toString();
   var type = wgGetType();
   var url = base + '?widget&type=' + type;
   // Pour le widget cours : encode l'EDT dans l'URL pour que Plash le voie
