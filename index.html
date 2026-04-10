@@ -9586,6 +9586,17 @@ aside.sidebar {
               <button class="salle-btn salle-btn-ghost" onclick="salleTimerSkip()" style="padding:9px 14px">⏭</button>
               <button class="salle-btn salle-btn-ghost" onclick="salleTimerReset()" style="padding:9px 14px">↺</button>
             </div>
+            <button class="salle-btn salle-btn-ghost" id="salleSettingsBtn" onclick="salleShowTimerSettings()" style="display:none;padding:7px 14px;font-size:12px;width:100%">⚙️ Régler les durées</button>
+            <div id="salleTimerSettings" style="display:none;width:100%;background:var(--g50);border-radius:10px;padding:14px;box-sizing:border-box">
+              <div style="font-size:11px;font-weight:700;color:var(--g500);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">⏱ Durées du Pomodoro</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <label style="font-size:12px;color:var(--g500);display:flex;flex-direction:column;gap:4px">Travail (min)<input type="number" class="salle-input" id="salleSetWork" min="1" max="120" value="25" style="padding:7px 10px"></label>
+                <label style="font-size:12px;color:var(--g500);display:flex;flex-direction:column;gap:4px">Pause courte (min)<input type="number" class="salle-input" id="salleSetShort" min="1" max="30" value="5" style="padding:7px 10px"></label>
+                <label style="font-size:12px;color:var(--g500);display:flex;flex-direction:column;gap:4px">Pause longue (min)<input type="number" class="salle-input" id="salleSetLong" min="1" max="60" value="15" style="padding:7px 10px"></label>
+                <label style="font-size:12px;color:var(--g500);display:flex;flex-direction:column;gap:4px">Cycles<input type="number" class="salle-input" id="salleSetCycles" min="2" max="8" value="4" style="padding:7px 10px"></label>
+              </div>
+              <button class="salle-btn" onclick="salleSaveTimerSettings()" style="width:100%;margin-top:10px;padding:9px">Appliquer ✓</button>
+            </div>
             <div id="sallePresenceWrap" style="margin-top:4px;width:100%">
               <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g400);text-align:center;margin-bottom:10px">Participants</div>
               <div class="salle-presence-row" id="sallePresenceRow"></div>
@@ -24256,6 +24267,29 @@ async function salleEnterRoom(code) {
       });
     }
     salleRenderPresence(participants);
+    // Auto-delete room when it becomes empty (e.g. last person closed browser)
+    if (participants.length === 0 && salleRoomCode) {
+      var _fb = window._fb;
+      if (_fb && _fb.remove && _fb.ref && _fb.db) {
+        _fb.remove(_fb.ref(_fb.db, 'study-rooms/' + salleRoomCode)).catch(function(){});
+      }
+      // Clean up local state without recursing into salleLeave
+      if (salleTimerUnsub) { salleTimerUnsub(); salleTimerUnsub = null; }
+      if (sallePresenceUnsub) { sallePresenceUnsub(); sallePresenceUnsub = null; }
+      if (salleChatUnsub) { salleChatUnsub(); salleChatUnsub = null; }
+      if (salleLocalTick) { clearInterval(salleLocalTick); salleLocalTick = null; }
+      salleRoomCode = null; salleRoomRef = null; sallePresenceRef = null;
+      salleLastRenderedMsgId = null;
+      var settingsBtn = document.getElementById('salleSettingsBtn');
+      if (settingsBtn) settingsBtn.style.display = 'none';
+      var settingsPanel = document.getElementById('salleTimerSettings');
+      if (settingsPanel) settingsPanel.style.display = 'none';
+      document.getElementById('salleRoom').style.display  = 'none';
+      document.getElementById('salleEntry').style.display = '';
+      document.getElementById('salleChatMsgs').innerHTML = '<div style="text-align:center;font-size:12px;color:var(--g400);padding:16px 0">Personne n\'a encore écrit. Dis bonjour ! 👋</div>';
+      document.getElementById('sallePresenceRow').innerHTML = '';
+      toast('La salle a été supprimée (plus de participants)', '🗑️');
+    }
   });
 
   // Subscribe to chat messages
@@ -24272,18 +24306,36 @@ function salleShowRoom() {
   document.getElementById('salleEntry').style.display = 'none';
   document.getElementById('salleRoom').style.display  = '';
   document.getElementById('salleNoAuth').style.display = 'none';
+  // Show settings button only for host
+  var settingsBtn = document.getElementById('salleSettingsBtn');
+  if (settingsBtn) settingsBtn.style.display = salleIsHost ? '' : 'none';
 }
 
 // ── Leave room ──
 window.salleLeave = async function() {
-  var { db, ref, remove } = window._fb || {};
-  if (sallePresenceRef && remove) remove(sallePresenceRef);
+  var { db, ref, remove, get: fbGet } = window._fb || {};
+  var codeAtLeave = salleRoomCode;
+  // Remove own presence first (await so we can check if room is now empty)
+  if (sallePresenceRef && remove) await remove(sallePresenceRef);
+  // Auto-delete room if it is now empty
+  if (codeAtLeave && fbGet && db && ref && remove) {
+    try {
+      var presSnap = await fbGet(ref(db, 'study-rooms/' + codeAtLeave + '/presence'));
+      if (!presSnap.exists()) {
+        await remove(ref(db, 'study-rooms/' + codeAtLeave));
+      }
+    } catch(e) {}
+  }
   if (salleTimerUnsub) { salleTimerUnsub(); salleTimerUnsub = null; }
   if (sallePresenceUnsub) { sallePresenceUnsub(); sallePresenceUnsub = null; }
   if (salleChatUnsub) { salleChatUnsub(); salleChatUnsub = null; }
   if (salleLocalTick) { clearInterval(salleLocalTick); salleLocalTick = null; }
   salleRoomCode = null; salleRoomRef = null; sallePresenceRef = null;
   salleLastRenderedMsgId = null;
+  var settingsBtn = document.getElementById('salleSettingsBtn');
+  if (settingsBtn) settingsBtn.style.display = 'none';
+  var settingsPanel = document.getElementById('salleTimerSettings');
+  if (settingsPanel) settingsPanel.style.display = 'none';
   document.getElementById('salleRoom').style.display  = 'none';
   document.getElementById('salleEntry').style.display = '';
   document.getElementById('salleChatMsgs').innerHTML = '<div style="text-align:center;font-size:12px;color:var(--g400);padding:16px 0">Personne n\'a encore écrit. Dis bonjour ! 👋</div>';
@@ -24433,11 +24485,41 @@ async function salleAdvanceMode() {
   toast(newMode === 'work' ? '🎯 Travail !' : newMode === 'short' ? '☕ Pause courte !' : '🌿 Grande pause !', '⏰');
 }
 
+// ── Timer settings (host only) ──
+window.salleShowTimerSettings = function() {
+  var panel = document.getElementById('salleTimerSettings');
+  if (!panel) return;
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+  var s = salleLocalState;
+  document.getElementById('salleSetWork').value   = Math.round((s.workS   || SALLE_WORK_S)  / 60);
+  document.getElementById('salleSetShort').value  = Math.round((s.shortS  || SALLE_SHORT_S) / 60);
+  document.getElementById('salleSetLong').value   = Math.round((s.longS   || SALLE_LONG_S)  / 60);
+  document.getElementById('salleSetCycles').value = s.cyclesMax || SALLE_CYCLES_MAX;
+  panel.style.display = '';
+};
+
+window.salleSaveTimerSettings = async function() {
+  if (!salleRoomCode || !salleIsHost) return;
+  var work  = Math.max(1,  Math.min(120, parseInt(document.getElementById('salleSetWork').value)   || 25));
+  var short = Math.max(1,  Math.min(30,  parseInt(document.getElementById('salleSetShort').value)  || 5));
+  var long  = Math.max(1,  Math.min(60,  parseInt(document.getElementById('salleSetLong').value)   || 15));
+  var cyc   = Math.max(2,  Math.min(8,   parseInt(document.getElementById('salleSetCycles').value) || 4));
+  var { db, ref, set } = window._fb;
+  var s = salleLocalState;
+  var newWork = work * 60, newShort = short * 60, newLong = long * 60;
+  var total = s.mode === 'work' ? newWork : s.mode === 'short' ? newShort : newLong;
+  await set(ref(db, 'study-rooms/' + salleRoomCode + '/timer'), Object.assign({}, s, {
+    running: false, startedAt: null, pausedRemaining: total,
+    workS: newWork, shortS: newShort, longS: newLong, cyclesMax: cyc
+  }));
+  document.getElementById('salleTimerSettings').style.display = 'none';
+  toast('⏱ Durées mises à jour !', '✅');
+};
+
 // ── Render presence ──
 function salleRenderPresence(participants) {
   var row = document.getElementById('sallePresenceRow');
-  if (!row) return;
-  row.innerHTML = '';
+  if (!row) return;  row.innerHTML = '';
   participants.forEach(function(p) {
     var wrap = document.createElement('div');
     wrap.className = 'salle-presence-wrap';
