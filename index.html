@@ -15048,6 +15048,16 @@ function showPage(pageId, btn) {
   if (pageId === 'culture')    { setTimeout(function(){ cultureGenerateGroq(false); }, 80); }
   if (pageId === 'flashcards') { setTimeout(function(){ renderFilters(); renderCard(); renderStats(); renderHeatmap(); }, 80); }
   if (pageId === 'home')       { setTimeout(updateHomeStats, 80); }
+
+  // Reveal any .rev elements that the IntersectionObserver may have missed
+  // (elements inside display:none sections are not reliably detected on first show)
+  if (target) {
+    setTimeout(function() {
+      target.querySelectorAll('.rev:not(.vis)').forEach(function(el, i) {
+        setTimeout(function() { el.classList.add('vis'); }, i * 55);
+      });
+    }, 60);
+  }
 }
 
 function toggleSidebar() {
