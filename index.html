@@ -16742,6 +16742,8 @@ const firebaseConfig = {
 
 let currentUser  = null;
 let currentSalon = 'general';
+Object.defineProperty(window, '_chatCurrentUser',  { get: () => currentUser,  configurable: true });
+Object.defineProperty(window, '_chatCurrentSalon', { get: () => currentSalon, configurable: true });
 let db = null, auth = null, firebaseOk = false;
 let localMessages = {};
 let ticketType = 'vente';
@@ -22983,9 +22985,9 @@ var AI_ACTION_REGISTRY = {
     execute: function(action) {
       var text = (action.text || action.message || '').trim();
       if (!text) return aiResult(false, action, { error:'message vide' });
-      if (typeof currentUser === 'undefined' || !currentUser) return aiResult(false, action, { error:'connecte-toi au chat étudiant d\'abord' });
+      if (!window._chatCurrentUser) return aiResult(false, action, { error:'connecte-toi au chat étudiant d\'abord' });
       // Map salon name to id
-      var userPromo = (typeof currentUser !== 'undefined' && currentUser && currentUser.promo) ? currentUser.promo : '';
+      var userPromo = (window._chatCurrentUser && window._chatCurrentUser.promo) ? window._chatCurrentUser.promo : '';
       var promoSalonId = userPromo ? 'promo-' + userPromo : 'general';
       var salonMap = {
         'general': 'general', 'général': 'general', 'generaux': 'general',
@@ -23000,13 +23002,12 @@ var AI_ACTION_REGISTRY = {
       var rawSalon = aiNormText(action.salon || 'general');
       var salonId = salonMap[rawSalon] || 'general';
       if (typeof showPage === 'function') showPage('chat', null);
-      var delay = (typeof currentSalon !== 'undefined' && currentSalon === salonId) ? 200 : 600;
+      var delay = (window._chatCurrentSalon === salonId) ? 200 : 600;
       setTimeout(function(){
         try {
-          if (typeof switchSalon === 'function' && salonId !== (typeof currentSalon !== 'undefined' ? currentSalon : 'general')) {
+          if (typeof switchSalon === 'function' && salonId !== (window._chatCurrentSalon || 'general')) {
             var salonEl = document.getElementById('sb-' + salonId);
             if (salonEl) switchSalon(salonId, salonEl, '', '', '');
-            else if (typeof currentSalon !== 'undefined') currentSalon = salonId;
           }
           var input = document.getElementById('msg-input');
           if (!input) { console.error('[AI send_chat_message] msg-input introuvable'); return; }
