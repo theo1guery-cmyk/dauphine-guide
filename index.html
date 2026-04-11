@@ -5124,6 +5124,26 @@ aside.sidebar {
 [data-theme="dark"] .syn-collab-card{background:#1a2236;border-color:#222b3a}
 [data-theme="dark"] .syn-collab-input{background:#111520;border-color:#222b3a;color:#e2e8f0}
 [data-theme="dark"] .syn-collab-live{background:rgba(0,61,122,.3);border-color:#4d9fff}
+/* Synapse — title bar + maps panel */
+.syn-title-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--g200);flex-shrink:0;background:var(--bg-page);flex-wrap:wrap}
+.syn-title-input{flex:1;min-width:150px;border:1.5px solid var(--g200);border-radius:var(--rs);padding:6px 10px;font-size:13px;font-weight:700;font-family:'Figtree',sans-serif;color:var(--text-main);background:var(--bg-card);outline:none;transition:border-color .18s}
+.syn-title-input:focus{border-color:var(--blue)}
+[data-theme="dark"] .syn-title-bar{background:#0d1320;border-color:#1e2a3a}
+[data-theme="dark"] .syn-title-input{background:#1a2236;border-color:#222b3a;color:#e2e8f0}
+.syn-maps-panel{border-bottom:1px solid var(--g200);background:var(--bg);flex-shrink:0;max-height:240px;overflow-y:auto}
+[data-theme="dark"] .syn-maps-panel{background:#111520;border-color:#1e2a3a}
+.syn-maps-list{padding:8px 14px;display:flex;flex-direction:column;gap:6px}
+.syn-maps-empty{padding:18px 18px;font-size:12px;color:var(--g400);text-align:center;line-height:1.6}
+.syn-map-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1.5px solid var(--g200);border-radius:var(--r);background:var(--bg-card);transition:border-color .18s,background .18s}
+.syn-map-item:hover{border-color:var(--blue);background:var(--blue-light)}
+.syn-map-item.active{border-color:var(--blue);background:var(--blue-light)}
+[data-theme="dark"] .syn-map-item{background:#1a2236;border-color:#222b3a}
+[data-theme="dark"] .syn-map-item:hover,[data-theme="dark"] .syn-map-item.active{background:rgba(0,61,122,.28);border-color:#4d9fff}
+.syn-map-item-info{flex:1;min-width:0}
+.syn-map-item-title{font-size:13px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.syn-map-item-meta{font-size:11px;color:var(--g400);margin-top:2px}
+.syn-map-item-actions{display:flex;gap:5px;flex-shrink:0}
+.syn-map-active-badge{display:inline-block;font-size:9px;font-weight:800;background:var(--blue);color:#fff;border-radius:20px;padding:1px 6px;margin-left:5px;vertical-align:middle;letter-spacing:.03em}
 
 /* ═══════════════════════════════════════════════════════════════
    MIND MAP IA
@@ -10054,6 +10074,13 @@ aside.sidebar {
           <span id="synStatusText">Carte personnelle</span>
         </div>
       </div>
+      <div class="syn-title-bar" id="synTitleBar">
+        <input type="text" id="synTitleInput" class="syn-title-input" placeholder="Titre de la carte…" maxlength="60" value="Nouvelle carte"/>
+        <button class="syn-btn" onclick="synSaveCurrentMap()">💾 Sauvegarder</button>
+        <button class="syn-btn" id="synMapsPanelBtn" onclick="synToggleMapsPanel()">📂 Mes cartes</button>
+        <button class="syn-btn" onclick="synNewMap()">✨ Nouvelle</button>
+      </div>
+      <div class="syn-maps-panel" id="synMapsPanel" style="display:none"></div>
       <div id="synCollabPanel" class="syn-collab-panel" style="display:none">
         <div class="syn-collab-section">
           <div class="syn-collab-card">
@@ -26995,6 +27022,129 @@ function synSetupCanvas(){
   });
 }
 
+/* ── Synapse local storage ── */
+var synCurrentMapId=null;
+var SYN_STORAGE_KEY='synMaps';
+
+function synGetMaps(){try{return JSON.parse(localStorage.getItem(SYN_STORAGE_KEY)||'[]');}catch(e){return[];}}
+function synSetMaps(maps){localStorage.setItem(SYN_STORAGE_KEY,JSON.stringify(maps));}
+
+function synMapSnapshot(){
+  return{
+    nodes:synNodes.map(function(n){return{id:n.id,label:n.label,x:n.x,y:n.y,w:n.w,h:n.h,isRoot:n.isRoot,color:n.color};}),
+    links:synLinks.map(function(l){return{from:l.from,to:l.to};}),
+    nextId:synNextId
+  };
+}
+
+window.synSaveCurrentMap=function(){
+  var inp=document.getElementById('synTitleInput');
+  var title=inp?inp.value.trim():'';
+  if(!title){title='Carte sans titre';if(inp)inp.value=title;}
+  var maps=synGetMaps();
+  var snap=synMapSnapshot();
+  if(synCurrentMapId){
+    var idx=-1;
+    for(var i=0;i<maps.length;i++){if(maps[i].id===synCurrentMapId){idx=i;break;}}
+    if(idx>=0){
+      maps[idx]=Object.assign(maps[idx],{title:title,updatedAt:Date.now()},snap);
+    }else{
+      synCurrentMapId=null;
+    }
+  }
+  if(!synCurrentMapId){
+    var id='syn-'+Date.now();
+    synCurrentMapId=id;
+    maps.unshift(Object.assign({id:id,title:title,createdAt:Date.now(),updatedAt:Date.now()},snap));
+  }
+  synSetMaps(maps);
+  synRenderMapsPanel();
+  toast('Carte sauvegardée ✓','💾');
+};
+
+window.synLoadMapById=function(id){
+  var maps=synGetMaps();
+  var map=null;
+  for(var i=0;i<maps.length;i++){if(maps[i].id===id){map=maps[i];break;}}
+  if(!map)return;
+  synNodes=(map.nodes||[]).map(function(n){return Object.assign({},n,{selected:false});});
+  synLinks=(map.links||[]).map(function(l){return{from:l.from,to:l.to};});
+  synNextId=map.nextId||1;
+  synSelected=null;
+  synCurrentMapId=id;
+  var inp=document.getElementById('synTitleInput');
+  if(inp)inp.value=map.title||'';
+  synRender();
+  var panel=document.getElementById('synMapsPanel');
+  if(panel)panel.style.display='none';
+  var btn=document.getElementById('synMapsPanelBtn');
+  if(btn)btn.classList.remove('active');
+  toast('Carte chargée : '+map.title,'📂');
+};
+
+window.synDeleteMapById=function(id){
+  if(!confirm('Supprimer cette carte définitivement ?'))return;
+  var maps=synGetMaps().filter(function(m){return m.id!==id;});
+  synSetMaps(maps);
+  if(synCurrentMapId===id)synCurrentMapId=null;
+  synRenderMapsPanel();
+  toast('Carte supprimée','🗑');
+};
+
+window.synNewMap=function(){
+  var outer=document.getElementById('synCanvasOuter');
+  var W=(outer&&outer.clientWidth)||800;
+  var H=(outer&&outer.clientHeight)||500;
+  synCurrentMapId=null;
+  var inp=document.getElementById('synTitleInput');
+  if(inp)inp.value='Nouvelle carte';
+  var root=synMakeNode('Dauphine L1',Math.max(10,W/2-62),Math.max(10,H/2-19),true);
+  root.w=140;
+  synNodes=[root];synLinks=[];synSelected=null;synNextId=2;
+  synRender();
+  synRenderMapsPanel();
+  toast('Nouvelle carte créée ✨','✨');
+};
+
+window.synToggleMapsPanel=function(){
+  var panel=document.getElementById('synMapsPanel');
+  if(!panel)return;
+  var isOpen=panel.style.display!=='none';
+  if(!isOpen)synRenderMapsPanel();
+  panel.style.display=isOpen?'none':'block';
+  var btn=document.getElementById('synMapsPanelBtn');
+  if(btn)btn.classList.toggle('active',!isOpen);
+};
+
+function synRenderMapsPanel(){
+  var panel=document.getElementById('synMapsPanel');
+  if(!panel)return;
+  var maps=synGetMaps();
+  if(!maps.length){
+    panel.innerHTML='<div class="syn-maps-empty">Aucune carte sauvegardée.<br>Crée ta première carte et clique sur 💾 Sauvegarder.</div>';
+    return;
+  }
+  var html='<div class="syn-maps-list">';
+  maps.forEach(function(m){
+    var d=new Date(m.updatedAt);
+    var dateStr=d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+    var nodeCount=(m.nodes||[]).length;
+    var isActive=m.id===synCurrentMapId;
+    html+='<div class="syn-map-item'+(isActive?' active':'')+'">';
+    html+='<div class="syn-map-item-info">';
+    html+='<div class="syn-map-item-title">'+escHtml(m.title)+(isActive?'<span class="syn-map-active-badge">En cours</span>':'')+' </div>';
+    html+='<div class="syn-map-item-meta">'+nodeCount+' nœud'+(nodeCount>1?'s':'')+' · '+dateStr+'</div>';
+    html+='</div>';
+    html+='<div class="syn-map-item-actions">';
+    if(!isActive)html+='<button class="syn-btn" onclick="synLoadMapById('+JSON.stringify(m.id)+')">Charger</button>';
+    html+='<button class="syn-btn danger" onclick="synDeleteMapById('+JSON.stringify(m.id)+')" title="Supprimer">🗑</button>';
+    html+='</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  panel.innerHTML=html;
+}
+
 /* ── Synapse collab helpers ── */
 function synGenCode(){
   var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='SYN-';
@@ -27125,12 +27275,24 @@ function synSchedulePush(){
 function synInit(){
   if(synInited)return;
   synInited=true;
-  var outer=document.getElementById('synCanvasOuter');
-  var W=(outer&&outer.clientWidth)||800;
-  var H=(outer&&outer.clientHeight)||500;
-  var root=synMakeNode('Dauphine L1',Math.max(10,W/2-62),Math.max(10,H/2-19),true);
-  root.w=140;
-  synNodes=[root];synLinks=[];synSelected=null;
+  var maps=synGetMaps();
+  if(maps.length){
+    var last=maps[0];
+    synNodes=(last.nodes||[]).map(function(n){return Object.assign({},n,{selected:false});});
+    synLinks=(last.links||[]).map(function(l){return{from:l.from,to:l.to};});
+    synNextId=last.nextId||1;
+    synSelected=null;
+    synCurrentMapId=last.id;
+    var inp=document.getElementById('synTitleInput');
+    if(inp)inp.value=last.title||'';
+  }else{
+    var outer=document.getElementById('synCanvasOuter');
+    var W=(outer&&outer.clientWidth)||800;
+    var H=(outer&&outer.clientHeight)||500;
+    var root=synMakeNode('Dauphine L1',Math.max(10,W/2-62),Math.max(10,H/2-19),true);
+    root.w=140;
+    synNodes=[root];synLinks=[];synSelected=null;
+  }
   synRender();
   synSetupCanvas();
 }
