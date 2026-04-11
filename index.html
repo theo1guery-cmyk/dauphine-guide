@@ -27016,7 +27016,7 @@ var synDragNode=null,synDragOff={x:0,y:0};
 var synVX=0,synVY=0,synVS=1.0;
 var synPanning=false,synPanStart={x:0,y:0},synPanOrigin={x:0,y:0};
 var synCollabCode=null,synCollabUnsub=null,synCollabPresRef=null;
-var synCollabPushTimer=null,synSessionStart=0;
+var synCollabPushTimer=null,synLocalSaveTimer=null,synSessionStart=0;
 
 var SYN_ROOT_CLR='#003d7a';
 var SYN_BRANCH_CLRS=['#0057ad','#1a73c8','#2d8de0','#4da6f5'];
@@ -27543,7 +27543,33 @@ window.synCopyCode=function(){
     .catch(function(){toast(synCollabCode,'📋');});
 };
 
+function synAutoSaveLocal(){
+  var inp=document.getElementById('synTitleInput');
+  var title=(inp&&inp.value.trim())||'Carte sans titre';
+  var maps=synGetMaps();
+  var snap=synMapSnapshot();
+  if(synCurrentMapId){
+    var idx=-1;
+    for(var i=0;i<maps.length;i++){if(maps[i].id===synCurrentMapId){idx=i;break;}}
+    if(idx>=0){
+      maps[idx]=Object.assign(maps[idx],{title:title,updatedAt:Date.now()},snap);
+    }else{
+      synCurrentMapId=null;
+    }
+  }
+  if(!synCurrentMapId){
+    var id='syn-'+Date.now();
+    synCurrentMapId=id;
+    if(inp&&!inp.value.trim())inp.value=title;
+    maps.unshift(Object.assign({id:id,title:title,createdAt:Date.now(),updatedAt:Date.now()},snap));
+  }
+  synSetMaps(maps);
+  synRenderMapsPanel();
+}
+
 function synSchedulePush(){
+  clearTimeout(synLocalSaveTimer);
+  synLocalSaveTimer=setTimeout(synAutoSaveLocal,800);
   if(!synCollabCode||!window._fb)return;
   clearTimeout(synCollabPushTimer);
   synCollabPushTimer=setTimeout(function(){
