@@ -4981,9 +4981,9 @@ aside.sidebar {
 .syn-status{margin-left:auto;font-size:11px;color:var(--g400);display:flex;align-items:center;gap:5px}
 .syn-status-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:synPulse 2s infinite}
 @keyframes synPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
-.syn-canvas-outer{flex:1;position:relative;overflow:hidden;min-height:480px}
-#synSvg{width:100%;height:100%;background:var(--g50)}
-.syn-grid-bg{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,var(--g200) 1px,transparent 1px);background-size:24px 24px;opacity:.65}
+.syn-canvas-outer{flex:1;position:relative;overflow:hidden;min-height:480px;background:var(--g50)}
+#synSvg{position:absolute;inset:0;width:100%;height:100%}
+.syn-grid-bg{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,var(--g200) 1px,transparent 1px);background-size:24px 24px;opacity:.65;z-index:1}
 .syn-ghost-cursor{position:absolute;pointer-events:none;z-index:10;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;transition:left .9s ease,top .9s ease}
 .syn-ghost-dot{width:9px;height:9px;border-radius:50%}
 .syn-add-popup{position:absolute;background:var(--bg-card);border:1.5px solid var(--blue);border-radius:var(--r);padding:12px;box-shadow:var(--sh);z-index:50;display:none;min-width:170px}
@@ -4993,7 +4993,8 @@ aside.sidebar {
 .syn-link{fill:none;stroke:var(--g400);stroke-width:1.8}
 .syn-link.new-link{stroke-dasharray:8 4;animation:synDash .55s linear infinite}
 @keyframes synDash{to{stroke-dashoffset:-12}}
-[data-theme="dark"] #synSvg{background:#111520}
+[data-theme="dark"] .syn-canvas-outer{background:#111520}
+[data-theme="dark"] #synSvg{background:transparent}
 [data-theme="dark"] .syn-grid-bg{opacity:.22}
 [data-theme="dark"] .syn-add-popup{background:#1a2236;border-color:#4d9fff}
 
@@ -26317,7 +26318,7 @@ document.addEventListener('DOMContentLoaded',function(){
 window.mmSwitchTab=function(n){
   document.querySelectorAll('.mm-tab-btn').forEach(function(b,i){b.classList.toggle('active',i+1===n);});
   document.querySelectorAll('.mm-tab-pane').forEach(function(p,i){p.classList.toggle('active',i+1===n);});
-  if(n===2)synInit();
+  if(n===2) requestAnimationFrame(synInit);
 };
 
 /* ── Mind Map edit mode ── */
