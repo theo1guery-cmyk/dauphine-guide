@@ -26838,7 +26838,70 @@ function mmSetupEditBtn(){
   controls.insertAdjacentElement('afterend',hint);
 }
 
-setTimeout(function(){mmSetupContextMenu();mmSetupEditBtn();},1400);
+function mmSetupImportSynapseBtn(){
+  var controls=document.querySelector('#mmPane1 .mm-controls');
+  if(!controls||document.getElementById('mmImportSynBtn'))return;
+  var btn=document.createElement('button');
+  btn.id='mmImportSynBtn';
+  btn.className='mm-ctrl-btn';
+  btn.title='Importer cette carte dans Synapse pour l\'éditer en détail';
+  btn.textContent='🔗 → Synapse';
+  btn.onclick=window.mmImportToSynapse;
+  controls.appendChild(btn);
+}
+
+window.mmImportToSynapse=function(){
+  var data=mmGetData();
+  if(!data){alert('Génère d\'abord une mind map !');return;}
+  var newNodes=[],newLinks=[],idCtr=1;
+  var outer=document.getElementById('synCanvasOuter');
+  var W=(outer&&outer.clientWidth)||800;
+  var H=(outer&&outer.clientHeight)||500;
+  var CX=W/2,CY=H/2;
+
+  function placeNode(lbl,cx,cy,isRoot){
+    var w=isRoot?140:124,h=38;
+    var id=idCtr++;
+    newNodes.push({
+      id:id,label:lbl,
+      x:Math.round(Math.max(10,cx-w/2)),
+      y:Math.round(Math.max(10,cy-h/2)),
+      w:w,h:h,isRoot:!!isRoot,
+      color:isRoot?SYN_ROOT_CLR:SYN_BRANCH_CLRS[Math.floor(Math.random()*SYN_BRANCH_CLRS.length)],
+      selected:false
+    });
+    return id;
+  }
+
+  function walk(node,parentId,depth,cx,cy,midAngle,arcSpan){
+    var lbl=(node.label||node.text||'Nœud').slice(0,24);
+    var id=placeNode(lbl,cx,cy,depth===0);
+    if(parentId!==null)newLinks.push({from:parentId,to:id});
+    var ch=node.children||[];
+    if(!ch.length)return;
+    var radii=[210,185,160,145,130];
+    var r=radii[Math.min(depth,radii.length-1)];
+    var n=ch.length;
+    var step=arcSpan/n;
+    ch.forEach(function(c,i){
+      var a=midAngle-arcSpan/2+step*(i+0.5);
+      walk(c,id,depth+1,cx+Math.cos(a)*r,cy+Math.sin(a)*r,a,Math.min(arcSpan,step*1.1));
+    });
+  }
+
+  walk(data,null,0,CX,CY,0,2*Math.PI);
+
+  /* Switch tab (enqueues synInit rAF if Synapse not yet initialised) */
+  window.mmSwitchTab(2);
+  /* Run after synInit to overwrite any default state with imported data */
+  requestAnimationFrame(function(){
+    synNodes=newNodes;synLinks=newLinks;synNextId=idCtr;synSelected=null;
+    synRender();
+    if(typeof toast==='function')toast('Carte importée dans Synapse 🔗','🔗');
+  });
+};
+
+setTimeout(function(){mmSetupContextMenu();mmSetupEditBtn();mmSetupImportSynapseBtn();},1400);
 
 /* ═══════════════════════════════════════════════════════════════
    SYNAPSE — Collaborative mind map
