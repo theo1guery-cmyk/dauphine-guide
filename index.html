@@ -9883,7 +9883,7 @@ aside.sidebar {
         <button class="syn-btn" onclick="synGenFlashcards()">⚡ Flashcards</button>
         <div class="syn-status">
           <span class="syn-status-dot"></span>
-          <span id="synStatusText">2 étudiants dans cette carte</span>
+          <span id="synStatusText">Carte personnelle</span>
         </div>
       </div>
       <div class="syn-canvas-outer" id="synCanvasOuter">
@@ -9897,9 +9897,6 @@ aside.sidebar {
           <g id="synLinksG"></g>
           <g id="synNodesG"></g>
         </svg>
-        <div class="syn-ghost-cursor" id="synCursor1" style="left:22%;top:28%"><span class="syn-ghost-dot" style="background:#f59e0b"></span>Alice</div>
-        <div class="syn-ghost-cursor" id="synCursor2" style="left:68%;top:58%"><span class="syn-ghost-dot" style="background:#10b981"></span>Marc</div>
-        <div class="syn-ghost-cursor" id="synCursor3" style="left:48%;top:72%"><span class="syn-ghost-dot" style="background:#a855f7"></span>Léna</div>
         <div class="syn-add-popup" id="synAddPopup">
           <div style="font-size:11px;font-weight:700;color:var(--g600);margin-bottom:6px">Nouveau nœud</div>
           <input type="text" id="synAddInput" placeholder="Nom du nœud…" maxlength="40"/>
@@ -26583,6 +26580,7 @@ function synSetupCanvas(){
   outer.addEventListener('click',function(e){
     if(!synAddMode)return;
     if(e.target.closest('.syn-node-g'))return;
+    e.stopPropagation();
     var r=outer.getBoundingClientRect();
     var x=e.clientX-r.left-62, y=e.clientY-r.top-19;
     synAddPos={x:Math.max(10,x),y:Math.max(10,y)};
@@ -26618,38 +26616,6 @@ function synSetupCanvas(){
   });
 }
 
-function synAnimateCursors(){
-  var cursors=[
-    {id:'synCursor1',x:22,y:28,dx:.25,dy:.18,rx:[5,42],ry:[12,65]},
-    {id:'synCursor2',x:68,y:58,dx:-.18,dy:.22,rx:[52,85],ry:[30,78]},
-    {id:'synCursor3',x:48,y:72,dx:.12,dy:-.2,rx:[28,68],ry:[55,88]}
-  ];
-  function step(){
-    cursors.forEach(function(c){
-      var el=document.getElementById(c.id);
-      if(!el)return;
-      c.x+=c.dx*(0.4+Math.random()*.5);
-      c.y+=c.dy*(0.4+Math.random()*.5);
-      if(c.x<c.rx[0]||c.x>c.rx[1])c.dx*=-1;
-      if(c.y<c.ry[0]||c.y>c.ry[1])c.dy*=-1;
-      el.style.left=c.x+'%';
-      el.style.top=c.y+'%';
-    });
-    setTimeout(step,1600+Math.floor(Math.random()*1000));
-  }
-  step();
-}
-
-function synCycleStatus(){
-  var counts=[2,3,3,4,2,5,3,2];
-  var i=0;
-  setInterval(function(){
-    i=(i+1)%counts.length;
-    var el=document.getElementById('synStatusText');
-    if(el)el.textContent=counts[i]+' étudiants dans cette carte';
-  },28000);
-}
-
 function synInit(){
   if(synInited)return;
   synInited=true;
@@ -26661,8 +26627,6 @@ function synInit(){
   synNodes=[root];synLinks=[];synSelected=null;
   synRender();
   synSetupCanvas();
-  synAnimateCursors();
-  synCycleStatus();
 }
 
 })();
