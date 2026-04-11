@@ -7844,7 +7844,7 @@ aside.sidebar {
             <div class="oral-row">
               <div class="prof-field">
                 <label for="oralVoiceSelect">Voix du professeur</label>
-                <select class="prof-select" id="oralVoiceSelect"></select>
+                <select class="prof-select" id="oralVoiceSelect"><option value="">Voix par défaut</option></select>
               </div>
               <div class="prof-field">
                 <label for="oralSpeechRate">Débit de parole</label>
@@ -15402,6 +15402,7 @@ function showPage(pageId, btn) {
   if (pageId === 'culture')    { setTimeout(function(){ cultureGenerateGroq(false); }, 80); }
   if (pageId === 'flashcards') { setTimeout(function(){ renderFilters(); renderCard(); renderStats(); renderHeatmap(); }, 80); }
   if (pageId === 'home')       { setTimeout(updateHomeStats, 80); }
+  if (pageId === 'oral')       { setTimeout(function(){ initProfTutor(); oralPopulateVoices(); }, 80); }
 
   // Reveal any .rev elements that the IntersectionObserver may have missed
   // (elements inside display:none sections are not reliably detected on first show)
@@ -21842,7 +21843,8 @@ function oralPopulateVoices() {
   if (!sel || !window.speechSynthesis) return;
   var voices = window.speechSynthesis.getVoices();
   if (!voices || !voices.length) return;
-  sel.innerHTML = '';
+  sel.innerHTML = '<option value="">Voix par défaut</option>';
+  delete sel.dataset.frSet;
   voices.forEach(function(v, idx) {
     var opt = document.createElement('option');
     opt.value = idx;
@@ -21865,7 +21867,7 @@ function oralSpeak(text) {
   u.rate = oralState.speechRate;
   var sel = document.getElementById('oralVoiceSelect');
   var voices = window.speechSynthesis.getVoices();
-  if (sel && voices && voices.length && voices[Number(sel.value)]) u.voice = voices[Number(sel.value)];
+  if (sel && sel.value !== '' && voices && voices.length && voices[Number(sel.value)]) u.voice = voices[Number(sel.value)];
   var avatars = document.querySelectorAll('.oral-avatar.prof');
   avatars.forEach(function(a) { a.classList.add('speaking'); });
   u.onend = function() { avatars.forEach(function(a) { a.classList.remove('speaking'); }); };
