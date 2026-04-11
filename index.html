@@ -221,7 +221,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);cursor:pointer}
 .card-3d.flipped{transform:rotateY(180deg)}
 @keyframes flashCardIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
-.card-entering{animation:flashCardIn .36s cubic-bezier(.34,1.1,.64,1) both}
+.card-entering{animation:flashCardIn .36s cubic-bezier(.34,1.1,.64,1) backwards}
 .card-face{position:absolute;inset:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;backface-visibility:hidden;overflow:hidden}
 .card-front{background:linear-gradient(150deg,#001d40 0%,#003d7a 52%,#0052a3 100%);color:#fff;box-shadow:0 24px 52px rgba(0,25,70,.26),0 6px 14px rgba(0,25,70,.12)}
 .card-front::after{content:'';position:absolute;top:-25%;left:-12%;width:120%;height:90%;background:radial-gradient(ellipse at 28% 30%,rgba(255,255,255,.1) 0%,transparent 58%);pointer-events:none}
@@ -11170,7 +11170,9 @@ function renderCard(){
 
 function flipCard(){
   flipped=!flipped;
-  document.getElementById('card3d').classList.toggle('flipped',flipped);
+  var _c3dFlip=document.getElementById('card3d');
+  _c3dFlip.classList.remove('card-entering');
+  _c3dFlip.classList.toggle('flipped',flipped);
   document.getElementById('flashMeta').textContent=flipped?'Comment tu te sens sur cette carte ?':'Clique sur la carte pour voir la réponse';
   var rb=document.getElementById('ratingBar');
   if(rb)rb.classList.toggle('show',flipped);
