@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23003d7a'/><text x='90' y='130' text-anchor='middle' fill='white' font-size='110' font-family='Georgia,serif' font-style='italic'>D</text></svg>">
 <meta name="msapplication-TileColor" content="#003d7a">
 <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'><rect width='144' height='144' fill='%23003d7a'/><text x='72' y='105' text-anchor='middle' fill='white' font-size='80' font-family='Georgia,serif' font-style='italic'>D</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&family=Josefin+Sans:wght@600;700&display=swap" rel="stylesheet">
 <style>
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -4924,45 +4924,94 @@ aside.sidebar {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TRAJECTOIRES — Constellation de carrières
+   TRAJECTOIRES — Signal · Career Atlas
 ═══════════════════════════════════════════════════════════════ */
-#page-trajectoires{display:none;flex-direction:column;height:100%}
+#page-trajectoires{display:none;flex-direction:column;height:100%;overflow:hidden}
 #page-trajectoires.active{display:flex}
-.traj-header{padding:20px 24px 10px;flex-shrink:0}
-.traj-title{font-family:'Instrument Serif',serif;font-size:clamp(22px,4vw,30px);color:var(--blue);margin:0 0 4px;letter-spacing:-.02em}
-.traj-subtitle{color:var(--g600);font-size:13px;margin:0 0 14px;max-width:60ch}
-.traj-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:2px}
-.traj-filter-btn{padding:5px 15px;border-radius:20px;border:1.5px solid var(--g200);background:var(--bg-card);color:var(--g600);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1)}
-.traj-filter-btn.active,.traj-filter-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
-.traj-canvas-wrap{flex:1;position:relative;min-height:400px;background:#070d1a;overflow:hidden}
-#trajCanvas{display:block;width:100%;height:100%;cursor:default}
-.shooting-star{position:absolute;height:1.5px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);pointer-events:none;animation:shootStar 7s linear infinite;opacity:0}
-.shooting-star:nth-child(2){animation-delay:3.2s;width:100px;top:38%}
-.shooting-star:nth-child(3){animation-delay:5.8s;width:70px;top:62%}
-@keyframes shootStar{0%{left:-200px;opacity:0;width:120px}5%{opacity:1}80%{opacity:.6}100%{left:110%;opacity:0}}
-#trajPanel{position:fixed;top:0;right:0;height:100%;width:360px;max-width:96vw;background:var(--bg-card);box-shadow:-6px 0 40px rgba(0,0,0,.18);z-index:400;transform:translateX(100%);transition:transform .36s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
-#trajPanel.open{transform:translateX(0)}
-.traj-panel-header{padding:20px 18px 12px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--g200)}
-.traj-panel-close{margin-left:auto;background:none;border:none;font-size:24px;cursor:pointer;color:var(--g400);line-height:1;padding:0 4px;flex-shrink:0}
-.traj-panel-body{padding:18px;flex:1}
-.traj-domain-badge{display:inline-block;padding:2px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:10px}
-.traj-job-title{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text-main);margin:0 0 4px;line-height:1.2}
-.traj-desc{color:var(--g600);font-size:13px;line-height:1.65;margin-bottom:14px}
-.traj-info-block{background:var(--g50);border-radius:var(--rs);padding:12px;margin-bottom:10px}
-.traj-info-label{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
-.traj-salary{font-size:20px;font-weight:800;color:var(--blue)}
-.traj-master-link{display:flex;align-items:center;gap:6px;color:var(--blue-mid);font-size:13px;font-weight:600;text-decoration:none}
-.traj-master-link:hover{text-decoration:underline}
-.traj-panel-footer{padding:14px 18px;border-top:1px solid var(--g200)}
-.traj-see-btn{display:block;width:100%;padding:11px;background:var(--blue);color:#fff;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;transition:background .2s}
-.traj-see-btn:hover{background:var(--blue-mid)}
-@media(max-width:600px){
-  #trajPanel{top:auto;bottom:0;right:0;left:0;width:100%;height:75vh;border-radius:20px 20px 0 0;transform:translateY(100%)}
-  #trajPanel.open{transform:translateY(0)}
+/* Hero */
+.traj-hero{position:relative;flex-shrink:0;background:#060e1e;overflow:hidden;min-height:clamp(160px,28vh,220px);display:flex;align-items:center;padding:0 0 0 clamp(16px,5vw,32px)}
+.traj-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(77,159,255,.3),transparent);z-index:3}
+.traj-hero-text{position:relative;z-index:2;flex:1;min-width:0;padding-right:12px;padding-top:14px;padding-bottom:14px}
+.traj-kicker{display:block;font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:10px}
+.traj-headline{font-family:'Josefin Sans',sans-serif;font-size:clamp(30px,7.5vw,56px);font-weight:700;color:#fff;line-height:1;letter-spacing:.05em;text-transform:uppercase;margin:0 0 10px}
+.traj-lead{font-size:12.5px;color:rgba(255,255,255,.42);margin:0 0 14px;max-width:30ch;line-height:1.5}
+.traj-hero-stats{display:flex;gap:18px}
+.traj-stat-chip{display:flex;flex-direction:column;gap:2px}
+.traj-stat-chip strong{font-size:17px;font-weight:800;color:#fff;line-height:1}
+.traj-stat-chip span{font-size:9px;color:rgba(255,255,255,.38);letter-spacing:.06em;text-transform:uppercase}
+/* Solar orbital */
+.traj-solar-wrap{position:absolute;right:clamp(8px,4vw,40px);top:50%;transform:translateY(-50%);z-index:1;pointer-events:none}
+@media(max-width:460px){.traj-solar-wrap{opacity:.28;right:-32px}}
+.traj-solar{position:relative;width:190px;height:190px;perspective:700px}
+.traj-center-node{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:oklch(0.93 0.025 240);box-shadow:0 0 14px rgba(0,80,160,.9),0 0 30px rgba(0,61,122,.5);display:flex;align-items:center;justify-content:center;z-index:20;font-size:6px;font-weight:900;color:#002d5a;letter-spacing:.06em;font-family:'Josefin Sans',sans-serif}
+.traj-ring{position:absolute;top:50%;left:50%;border-radius:50%;transform-style:preserve-3d;opacity:.75;transition:opacity .45s,border-color .45s}
+.traj-ring--1{width:58px;height:58px;margin:-29px 0 0 -29px;border:1px solid rgba(77,159,255,.3);--c:#4d9fff;--speed:8s;transform:rotateX(72deg)}
+.traj-ring--2{width:96px;height:96px;margin:-48px 0 0 -48px;border:1px solid rgba(245,158,11,.22);--c:#f59e0b;--speed:13s;transform:rotateX(68deg) rotateZ(30deg)}
+.traj-ring--3{width:136px;height:136px;margin:-68px 0 0 -68px;border:1px solid rgba(16,185,129,.2);--c:#10b981;--speed:19s;transform:rotateX(74deg) rotateZ(-18deg)}
+.traj-ring--4{width:178px;height:178px;margin:-89px 0 0 -89px;border:1px solid rgba(168,85,247,.16);--c:#a855f7;--speed:25s;transform:rotateX(66deg) rotateZ(48deg)}
+.traj-ring.active-ring{opacity:1;border-color:var(--c) !important}
+.traj-ring.inactive-ring{opacity:.15}
+.traj-dot-orbit{position:absolute;inset:0;animation:trajOrbitSpin var(--speed,12s) linear infinite;transform-origin:center center}
+.traj-dot{position:absolute;top:0;left:50%;width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c),0 0 14px var(--c);transform:translate(-50%,-50%);transition:box-shadow .45s,width .45s,height .45s}
+.traj-ring.active-ring .traj-dot{width:11px;height:11px;box-shadow:0 0 10px var(--c),0 0 22px var(--c),0 0 44px var(--c)}
+@keyframes trajOrbitSpin{to{transform:rotate(360deg)}}
+/* bg stars */
+.traj-bg-stars{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.traj-bg-star{position:absolute;border-radius:50%;background:#fff;animation:trajTwinkle calc(1.5s + var(--d,0s)*1s) ease-in-out infinite alternate}
+@keyframes trajTwinkle{from{opacity:.04}to{opacity:.5}}
+/* Filters bar */
+.traj-filters-bar{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:10px 14px;overflow-x:auto;background:var(--bg-card);border-bottom:1px solid var(--g200);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.traj-filters-bar::-webkit-scrollbar{display:none}
+.traj-filter-btn{flex-shrink:0;padding:5px 14px;border-radius:20px;border:1.5px solid var(--g200);background:transparent;color:var(--g400);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .22s cubic-bezier(.4,0,.2,1)}
+.traj-filter-btn:not([data-domain]).active,.traj-filter-btn:not([data-domain]):hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.traj-filter-btn[data-domain="Droit"].active,.traj-filter-btn[data-domain="Droit"]:hover{background:#4d9fff;border-color:#4d9fff;color:#fff}
+.traj-filter-btn[data-domain="Finance"].active,.traj-filter-btn[data-domain="Finance"]:hover{background:#f59e0b;border-color:#f59e0b;color:#fff}
+.traj-filter-btn[data-domain="Santé"].active,.traj-filter-btn[data-domain="Santé"]:hover{background:#10b981;border-color:#10b981;color:#fff}
+.traj-filter-btn[data-domain="International"].active,.traj-filter-btn[data-domain="International"]:hover{background:#a855f7;border-color:#a855f7;color:#fff}
+/* Cards */
+.traj-cards-scroll{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch}
+.traj-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
+.traj-card{background:var(--bg-card);border-radius:14px;padding:14px;cursor:pointer;position:relative;overflow:hidden;border:1.5px solid var(--g100);transition:transform .26s cubic-bezier(.22,1,.36,1),box-shadow .26s cubic-bezier(.22,1,.36,1),border-color .2s;animation:trajCardIn .58s cubic-bezier(.22,1,.36,1) both;animation-delay:var(--ci-delay,0ms)}
+.traj-card:hover{transform:translateY(-4px) scale(1.015);border-color:var(--card-color);box-shadow:0 10px 26px rgba(0,0,0,.1)}
+.traj-card-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--card-color);margin-bottom:9px;opacity:.9}
+.traj-card-title{font-size:13.5px;font-weight:700;color:var(--text-main);line-height:1.35;margin-bottom:10px;padding-right:22px}
+.traj-card-salary{font-size:11px;font-weight:600;color:var(--g400)}
+.traj-card-arrow{position:absolute;bottom:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--g50);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.7);transition:opacity .2s,transform .2s,background .15s;color:var(--card-color)}
+.traj-card:hover .traj-card-arrow{opacity:1;transform:scale(1)}
+@keyframes trajCardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+/* Detail panel */
+#trajDetail{position:fixed;bottom:0;left:0;right:0;height:82vh;background:var(--bg-card);border-radius:22px 22px 0 0;box-shadow:0 -6px 40px rgba(0,0,0,.2);z-index:500;transform:translateY(100%);transition:transform .42s cubic-bezier(.22,1,.36,1);overflow:hidden;display:flex;flex-direction:column}
+#trajDetail.open{transform:translateY(0)}
+#trajDetailBackdrop{position:fixed;inset:0;background:rgba(5,15,30,.52);z-index:499;opacity:0;transition:opacity .35s;pointer-events:none}
+#trajDetailBackdrop.vis{opacity:1;pointer-events:auto}
+@media(min-width:640px){
+  #trajDetail{top:0;bottom:0;left:auto;right:0;width:400px;height:100%;border-radius:0;transform:translateX(100%);box-shadow:-6px 0 40px rgba(0,0,0,.16)}
+  #trajDetail.open{transform:translateX(0)}
 }
-[data-theme="dark"] #trajPanel{background:#141e30;border-left:1px solid #1e3050}
-[data-theme="dark"] .traj-info-block{background:#0e1928}
-[data-theme="dark"] .traj-title{color:#6ab0ff}
+.traj-detail-inner{flex:1;overflow-y:auto;padding:28px 22px 36px}
+.traj-detail-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border:none;background:var(--g100);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g400);transition:background .18s,color .18s;z-index:2}
+.traj-detail-close:hover{background:var(--g200);color:var(--text-main)}
+.traj-detail-badge{display:inline-block;padding:4px 13px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#fff;margin-bottom:14px}
+.traj-detail-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(20px,5vw,28px);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-main);line-height:1.1;margin:0 0 14px}
+.traj-detail-desc{font-size:14px;color:var(--g600);line-height:1.7;margin:0 0 20px;max-width:52ch}
+.traj-detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.traj-dstat{background:var(--g50);border-radius:12px;padding:14px 12px}
+.traj-dstat-label{display:block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g400);margin-bottom:7px}
+.traj-dstat-value{display:block;font-size:14px;font-weight:800;color:var(--text-main);line-height:1.35}
+.traj-dstat-value.sm{font-size:12px;font-weight:700;color:var(--g600);line-height:1.4}
+.traj-detail-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--blue);color:#fff;border-radius:13px;font-size:14px;font-weight:700;text-decoration:none;transition:background .2s,transform .18s}
+.traj-detail-cta:hover{background:var(--blue-mid);transform:translateY(-1px)}
+.traj-detail-cta svg{flex-shrink:0;transition:transform .2s}
+.traj-detail-cta:hover svg{transform:translate(2px,-2px)}
+/* Dark mode */
+[data-theme="dark"] .traj-filters-bar{background:#0d1929;border-color:#192d47}
+[data-theme="dark"] .traj-card{background:#0d1929;border-color:#192d47}
+[data-theme="dark"] .traj-card:hover{box-shadow:0 10px 28px rgba(0,0,0,.5)}
+[data-theme="dark"] .traj-card-arrow{background:#0a1220}
+[data-theme="dark"] #trajDetail{background:#0d1929}
+[data-theme="dark"] .traj-dstat{background:#0a1220}
+[data-theme="dark"] .traj-detail-close{background:#162033;color:#6ab0ff}
+[data-theme="dark"] .traj-detail-close:hover{background:#1c2e4a}
 
 /* ═══════════════════════════════════════════════════════════════
    MIND MAP — TABS (IA tab + Synapse tab)
@@ -9722,52 +9771,64 @@ aside.sidebar {
 
 <!-- ══ TRAJECTOIRES ══ -->
 <div id="page-trajectoires" class="page-section">
-  <div class="traj-header">
-    <h1 class="traj-title">✦ Trajectoires — Atlas des débouchés</h1>
-    <p class="traj-subtitle">Chaque étoile est un métier accessible depuis Dauphine. Clique pour découvrir le parcours.</p>
-    <div class="traj-filters">
-      <button class="traj-filter-btn active" onclick="trajFilter('all',this)">Tout</button>
-      <button class="traj-filter-btn" onclick="trajFilter('Droit',this)" style="--fc:#4d9fff">⚖️ Droit</button>
-      <button class="traj-filter-btn" onclick="trajFilter('Finance',this)" style="--fc:#f59e0b">💰 Finance</button>
-      <button class="traj-filter-btn" onclick="trajFilter('Santé',this)" style="--fc:#10b981">🏥 Santé</button>
-      <button class="traj-filter-btn" onclick="trajFilter('International',this)" style="--fc:#a855f7">🌍 International</button>
+  <div class="traj-hero">
+    <div class="traj-bg-stars" aria-hidden="true"></div>
+    <div class="traj-hero-text">
+      <span class="traj-kicker">Atlas des débouchés · 4 domaines</span>
+      <h1 class="traj-headline">Trajectoires</h1>
+      <p class="traj-lead">Explore les métiers accessibles depuis Dauphine PSL.</p>
+      <div class="traj-hero-stats">
+        <div class="traj-stat-chip"><strong>26</strong><span>Métiers</span></div>
+        <div class="traj-stat-chip"><strong>4</strong><span>Domaines</span></div>
+      </div>
+    </div>
+    <div class="traj-solar-wrap" aria-hidden="true">
+      <div class="traj-solar">
+        <div class="traj-ring traj-ring--1"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
+        <div class="traj-ring traj-ring--2"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
+        <div class="traj-ring traj-ring--3"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
+        <div class="traj-ring traj-ring--4"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
+        <div class="traj-center-node">PSL</div>
+      </div>
     </div>
   </div>
-  <div class="traj-canvas-wrap">
-    <canvas id="trajCanvas"></canvas>
-    <div class="shooting-star" style="width:130px;top:16%"></div>
-    <div class="shooting-star"></div>
-    <div class="shooting-star"></div>
+  <div class="traj-filters-bar" id="trajFiltersBar">
+    <button class="traj-filter-btn active" onclick="trajFilter('all',this)">Tout</button>
+    <button class="traj-filter-btn" data-domain="Droit" onclick="trajFilter('Droit',this)">⚖️ Droit</button>
+    <button class="traj-filter-btn" data-domain="Finance" onclick="trajFilter('Finance',this)">💰 Finance</button>
+    <button class="traj-filter-btn" data-domain="Santé" onclick="trajFilter('Santé',this)">🏥 Santé</button>
+    <button class="traj-filter-btn" data-domain="International" onclick="trajFilter('International',this)">🌍 International</button>
+  </div>
+  <div class="traj-cards-scroll">
+    <div class="traj-cards-grid" id="trajCardsGrid"></div>
   </div>
 </div>
-<!-- Trajectoires detail panel (outside page-section so it overlays) -->
-<div id="trajPanel" role="dialog" aria-modal="true" aria-label="Détails du métier">
-  <div class="traj-panel-header">
-    <span id="trajPanelIcon" style="font-size:26px;flex-shrink:0">✦</span>
-    <div style="flex:1;min-width:0">
-      <div id="trajPanelBadge" class="traj-domain-badge"></div>
-      <h2 id="trajPanelTitle" class="traj-job-title"></h2>
+<!-- Trajectoires detail panel -->
+<div id="trajDetailBackdrop" onclick="window.trajClosePanel()"></div>
+<div id="trajDetail" role="dialog" aria-modal="true" aria-label="Détails du métier">
+  <div class="traj-detail-inner">
+    <button class="traj-detail-close" onclick="window.trajClosePanel()" aria-label="Fermer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="traj-detail-badge" id="tdBadge"></span>
+    <h2 class="traj-detail-title" id="tdTitle"></h2>
+    <p class="traj-detail-desc" id="tdDesc"></p>
+    <div class="traj-detail-stats">
+      <div class="traj-dstat">
+        <span class="traj-dstat-label">Salaire départ</span>
+        <strong class="traj-dstat-value" id="tdSalary"></strong>
+      </div>
+      <div class="traj-dstat">
+        <span class="traj-dstat-label">Master recommandé</span>
+        <strong class="traj-dstat-value sm" id="tdMasterName"></strong>
+      </div>
     </div>
-    <button class="traj-panel-close" onclick="trajClosePanel()" aria-label="Fermer">×</button>
-  </div>
-  <div class="traj-panel-body">
-    <p id="trajPanelDesc" class="traj-desc"></p>
-    <div class="traj-info-block">
-      <div class="traj-info-label">💰 Salaire</div>
-      <div id="trajPanelSalary" class="traj-salary"></div>
-    </div>
-    <div class="traj-info-block">
-      <div class="traj-info-label">🎓 Master recommandé</div>
-      <a id="trajPanelMaster" class="traj-master-link" href="#" target="_blank" rel="noopener">
-        <span>↗</span><span id="trajPanelMasterName"></span>
-      </a>
-    </div>
-  </div>
-  <div class="traj-panel-footer">
-    <a id="trajPanelSeeBtn" class="traj-see-btn" href="#" target="_blank" rel="noopener">Voir le master sur Dauphine →</a>
+    <a class="traj-detail-cta" id="tdCta" href="#" target="_blank" rel="noopener">
+      Voir le master sur Dauphine
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </a>
   </div>
 </div>
-
 <!-- ══ MIND MAP IA ══ -->
 <div class="page-section" id="page-mindmap">
   <!-- Tab bar -->
@@ -26051,301 +26112,178 @@ window.annalesReset = function() {
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   TRAJECTOIRES — Constellation JS
+   TRAJECTOIRES — Signal · Career Atlas JS
 ═══════════════════════════════════════════════════════════════ */
 (function(){'use strict';
 
 var CAREERS=[
   {id:'ap',title:'Assistant parlementaire',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'24–30 k€ net/an',desc:'Soutient députés et sénateurs en gérant agenda, dossiers et communication parlementaire.',sv:27},
   {id:'af',title:'Avocat fiscaliste',domain:'Droit',color:'#4d9fff',master:'Master Droit des Affaires',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-affaires',salary:'≈ 42 k€ brut/an',desc:'Conseille et défend les entreprises en droit fiscal et optimise les montages financiers.',sv:42},
-  {id:'cl',title:'Chargé de lobbying',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'35–45 k€ brut/an',desc:'Définit et conduit des stratégies d\'influence auprès des pouvoirs publics.',sv:40},
-  {id:'co',title:'Compliance Officer',domain:'Droit',color:'#4d9fff',master:'M2 Droit et régulation des marchés',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-public/2e-annee-de-master-droit-et-regulation-des-marches-291',salary:'N/A',desc:'Vérifie que l\'entreprise respecte lois et régulations, met en place des programmes de conformité.',sv:45},
-  {id:'ju',title:'Juriste',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'40 k€ début · 55–60 k€ après 5 ans',desc:'Conseille les dirigeants et veille à la conformité juridique de l\'entreprise.',sv:50},
-  {id:'je',title:'Juriste d\'entreprise',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'N/A',desc:'Pilote les questions juridiques internes et assure la conformité de l\'entreprise.',sv:47},
-  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'≈ 50 k€ brut/an',desc:'Gère le suivi juridique des contrats d\'assurance et conseille sur les aspects réglementaires.',sv:50},
-  {id:'jf',title:'Juriste secteur financier',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'40 k€ début · 50 k€ après 5 ans',desc:'Sécurise juridiquement les opérations financières des banques ou entreprises cotées.',sv:45},
+  {id:'cl',title:'Chargé de lobbying',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'35–45 k€ brut/an',desc:"Définit et conduit des stratégies d'influence auprès des pouvoirs publics.",sv:40},
+  {id:'co',title:'Compliance Officer',domain:'Droit',color:'#4d9fff',master:'M2 Droit et régulation des marchés',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-public/2e-annee-de-master-droit-et-regulation-des-marches-291',salary:'N/A',desc:"Vérifie que l'entreprise respecte lois et régulations, met en place des programmes de conformité.",sv:45},
+  {id:'ju',title:'Juriste',domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:"40 k€ début · 55–60 k€ après 5 ans",desc:"Conseille les dirigeants et veille à la conformité juridique de l'entreprise.",sv:50},
+  {id:'je',title:"Juriste d'entreprise",domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'N/A',desc:"Pilote les questions juridiques internes et assure la conformité de l'entreprise.",sv:47},
+  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'≈ 50 k€ brut/an',desc:'Gère le suivi juridique des contrats d'assurance et conseille sur les aspects réglementaires.',sv:50},
+  {id:'jf',title:'Juriste secteur financier',domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:"40 k€ début · 50 k€ après 5 ans",desc:'Sécurise juridiquement les opérations financières des banques ou entreprises cotées.',sv:45},
   {id:'no',title:'Notaire',domain:'Droit',color:'#4d9fff',master:'Master Droit Notarial',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-notarial',salary:'44 k€ brut/an',desc:'Officier public qui rédige et authentifie les actes, garantissant leur validité légale.',sv:44},
   {id:'ma',title:'Analyste M&A',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 44,5 k€ brut/an',desc:'Recommande et structure les opérations de fusions/acquisitions pour les entreprises.',sv:44},
-  {id:'pe',title:'Analyste Private Equity',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:'Analyse et sélectionne les opportunités d\'investissement pour les fonds de capital-investissement.',sv:40},
-  {id:'fi',title:'Analyste financier',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:'Étudie en profondeur la valeur des entreprises pour conseiller investisseurs ou traders.',sv:61},
-  {id:'ai',title:'Analyste investissement',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:'Identifie et saisit les meilleures opportunités financières pour son entreprise.',sv:40},
-  {id:'am',title:'Asset Manager',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'40 k€ début · 67,5 k€ après 5 ans',desc:'Gère et optimise un portefeuille d\'actifs, définissant stratégies d\'investissement.',sv:55},
-  {id:'br',title:'Broker',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:'Intermédiaire entre acheteurs et vendeurs d\'actifs financiers, proposant les meilleures conditions.',sv:61},
-  {id:'cgp',title:'Conseiller en gestion de patrimoine',domain:'Finance',color:'#f59e0b',master:'M2 Gestion du Patrimoine & Banque privée',masterUrl:'https://dauphine.psl.eu/formations/masters/gestion-de-patrimoine/m2',salary:'45,6 k€ médian',desc:'Diagnostique le patrimoine d\'un client et propose des placements adaptés à ses objectifs.',sv:46},
+  {id:'pe',title:'Analyste Private Equity',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:"Analyse et sélectionne les opportunités d'investissement pour les fonds de capital-investissement.",sv:40},
+  {id:'fi',title:'Analyste financier',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:"Étudie en profondeur la valeur des entreprises pour conseiller investisseurs ou traders.",sv:61},
+  {id:'ai',title:'Analyste investissement',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:"Identifie et saisit les meilleures opportunités financières pour son entreprise.",sv:40},
+  {id:'am',title:'Asset Manager',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:"40 k€ début · 67,5 k€ après 5 ans",desc:"Gère et optimise un portefeuille d'actifs, définissant stratégies d'investissement.",sv:55},
+  {id:'br',title:'Broker',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:"Intermédiaire entre acheteurs et vendeurs d'actifs financiers, proposant les meilleures conditions.",sv:61},
+  {id:'cgp',title:'Conseiller en gestion de patrimoine',domain:'Finance',color:'#f59e0b',master:'M2 Gestion du Patrimoine & Banque privée',masterUrl:'https://dauphine.psl.eu/formations/masters/gestion-de-patrimoine/m2',salary:"45,6 k€ médian",desc:"Diagnostique le patrimoine d'un client et propose des placements adaptés à ses objectifs.",sv:46},
   {id:'tr',title:'Trader',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'48–70 k€ (hors bonus)',desc:'Anime les marchés financiers en négociant actifs et gérant risques pour créer des marges.',sv:59},
-  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#f59e0b',master:'Master Politiques d\'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:'35–45 k€ · 70–90 k€ senior',desc:'Évalue la gestion environnementale, sociale et de gouvernance des entreprises.',sv:40},
-  {id:'cam',title:'Chargé d\'accès au marché',domain:'Santé',color:'#10b981',master:'M2 Évaluation Médico-Économique',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante/2e-annee-Evaluation-medico-economique-et-acces-marche',salary:'40–50 k€ brut/an',desc:'Prépare et fait valider l\'accès sur le marché des innovations médicales.',sv:45},
-  {id:'eme',title:'Chargé évaluation médico-éco.',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–50 k€ brut/an',desc:'Évalue l\'efficacité et le coût des innovations médicales pour décisions de santé publique.',sv:42},
+  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#f59e0b',master:'Master Politiques d'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:"35–45 k€ · 70–90 k€ senior",desc:"Évalue la gestion environnementale, sociale et de gouvernance des entreprises.",sv:40},
+  {id:'cam',title:"Chargé d'accès au marché",domain:'Santé',color:'#10b981',master:'M2 Évaluation Médico-Économique',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante/2e-annee-Evaluation-medico-economique-et-acces-marche',salary:'40–50 k€ brut/an',desc:"Prépare et fait valider l'accès sur le marché des innovations médicales.",sv:45},
+  {id:'eme',title:'Chargé évaluation médico-éco.',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–50 k€ brut/an',desc:"Évalue l'efficacité et le coût des innovations médicales pour décisions de santé publique.",sv:42},
   {id:'cts',title:'Conseiller technique (santé)',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–45 k€ brut/an',desc:'Conseille ministères ou institutions sanitaires en combinant expertise médico-économique.',sv:40},
-  {id:'ces',title:'Consultant éco. de la santé',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'37,8 k€ médian · 45–55 k€ senior',desc:'Analyse données médico-économiques et conseille sur politiques de santé publique.',sv:46},
-  {id:'mae',title:'Chargé mission affaires européennes',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'≈ 38,75 k€ brut/an',desc:'Défend les intérêts d\'organisations au niveau de l\'UE en gérant projets et relations.',sv:39},
-  {id:'cds',title:'Consultant défense & sécurité',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'42 k€ · 50–55 k€ senior',desc:'Accompagne entreprises sur enjeux sécurité en évaluant risques et stratégies.',sv:46},
-  {id:'csc',title:'Consultant supply chain',domain:'International',color:'#a855f7',master:'Master Supply Chain Internationale',masterUrl:'https://dauphine.psl.eu/formations/masters/scm-2eme-annee',salary:'40 k€ début · 60 k€ après 5 ans',desc:'Conseille entreprises sur gestion logistique globale pour optimiser flux et coûts.',sv:50},
+  {id:'ces',title:'Consultant éco. de la santé',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:"37,8 k€ médian · 45–55 k€ senior",desc:'Analyse données médico-économiques et conseille sur politiques de santé publique.',sv:46},
+  {id:'mae',title:'Chargé mission affaires européennes',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'≈ 38,75 k€ brut/an',desc:"Défend les intérêts d'organisations au niveau de l'UE en gérant projets et relations.",sv:39},
+  {id:'cds',title:'Consultant défense & sécurité',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:"42 k€ · 50–55 k€ senior",desc:'Accompagne entreprises sur enjeux sécurité en évaluant risques et stratégies.',sv:46},
+  {id:'csc',title:'Consultant supply chain',domain:'International',color:'#a855f7',master:'Master Supply Chain Internationale',masterUrl:'https://dauphine.psl.eu/formations/masters/scm-2eme-annee',salary:"40 k€ début · 60 k€ après 5 ans",desc:'Conseille entreprises sur gestion logistique globale pour optimiser flux et coûts.',sv:50},
   {id:'dp',title:'Demand Planner',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'35–70 k€ brut/an',desc:'Prévoit la demande client pour planifier production et stocks.',sv:52}
 ];
 
-var QUADRANTS={Droit:{qx:.25,qy:.28},Finance:{qx:.75,qy:.28},Santé:{qx:.25,qy:.72},International:{qx:.75,qy:.72}};
-var DOMAIN_LABELS=[
-  {domain:'Droit',qx:.25,qy:.28,color:'rgba(77,159,255,.12)'},
-  {domain:'Finance',qx:.75,qy:.28,color:'rgba(245,158,11,.1)'},
-  {domain:'Santé',qx:.25,qy:.72,color:'rgba(16,185,129,.1)'},
-  {domain:'International',qx:.75,qy:.72,color:'rgba(168,85,247,.1)'}
-];
+var DOMAIN_META={
+  'Droit':{emoji:'⚖️'},
+  'Finance':{emoji:'💰'},
+  'Santé':{emoji:'🏥'},
+  'International':{emoji:'🌍'}
+};
+var DOMAIN_RINGS={'Droit':'.traj-ring--1','Finance':'.traj-ring--2','Santé':'.traj-ring--3','International':'.traj-ring--4'};
 
-var stars=[],ambient=[],links=[],filterDomain='all';
-var canvas,ctx,raf=null,phase='enter',t=0;
-var selectedStar=null,_listenersAdded=false;
+var filterDomain='all';
+var _inited=false;
 
-function init(){
-  canvas=document.getElementById('trajCanvas');
-  if(!canvas)return;
-  ctx=canvas.getContext('2d');
-  resize();
-  buildStars();
-  buildAmbient();
-  buildLinks();
-  animate();
-  canvas.addEventListener('click',onCanvasClick);
-  canvas.addEventListener('mousemove',onCanvasHover);
-}
-
-function resize(){
-  var wrap=canvas.parentElement;
-  canvas.width=wrap.clientWidth;
-  canvas.height=wrap.clientHeight||500;
-}
-
-function buildStars(){
-  stars=[];
-  var W=canvas.width,H=canvas.height;
-  var byDomain={};
-  CAREERS.forEach(function(c){
-    if(!byDomain[c.domain])byDomain[c.domain]=[];
-    byDomain[c.domain].push(c);
-  });
-  Object.keys(byDomain).forEach(function(dom){
-    var q=QUADRANTS[dom];
-    var cx=q.qx*W, cy=q.qy*H;
-    var list=byDomain[dom];
-    list.forEach(function(c,i){
-      var angle=(i/list.length)*Math.PI*2+.3;
-      var r=55+Math.random()*70;
-      var tx=Math.max(18,Math.min(W-18,cx+Math.cos(angle)*r));
-      var ty=Math.max(18,Math.min(H-18,cy+Math.sin(angle)*r));
-      var sr=3+Math.min((c.sv-24)/38*3.5,3.5);
-      stars.push({
-        career:c,
-        tx:tx,ty:ty,x:W/2,y:H/2,
-        r:sr,phase:0,twinkle:Math.random()*Math.PI*2,twinkleSpeed:.02+Math.random()*.03,
-        entered:false
-      });
-    });
+function renderCards(){
+  var grid=document.getElementById('trajCardsGrid');
+  if(!grid)return;
+  grid.innerHTML='';
+  CAREERS.forEach(function(c,i){
+    var meta=DOMAIN_META[c.domain]||{};
+    var card=document.createElement('div');
+    card.className='traj-card';
+    card.style.cssText='--card-color:'+c.color+';--ci-delay:'+Math.min(i*38,400)+'ms';
+    card.dataset.domain=c.domain;
+    card.setAttribute('tabindex','0');
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label',c.title);
+    card.innerHTML='<div class="traj-card-tag">'+(meta.emoji||'')+' '+c.domain+'</div>'
+      +'<div class="traj-card-title">'+c.title+'</div>'
+      +'<div class="traj-card-salary">'+c.salary+'</div>'
+      +'<div class="traj-card-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg></div>';
+    card.addEventListener('click',function(){openDetail(c);});
+    card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetail(c);}});
+    grid.appendChild(card);
   });
 }
 
-function buildAmbient(){
-  ambient=[];
-  var W=canvas.width,H=canvas.height;
-  for(var i=0;i<90;i++){
-    ambient.push({x:Math.random()*W,y:Math.random()*H,r:.5+Math.random()*1.2,tw:Math.random()*Math.PI*2,tws:.01+Math.random()*.02,a:.2+Math.random()*.4});
+function applyFilter(){
+  var cards=Array.from(document.querySelectorAll('.traj-card'));
+  var vi=0;
+  cards.forEach(function(card){
+    var match=filterDomain==='all'||card.dataset.domain===filterDomain;
+    if(match){
+      card.style.display='';
+      card.style.animationName='none';
+      void card.offsetHeight;
+      card.style.animationName='';
+      card.style.animationDelay=Math.min(vi*42,360)+'ms';
+      vi++;
+    }else{
+      card.style.display='none';
+    }
+  });
+  // Update orbital ring highlight
+  document.querySelectorAll('.traj-ring').forEach(function(r){r.classList.remove('active-ring','inactive-ring');});
+  if(filterDomain!=='all'){
+    document.querySelectorAll('.traj-ring').forEach(function(r){r.classList.add('inactive-ring');});
+    var sel=document.querySelector(DOMAIN_RINGS[filterDomain]);
+    if(sel){sel.classList.remove('inactive-ring');sel.classList.add('active-ring');}
   }
 }
 
-function buildLinks(){
-  links=[];
-  var byDomain={};
-  stars.forEach(function(s){
-    var d=s.career.domain;
-    if(!byDomain[d])byDomain[d]=[];
-    byDomain[d].push(s);
-  });
-  Object.keys(byDomain).forEach(function(dom){
-    var list=byDomain[dom];
-    for(var i=0;i<list.length;i++){
-      for(var j=i+1;j<list.length;j++){
-        var dx=list[i].tx-list[j].tx, dy=list[i].ty-list[j].ty;
-        if(Math.sqrt(dx*dx+dy*dy)<130){
-          links.push({a:list[i],b:list[j],dom:dom});
-        }
-      }
-    }
-  });
-}
-
-function animate(){
-  raf=requestAnimationFrame(animate);
-  t+=.016;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  drawBackground();
-  drawLinks();
-  drawStars();
-  if(phase==='enter'){
-    var allIn=true;
-    stars.forEach(function(s){
-      var dx=s.tx-s.x, dy=s.ty-s.y;
-      s.x+=dx*.06; s.y+=dy*.06;
-      if(Math.abs(dx)>1||Math.abs(dy)>1)allIn=false;
-    });
-    if(allIn)phase='idle';
-  }
-}
-
-function drawBackground(){
-  ambient.forEach(function(a){
-    a.tw+=a.tws;
-    var alpha=a.a*(0.5+0.5*Math.sin(a.tw));
-    ctx.beginPath();
-    ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
-    ctx.fillStyle='rgba(255,255,255,'+alpha+')';
-    ctx.fill();
-  });
-  // Domain labels
-  DOMAIN_LABELS.forEach(function(dl){
-    var x=dl.qx*canvas.width, y=dl.qy*canvas.height;
-    ctx.font='bold 13px Figtree,sans-serif';
-    ctx.fillStyle=dl.color.replace('.12','0.2').replace('.1','0.18');
-    ctx.textAlign='center';
-    ctx.fillText(dl.domain.toUpperCase(),x,y-72);
-  });
-}
-
-function drawLinks(){
-  links.forEach(function(lnk){
-    var sa=lnk.a, sb=lnk.b;
-    var aActive=filterDomain==='all'||filterDomain===lnk.dom;
-    if(!aActive)return;
-    ctx.beginPath();
-    ctx.moveTo(sa.x,sa.y);
-    ctx.lineTo(sb.x,sb.y);
-    ctx.strokeStyle='rgba('+hexToRgb(sa.career.color)+',.08)';
-    ctx.lineWidth=.8;
-    ctx.stroke();
-  });
-}
-
-function drawStars(){
-  stars.forEach(function(s){
-    s.twinkle+=s.twinkleSpeed;
-    var active=filterDomain==='all'||filterDomain===s.career.domain;
-    var alpha=active?1:.08;
-    var glowR=s.r*(2.5+.6*Math.sin(s.twinkle));
-    // glow
-    var grd=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,glowR*2.5);
-    grd.addColorStop(0,'rgba('+hexToRgb(s.career.color)+','+(active?.35:.03)+')');
-    grd.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,glowR*2.5,0,Math.PI*2);
-    ctx.fillStyle=grd;
-    ctx.fill();
-    // core
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r*(1+.15*Math.sin(s.twinkle)),0,Math.PI*2);
-    ctx.fillStyle='rgba('+hexToRgb(s.career.color)+','+alpha+')';
-    ctx.fill();
-    // selected ring
-    if(selectedStar&&selectedStar===s){
-      ctx.beginPath();
-      ctx.arc(s.x,s.y,s.r+5+2*Math.sin(t*3),0,Math.PI*2);
-      ctx.strokeStyle='rgba('+hexToRgb(s.career.color)+',.7)';
-      ctx.lineWidth=1.5;
-      ctx.stroke();
-    }
-  });
-}
-
-function hexToRgb(hex){
-  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  return r+','+g+','+b;
-}
-
-function hitTest(cx,cy){
-  var hit=null,minD=Infinity;
-  stars.forEach(function(s){
-    if(filterDomain!=='all'&&filterDomain!==s.career.domain)return;
-    var dx=cx-s.x, dy=cy-s.y;
-    var d=Math.sqrt(dx*dx+dy*dy);
-    var hitR=Math.max(s.r+6,14);
-    if(d<hitR&&d<minD){minD=d;hit=s;}
-  });
-  return hit;
-}
-
-function onCanvasClick(e){
-  var r=canvas.getBoundingClientRect();
-  var scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
-  var mx=(e.clientX-r.left)*scaleX, my=(e.clientY-r.top)*scaleY;
-  var s=hitTest(mx,my);
-  if(s){selectedStar=s;openPanel(s);}
-  else{selectedStar=null;closePanel();}
-}
-
-function onCanvasHover(e){
-  var r=canvas.getBoundingClientRect();
-  var scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
-  var mx=(e.clientX-r.left)*scaleX, my=(e.clientY-r.top)*scaleY;
-  canvas.style.cursor=hitTest(mx,my)?'pointer':'default';
-}
-
-function openPanel(s){
-  var c=s.career;
-  document.getElementById('trajPanelBadge').textContent=c.domain;
-  document.getElementById('trajPanelBadge').style.cssText='display:inline-block;padding:2px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:10px;background:'+hexToRgb(c.color)+';color:#fff;background:'+c.color;
-  document.getElementById('trajPanelTitle').textContent=c.title;
-  document.getElementById('trajPanelDesc').textContent=c.desc;
-  document.getElementById('trajPanelSalary').textContent=c.salary;
-  document.getElementById('trajPanelMasterName').textContent=c.master;
-  document.getElementById('trajPanelMaster').href=c.masterUrl;
-  document.getElementById('trajPanelSeeBtn').href=c.masterUrl;
-  document.getElementById('trajPanel').classList.add('open');
+function openDetail(career){
+  var meta=DOMAIN_META[career.domain]||{};
+  var badge=document.getElementById('tdBadge');
+  if(badge){badge.textContent=(meta.emoji||'')+' '+career.domain;badge.style.background=career.color;}
+  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  el('tdTitle',career.title);
+  el('tdDesc',career.desc);
+  el('tdSalary',career.salary);
+  el('tdMasterName',career.master);
+  var cta=document.getElementById('tdCta');
+  if(cta)cta.href=career.masterUrl;
+  var detail=document.getElementById('trajDetail');
+  var bd=document.getElementById('trajDetailBackdrop');
+  if(detail)detail.classList.add('open');
+  if(bd){bd.style.display='block';requestAnimationFrame(function(){bd.classList.add('vis');});}
+  document.body.style.overflow='hidden';
 }
 
 window.trajClosePanel=function(){
-  selectedStar=null;
-  document.getElementById('trajPanel').classList.remove('open');
+  var detail=document.getElementById('trajDetail');
+  var bd=document.getElementById('trajDetailBackdrop');
+  if(detail)detail.classList.remove('open');
+  if(bd){bd.classList.remove('vis');setTimeout(function(){bd.style.display='none';},350);}
+  document.body.style.overflow='';
 };
 
 window.trajFilter=function(domain,btn){
   filterDomain=domain;
   document.querySelectorAll('.traj-filter-btn').forEach(function(b){b.classList.remove('active');});
   if(btn)btn.classList.add('active');
+  applyFilter();
 };
 
-function startTraj(){
-  if(!canvas){canvas=document.getElementById('trajCanvas');}
-  if(!canvas||!canvas.parentElement.clientWidth)return;
-  if(!ctx)ctx=canvas.getContext('2d');
-  if(!_listenersAdded){
-    canvas.addEventListener('click',onCanvasClick);
-    canvas.addEventListener('mousemove',onCanvasHover);
-    _listenersAdded=true;
+function buildBgStars(){
+  var hero=document.querySelector('.traj-bg-stars');
+  if(!hero)return;
+  hero.innerHTML='';
+  for(var i=0;i<55;i++){
+    var s=document.createElement('span');
+    s.className='traj-bg-star';
+    var sz=0.8+Math.random()*1.8;
+    s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;--d:'+Math.random().toFixed(2);
+    hero.appendChild(s);
   }
-  if(raf){cancelAnimationFrame(raf);raf=null;}
-  resize();
-  buildStars();
-  buildAmbient();
-  buildLinks();
-  phase='enter';
-  t=0;
-  animate();
+}
+
+function playEntrance(){
+  var cards=Array.from(document.querySelectorAll('.traj-card'));
+  var vi=0;
+  cards.forEach(function(card){
+    if(card.style.display==='none')return;
+    card.style.animationName='none';
+    void card.offsetHeight;
+    card.style.animationName='';
+    card.style.animationDelay=Math.min(vi*38,380)+'ms';
+    vi++;
+  });
+}
+
+function initTraj(){
+  if(!_inited){
+    _inited=true;
+    renderCards();
+    buildBgStars();
+  }else{
+    playEntrance();
+  }
 }
 
 // Hook into showPage
-var _origShowPage=window.showPage;
+var _trajOrigShowPage=window.showPage;
 window.showPage=function(page,btn){
-  if(_origShowPage)_origShowPage(page,btn);
-  if(page==='trajectoires')setTimeout(startTraj,60);
+  if(_trajOrigShowPage)_trajOrigShowPage(page,btn);
+  if(page==='trajectoires')setTimeout(initTraj,60);
 };
 
-window.addEventListener('resize',function(){
-  if(document.getElementById('page-trajectoires').classList.contains('active')){
-    resize();buildStars();buildAmbient();buildLinks();
-  }
+document.addEventListener('DOMContentLoaded',function(){
+  if(document.getElementById('page-trajectoires').classList.contains('active'))initTraj();
 });
 
-document.addEventListener('DOMContentLoaded',function(){
-  // auto-init if page is already active (rare but safe)
-  if(document.getElementById('page-trajectoires').classList.contains('active'))startTraj();
-});
 })();
 
 /* ═══════════════════════════════════════════════════════════════
