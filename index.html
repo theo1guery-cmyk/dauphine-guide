@@ -4997,6 +4997,25 @@ aside.sidebar {
 [data-theme="dark"] #synSvg{background:transparent}
 [data-theme="dark"] .syn-grid-bg{opacity:.22}
 [data-theme="dark"] .syn-add-popup{background:#1a2236;border-color:#4d9fff}
+.syn-collab-panel{padding:14px 18px;border-bottom:1px solid var(--g200);background:var(--bg);flex-shrink:0}
+.syn-collab-section{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.syn-collab-card{flex:1;min-width:190px;display:flex;flex-direction:column;gap:8px;padding:13px 15px;border:1.5px solid var(--g200);border-radius:var(--r);background:var(--bg-card)}
+.syn-collab-card strong{font-size:13px;font-weight:800;color:var(--g900)}
+.syn-collab-card p{font-size:12px;color:var(--g500);margin:0;line-height:1.5}
+.syn-collab-card .syn-collab-btn{padding:7px 14px;border-radius:var(--rs);border:none;background:var(--blue);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .18s;width:100%}
+.syn-collab-card .syn-collab-btn:hover{opacity:.85}
+.syn-collab-card .syn-collab-btn:disabled{opacity:.5;cursor:default}
+.syn-collab-input{width:100%;box-sizing:border-box;border:1.5px solid var(--g200);border-radius:var(--rs);padding:7px 10px;font-size:13px;font-weight:700;letter-spacing:.1em;font-family:'Figtree',sans-serif;outline:none;text-transform:uppercase;background:var(--bg)}
+.syn-collab-input:focus{border-color:var(--blue)}
+.syn-cc-sep{align-self:center;font-size:11px;font-weight:700;color:var(--g400);padding:0 2px}
+.syn-collab-live{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--blue);background:var(--blue-light);border:1.5px solid var(--blue);border-radius:var(--rs);padding:4px 10px}
+.syn-collab-live code{font-family:monospace;font-size:12px;font-weight:800;letter-spacing:.1em}
+.syn-btn-icon{background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;font-size:12px;transition:background .15s;color:var(--g600);font-family:inherit;font-weight:700}
+.syn-btn-icon:hover{background:rgba(0,0,0,.07)}
+[data-theme="dark"] .syn-collab-panel{background:#111520;border-color:#1e2a3a}
+[data-theme="dark"] .syn-collab-card{background:#1a2236;border-color:#222b3a}
+[data-theme="dark"] .syn-collab-input{background:#111520;border-color:#222b3a;color:#e2e8f0}
+[data-theme="dark"] .syn-collab-live{background:rgba(0,61,122,.3);border-color:#4d9fff}
 
 /* ═══════════════════════════════════════════════════════════════
    MIND MAP IA
@@ -9881,9 +9900,33 @@ aside.sidebar {
         <button class="syn-btn danger" onclick="synDeleteSelected()">🗑 Supprimer</button>
         <button class="syn-btn" onclick="synExportSvg()">⬇️ SVG</button>
         <button class="syn-btn" onclick="synGenFlashcards()">⚡ Flashcards</button>
+        <button class="syn-btn" id="synShareBtn" onclick="synToggleCollabPanel()">🌐 Partager</button>
+        <div class="syn-collab-live" id="synCollabLive" style="display:none">
+          <span class="syn-status-dot"></span>
+          <code id="synCodeDisplay"></code>
+          <button class="syn-btn-icon" onclick="synCopyCode()" title="Copier le code">📋</button>
+          <button class="syn-btn-icon" onclick="synLeaveRoom()" title="Quitter la session">✕ Quitter</button>
+        </div>
         <div class="syn-status">
           <span class="syn-status-dot"></span>
-          <span id="synStatusText">2 étudiants dans cette carte</span>
+          <span id="synStatusText">Carte personnelle</span>
+        </div>
+      </div>
+      <div id="synCollabPanel" class="syn-collab-panel" style="display:none">
+        <div class="syn-collab-section">
+          <div class="syn-collab-card">
+            <strong>🆕 Créer une session</strong>
+            <p>Génère un code à partager avec tes camarades pour éditer la carte ensemble en temps réel.</p>
+            <button id="synCreateRoomBtn" class="syn-collab-btn" onclick="synCreateRoom()">Créer →</button>
+          </div>
+          <div class="syn-cc-sep">ou</div>
+          <div class="syn-collab-card">
+            <strong>🔗 Rejoindre une session</strong>
+            <p>Entre le code partagé par ton camarade.</p>
+            <input id="synJoinInput" class="syn-collab-input" placeholder="SYN-XXXXX" maxlength="9" oninput="this.value=this.value.toUpperCase()"/>
+            <div id="synJoinError" style="display:none;font-size:11px;color:#ef4444;margin-top:-4px">Code introuvable. Vérifie et réessaie.</div>
+            <button id="synJoinRoomBtn" class="syn-collab-btn" onclick="synJoinRoom()">Rejoindre →</button>
+          </div>
         </div>
       </div>
       <div class="syn-canvas-outer" id="synCanvasOuter">
@@ -9897,9 +9940,6 @@ aside.sidebar {
           <g id="synLinksG"></g>
           <g id="synNodesG"></g>
         </svg>
-        <div class="syn-ghost-cursor" id="synCursor1" style="left:22%;top:28%"><span class="syn-ghost-dot" style="background:#f59e0b"></span>Alice</div>
-        <div class="syn-ghost-cursor" id="synCursor2" style="left:68%;top:58%"><span class="syn-ghost-dot" style="background:#10b981"></span>Marc</div>
-        <div class="syn-ghost-cursor" id="synCursor3" style="left:48%;top:72%"><span class="syn-ghost-dot" style="background:#a855f7"></span>Léna</div>
         <div class="syn-add-popup" id="synAddPopup">
           <div style="font-size:11px;font-weight:700;color:var(--g600);margin-bottom:6px">Nouveau nœud</div>
           <input type="text" id="synAddInput" placeholder="Nom du nœud…" maxlength="40"/>
@@ -26435,6 +26475,8 @@ var synSelected=null,synConnectMode=false,synConnectSrc=null;
 var synAddMode=false,synAddPos={x:0,y:0};
 var synInited=false;
 var synDragNode=null,synDragOff={x:0,y:0};
+var synCollabCode=null,synCollabUnsub=null,synCollabPresRef=null;
+var synCollabPushTimer=null,synSessionStart=0;
 
 var SYN_ROOT_CLR='#003d7a';
 var SYN_BRANCH_CLRS=['#0057ad','#1a73c8','#2d8de0','#4da6f5'];
@@ -26500,7 +26542,7 @@ function synOnNodeClick(e){
     else if(synConnectSrc.id!==n.id){
       var exists=synLinks.filter(function(l){return(l.from===synConnectSrc.id&&l.to===n.id)||(l.from===n.id&&l.to===synConnectSrc.id);}).length>0;
       if(!exists)synLinks.push({from:synConnectSrc.id,to:n.id,isNew:true});
-      synConnectSrc.selected=false;synConnectSrc=null;synRender();
+      synConnectSrc.selected=false;synConnectSrc=null;synRender();synSchedulePush();
     }
     return;
   }
@@ -26513,7 +26555,7 @@ function synOnNodeDblclick(e){
   var n=synNodes.filter(function(x){return x.id===id;})[0];
   if(!n)return;
   var v=prompt('Renommer:',n.label);
-  if(v!==null&&v.trim()){n.label=v.trim();synRender();}
+  if(v!==null&&v.trim()){n.label=v.trim();synRender();synSchedulePush();}
 }
 
 document.addEventListener('mousemove',function(e){
@@ -26525,7 +26567,7 @@ document.addEventListener('mousemove',function(e){
   synDragNode.y=e.clientY-r.top-synDragOff.y;
   synRender();
 });
-document.addEventListener('mouseup',function(){synDragNode=null;});
+document.addEventListener('mouseup',function(){if(synDragNode){synDragNode=null;synSchedulePush();}else{synDragNode=null;}});
 
 document.addEventListener('keydown',function(e){
   if(e.key==='Delete'&&synSelected){
@@ -26533,7 +26575,7 @@ document.addEventListener('keydown',function(e){
     if(pane&&pane.classList.contains('active')){
       synLinks=synLinks.filter(function(l){return l.from!==synSelected.id&&l.to!==synSelected.id;});
       synNodes=synNodes.filter(function(x){return x.id!==synSelected.id;});
-      synSelected=null;synRender();
+      synSelected=null;synRender();synSchedulePush();
     }
   }
 });
@@ -26557,7 +26599,7 @@ window.synDeleteSelected=function(){
   if(!synSelected)return;
   synLinks=synLinks.filter(function(l){return l.from!==synSelected.id&&l.to!==synSelected.id;});
   synNodes=synNodes.filter(function(x){return x.id!==synSelected.id;});
-  synSelected=null;synRender();
+  synSelected=null;synRender();synSchedulePush();
 };
 
 window.synExportSvg=function(){
@@ -26583,6 +26625,7 @@ function synSetupCanvas(){
   outer.addEventListener('click',function(e){
     if(!synAddMode)return;
     if(e.target.closest('.syn-node-g'))return;
+    e.stopPropagation();
     var r=outer.getBoundingClientRect();
     var x=e.clientX-r.left-62, y=e.clientY-r.top-19;
     synAddPos={x:Math.max(10,x),y:Math.max(10,y)};
@@ -26601,7 +26644,7 @@ function synSetupCanvas(){
       if(e.key==='Enter'){
         var lbl=inp.value.trim()||'Nœud';
         synNodes.push(synMakeNode(lbl,synAddPos.x,synAddPos.y,false));
-        synRender();
+        synRender();synSchedulePush();
         document.getElementById('synAddPopup').style.display='none';
         synAddMode=false;
         var btn=document.getElementById('synAddBtn');
@@ -26618,36 +26661,131 @@ function synSetupCanvas(){
   });
 }
 
-function synAnimateCursors(){
-  var cursors=[
-    {id:'synCursor1',x:22,y:28,dx:.25,dy:.18,rx:[5,42],ry:[12,65]},
-    {id:'synCursor2',x:68,y:58,dx:-.18,dy:.22,rx:[52,85],ry:[30,78]},
-    {id:'synCursor3',x:48,y:72,dx:.12,dy:-.2,rx:[28,68],ry:[55,88]}
-  ];
-  function step(){
-    cursors.forEach(function(c){
-      var el=document.getElementById(c.id);
-      if(!el)return;
-      c.x+=c.dx*(0.4+Math.random()*.5);
-      c.y+=c.dy*(0.4+Math.random()*.5);
-      if(c.x<c.rx[0]||c.x>c.rx[1])c.dx*=-1;
-      if(c.y<c.ry[0]||c.y>c.ry[1])c.dy*=-1;
-      el.style.left=c.x+'%';
-      el.style.top=c.y+'%';
-    });
-    setTimeout(step,1600+Math.floor(Math.random()*1000));
-  }
-  step();
+/* ── Synapse collab helpers ── */
+function synGenCode(){
+  var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='SYN-';
+  for(var i=0;i<5;i++)s+=c[Math.floor(Math.random()*c.length)];
+  return s;
 }
 
-function synCycleStatus(){
-  var counts=[2,3,3,4,2,5,3,2];
-  var i=0;
-  setInterval(function(){
-    i=(i+1)%counts.length;
-    var el=document.getElementById('synStatusText');
-    if(el)el.textContent=counts[i]+' étudiants dans cette carte';
-  },28000);
+window.synToggleCollabPanel=function(){
+  if(synCollabCode)return;
+  var p=document.getElementById('synCollabPanel');
+  if(!p)return;
+  p.style.display=p.style.display==='none'?'block':'none';
+};
+
+window.synCreateRoom=async function(){
+  if(!window._fb||!window._fb.db){toast('Firebase non disponible','⚠️');return;}
+  var user=window._chatCurrentUser;
+  if(!user){toast('Connecte-toi via le Chat étudiant pour collaborer','🔒');return;}
+  var btn=document.getElementById('synCreateRoomBtn');
+  if(btn){btn.disabled=true;btn.textContent='Création…';}
+  var code=synGenCode();
+  try{
+    await window._fb.set(window._fb.ref(window._fb.db,'synapse-rooms/'+code+'/meta'),
+      {hostUid:user.uid,hostPseudo:user.pseudo,createdAt:Date.now()});
+    await synStartCollab(code);
+    synSchedulePush();
+  }catch(e){
+    toast('Erreur : '+e.message,'❌');
+    if(btn){btn.disabled=false;btn.textContent='Créer →';}
+  }
+};
+
+window.synJoinRoom=async function(){
+  if(!window._fb||!window._fb.db){toast('Firebase non disponible','⚠️');return;}
+  var user=window._chatCurrentUser;
+  if(!user){toast('Connecte-toi via le Chat étudiant pour collaborer','🔒');return;}
+  var raw=document.getElementById('synJoinInput').value.trim().toUpperCase();
+  var code=raw.startsWith('SYN-')?raw:'SYN-'+raw;
+  var errEl=document.getElementById('synJoinError');
+  if(errEl)errEl.style.display='none';
+  var btn=document.getElementById('synJoinRoomBtn');
+  if(btn){btn.disabled=true;btn.textContent='Vérification…';}
+  try{
+    var snap=await window._fb.get(window._fb.ref(window._fb.db,'synapse-rooms/'+code+'/meta'));
+    if(!snap.exists()){
+      if(errEl)errEl.style.display='';
+      if(btn){btn.disabled=false;btn.textContent='Rejoindre →';}
+      return;
+    }
+    await synStartCollab(code);
+  }catch(e){
+    toast('Erreur : '+e.message,'❌');
+    if(btn){btn.disabled=false;btn.textContent='Rejoindre →';}
+  }
+};
+
+async function synStartCollab(code){
+  var user=window._chatCurrentUser;
+  var _fb=window._fb;
+  synSessionStart=Date.now();
+  synCollabPresRef=_fb.ref(_fb.db,'synapse-rooms/'+code+'/presence/'+user.uid);
+  await _fb.set(synCollabPresRef,{pseudo:user.pseudo,ts:Date.now()});
+  _fb.onDisconnect(synCollabPresRef).remove();
+  synCollabUnsub=_fb.onValue(_fb.ref(_fb.db,'synapse-rooms/'+code),function(snap){
+    var data=snap.val();
+    if(!data)return;
+    var cnt=data.presence?Object.keys(data.presence).length:1;
+    var stEl=document.getElementById('synStatusText');
+    if(stEl)stEl.textContent=cnt+' personne'+(cnt>1?'s':'')+' dans cette carte';
+    if(synDragNode)return;
+    if(data.snapshot){
+      var myUid=window._chatCurrentUser?window._chatCurrentUser.uid:null;
+      if(myUid&&data.snapshot.by===myUid&&data.snapshot.ts>synSessionStart)return;
+      var ns=(data.snapshot.nodes||[]).map(function(n){return Object.assign({},n,{selected:false});});
+      var ls=data.snapshot.links||[];
+      synNodes=ns;synLinks=ls;
+      var maxId=0;synNodes.forEach(function(n){if(n.id>maxId)maxId=n.id;});
+      synNextId=maxId+1;
+      synRender();
+    }
+  });
+  synCollabCode=code;
+  document.getElementById('synCollabPanel').style.display='none';
+  var shareBtn=document.getElementById('synShareBtn');
+  if(shareBtn)shareBtn.style.display='none';
+  var liveEl=document.getElementById('synCollabLive');
+  if(liveEl)liveEl.style.display='flex';
+  var codeEl=document.getElementById('synCodeDisplay');
+  if(codeEl)codeEl.textContent=code;
+  toast('Session '+code+' active 🔗','🌐');
+}
+
+window.synLeaveRoom=function(){
+  if(synCollabUnsub){synCollabUnsub();synCollabUnsub=null;}
+  if(synCollabPresRef&&window._fb){try{window._fb.remove(synCollabPresRef);}catch(e){}}
+  synCollabPresRef=null;synCollabCode=null;
+  var liveEl=document.getElementById('synCollabLive');
+  if(liveEl)liveEl.style.display='none';
+  var shareBtn=document.getElementById('synShareBtn');
+  if(shareBtn)shareBtn.style.display='';
+  var stEl=document.getElementById('synStatusText');
+  if(stEl)stEl.textContent='Carte personnelle';
+  toast('Session quittée','👋');
+};
+
+window.synCopyCode=function(){
+  if(!synCollabCode)return;
+  navigator.clipboard.writeText(synCollabCode)
+    .then(function(){toast('Code copié !','📋');})
+    .catch(function(){toast(synCollabCode,'📋');});
+};
+
+function synSchedulePush(){
+  if(!synCollabCode||!window._fb)return;
+  clearTimeout(synCollabPushTimer);
+  synCollabPushTimer=setTimeout(function(){
+    var user=window._chatCurrentUser;
+    var ts=Date.now();
+    var snapshot={
+      nodes:synNodes.map(function(n){return{id:n.id,label:n.label,x:n.x,y:n.y,w:n.w,h:n.h,isRoot:n.isRoot,color:n.color};}),
+      links:synLinks.map(function(l){return{from:l.from,to:l.to};}),
+      by:user?user.uid:'anon',ts:ts
+    };
+    window._fb.set(window._fb.ref(window._fb.db,'synapse-rooms/'+synCollabCode+'/snapshot'),snapshot).catch(function(){});
+  },600);
 }
 
 function synInit(){
@@ -26661,8 +26799,6 @@ function synInit(){
   synNodes=[root];synLinks=[];synSelected=null;
   synRender();
   synSetupCanvas();
-  synAnimateCursors();
-  synCycleStatus();
 }
 
 })();
