@@ -26054,7 +26054,7 @@ var DOMAIN_LABELS=[
 
 var stars=[],ambient=[],links=[],filterDomain='all';
 var canvas,ctx,raf=null,phase='enter',t=0;
-var selectedStar=null;
+var selectedStar=null,_listenersAdded=false;
 
 function init(){
   canvas=document.getElementById('trajCanvas');
@@ -26273,13 +26273,20 @@ window.trajFilter=function(domain,btn){
 function startTraj(){
   if(!canvas){canvas=document.getElementById('trajCanvas');}
   if(!canvas||!canvas.parentElement.clientWidth)return;
+  if(!ctx)ctx=canvas.getContext('2d');
+  if(!_listenersAdded){
+    canvas.addEventListener('click',onCanvasClick);
+    canvas.addEventListener('mousemove',onCanvasHover);
+    _listenersAdded=true;
+  }
+  if(raf){cancelAnimationFrame(raf);raf=null;}
   resize();
   buildStars();
   buildAmbient();
   buildLinks();
   phase='enter';
   t=0;
-  if(!raf)animate();
+  animate();
 }
 
 // Hook into showPage
