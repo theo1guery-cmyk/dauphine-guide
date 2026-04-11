@@ -4924,94 +4924,152 @@ aside.sidebar {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   TRAJECTOIRES — Signal · Career Atlas
+   TRAJECTOIRES — Immersive Career Constellation
 ═══════════════════════════════════════════════════════════════ */
-#page-trajectoires{display:none;flex-direction:column;height:100%;overflow:hidden}
+#page-trajectoires{display:none;flex-direction:column;height:100%;overflow-y:auto;overflow-x:hidden;background:linear-gradient(180deg,#060e1e 0%,#0f1d32 100%);scroll-behavior:smooth}
 #page-trajectoires.active{display:flex}
-/* Hero */
-.traj-hero{position:relative;flex-shrink:0;background:#060e1e;overflow:hidden;min-height:clamp(160px,28vh,220px);display:flex;align-items:center;padding:0 0 0 clamp(16px,5vw,32px)}
-.traj-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(77,159,255,.3),transparent);z-index:3}
-.traj-hero-text{position:relative;z-index:2;flex:1;min-width:0;padding-right:12px;padding-top:14px;padding-bottom:14px}
-.traj-kicker{display:block;font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:10px}
-.traj-headline{font-family:'Josefin Sans',sans-serif;font-size:clamp(30px,7.5vw,56px);font-weight:700;color:#fff;line-height:1;letter-spacing:.05em;text-transform:uppercase;margin:0 0 10px}
-.traj-lead{font-size:12.5px;color:rgba(255,255,255,.42);margin:0 0 14px;max-width:30ch;line-height:1.5}
-.traj-hero-stats{display:flex;gap:18px}
-.traj-stat-chip{display:flex;flex-direction:column;gap:2px}
-.traj-stat-chip strong{font-size:17px;font-weight:800;color:#fff;line-height:1}
-.traj-stat-chip span{font-size:9px;color:rgba(255,255,255,.38);letter-spacing:.06em;text-transform:uppercase}
-/* Solar orbital */
-.traj-solar-wrap{position:absolute;right:clamp(8px,4vw,40px);top:50%;transform:translateY(-50%);z-index:1;pointer-events:none}
-@media(max-width:460px){.traj-solar-wrap{opacity:.28;right:-32px}}
-.traj-solar{position:relative;width:190px;height:190px;perspective:700px}
-.traj-center-node{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:oklch(0.93 0.025 240);box-shadow:0 0 14px rgba(0,80,160,.9),0 0 30px rgba(0,61,122,.5);display:flex;align-items:center;justify-content:center;z-index:20;font-size:6px;font-weight:900;color:#002d5a;letter-spacing:.06em;font-family:'Josefin Sans',sans-serif}
-.traj-ring{position:absolute;top:50%;left:50%;border-radius:50%;transform-style:preserve-3d;opacity:.75;transition:opacity .45s,border-color .45s}
-.traj-ring--1{width:58px;height:58px;margin:-29px 0 0 -29px;border:1px solid rgba(77,159,255,.3);--c:#4d9fff;--speed:8s;transform:rotateX(72deg)}
-.traj-ring--2{width:96px;height:96px;margin:-48px 0 0 -48px;border:1px solid rgba(245,158,11,.22);--c:#f59e0b;--speed:13s;transform:rotateX(68deg) rotateZ(30deg)}
-.traj-ring--3{width:136px;height:136px;margin:-68px 0 0 -68px;border:1px solid rgba(16,185,129,.2);--c:#10b981;--speed:19s;transform:rotateX(74deg) rotateZ(-18deg)}
-.traj-ring--4{width:178px;height:178px;margin:-89px 0 0 -89px;border:1px solid rgba(168,85,247,.16);--c:#a855f7;--speed:25s;transform:rotateX(66deg) rotateZ(48deg)}
-.traj-ring.active-ring{opacity:1;border-color:var(--c) !important}
-.traj-ring.inactive-ring{opacity:.15}
-.traj-dot-orbit{position:absolute;inset:0;animation:trajOrbitSpin var(--speed,12s) linear infinite;transform-origin:center center}
-.traj-dot{position:absolute;top:0;left:50%;width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c),0 0 14px var(--c);transform:translate(-50%,-50%);transition:box-shadow .45s,width .45s,height .45s}
-.traj-ring.active-ring .traj-dot{width:11px;height:11px;box-shadow:0 0 10px var(--c),0 0 22px var(--c),0 0 44px var(--c)}
-@keyframes trajOrbitSpin{to{transform:rotate(360deg)}}
-/* bg stars */
-.traj-bg-stars{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.traj-bg-star{position:absolute;border-radius:50%;background:#fff;animation:trajTwinkle calc(1.5s + var(--d,0s)*1s) ease-in-out infinite alternate}
-@keyframes trajTwinkle{from{opacity:.04}to{opacity:.5}}
-/* Filters bar */
-.traj-filters-bar{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:10px 14px;overflow-x:auto;background:var(--bg-card);border-bottom:1px solid var(--g200);scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.traj-filters-bar::-webkit-scrollbar{display:none}
-.traj-filter-btn{flex-shrink:0;padding:5px 14px;border-radius:20px;border:1.5px solid var(--g200);background:transparent;color:var(--g400);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .22s cubic-bezier(.4,0,.2,1)}
-.traj-filter-btn:not([data-domain]).active,.traj-filter-btn:not([data-domain]):hover{background:var(--blue);border-color:var(--blue);color:#fff}
-.traj-filter-btn[data-domain="Droit"].active,.traj-filter-btn[data-domain="Droit"]:hover{background:#4d9fff;border-color:#4d9fff;color:#fff}
-.traj-filter-btn[data-domain="Finance"].active,.traj-filter-btn[data-domain="Finance"]:hover{background:#f59e0b;border-color:#f59e0b;color:#fff}
-.traj-filter-btn[data-domain="Santé"].active,.traj-filter-btn[data-domain="Santé"]:hover{background:#10b981;border-color:#10b981;color:#fff}
-.traj-filter-btn[data-domain="International"].active,.traj-filter-btn[data-domain="International"]:hover{background:#a855f7;border-color:#a855f7;color:#fff}
-/* Cards */
-.traj-cards-scroll{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch}
-.traj-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
-.traj-card{background:var(--bg-card);border-radius:14px;padding:14px;cursor:pointer;position:relative;overflow:hidden;border:1.5px solid var(--g100);transition:transform .26s cubic-bezier(.22,1,.36,1),box-shadow .26s cubic-bezier(.22,1,.36,1),border-color .2s;animation:trajCardIn .58s cubic-bezier(.22,1,.36,1) both;animation-delay:var(--ci-delay,0ms)}
-.traj-card:hover{transform:translateY(-4px) scale(1.015);border-color:var(--card-color);box-shadow:0 10px 26px rgba(0,0,0,.1)}
-.traj-card-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--card-color);margin-bottom:9px;opacity:.9}
-.traj-card-title{font-size:13.5px;font-weight:700;color:var(--text-main);line-height:1.35;margin-bottom:10px;padding-right:22px}
-.traj-card-salary{font-size:11px;font-weight:600;color:var(--g400)}
-.traj-card-arrow{position:absolute;bottom:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--g50);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.7);transition:opacity .2s,transform .2s,background .15s;color:var(--card-color)}
-.traj-card:hover .traj-card-arrow{opacity:1;transform:scale(1)}
-@keyframes trajCardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-/* Detail panel */
-#trajDetail{position:fixed;bottom:0;left:0;right:0;height:82vh;background:var(--bg-card);border-radius:22px 22px 0 0;box-shadow:0 -6px 40px rgba(0,0,0,.2);z-index:500;transform:translateY(100%);transition:transform .42s cubic-bezier(.22,1,.36,1);overflow:hidden;display:flex;flex-direction:column}
-#trajDetail.open{transform:translateY(0)}
-#trajDetailBackdrop{position:fixed;inset:0;background:rgba(5,15,30,.52);z-index:499;opacity:0;transition:opacity .35s;pointer-events:none}
-#trajDetailBackdrop.vis{opacity:1;pointer-events:auto}
-@media(min-width:640px){
-  #trajDetail{top:0;bottom:0;left:auto;right:0;width:400px;height:100%;border-radius:0;transform:translateX(100%);box-shadow:-6px 0 40px rgba(0,0,0,.16)}
-  #trajDetail.open{transform:translateX(0)}
-}
-.traj-detail-inner{flex:1;overflow-y:auto;padding:28px 22px 36px}
-.traj-detail-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border:none;background:var(--g100);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g400);transition:background .18s,color .18s;z-index:2}
-.traj-detail-close:hover{background:var(--g200);color:var(--text-main)}
-.traj-detail-badge{display:inline-block;padding:4px 13px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#fff;margin-bottom:14px}
-.traj-detail-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(20px,5vw,28px);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-main);line-height:1.1;margin:0 0 14px}
-.traj-detail-desc{font-size:14px;color:var(--g600);line-height:1.7;margin:0 0 20px;max-width:52ch}
-.traj-detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
-.traj-dstat{background:var(--g50);border-radius:12px;padding:14px 12px}
-.traj-dstat-label{display:block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g400);margin-bottom:7px}
-.traj-dstat-value{display:block;font-size:14px;font-weight:800;color:var(--text-main);line-height:1.35}
-.traj-dstat-value.sm{font-size:12px;font-weight:700;color:var(--g600);line-height:1.4}
-.traj-detail-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--blue);color:#fff;border-radius:13px;font-size:14px;font-weight:700;text-decoration:none;transition:background .2s,transform .18s}
-.traj-detail-cta:hover{background:var(--blue-mid);transform:translateY(-1px)}
+#page-trajectoires *{box-sizing:border-box}
+
+/* ── Hero (fullscreen) ── */
+.traj-hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:60px 24px 40px}
+.traj-hero-parallax{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;will-change:transform}
+
+/* Particles */
+.traj-particles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.traj-particle{position:absolute;border-radius:50%;background:#fff;animation:trajTwinkle2 var(--dur,3s) ease-in-out infinite alternate;opacity:0.05}
+@keyframes trajTwinkle2{0%{opacity:0.03;transform:scale(1)}100%{opacity:var(--peak,0.45);transform:scale(1.2)}}
+
+/* Orbital rings (hero) */
+.traj-orbital-wrap{position:relative;width:clamp(260px,50vw,420px);height:clamp(260px,50vw,420px);margin-bottom:40px;perspective:800px}
+.traj-orbital-ring{position:absolute;top:50%;left:50%;border-radius:50%;transform-style:preserve-3d;border:1.5px solid;opacity:.6}
+.traj-orbital-ring--1{--c:#4d9fff;width:36%;height:36%;margin-top:-18%;margin-left:-18%;border-color:rgba(77,159,255,.25);transform:rotateX(70deg);animation:trajRingSpin 20s linear infinite}
+.traj-orbital-ring--2{--c:#fbbf24;width:56%;height:56%;margin-top:-28%;margin-left:-28%;border-color:rgba(251,191,36,.2);transform:rotateX(70deg) rotateZ(25deg);animation:trajRingSpin 28s linear infinite reverse}
+.traj-orbital-ring--3{--c:#10b981;width:76%;height:76%;margin-top:-38%;margin-left:-38%;border-color:rgba(16,185,129,.18);transform:rotateX(70deg) rotateZ(-15deg);animation:trajRingSpin 36s linear infinite}
+.traj-orbital-ring--4{--c:#a855f7;width:96%;height:96%;margin-top:-48%;margin-left:-48%;border-color:rgba(168,85,247,.14);transform:rotateX(70deg) rotateZ(40deg);animation:trajRingSpin 44s linear infinite reverse}
+@keyframes trajRingSpin{to{transform:rotateX(70deg) rotate(360deg)}}
+.traj-orbital-dot-wrap{position:absolute;inset:0;animation:trajDotOrbit var(--speed,20s) linear infinite}
+.traj-orbital-dot{position:absolute;top:0;left:50%;width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c),0 0 20px var(--c);transform:translate(-50%,-50%)}
+@keyframes trajDotOrbit{to{transform:rotate(360deg)}}
+.traj-center-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(180,210,255,.6) 50%,transparent 100%);box-shadow:0 0 30px rgba(77,159,255,.7),0 0 60px rgba(77,159,255,.3);display:flex;align-items:center;justify-content:center;font-family:'Josefin Sans',sans-serif;font-size:11px;font-weight:900;color:#0a1e3d;letter-spacing:.1em;z-index:10}
+
+/* Hero typography */
+.traj-hero-kicker{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px}
+.traj-hero-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(48px,12vw,96px);font-weight:700;color:#fff;line-height:.95;letter-spacing:.12em;text-transform:uppercase;margin:0 0 16px;background:linear-gradient(180deg,#fff 40%,rgba(255,255,255,.5) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.traj-hero-sub{font-size:clamp(13px,2vw,16px);color:rgba(255,255,255,.45);max-width:42ch;line-height:1.6;margin:0 auto 28px}
+.traj-hero-meta{display:flex;gap:32px;justify-content:center;margin-bottom:36px}
+.traj-hero-meta-item{font-size:13px;font-weight:800;color:#d4a853;letter-spacing:.06em;text-transform:uppercase}
+.traj-hero-meta-item span{color:rgba(255,255,255,.4);font-weight:600}
+.traj-hero-scroll-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:1.5px solid rgba(255,255,255,.15);border-radius:40px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:13px;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .3s;font-family:inherit;backdrop-filter:blur(4px)}
+.traj-hero-scroll-cta:hover{border-color:rgba(255,255,255,.35);color:#fff;background:rgba(255,255,255,.08)}
+.traj-hero-scroll-cta .arrow-down{display:inline-block;animation:trajBounceDown 2s ease-in-out infinite}
+@keyframes trajBounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* ── Network Section ── */
+.traj-network-section{position:relative;min-height:100vh;padding:60px 20px 80px;background:linear-gradient(180deg,#0f1d32 0%,#0a1525 100%)}
+.traj-network-header{text-align:center;margin-bottom:40px}
+.traj-network-header h2{font-family:'Josefin Sans',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
+.traj-network-header p{font-size:13px;color:rgba(255,255,255,.4);letter-spacing:.04em}
+
+/* Toolbar */
+.traj-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-bottom:32px}
+.traj-domain-btn{padding:8px 18px;border-radius:24px;border:1.5px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.04em}
+.traj-domain-btn:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.traj-domain-btn.active{color:#fff}
+.traj-domain-btn[data-domain="all"].active{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
+.traj-domain-btn[data-domain="Droit"].active{background:rgba(77,159,255,.2);border-color:#4d9fff;color:#4d9fff}
+.traj-domain-btn[data-domain="Finance"].active{background:rgba(251,191,36,.15);border-color:#fbbf24;color:#fbbf24}
+.traj-domain-btn[data-domain="Santé"].active{background:rgba(16,185,129,.15);border-color:#10b981;color:#10b981}
+.traj-domain-btn[data-domain="International"].active{background:rgba(168,85,247,.15);border-color:#a855f7;color:#a855f7}
+.traj-compare-toggle{padding:8px 18px;border-radius:24px;border:1.5px solid rgba(212,168,83,.3);background:transparent;color:#d4a853;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.04em;margin-left:8px}
+.traj-compare-toggle:hover{background:rgba(212,168,83,.1)}
+.traj-compare-toggle.active{background:rgba(212,168,83,.2);border-color:#d4a853}
+
+/* SVG network */
+.traj-svg-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;aspect-ratio:4/3}
+.traj-svg-wrap svg{width:100%;height:100%}
+.traj-node-group{cursor:pointer}
+.traj-node-group.dimmed{opacity:.12;pointer-events:none}
+.traj-node-group.dimmed-compare{opacity:.3}
+.traj-node-circle{transition:r .3s,filter .3s,stroke-width .3s}
+.traj-node-group:hover .traj-node-circle{filter:drop-shadow(0 0 12px var(--nc));stroke-width:2.5}
+.traj-node-group.selected .traj-node-circle{stroke:#d4a853;stroke-width:3;filter:drop-shadow(0 0 16px #d4a853)}
+.traj-node-label{fill:#fff;font-size:10px;font-weight:600;pointer-events:none;text-anchor:middle;dominant-baseline:central;opacity:.85}
+.traj-edge{stroke-width:1;opacity:.12;fill:none}
+.traj-edge-cross{stroke:#fff;stroke-dasharray:3 5;opacity:.06;fill:none;stroke-width:.5}
+.traj-node-group .traj-node-reveal{transform:scale(0);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s;transform-origin:center center}
+.traj-node-group.revealed .traj-node-reveal{transform:scale(1);opacity:1}
+
+/* Tooltip */
+.traj-tooltip{position:absolute;pointer-events:none;background:rgba(10,21,37,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;z-index:100;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;min-width:180px}
+.traj-tooltip.vis{opacity:1;transform:translateY(0)}
+.traj-tooltip-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+.traj-tooltip-salary{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px}
+.traj-tooltip-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;color:#fff;letter-spacing:.04em;text-transform:uppercase}
+
+/* ── Fullscreen Detail Panel ── */
+#trajDetailOverlay{position:fixed;inset:0;background:rgba(6,14,30,.95);backdrop-filter:blur(20px);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
+#trajDetailOverlay.open{opacity:1;pointer-events:auto}
+.traj-detail-panel{width:90%;max-width:560px;max-height:85vh;overflow-y:auto;transform:translateY(40px);transition:transform .5s cubic-bezier(.22,1,.36,1);padding:48px 36px;position:relative}
+#trajDetailOverlay.open .traj-detail-panel{transform:translateY(0)}
+.traj-detail-close{position:absolute;top:0;right:0;width:40px;height:40px;border:1px solid rgba(255,255,255,.15);background:transparent;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);transition:all .2s;z-index:2}
+.traj-detail-close:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.05)}
+.traj-detail-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-bottom:18px}
+.traj-detail-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(24px,5vw,36px);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fff;line-height:1.1;margin:0 0 18px}
+.traj-detail-desc{font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;margin:0 0 28px;max-width:50ch}
+.traj-detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.traj-dstat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 14px}
+.traj-dstat-label{display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:8px}
+.traj-dstat-value{display:block;font-size:15px;font-weight:800;color:#fff;line-height:1.35}
+.traj-dstat-value.sm{font-size:13px;font-weight:700;color:rgba(255,255,255,.65);line-height:1.4}
+.traj-detail-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:linear-gradient(135deg,#4d9fff,#3b82f6);color:#fff;border-radius:14px;font-size:14px;font-weight:700;text-decoration:none;transition:all .25s;border:none}
+.traj-detail-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(77,159,255,.3)}
 .traj-detail-cta svg{flex-shrink:0;transition:transform .2s}
 .traj-detail-cta:hover svg{transform:translate(2px,-2px)}
-/* Dark mode */
-[data-theme="dark"] .traj-filters-bar{background:#0d1929;border-color:#192d47}
-[data-theme="dark"] .traj-card{background:#0d1929;border-color:#192d47}
-[data-theme="dark"] .traj-card:hover{box-shadow:0 10px 28px rgba(0,0,0,.5)}
-[data-theme="dark"] .traj-card-arrow{background:#0a1220}
-[data-theme="dark"] #trajDetail{background:#0d1929}
-[data-theme="dark"] .traj-dstat{background:#0a1220}
-[data-theme="dark"] .traj-detail-close{background:#162033;color:#6ab0ff}
-[data-theme="dark"] .traj-detail-close:hover{background:#1c2e4a}
+
+/* ── Compare Panel ── */
+#trajComparePanel{position:fixed;bottom:0;left:0;right:0;max-height:70vh;background:rgba(10,21,37,.96);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.1);z-index:550;transform:translateY(100%);transition:transform .45s cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:32px 24px}
+#trajComparePanel.open{transform:translateY(0)}
+.traj-compare-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.traj-compare-header h3{font-family:'Josefin Sans',sans-serif;font-size:18px;font-weight:700;color:#d4a853;letter-spacing:.08em;text-transform:uppercase;margin:0}
+.traj-compare-close{width:36px;height:36px;border:1px solid rgba(255,255,255,.15);background:transparent;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);transition:all .2s}
+.traj-compare-close:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.traj-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.traj-compare-col{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 20px}
+.traj-compare-col-badge{display:inline-block;padding:3px 12px;border-radius:14px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;margin-bottom:12px}
+.traj-compare-col-title{font-family:'Josefin Sans',sans-serif;font-size:18px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.04em;margin:0 0 12px}
+.traj-compare-col-desc{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6;margin:0 0 16px}
+.traj-compare-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.traj-compare-row-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35)}
+.traj-compare-row-value{font-size:13px;font-weight:700;color:#fff}
+.traj-compare-row-value.diff{color:#fbbf24}
+.traj-compare-hint{text-align:center;font-size:12px;color:rgba(255,255,255,.3);padding:20px 0}
+
+/* Chemins communs */
+.traj-chemins{max-width:900px;margin:60px auto 0;padding:0 20px}
+.traj-chemins h3{font-family:'Josefin Sans',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase;text-align:center;margin:0 0 20px}
+.traj-chemins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.traj-chemin-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;text-align:center}
+.traj-chemin-domains{display:flex;justify-content:center;gap:6px;margin-bottom:8px}
+.traj-chemin-dot{width:8px;height:8px;border-radius:50%}
+.traj-chemin-label{font-size:11px;color:rgba(255,255,255,.4);line-height:1.4}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .traj-hero{min-height:85vh;padding:40px 16px 30px}
+  .traj-orbital-wrap{width:220px;height:220px;margin-bottom:28px}
+  .traj-hero-meta{gap:16px}
+  .traj-network-section{padding:40px 12px 60px}
+  .traj-svg-wrap{aspect-ratio:3/4}
+  .traj-node-label{font-size:8px}
+  .traj-compare-grid{grid-template-columns:1fr;gap:16px}
+  .traj-detail-panel{padding:32px 20px}
+  .traj-toolbar{gap:6px}
+  .traj-domain-btn,.traj-compare-toggle{padding:6px 12px;font-size:11px}
+}
+@media(max-width:380px){
+  .traj-hero-title{letter-spacing:.06em}
+  .traj-orbital-wrap{width:180px;height:180px}
+}
 
 /* ═══════════════════════════════════════════════════════════════
    MIND MAP — TABS (IA tab + Synapse tab)
@@ -9774,43 +9832,56 @@ aside.sidebar {
 
 <!-- ══ TRAJECTOIRES ══ -->
 <div id="page-trajectoires" class="page-section">
-  <div class="traj-hero">
-    <div class="traj-bg-stars" aria-hidden="true"></div>
-    <div class="traj-hero-text">
-      <span class="traj-kicker">Atlas des débouchés · 4 domaines</span>
-      <h1 class="traj-headline">Trajectoires</h1>
-      <p class="traj-lead">Explore les métiers accessibles depuis Dauphine PSL.</p>
-      <div class="traj-hero-stats">
-        <div class="traj-stat-chip"><strong>26</strong><span>Métiers</span></div>
-        <div class="traj-stat-chip"><strong>4</strong><span>Domaines</span></div>
+
+  <!-- HERO -->
+  <div class="traj-hero" id="trajHero">
+    <div class="traj-particles" id="trajParticles" aria-hidden="true"></div>
+    <div class="traj-hero-parallax" id="trajHeroParallax">
+      <div class="traj-orbital-wrap" aria-hidden="true">
+        <div class="traj-orbital-ring traj-orbital-ring--1"><div class="traj-orbital-dot-wrap" style="--speed:20s"><span class="traj-orbital-dot"></span></div></div>
+        <div class="traj-orbital-ring traj-orbital-ring--2"><div class="traj-orbital-dot-wrap" style="--speed:28s"><span class="traj-orbital-dot"></span></div></div>
+        <div class="traj-orbital-ring traj-orbital-ring--3"><div class="traj-orbital-dot-wrap" style="--speed:36s"><span class="traj-orbital-dot"></span></div></div>
+        <div class="traj-orbital-ring traj-orbital-ring--4"><div class="traj-orbital-dot-wrap" style="--speed:44s"><span class="traj-orbital-dot"></span></div></div>
+        <div class="traj-center-glow">PSL</div>
       </div>
-    </div>
-    <div class="traj-solar-wrap" aria-hidden="true">
-      <div class="traj-solar">
-        <div class="traj-ring traj-ring--1"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
-        <div class="traj-ring traj-ring--2"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
-        <div class="traj-ring traj-ring--3"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
-        <div class="traj-ring traj-ring--4"><div class="traj-dot-orbit"><span class="traj-dot"></span></div></div>
-        <div class="traj-center-node">PSL</div>
+      <div class="traj-hero-kicker">Atlas des trajectoires professionnelles</div>
+      <h1 class="traj-hero-title">TRAJECTOIRES</h1>
+      <p class="traj-hero-sub">Explore les m&#233;tiers accessibles depuis Dauphine PSL</p>
+      <div class="traj-hero-meta">
+        <div class="traj-hero-meta-item">26 <span>m&#233;tiers</span></div>
+        <div class="traj-hero-meta-item">4 <span>domaines</span></div>
       </div>
+      <button class="traj-hero-scroll-cta" id="trajScrollCta"><span class="arrow-down">&#8595;</span> Explorer</button>
     </div>
   </div>
-  <div class="traj-filters-bar" id="trajFiltersBar">
-    <button class="traj-filter-btn active" onclick="trajFilter('all',this)">Tout</button>
-    <button class="traj-filter-btn" data-domain="Droit" onclick="trajFilter('Droit',this)">⚖️ Droit</button>
-    <button class="traj-filter-btn" data-domain="Finance" onclick="trajFilter('Finance',this)">💰 Finance</button>
-    <button class="traj-filter-btn" data-domain="Santé" onclick="trajFilter('Santé',this)">🏥 Santé</button>
-    <button class="traj-filter-btn" data-domain="International" onclick="trajFilter('International',this)">🌍 International</button>
+
+  <!-- NETWORK -->
+  <div class="traj-network-section" id="trajNetworkSection">
+    <div class="traj-network-header">
+      <h2>Constellation des m&#233;tiers</h2>
+      <p>Clique sur un m&#233;tier pour en savoir plus</p>
+    </div>
+    <div class="traj-toolbar" id="trajToolbar">
+      <button class="traj-domain-btn active" data-domain="all">Tout</button>
+      <button class="traj-domain-btn" data-domain="Droit">&#9878;&#65039; Droit</button>
+      <button class="traj-domain-btn" data-domain="Finance">&#128176; Finance</button>
+      <button class="traj-domain-btn" data-domain="Sant&#233;">&#127973; Sant&#233;</button>
+      <button class="traj-domain-btn" data-domain="International">&#127757; International</button>
+      <button class="traj-compare-toggle" id="trajCompareBtn">Comparer</button>
+    </div>
+    <div class="traj-svg-wrap" id="trajSvgWrap">
+      <svg id="trajNetworkSvg" viewBox="0 0 900 675" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="traj-tooltip" id="trajTooltip"></div>
+    </div>
+    <div class="traj-chemins" id="trajChemins"></div>
   </div>
-  <div class="traj-cards-scroll">
-    <div class="traj-cards-grid" id="trajCardsGrid"></div>
-  </div>
+
 </div>
-<!-- Trajectoires detail panel -->
-<div id="trajDetailBackdrop" onclick="window.trajClosePanel()"></div>
-<div id="trajDetail" role="dialog" aria-modal="true" aria-label="Détails du métier">
-  <div class="traj-detail-inner">
-    <button class="traj-detail-close" onclick="window.trajClosePanel()" aria-label="Fermer">
+
+<!-- Trajectoires fullscreen detail overlay -->
+<div id="trajDetailOverlay" role="dialog" aria-modal="true" aria-label="D&#233;tails du m&#233;tier">
+  <div class="traj-detail-panel">
+    <button class="traj-detail-close" id="trajDetailClose" aria-label="Fermer">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
     <span class="traj-detail-badge" id="tdBadge"></span>
@@ -9818,11 +9889,11 @@ aside.sidebar {
     <p class="traj-detail-desc" id="tdDesc"></p>
     <div class="traj-detail-stats">
       <div class="traj-dstat">
-        <span class="traj-dstat-label">Salaire départ</span>
+        <span class="traj-dstat-label">Salaire d&#233;part</span>
         <strong class="traj-dstat-value" id="tdSalary"></strong>
       </div>
       <div class="traj-dstat">
-        <span class="traj-dstat-label">Master recommandé</span>
+        <span class="traj-dstat-label">Master recommand&#233;</span>
         <strong class="traj-dstat-value sm" id="tdMasterName"></strong>
       </div>
     </div>
@@ -9830,6 +9901,19 @@ aside.sidebar {
       Voir le master sur Dauphine
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
     </a>
+  </div>
+</div>
+
+<!-- Trajectoires compare panel -->
+<div id="trajComparePanel">
+  <div class="traj-compare-header">
+    <h3>Comparaison</h3>
+    <button class="traj-compare-close" id="trajCompareClose">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="traj-compare-grid" id="trajCompareGrid">
+    <div class="traj-compare-hint">S&#233;lectionne 2 m&#233;tiers pour les comparer</div>
   </div>
 </div>
 <!-- ══ MIND MAP IA ══ -->
@@ -26112,170 +26196,476 @@ window.annalesReset = function() {
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   TRAJECTOIRES — Signal · Career Atlas JS
+   TRAJECTOIRES — Immersive Career Constellation JS
 ═══════════════════════════════════════════════════════════════ */
 (function(){'use strict';
 
+/* ── DATA (reference existing CAREERS array above) ── */
 var CAREERS=[
-  {id:'ap',title:'Assistant parlementaire',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'24–30 k€ net/an',desc:'Soutient députés et sénateurs en gérant agenda, dossiers et communication parlementaire.',sv:27},
-  {id:'af',title:'Avocat fiscaliste',domain:'Droit',color:'#4d9fff',master:'Master Droit des Affaires',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-affaires',salary:'≈ 42 k€ brut/an',desc:'Conseille et défend les entreprises en droit fiscal et optimise les montages financiers.',sv:42},
-  {id:'cl',title:'Chargé de lobbying',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'35–45 k€ brut/an',desc:"Définit et conduit des stratégies d'influence auprès des pouvoirs publics.",sv:40},
-  {id:'co',title:'Compliance Officer',domain:'Droit',color:'#4d9fff',master:'M2 Droit et régulation des marchés',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-public/2e-annee-de-master-droit-et-regulation-des-marches-291',salary:'N/A',desc:"Vérifie que l'entreprise respecte lois et régulations, met en place des programmes de conformité.",sv:45},
-  {id:'ju',title:'Juriste',domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:"40 k€ début · 55–60 k€ après 5 ans",desc:"Conseille les dirigeants et veille à la conformité juridique de l'entreprise.",sv:50},
-  {id:'je',title:"Juriste d'entreprise",domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'N/A',desc:"Pilote les questions juridiques internes et assure la conformité de l'entreprise.",sv:47},
-  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'≈ 50 k€ brut/an',desc:'Gère le suivi juridique des contrats d\'assurance et conseille sur les aspects réglementaires.',sv:50},
-  {id:'jf',title:'Juriste secteur financier',domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:"40 k€ début · 50 k€ après 5 ans",desc:'Sécurise juridiquement les opérations financières des banques ou entreprises cotées.',sv:45},
-  {id:'no',title:'Notaire',domain:'Droit',color:'#4d9fff',master:'Master Droit Notarial',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-notarial',salary:'44 k€ brut/an',desc:'Officier public qui rédige et authentifie les actes, garantissant leur validité légale.',sv:44},
-  {id:'ma',title:'Analyste M&A',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 44,5 k€ brut/an',desc:'Recommande et structure les opérations de fusions/acquisitions pour les entreprises.',sv:44},
-  {id:'pe',title:'Analyste Private Equity',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:"Analyse et sélectionne les opportunités d'investissement pour les fonds de capital-investissement.",sv:40},
-  {id:'fi',title:'Analyste financier',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:"Étudie en profondeur la valeur des entreprises pour conseiller investisseurs ou traders.",sv:61},
-  {id:'ai',title:'Analyste investissement',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:"Identifie et saisit les meilleures opportunités financières pour son entreprise.",sv:40},
-  {id:'am',title:'Asset Manager',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:"40 k€ début · 67,5 k€ après 5 ans",desc:"Gère et optimise un portefeuille d'actifs, définissant stratégies d'investissement.",sv:55},
-  {id:'br',title:'Broker',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:"Intermédiaire entre acheteurs et vendeurs d'actifs financiers, proposant les meilleures conditions.",sv:61},
-  {id:'cgp',title:'Conseiller en gestion de patrimoine',domain:'Finance',color:'#f59e0b',master:'M2 Gestion du Patrimoine & Banque privée',masterUrl:'https://dauphine.psl.eu/formations/masters/gestion-de-patrimoine/m2',salary:"45,6 k€ médian",desc:"Diagnostique le patrimoine d'un client et propose des placements adaptés à ses objectifs.",sv:46},
-  {id:'tr',title:'Trader',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'48–70 k€ (hors bonus)',desc:'Anime les marchés financiers en négociant actifs et gérant risques pour créer des marges.',sv:59},
-  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#f59e0b',master:'Master Politiques d\'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:"35–45 k€ · 70–90 k€ senior",desc:"Évalue la gestion environnementale, sociale et de gouvernance des entreprises.",sv:40},
-  {id:'cam',title:"Chargé d'accès au marché",domain:'Santé',color:'#10b981',master:'M2 Évaluation Médico-Économique',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante/2e-annee-Evaluation-medico-economique-et-acces-marche',salary:'40–50 k€ brut/an',desc:"Prépare et fait valider l'accès sur le marché des innovations médicales.",sv:45},
-  {id:'eme',title:'Chargé évaluation médico-éco.',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–50 k€ brut/an',desc:"Évalue l'efficacité et le coût des innovations médicales pour décisions de santé publique.",sv:42},
-  {id:'cts',title:'Conseiller technique (santé)',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–45 k€ brut/an',desc:'Conseille ministères ou institutions sanitaires en combinant expertise médico-économique.',sv:40},
-  {id:'ces',title:'Consultant éco. de la santé',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:"37,8 k€ médian · 45–55 k€ senior",desc:'Analyse données médico-économiques et conseille sur politiques de santé publique.',sv:46},
-  {id:'mae',title:'Chargé mission affaires européennes',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'≈ 38,75 k€ brut/an',desc:"Défend les intérêts d'organisations au niveau de l'UE en gérant projets et relations.",sv:39},
-  {id:'cds',title:'Consultant défense & sécurité',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:"42 k€ · 50–55 k€ senior",desc:'Accompagne entreprises sur enjeux sécurité en évaluant risques et stratégies.',sv:46},
-  {id:'csc',title:'Consultant supply chain',domain:'International',color:'#a855f7',master:'Master Supply Chain Internationale',masterUrl:'https://dauphine.psl.eu/formations/masters/scm-2eme-annee',salary:"40 k€ début · 60 k€ après 5 ans",desc:'Conseille entreprises sur gestion logistique globale pour optimiser flux et coûts.',sv:50},
-  {id:'dp',title:'Demand Planner',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'35–70 k€ brut/an',desc:'Prévoit la demande client pour planifier production et stocks.',sv:52}
+  {id:'ap',title:'Assistant parlementaire',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'24\u201330 k\u20AC net/an',desc:'Soutient d\u00E9put\u00E9s et s\u00E9nateurs en g\u00E9rant agenda, dossiers et communication parlementaire.',sv:27},
+  {id:'af',title:'Avocat fiscaliste',domain:'Droit',color:'#4d9fff',master:'Master Droit des Affaires',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-affaires',salary:'\u2248 42 k\u20AC brut/an',desc:'Conseille et d\u00E9fend les entreprises en droit fiscal et optimise les montages financiers.',sv:42},
+  {id:'cl',title:'Charg\u00E9 de lobbying',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'35\u201345 k\u20AC brut/an',desc:'D\u00E9finit et conduit des strat\u00E9gies d\'influence aupr\u00E8s des pouvoirs publics.',sv:40},
+  {id:'co',title:'Compliance Officer',domain:'Droit',color:'#4d9fff',master:'M2 Droit et r\u00E9gulation des march\u00E9s',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-public/2e-annee-de-master-droit-et-regulation-des-marches-291',salary:'N/A',desc:'V\u00E9rifie que l\'entreprise respecte lois et r\u00E9gulations, met en place des programmes de conformit\u00E9.',sv:45},
+  {id:'ju',title:'Juriste',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'40 k\u20AC d\u00E9but \u00B7 55\u201360 k\u20AC apr\u00E8s 5 ans',desc:'Conseille les dirigeants et veille \u00E0 la conformit\u00E9 juridique de l\'entreprise.',sv:50},
+  {id:'je',title:'Juriste d\'entreprise',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'N/A',desc:'Pilote les questions juridiques internes et assure la conformit\u00E9 de l\'entreprise.',sv:47},
+  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'\u2248 50 k\u20AC brut/an',desc:'G\u00E8re le suivi juridique des contrats d\'assurance et conseille sur les aspects r\u00E9glementaires.',sv:50},
+  {id:'jf',title:'Juriste secteur financier',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'40 k\u20AC d\u00E9but \u00B7 50 k\u20AC apr\u00E8s 5 ans',desc:'S\u00E9curise juridiquement les op\u00E9rations financi\u00E8res des banques ou entreprises cot\u00E9es.',sv:45},
+  {id:'no',title:'Notaire',domain:'Droit',color:'#4d9fff',master:'Master Droit Notarial',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-notarial',salary:'44 k\u20AC brut/an',desc:'Officier public qui r\u00E9dige et authentifie les actes, garantissant leur validit\u00E9 l\u00E9gale.',sv:44},
+  {id:'ma',title:'Analyste M&A',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'\u2248 44,5 k\u20AC brut/an',desc:'Recommande et structure les op\u00E9rations de fusions/acquisitions pour les entreprises.',sv:44},
+  {id:'pe',title:'Analyste Private Equity',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'\u2248 40 k\u20AC brut/an',desc:'Analyse et s\u00E9lectionne les opportunit\u00E9s d\'investissement pour les fonds de capital-investissement.',sv:40},
+  {id:'fi',title:'Analyste financier',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k\u20AC brut/an',desc:'\u00C9tudie en profondeur la valeur des entreprises pour conseiller investisseurs ou traders.',sv:61},
+  {id:'ai',title:'Analyste investissement',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'\u2248 40 k\u20AC brut/an',desc:'Identifie et saisit les meilleures opportunit\u00E9s financi\u00E8res pour son entreprise.',sv:40},
+  {id:'am',title:'Asset Manager',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'40 k\u20AC d\u00E9but \u00B7 67,5 k\u20AC apr\u00E8s 5 ans',desc:'G\u00E8re et optimise un portefeuille d\'actifs, d\u00E9finissant strat\u00E9gies d\'investissement.',sv:55},
+  {id:'br',title:'Broker',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k\u20AC brut/an',desc:'Interm\u00E9diaire entre acheteurs et vendeurs d\'actifs financiers, proposant les meilleures conditions.',sv:61},
+  {id:'cgp',title:'Conseiller gestion patrimoine',domain:'Finance',color:'#fbbf24',master:'M2 Gestion du Patrimoine & Banque priv\u00E9e',masterUrl:'https://dauphine.psl.eu/formations/masters/gestion-de-patrimoine/m2',salary:'45,6 k\u20AC m\u00E9dian',desc:'Diagnostique le patrimoine d\'un client et propose des placements adapt\u00E9s \u00E0 ses objectifs.',sv:46},
+  {id:'tr',title:'Trader',domain:'Finance',color:'#fbbf24',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'48\u201370 k\u20AC (hors bonus)',desc:'Anime les march\u00E9s financiers en n\u00E9gociant actifs et g\u00E9rant risques pour cr\u00E9er des marges.',sv:59},
+  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#fbbf24',master:'Master Politiques d\'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:'35\u201345 k\u20AC \u00B7 70\u201390 k\u20AC senior',desc:'\u00C9value la gestion environnementale, sociale et de gouvernance des entreprises.',sv:40},
+  {id:'cam',title:'Charg\u00E9 d\'acc\u00E8s au march\u00E9',domain:'Sant\u00E9',color:'#10b981',master:'M2 \u00C9valuation M\u00E9dico-\u00C9conomique',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante/2e-annee-Evaluation-medico-economique-et-acces-marche',salary:'40\u201350 k\u20AC brut/an',desc:'Pr\u00E9pare et fait valider l\'acc\u00E8s sur le march\u00E9 des innovations m\u00E9dicales.',sv:45},
+  {id:'eme',title:'Charg\u00E9 \u00E9valuation m\u00E9dico-\u00E9co.',domain:'Sant\u00E9',color:'#10b981',master:'Master \u00C9conomie et Gestion de la Sant\u00E9',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35\u201350 k\u20AC brut/an',desc:'\u00C9value l\'efficacit\u00E9 et le co\u00FBt des innovations m\u00E9dicales pour d\u00E9cisions de sant\u00E9 publique.',sv:42},
+  {id:'cts',title:'Conseiller technique (sant\u00E9)',domain:'Sant\u00E9',color:'#10b981',master:'Master \u00C9conomie et Gestion de la Sant\u00E9',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35\u201345 k\u20AC brut/an',desc:'Conseille minist\u00E8res ou institutions sanitaires en combinant expertise m\u00E9dico-\u00E9conomique.',sv:40},
+  {id:'ces',title:'Consultant \u00E9co. de la sant\u00E9',domain:'Sant\u00E9',color:'#10b981',master:'Master \u00C9conomie et Gestion de la Sant\u00E9',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'37,8 k\u20AC m\u00E9dian \u00B7 45\u201355 k\u20AC senior',desc:'Analyse donn\u00E9es m\u00E9dico-\u00E9conomiques et conseille sur politiques de sant\u00E9 publique.',sv:46},
+  {id:'mae',title:'Charg\u00E9 mission affaires europ.',domain:'International',color:'#a855f7',master:'Master Affaires internationales & d\u00E9veloppement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'\u2248 38,75 k\u20AC brut/an',desc:'D\u00E9fend les int\u00E9r\u00EAts d\'organisations au niveau de l\'UE en g\u00E9rant projets et relations.',sv:39},
+  {id:'cds',title:'Consultant d\u00E9fense & s\u00E9curit\u00E9',domain:'International',color:'#a855f7',master:'Master Affaires internationales & d\u00E9veloppement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'42 k\u20AC \u00B7 50\u201355 k\u20AC senior',desc:'Accompagne entreprises sur enjeux s\u00E9curit\u00E9 en \u00E9valuant risques et strat\u00E9gies.',sv:46},
+  {id:'csc',title:'Consultant supply chain',domain:'International',color:'#a855f7',master:'Master Supply Chain Internationale',masterUrl:'https://dauphine.psl.eu/formations/masters/scm-2eme-annee',salary:'40 k\u20AC d\u00E9but \u00B7 60 k\u20AC apr\u00E8s 5 ans',desc:'Conseille entreprises sur gestion logistique globale pour optimiser flux et co\u00FBts.',sv:50},
+  {id:'dp',title:'Demand Planner',domain:'International',color:'#a855f7',master:'Master Affaires internationales & d\u00E9veloppement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'35\u201370 k\u20AC brut/an',desc:'Pr\u00E9voit la demande client pour planifier production et stocks.',sv:52}
 ];
 
 var DOMAIN_META={
-  'Droit':{emoji:'⚖️'},
-  'Finance':{emoji:'💰'},
-  'Santé':{emoji:'🏥'},
-  'International':{emoji:'🌍'}
+  'Droit':{emoji:'\u2696\uFE0F',color:'#4d9fff'},
+  'Finance':{emoji:'\uD83D\uDCB0',color:'#fbbf24'},
+  'Sant\u00E9':{emoji:'\uD83C\uDFE5',color:'#10b981'},
+  'International':{emoji:'\uD83C\uDF0D',color:'#a855f7'}
 };
-var DOMAIN_RINGS={'Droit':'.traj-ring--1','Finance':'.traj-ring--2','Santé':'.traj-ring--3','International':'.traj-ring--4'};
 
-var filterDomain='all';
+var DOMAIN_COLORS={'Droit':'#4d9fff','Finance':'#fbbf24','Sant\u00E9':'#10b981','International':'#a855f7'};
+
+/* Cluster centers (in SVG viewBox 900x675) */
+var CLUSTER_CENTERS={
+  'Droit':{x:225,y:236},
+  'Finance':{x:675,y:236},
+  'Sant\u00E9':{x:225,y:472},
+  'International':{x:675,y:472}
+};
+
+/* Cross-domain links (domains that share skill paths) */
+var CROSS_LINKS=[
+  ['Droit','Finance'],
+  ['Finance','International'],
+  ['Sant\u00E9','International']
+];
+
+var currentFilter='all';
+var compareMode=false;
+var compareSelection=[];
+var nodePositions=[];
 var _inited=false;
 
-function renderCards(){
-  var grid=document.getElementById('trajCardsGrid');
-  if(!grid)return;
-  grid.innerHTML='';
-  CAREERS.forEach(function(c,i){
-    var meta=DOMAIN_META[c.domain]||{};
-    var card=document.createElement('div');
-    card.className='traj-card';
-    card.style.cssText='--card-color:'+c.color+';--ci-delay:'+Math.min(i*38,400)+'ms';
-    card.dataset.domain=c.domain;
-    card.setAttribute('tabindex','0');
-    card.setAttribute('role','button');
-    card.setAttribute('aria-label',c.title);
-    card.innerHTML='<div class="traj-card-tag">'+(meta.emoji||'')+' '+c.domain+'</div>'
-      +'<div class="traj-card-title">'+c.title+'</div>'
-      +'<div class="traj-card-salary">'+c.salary+'</div>'
-      +'<div class="traj-card-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg></div>';
-    card.addEventListener('click',function(){openDetail(c);});
-    card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetail(c);}});
-    grid.appendChild(card);
+/* ── Particles ── */
+function buildParticles(){
+  var container=document.getElementById('trajParticles');
+  if(!container||container.children.length>0)return;
+  for(var i=0;i<60;i++){
+    var p=document.createElement('span');
+    p.className='traj-particle';
+    var sz=(1+Math.random()*2).toFixed(1);
+    var dur=(2+Math.random()*3).toFixed(1);
+    var peak=(0.2+Math.random()*0.35).toFixed(2);
+    p.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;--dur:'+dur+'s;--peak:'+peak+';animation-delay:'+(Math.random()*5).toFixed(1)+'s';
+    container.appendChild(p);
+  }
+}
+
+/* ── Scroll CTA ── */
+function setupScrollCta(){
+  var btn=document.getElementById('trajScrollCta');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    var target=document.getElementById('trajNetworkSection');
+    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+
+/* ── Parallax ── */
+function setupParallax(){
+  var page=document.getElementById('page-trajectoires');
+  var parallax=document.getElementById('trajHeroParallax');
+  if(!page||!parallax)return;
+  page.addEventListener('scroll',function(){
+    var st=page.scrollTop;
+    parallax.style.transform='translateY('+st*0.5+'px)';
+  },{passive:true});
+}
+
+/* ── Compute Node Positions ── */
+function computeNodePositions(){
+  nodePositions=[];
+  var domains={};
+  CAREERS.forEach(function(c){
+    if(!domains[c.domain])domains[c.domain]=[];
+    domains[c.domain].push(c);
+  });
+  Object.keys(domains).forEach(function(domain){
+    var center=CLUSTER_CENTERS[domain];
+    var items=domains[domain];
+    var count=items.length;
+    var radius=Math.min(80,30+count*8);
+    items.forEach(function(career,i){
+      var angle=(2*Math.PI*i/count)-Math.PI/2;
+      var x=center.x+radius*Math.cos(angle);
+      var y=center.y+radius*Math.sin(angle);
+      nodePositions.push({career:career,x:x,y:y,domain:domain});
+    });
+  });
+}
+
+/* ── Build SVG Network ── */
+function buildNetwork(){
+  var svg=document.getElementById('trajNetworkSvg');
+  if(!svg)return;
+  svg.innerHTML='';
+  computeNodePositions();
+
+  /* Domain cluster labels */
+  var labelGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
+  Object.keys(CLUSTER_CENTERS).forEach(function(domain){
+    var c=CLUSTER_CENTERS[domain];
+    var txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',c.x);
+    txt.setAttribute('y',c.y-110);
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('fill',DOMAIN_COLORS[domain]);
+    txt.setAttribute('font-size','12');
+    txt.setAttribute('font-weight','800');
+    txt.setAttribute('letter-spacing','0.12em');
+    txt.setAttribute('opacity','0.4');
+    txt.setAttribute('font-family','Josefin Sans, sans-serif');
+    txt.textContent=domain.toUpperCase();
+    labelGroup.appendChild(txt);
+  });
+  svg.appendChild(labelGroup);
+
+  /* Intra-domain edges */
+  var edgeGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
+  var domains={};
+  nodePositions.forEach(function(n){
+    if(!domains[n.domain])domains[n.domain]=[];
+    domains[n.domain].push(n);
+  });
+  Object.keys(domains).forEach(function(domain){
+    var nodes=domains[domain];
+    var color=DOMAIN_COLORS[domain];
+    for(var i=0;i<nodes.length;i++){
+      for(var j=i+1;j<nodes.length;j++){
+        var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',nodes[i].x);
+        line.setAttribute('y1',nodes[i].y);
+        line.setAttribute('x2',nodes[j].x);
+        line.setAttribute('y2',nodes[j].y);
+        line.setAttribute('stroke',color);
+        line.setAttribute('class','traj-edge');
+        edgeGroup.appendChild(line);
+      }
+    }
+  });
+  svg.appendChild(edgeGroup);
+
+  /* Cross-domain edges */
+  var crossGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
+  CROSS_LINKS.forEach(function(pair){
+    var c1=CLUSTER_CENTERS[pair[0]];
+    var c2=CLUSTER_CENTERS[pair[1]];
+    if(c1&&c2){
+      var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',c1.x);
+      line.setAttribute('y1',c1.y);
+      line.setAttribute('x2',c2.x);
+      line.setAttribute('y2',c2.y);
+      line.setAttribute('class','traj-edge-cross');
+      line.setAttribute('stroke','#fff');
+      crossGroup.appendChild(line);
+    }
+  });
+  svg.appendChild(crossGroup);
+
+  /* Nodes */
+  var nodeGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
+  nodePositions.forEach(function(n,idx){
+    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','traj-node-group');
+    g.setAttribute('data-idx',idx);
+    g.setAttribute('data-domain',n.domain);
+    g.setAttribute('tabindex','0');
+    g.setAttribute('role','button');
+    g.setAttribute('aria-label',n.career.title);
+
+    var inner=document.createElementNS('http://www.w3.org/2000/svg','g');
+    inner.setAttribute('class','traj-node-reveal');
+
+    var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',n.x);
+    circle.setAttribute('cy',n.y);
+    circle.setAttribute('r','18');
+    circle.setAttribute('fill',DOMAIN_COLORS[n.domain]);
+    circle.setAttribute('fill-opacity','0.15');
+    circle.setAttribute('stroke',DOMAIN_COLORS[n.domain]);
+    circle.setAttribute('stroke-width','1.5');
+    circle.setAttribute('class','traj-node-circle');
+    circle.style.cssText='--nc:'+DOMAIN_COLORS[n.domain];
+    inner.appendChild(circle);
+
+    /* Truncate long titles */
+    var label=n.career.title;
+    if(label.length>18)label=label.substring(0,16)+'...';
+    var text=document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x',n.x);
+    text.setAttribute('y',n.y);
+    text.setAttribute('class','traj-node-label');
+    text.textContent=label;
+    inner.appendChild(text);
+
+    g.appendChild(inner);
+    nodeGroup.appendChild(g);
+
+    /* Events */
+    g.addEventListener('mouseenter',function(e){showTooltip(e,n);});
+    g.addEventListener('mouseleave',hideTooltip);
+    g.addEventListener('click',function(){handleNodeClick(n,idx);});
+    g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();handleNodeClick(n,idx);}});
+  });
+  svg.appendChild(nodeGroup);
+}
+
+/* ── Tooltip ── */
+function showTooltip(e,node){
+  var tip=document.getElementById('trajTooltip');
+  if(!tip)return;
+  var meta=DOMAIN_META[node.domain]||{};
+  tip.innerHTML='<div class="traj-tooltip-title">'+node.career.title+'</div>'
+    +'<div class="traj-tooltip-salary">'+node.career.salary+'</div>'
+    +'<span class="traj-tooltip-badge" style="background:'+DOMAIN_COLORS[node.domain]+'">'+(meta.emoji||'')+' '+node.domain+'</span>';
+  var wrap=document.getElementById('trajSvgWrap');
+  if(!wrap)return;
+  var rect=wrap.getBoundingClientRect();
+  var svgEl=document.getElementById('trajNetworkSvg');
+  var svgRect=svgEl.getBoundingClientRect();
+  var scaleX=svgRect.width/900;
+  var scaleY=svgRect.height/675;
+  var px=node.x*scaleX;
+  var py=node.y*scaleY;
+  tip.style.left=Math.min(px-90,rect.width-200)+'px';
+  tip.style.top=(py-80)+'px';
+  tip.classList.add('vis');
+}
+
+function hideTooltip(){
+  var tip=document.getElementById('trajTooltip');
+  if(tip)tip.classList.remove('vis');
+}
+
+/* ── Node Click Handler ── */
+function handleNodeClick(node,idx){
+  if(compareMode){
+    handleCompareSelect(node,idx);
+  }else{
+    openDetail(node.career);
+  }
+}
+
+/* ── Domain Filters ── */
+function setupFilters(){
+  var toolbar=document.getElementById('trajToolbar');
+  if(!toolbar)return;
+  toolbar.querySelectorAll('.traj-domain-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      toolbar.querySelectorAll('.traj-domain-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      var domain=btn.dataset.domain;
+      currentFilter=domain;
+      applyFilter();
+    });
   });
 }
 
 function applyFilter(){
-  var cards=Array.from(document.querySelectorAll('.traj-card'));
-  var vi=0;
-  cards.forEach(function(card){
-    var match=filterDomain==='all'||card.dataset.domain===filterDomain;
-    if(match){
-      card.style.display='';
-      card.style.animationName='none';
-      void card.offsetHeight;
-      card.style.animationName='';
-      card.style.animationDelay=Math.min(vi*42,360)+'ms';
-      vi++;
+  var groups=document.querySelectorAll('.traj-node-group');
+  groups.forEach(function(g){
+    var domain=g.getAttribute('data-domain');
+    if(currentFilter==='all'||domain===currentFilter){
+      g.classList.remove('dimmed');
     }else{
-      card.style.display='none';
+      g.classList.add('dimmed');
     }
   });
-  // Update orbital ring highlight
-  document.querySelectorAll('.traj-ring').forEach(function(r){r.classList.remove('active-ring','inactive-ring');});
-  if(filterDomain!=='all'){
-    document.querySelectorAll('.traj-ring').forEach(function(r){r.classList.add('inactive-ring');});
-    var sel=document.querySelector(DOMAIN_RINGS[filterDomain]);
-    if(sel){sel.classList.remove('inactive-ring');sel.classList.add('active-ring');}
-  }
+  /* Also dim edges */
+  document.querySelectorAll('.traj-edge').forEach(function(e){
+    e.style.opacity=(currentFilter==='all')?'0.12':'0.04';
+  });
 }
 
+/* ── Detail Panel ── */
 function openDetail(career){
   var meta=DOMAIN_META[career.domain]||{};
   var badge=document.getElementById('tdBadge');
-  if(badge){badge.textContent=(meta.emoji||'')+' '+career.domain;badge.style.background=career.color;}
-  var el=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
-  el('tdTitle',career.title);
-  el('tdDesc',career.desc);
-  el('tdSalary',career.salary);
-  el('tdMasterName',career.master);
+  if(badge){badge.textContent=(meta.emoji||'')+' '+career.domain;badge.style.background=DOMAIN_COLORS[career.domain];}
+  var setTxt=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  setTxt('tdTitle',career.title);
+  setTxt('tdDesc',career.desc);
+  setTxt('tdSalary',career.salary);
+  setTxt('tdMasterName',career.master);
   var cta=document.getElementById('tdCta');
   if(cta)cta.href=career.masterUrl;
-  var detail=document.getElementById('trajDetail');
-  var bd=document.getElementById('trajDetailBackdrop');
-  if(detail)detail.classList.add('open');
-  if(bd){bd.style.display='block';requestAnimationFrame(function(){bd.classList.add('vis');});}
+  var overlay=document.getElementById('trajDetailOverlay');
+  if(overlay)overlay.classList.add('open');
   document.body.style.overflow='hidden';
 }
 
 window.trajClosePanel=function(){
-  var detail=document.getElementById('trajDetail');
-  var bd=document.getElementById('trajDetailBackdrop');
-  if(detail)detail.classList.remove('open');
-  if(bd){bd.classList.remove('vis');setTimeout(function(){bd.style.display='none';},350);}
+  var overlay=document.getElementById('trajDetailOverlay');
+  if(overlay)overlay.classList.remove('open');
   document.body.style.overflow='';
 };
 
-window.trajFilter=function(domain,btn){
-  filterDomain=domain;
-  document.querySelectorAll('.traj-filter-btn').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  applyFilter();
-};
-
-function buildBgStars(){
-  var hero=document.querySelector('.traj-bg-stars');
-  if(!hero)return;
-  hero.innerHTML='';
-  for(var i=0;i<55;i++){
-    var s=document.createElement('span');
-    s.className='traj-bg-star';
-    var sz=0.8+Math.random()*1.8;
-    s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;--d:'+Math.random().toFixed(2);
-    hero.appendChild(s);
-  }
-}
-
-function playEntrance(){
-  var cards=Array.from(document.querySelectorAll('.traj-card'));
-  var vi=0;
-  cards.forEach(function(card){
-    if(card.style.display==='none')return;
-    card.style.animationName='none';
-    void card.offsetHeight;
-    card.style.animationName='';
-    card.style.animationDelay=Math.min(vi*38,380)+'ms';
-    vi++;
+function setupDetailClose(){
+  var closeBtn=document.getElementById('trajDetailClose');
+  if(closeBtn)closeBtn.addEventListener('click',window.trajClosePanel);
+  var overlay=document.getElementById('trajDetailOverlay');
+  if(overlay)overlay.addEventListener('click',function(e){
+    if(e.target===overlay)window.trajClosePanel();
   });
 }
 
-function initTraj(){
-  if(!_inited){
-    _inited=true;
-    renderCards();
-    buildBgStars();
+/* ── Compare Mode ── */
+function setupCompare(){
+  var btn=document.getElementById('trajCompareBtn');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    compareMode=!compareMode;
+    btn.classList.toggle('active',compareMode);
+    compareSelection=[];
+    updateCompareHighlights();
+    if(!compareMode)closeCompare();
+  });
+  var closeBtn=document.getElementById('trajCompareClose');
+  if(closeBtn)closeBtn.addEventListener('click',closeCompare);
+}
+
+function handleCompareSelect(node,idx){
+  var existing=compareSelection.findIndex(function(s){return s.idx===idx;});
+  if(existing>-1){
+    compareSelection.splice(existing,1);
   }else{
-    playEntrance();
+    if(compareSelection.length>=2)compareSelection.shift();
+    compareSelection.push({career:node.career,idx:idx,domain:node.domain});
+  }
+  updateCompareHighlights();
+  if(compareSelection.length===2)showCompare();
+}
+
+function updateCompareHighlights(){
+  document.querySelectorAll('.traj-node-group').forEach(function(g){
+    g.classList.remove('selected','dimmed-compare');
+  });
+  if(compareMode&&compareSelection.length>0){
+    var selectedIdxs=compareSelection.map(function(s){return s.idx;});
+    document.querySelectorAll('.traj-node-group').forEach(function(g){
+      var idx=parseInt(g.getAttribute('data-idx'));
+      if(selectedIdxs.indexOf(idx)>-1){
+        g.classList.add('selected');
+      }
+    });
   }
 }
 
-// Script is at end of HTML — DOM is already parsed, no need to wait for DOMContentLoaded
+function showCompare(){
+  var panel=document.getElementById('trajComparePanel');
+  var grid=document.getElementById('trajCompareGrid');
+  if(!panel||!grid)return;
+  grid.innerHTML='';
+  compareSelection.forEach(function(sel){
+    var c=sel.career;
+    var meta=DOMAIN_META[c.domain]||{};
+    var col=document.createElement('div');
+    col.className='traj-compare-col';
+    col.innerHTML='<span class="traj-compare-col-badge" style="background:'+DOMAIN_COLORS[c.domain]+'">'+(meta.emoji||'')+' '+c.domain+'</span>'
+      +'<div class="traj-compare-col-title">'+c.title+'</div>'
+      +'<div class="traj-compare-col-desc">'+c.desc+'</div>'
+      +'<div class="traj-compare-row"><span class="traj-compare-row-label">Salaire</span><span class="traj-compare-row-value">'+c.salary+'</span></div>'
+      +'<div class="traj-compare-row"><span class="traj-compare-row-label">Master</span><span class="traj-compare-row-value">'+c.master+'</span></div>';
+    grid.appendChild(col);
+  });
+  /* Highlight salary differences */
+  if(compareSelection.length===2){
+    var s1=compareSelection[0].career.salary;
+    var s2=compareSelection[1].career.salary;
+    if(s1!==s2){
+      var vals=grid.querySelectorAll('.traj-compare-row-value');
+      if(vals[0])vals[0].classList.add('diff');
+      if(vals[2])vals[2].classList.add('diff');
+    }
+  }
+  panel.classList.add('open');
+}
+
+function closeCompare(){
+  var panel=document.getElementById('trajComparePanel');
+  if(panel)panel.classList.remove('open');
+}
+
+/* ── Chemins Communs ── */
+function buildChemins(){
+  var container=document.getElementById('trajChemins');
+  if(!container)return;
+  container.innerHTML='<h3>Chemins communs</h3><div class="traj-chemins-grid"></div>';
+  var grid=container.querySelector('.traj-chemins-grid');
+  CROSS_LINKS.forEach(function(pair){
+    var card=document.createElement('div');
+    card.className='traj-chemin-card';
+    card.innerHTML='<div class="traj-chemin-domains">'
+      +'<span class="traj-chemin-dot" style="background:'+DOMAIN_COLORS[pair[0]]+'"></span>'
+      +'<span class="traj-chemin-dot" style="background:'+DOMAIN_COLORS[pair[1]]+'"></span>'
+      +'</div>'
+      +'<div class="traj-chemin-label">'+pair[0]+' & '+pair[1]+'<br><small style="opacity:.6">Competences transversales</small></div>';
+    grid.appendChild(card);
+  });
+}
+
+/* ── Scroll Reveal (IntersectionObserver) ── */
+function setupReveal(){
+  var nodes=document.querySelectorAll('.traj-node-group');
+  if(!nodes.length)return;
+  var page=document.getElementById('page-trajectoires');
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var idx=parseInt(entry.target.getAttribute('data-idx'))||0;
+        setTimeout(function(){
+          entry.target.classList.add('revealed');
+        },idx*30);
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.1,root:page});
+  nodes.forEach(function(node){observer.observe(node);});
+}
+
+/* ── Init ── */
+function initTraj(){
+  if(_inited)return;
+  _inited=true;
+  buildParticles();
+  setupScrollCta();
+  setupParallax();
+  buildNetwork();
+  setupFilters();
+  setupDetailClose();
+  setupCompare();
+  buildChemins();
+  setTimeout(setupReveal,100);
+}
+
+/* Hook into page activation */
 (function(){
-  buildBgStars();
+  buildParticles();
   var pageEl=document.getElementById('page-trajectoires');
   if(!pageEl)return;
   var obs=new MutationObserver(function(){
