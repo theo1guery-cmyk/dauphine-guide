@@ -27443,8 +27443,8 @@ function synRenderMapsPanel(){
     html+='<div class="syn-map-item-meta">'+nodeCount+' nœud'+(nodeCount>1?'s':'')+' · '+dateStr+'</div>';
     html+='</div>';
     html+='<div class="syn-map-item-actions">';
-    if(!isActive)html+='<button class="syn-btn" onclick="synLoadMapById('+JSON.stringify(m.id)+')">Charger</button>';
-    html+='<button class="syn-btn danger" onclick="synDeleteMapById('+JSON.stringify(m.id)+')" title="Supprimer">🗑</button>';
+    if(!isActive)html+='<button class="syn-btn" onclick="synLoadMapById(\''+m.id+'\')">Charger</button>';
+    html+='<button class="syn-btn danger" onclick="synDeleteMapById(\''+m.id+'\')" title="Supprimer">🗑</button>';
     html+='</div>';
     html+='</div>';
   });
