@@ -10059,7 +10059,6 @@ aside.sidebar {
       <div class="syn-toolbar">
         <button class="syn-btn" id="synAddBtn" onclick="synToggleAdd()">➕ Nœud</button>
         <button class="syn-btn" id="synConnectBtn" onclick="synToggleConnect()">🔗 Connecter</button>
-        <button class="syn-btn danger" onclick="synDeleteSelected()">🗑 Supprimer</button>
         <button class="syn-btn" onclick="synExportSvg()">⬇️ SVG</button>
         <button class="syn-btn" onclick="synGenFlashcards()">⚡ Flashcards</button>
         <button class="syn-btn" id="synShareBtn" onclick="synToggleCollabPanel()">🌐 Partager</button>
@@ -10112,6 +10111,19 @@ aside.sidebar {
         <div class="syn-add-popup" id="synAddPopup">
           <div style="font-size:11px;font-weight:700;color:var(--g600);margin-bottom:6px">Nouveau nœud</div>
           <input type="text" id="synAddInput" placeholder="Nom du nœud…" maxlength="40"/>
+          <select id="synBranchSelect" style="margin-top:8px;width:100%;padding:5px 8px;border:1px solid var(--g200);border-radius:7px;background:var(--bg-card);color:var(--text-main);font-size:12px;cursor:pointer">
+            <option value="1">🌿 Branche 1 — principale</option>
+            <option value="2">🌿 Branche 2</option>
+            <option value="3">🌿 Branche 3</option>
+            <option value="4">🌿 Branche 4</option>
+          </select>
+          <div style="font-size:10px;color:var(--g400);margin-top:5px">Branche 1 = nœud principal · Entrée pour valider</div>
+        </div>
+        <!-- Node action popup -->
+        <div id="synNodePopup" style="display:none;position:absolute;z-index:300;background:var(--bg-card);border:1px solid var(--g200);border-radius:12px;box-shadow:var(--sh);padding:6px 4px;min-width:150px">
+          <div style="font-size:10px;font-weight:700;color:var(--g400);padding:2px 12px 5px;letter-spacing:.05em;text-transform:uppercase" id="synNodePopupLabel"></div>
+          <button onclick="synNodePopupRename()" style="display:block;width:100%;text-align:left;padding:7px 12px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text-main);border-radius:7px">✏️ Renommer</button>
+          <button onclick="synNodePopupDelete()" style="display:block;width:100%;text-align:left;padding:7px 12px;border:none;background:none;cursor:pointer;font-size:13px;color:#ef4444;border-radius:7px">🗑 Supprimer</button>
         </div>
       </div>
     </div>
@@ -26842,9 +26854,11 @@ var synCollabPushTimer=null,synSessionStart=0;
 var SYN_ROOT_CLR='#003d7a';
 var SYN_BRANCH_CLRS=['#0057ad','#1a73c8','#2d8de0','#4da6f5'];
 
-function synMakeNode(label,x,y,isRoot){
-  return{id:synNextId++,label:label,x:x,y:y,w:124,h:38,isRoot:!!isRoot,
-    color:isRoot?SYN_ROOT_CLR:SYN_BRANCH_CLRS[Math.floor(Math.random()*SYN_BRANCH_CLRS.length)],selected:false};
+function synMakeNode(label,x,y,isRoot,branchLevel){
+  var lvl=isRoot?-1:((parseInt(branchLevel)||1)-1);
+  var color=isRoot?SYN_ROOT_CLR:SYN_BRANCH_CLRS[Math.min(Math.max(lvl,0),SYN_BRANCH_CLRS.length-1)];
+  return{id:synNextId++,label:label,x:x,y:y,w:124,h:38,isRoot:!!isRoot,branchLevel:isRoot?0:(parseInt(branchLevel)||1),
+    color:color,selected:false};
 }
 
 function svgEl(tag,attrs){
@@ -26909,6 +26923,9 @@ function synOnNodeClick(e){
   }
   synNodes.forEach(function(x){x.selected=false;});
   n.selected=true;synSelected=n;synRender();
+  /* show inline action popup */
+  e.stopPropagation();
+  synShowNodePopup(n,e.clientX,e.clientY);
 }
 
 function synOnNodeDblclick(e){
@@ -26963,6 +26980,47 @@ window.synDeleteSelected=function(){
   synSelected=null;synRender();synSchedulePush();
 };
 
+/* ── Node action popup ── */
+var synNodePopupTarget=null;
+window.synShowNodePopup=function(node,clientX,clientY){
+  synNodePopupTarget=node;
+  var popup=document.getElementById('synNodePopup');
+  if(!popup)return;
+  var outer=document.getElementById('synCanvasOuter');
+  var r=outer?outer.getBoundingClientRect():{left:0,top:0};
+  var lbl=document.getElementById('synNodePopupLabel');
+  if(lbl)lbl.textContent=node.isRoot?'Nœud racine':'Branche '+node.branchLevel;
+  var px=clientX-r.left+10, py=clientY-r.top-10;
+  /* keep within bounds */
+  var pw=popup.offsetWidth||160;
+  if(px+pw>r.width-4)px=r.width-pw-4;
+  if(py<4)py=4;
+  popup.style.left=px+'px';
+  popup.style.top=py+'px';
+  popup.style.display='block';
+};
+
+window.synNodePopupRename=function(){
+  var popup=document.getElementById('synNodePopup');
+  if(popup)popup.style.display='none';
+  if(!synNodePopupTarget)return;
+  var v=prompt('Renommer:',synNodePopupTarget.label);
+  if(v!==null&&v.trim()){synNodePopupTarget.label=v.trim();synRender();synSchedulePush();}
+  synNodePopupTarget=null;
+};
+
+window.synNodePopupDelete=function(){
+  var popup=document.getElementById('synNodePopup');
+  if(popup)popup.style.display='none';
+  if(!synNodePopupTarget)return;
+  var n=synNodePopupTarget;
+  synLinks=synLinks.filter(function(l){return l.from!==n.id&&l.to!==n.id;});
+  synNodes=synNodes.filter(function(x){return x.id!==n.id;});
+  if(synSelected&&synSelected.id===n.id)synSelected=null;
+  synNodePopupTarget=null;
+  synRender();synSchedulePush();
+};
+
 window.synExportSvg=function(){
   var svg=document.getElementById('synSvg');
   if(!svg)return;
@@ -27004,7 +27062,9 @@ function synSetupCanvas(){
     inp.addEventListener('keydown',function(e){
       if(e.key==='Enter'){
         var lbl=inp.value.trim()||'Nœud';
-        synNodes.push(synMakeNode(lbl,synAddPos.x,synAddPos.y,false));
+        var bSelect=document.getElementById('synBranchSelect');
+        var branchLevel=bSelect?parseInt(bSelect.value)||1:1;
+        synNodes.push(synMakeNode(lbl,synAddPos.x,synAddPos.y,false,branchLevel));
         synRender();synSchedulePush();
         document.getElementById('synAddPopup').style.display='none';
         synAddMode=false;
@@ -27019,6 +27079,8 @@ function synSetupCanvas(){
   document.addEventListener('click',function(e){
     var popup=document.getElementById('synAddPopup');
     if(popup&&!popup.contains(e.target))popup.style.display='none';
+    var npopup=document.getElementById('synNodePopup');
+    if(npopup&&!npopup.contains(e.target)&&!e.target.closest('.syn-node-g'))npopup.style.display='none';
   });
 }
 
