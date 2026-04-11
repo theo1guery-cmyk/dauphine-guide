@@ -10061,6 +10061,9 @@ aside.sidebar {
         <button class="syn-btn" id="synConnectBtn" onclick="synToggleConnect()">🔗 Connecter</button>
         <button class="syn-btn" onclick="synExportSvg()">⬇️ SVG</button>
         <button class="syn-btn" onclick="synGenFlashcards()">⚡ Flashcards</button>
+        <button class="syn-btn" onclick="synZoomOut()" title="Dézoomer (molette ↓)">🔍−</button>
+        <button class="syn-btn" onclick="synZoomIn()" title="Zoomer (molette ↑)">🔍+</button>
+        <button class="syn-btn" onclick="synResetView()" title="Réinitialiser la vue">↺ Vue</button>
         <button class="syn-btn" id="synShareBtn" onclick="synToggleCollabPanel()">🌐 Partager</button>
         <div class="syn-collab-live" id="synCollabLive" style="display:none">
           <span class="syn-status-dot"></span>
@@ -10105,8 +10108,10 @@ aside.sidebar {
               <path d="M0,0 L0,6 L8,3 z" fill="#9ba3b0"/>
             </marker>
           </defs>
-          <g id="synLinksG"></g>
-          <g id="synNodesG"></g>
+          <g id="synViewport">
+            <g id="synLinksG"></g>
+            <g id="synNodesG"></g>
+          </g>
         </svg>
         <div class="syn-add-popup" id="synAddPopup">
           <div style="font-size:11px;font-weight:700;color:var(--g600);margin-bottom:6px">Nouveau nœud</div>
@@ -26911,6 +26916,8 @@ var synSelected=null,synConnectMode=false,synConnectSrc=null;
 var synAddMode=false,synAddPos={x:0,y:0};
 var synInited=false;
 var synDragNode=null,synDragOff={x:0,y:0};
+var synVX=0,synVY=0,synVS=1.0;
+var synPanning=false,synPanStart={x:0,y:0},synPanOrigin={x:0,y:0};
 var synCollabCode=null,synCollabUnsub=null,synCollabPresRef=null;
 var synCollabPushTimer=null,synSessionStart=0;
 
@@ -26923,6 +26930,16 @@ function synMakeNode(label,x,y,isRoot,branchLevel){
   return{id:synNextId++,label:label,x:x,y:y,w:124,h:38,isRoot:!!isRoot,branchLevel:isRoot?0:(parseInt(branchLevel)||1),
     color:color,selected:false};
 }
+
+function synApplyView(){
+  var vp=document.getElementById('synViewport');
+  if(vp)vp.setAttribute('transform','translate('+synVX+','+synVY+') scale('+synVS+')');
+}
+function synZoomIn(){synVS=Math.min(3.0,synVS*1.25);synApplyView();}
+function synZoomOut(){synVS=Math.max(0.15,synVS/1.25);synApplyView();}
+window.synZoomIn=synZoomIn;
+window.synZoomOut=synZoomOut;
+window.synResetView=function(){synVX=0;synVY=0;synVS=1.0;synApplyView();};
 
 function svgEl(tag,attrs){
   var el=document.createElementNS('http://www.w3.org/2000/svg',tag);
@@ -26958,17 +26975,19 @@ function synRender(){
     g.addEventListener('dblclick',synOnNodeDblclick);
     nG.appendChild(g);
   });
+  synApplyView();
 }
 
 function synOnDragStart(e){
   e.preventDefault();
+  e.stopPropagation();
   var id=parseInt(e.currentTarget.getAttribute('data-id'));
   var n=synNodes.filter(function(x){return x.id===id;})[0];
   if(!n)return;
   synDragNode=n;
   var svg=document.getElementById('synSvg');
   var r=svg.getBoundingClientRect();
-  synDragOff={x:e.clientX-r.left-n.x,y:e.clientY-r.top-n.y};
+  synDragOff={x:(e.clientX-r.left-synVX)/synVS-n.x,y:(e.clientY-r.top-synVY)/synVS-n.y};
 }
 
 function synOnNodeClick(e){
@@ -27000,15 +27019,30 @@ function synOnNodeDblclick(e){
 }
 
 document.addEventListener('mousemove',function(e){
-  if(!synDragNode)return;
-  var svg=document.getElementById('synSvg');
-  if(!svg)return;
-  var r=svg.getBoundingClientRect();
-  synDragNode.x=e.clientX-r.left-synDragOff.x;
-  synDragNode.y=e.clientY-r.top-synDragOff.y;
-  synRender();
+  if(synDragNode){
+    var svg=document.getElementById('synSvg');
+    if(!svg)return;
+    var r=svg.getBoundingClientRect();
+    synDragNode.x=(e.clientX-r.left-synVX)/synVS-synDragOff.x;
+    synDragNode.y=(e.clientY-r.top-synVY)/synVS-synDragOff.y;
+    synRender();
+    return;
+  }
+  if(synPanning){
+    synVX=synPanOrigin.x+(e.clientX-synPanStart.x);
+    synVY=synPanOrigin.y+(e.clientY-synPanStart.y);
+    synApplyView();
+  }
 });
-document.addEventListener('mouseup',function(){if(synDragNode){synDragNode=null;synSchedulePush();}else{synDragNode=null;}});
+document.addEventListener('mouseup',function(){
+  if(synDragNode){synDragNode=null;synSchedulePush();}
+  else{synDragNode=null;}
+  if(synPanning){
+    synPanning=false;
+    var outer=document.getElementById('synCanvasOuter');
+    if(outer)outer.style.cursor=synAddMode?'crosshair':'grab';
+  }
+});
 
 document.addEventListener('keydown',function(e){
   if(e.key==='Delete'&&synSelected){
@@ -27026,7 +27060,7 @@ window.synToggleAdd=function(){
   var btn=document.getElementById('synAddBtn');
   if(btn)btn.classList.toggle('active',synAddMode);
   var outer=document.getElementById('synCanvasOuter');
-  if(outer)outer.style.cursor=synAddMode?'crosshair':'default';
+  if(outer)outer.style.cursor=synAddMode?'crosshair':'grab';
 };
 
 window.synToggleConnect=function(){
@@ -27104,12 +27138,14 @@ window.synGenFlashcards=function(){
 function synSetupCanvas(){
   var outer=document.getElementById('synCanvasOuter');
   if(!outer)return;
+  outer.style.cursor='grab';
   outer.addEventListener('click',function(e){
     if(!synAddMode)return;
     if(e.target.closest('.syn-node-g'))return;
+    if(e.target.closest('#synAddPopup')||e.target.closest('#synNodePopup'))return;
     e.stopPropagation();
     var r=outer.getBoundingClientRect();
-    var x=e.clientX-r.left-62, y=e.clientY-r.top-19;
+    var x=(e.clientX-r.left-synVX)/synVS-62, y=(e.clientY-r.top-synVY)/synVS-19;
     synAddPos={x:Math.max(10,x),y:Math.max(10,y)};
     var popup=document.getElementById('synAddPopup');
     if(popup){
@@ -27134,7 +27170,7 @@ function synSetupCanvas(){
         var btn=document.getElementById('synAddBtn');
         if(btn)btn.classList.remove('active');
         var outer2=document.getElementById('synCanvasOuter');
-        if(outer2)outer2.style.cursor='default';
+        if(outer2)outer2.style.cursor='grab';
       }
       if(e.key==='Escape')document.getElementById('synAddPopup').style.display='none';
     });
@@ -27145,6 +27181,32 @@ function synSetupCanvas(){
     var npopup=document.getElementById('synNodePopup');
     if(npopup&&!npopup.contains(e.target)&&!e.target.closest('.syn-node-g'))npopup.style.display='none';
   });
+  /* Wheel zoom */
+  outer.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var r=outer.getBoundingClientRect();
+    var mx=e.clientX-r.left,my=e.clientY-r.top;
+    var factor=e.deltaY<0?1.12:1/1.12;
+    var oldS=synVS;
+    synVS=Math.min(3.0,Math.max(0.15,synVS*factor));
+    synVX=mx-(mx-synVX)/oldS*synVS;
+    synVY=my-(my-synVY)/oldS*synVS;
+    synApplyView();
+  },{passive:false});
+  /* Pan on empty canvas by dragging */
+  var svg=document.getElementById('synSvg');
+  if(svg){
+    svg.addEventListener('mousedown',function(e){
+      if(e.target.closest('.syn-node-g'))return;
+      if(synAddMode)return;
+      if(e.button!==0&&e.button!==1)return;
+      synPanning=true;
+      synPanStart={x:e.clientX,y:e.clientY};
+      synPanOrigin={x:synVX,y:synVY};
+      outer.style.cursor='grabbing';
+      e.preventDefault();
+    });
+  }
 }
 
 /* ── Synapse local storage ── */
@@ -27152,11 +27214,11 @@ var synCurrentMapId=null;
 var SYN_STORAGE_KEY='synMaps';
 
 function synGetMaps(){try{return JSON.parse(localStorage.getItem(SYN_STORAGE_KEY)||'[]');}catch(e){return[];}}
-function synSetMaps(maps){localStorage.setItem(SYN_STORAGE_KEY,JSON.stringify(maps));}
+function synSetMaps(maps){try{localStorage.setItem(SYN_STORAGE_KEY,JSON.stringify(maps));}catch(err){if(typeof toast==='function')toast('Stockage indisponible ⚠️','⚠️');}}
 
 function synMapSnapshot(){
   return{
-    nodes:synNodes.map(function(n){return{id:n.id,label:n.label,x:n.x,y:n.y,w:n.w,h:n.h,isRoot:n.isRoot,color:n.color};}),
+    nodes:synNodes.map(function(n){return{id:n.id,label:n.label,x:n.x,y:n.y,w:n.w,h:n.h,isRoot:n.isRoot,color:n.color,branchLevel:n.branchLevel};}),
     links:synLinks.map(function(l){return{from:l.from,to:l.to};}),
     nextId:synNextId
   };
@@ -27197,6 +27259,7 @@ window.synLoadMapById=function(id){
   synNextId=map.nextId||1;
   synSelected=null;
   synCurrentMapId=id;
+  synVX=0;synVY=0;synVS=1.0;
   var inp=document.getElementById('synTitleInput');
   if(inp)inp.value=map.title||'';
   synRender();
@@ -27226,6 +27289,7 @@ window.synNewMap=function(){
   var root=synMakeNode('Dauphine L1',Math.max(10,W/2-62),Math.max(10,H/2-19),true);
   root.w=140;
   synNodes=[root];synLinks=[];synSelected=null;synNextId=2;
+  synVX=0;synVY=0;synVS=1.0;
   synRender();
   synRenderMapsPanel();
   toast('Nouvelle carte créée ✨','✨');
@@ -27389,7 +27453,7 @@ function synSchedulePush(){
     var user=window._chatCurrentUser;
     var ts=Date.now();
     var snapshot={
-      nodes:synNodes.map(function(n){return{id:n.id,label:n.label,x:n.x,y:n.y,w:n.w,h:n.h,isRoot:n.isRoot,color:n.color};}),
+      nodes:synNodes.map(function(n){return{id:n.id,label:n.label,x:n.x,y:n.y,w:n.w,h:n.h,isRoot:n.isRoot,color:n.color,branchLevel:n.branchLevel};}),
       links:synLinks.map(function(l){return{from:l.from,to:l.to};}),
       by:user?user.uid:'anon',ts:ts
     };
