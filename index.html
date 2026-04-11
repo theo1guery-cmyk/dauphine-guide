@@ -26124,7 +26124,7 @@ var CAREERS=[
   {id:'co',title:'Compliance Officer',domain:'Droit',color:'#4d9fff',master:'M2 Droit et régulation des marchés',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-public/2e-annee-de-master-droit-et-regulation-des-marches-291',salary:'N/A',desc:"Vérifie que l'entreprise respecte lois et régulations, met en place des programmes de conformité.",sv:45},
   {id:'ju',title:'Juriste',domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:"40 k€ début · 55–60 k€ après 5 ans",desc:"Conseille les dirigeants et veille à la conformité juridique de l'entreprise.",sv:50},
   {id:'je',title:"Juriste d'entreprise",domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'N/A',desc:"Pilote les questions juridiques internes et assure la conformité de l'entreprise.",sv:47},
-  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'≈ 50 k€ brut/an',desc:'Gère le suivi juridique des contrats d'assurance et conseille sur les aspects réglementaires.',sv:50},
+  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'≈ 50 k€ brut/an',desc:'Gère le suivi juridique des contrats d\'assurance et conseille sur les aspects réglementaires.',sv:50},
   {id:'jf',title:'Juriste secteur financier',domain:'Droit',color:'#4d9fff',master:"Master Droit de l'entreprise",masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:"40 k€ début · 50 k€ après 5 ans",desc:'Sécurise juridiquement les opérations financières des banques ou entreprises cotées.',sv:45},
   {id:'no',title:'Notaire',domain:'Droit',color:'#4d9fff',master:'Master Droit Notarial',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-notarial',salary:'44 k€ brut/an',desc:'Officier public qui rédige et authentifie les actes, garantissant leur validité légale.',sv:44},
   {id:'ma',title:'Analyste M&A',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 44,5 k€ brut/an',desc:'Recommande et structure les opérations de fusions/acquisitions pour les entreprises.',sv:44},
@@ -26135,7 +26135,7 @@ var CAREERS=[
   {id:'br',title:'Broker',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:"Intermédiaire entre acheteurs et vendeurs d'actifs financiers, proposant les meilleures conditions.",sv:61},
   {id:'cgp',title:'Conseiller en gestion de patrimoine',domain:'Finance',color:'#f59e0b',master:'M2 Gestion du Patrimoine & Banque privée',masterUrl:'https://dauphine.psl.eu/formations/masters/gestion-de-patrimoine/m2',salary:"45,6 k€ médian",desc:"Diagnostique le patrimoine d'un client et propose des placements adaptés à ses objectifs.",sv:46},
   {id:'tr',title:'Trader',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'48–70 k€ (hors bonus)',desc:'Anime les marchés financiers en négociant actifs et gérant risques pour créer des marges.',sv:59},
-  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#f59e0b',master:'Master Politiques d'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:"35–45 k€ · 70–90 k€ senior",desc:"Évalue la gestion environnementale, sociale et de gouvernance des entreprises.",sv:40},
+  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#f59e0b',master:'Master Politiques d\'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:"35–45 k€ · 70–90 k€ senior",desc:"Évalue la gestion environnementale, sociale et de gouvernance des entreprises.",sv:40},
   {id:'cam',title:"Chargé d'accès au marché",domain:'Santé',color:'#10b981',master:'M2 Évaluation Médico-Économique',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante/2e-annee-Evaluation-medico-economique-et-acces-marche',salary:'40–50 k€ brut/an',desc:"Prépare et fait valider l'accès sur le marché des innovations médicales.",sv:45},
   {id:'eme',title:'Chargé évaluation médico-éco.',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–50 k€ brut/an',desc:"Évalue l'efficacité et le coût des innovations médicales pour décisions de santé publique.",sv:42},
   {id:'cts',title:'Conseiller technique (santé)',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–45 k€ brut/an',desc:'Conseille ministères ou institutions sanitaires en combinant expertise médico-économique.',sv:40},
@@ -26274,16 +26274,17 @@ function initTraj(){
   }
 }
 
-// Hook into showPage
-var _trajOrigShowPage=window.showPage;
-window.showPage=function(page,btn){
-  if(_trajOrigShowPage)_trajOrigShowPage(page,btn);
-  if(page==='trajectoires')setTimeout(initTraj,60);
-};
-
-document.addEventListener('DOMContentLoaded',function(){
-  if(document.getElementById('page-trajectoires').classList.contains('active'))initTraj();
-});
+// Script is at end of HTML — DOM is already parsed, no need to wait for DOMContentLoaded
+(function(){
+  buildBgStars();
+  var pageEl=document.getElementById('page-trajectoires');
+  if(!pageEl)return;
+  var obs=new MutationObserver(function(){
+    if(pageEl.classList.contains('active'))setTimeout(initTraj,60);
+  });
+  obs.observe(pageEl,{attributes:true,attributeFilter:['class']});
+  if(pageEl.classList.contains('active'))initTraj();
+})();
 
 })();
 
