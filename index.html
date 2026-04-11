@@ -61,7 +61,7 @@ input,textarea,select{background:var(--bg-card,#fff);color:var(--text-main,#1118
 [data-theme="dark"] .result-big{background:var(--blue)}
 [data-theme="dark"] .result-row{background:var(--g50)}
 [data-theme="dark"] .deck-btn{background:var(--bg-card);color:var(--g600);border-color:var(--border-col)}
-[data-theme="dark"] .card-back{background:var(--g50)}
+[data-theme="dark"] .card-back{background:var(--g50);border:1px solid var(--border-col)}
 [data-theme="dark"] .card-back .card-text{color:var(--text-main)}
 [data-theme="dark"] .flash-textarea,[data-theme="dark"] .flash-select,[data-theme="dark"] .flash-autre,
 [data-theme="dark"] #flashJsonInput{background:var(--bg-card);color:var(--text-main);border-color:var(--border-col)}
@@ -74,7 +74,7 @@ input,textarea,select{background:var(--bg-card,#fff);color:var(--text-main,#1118
 [data-theme="dark"] .rattr-section{background:var(--bg-card);border-color:var(--border-col)}
 [data-theme="dark"] .exam-field input,[data-theme="dark"] .exam-field select{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
 [data-theme="dark"] .rattr-result{background:var(--blue-pale)}
-[data-theme="dark"] .heatmap-cell[style*="#ebedf0"]{background:#2d3748!important}
+[data-theme="dark"] .heatmap-cell[style*="#e8f0fb"]{background:#1a2744!important}
 [data-theme="dark"] .share-url-box{background:var(--g100);border-color:var(--border-col);color:var(--text-sub)}
 [data-theme="dark"] .import-code-input{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
 [data-theme="dark"] .share-btn{background:var(--bg-card);border-color:var(--border-col);color:var(--g600)}
@@ -204,32 +204,39 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .flash-section{padding:64px 0}
 .flash-layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
 .flash-gen{background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);border-radius:var(--r);padding:22px;box-shadow:var(--shs)}
-.flash-gen h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.flash-gen h3{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--g900);letter-spacing:-.01em}
 .flash-gen p{font-size:12px;color:var(--g600);margin-bottom:14px}
-.flash-textarea{width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:12px 14px;font-size:12px;font-family:'Figtree',sans-serif;resize:vertical;min-height:120px;color:var(--g900);transition:border-color .15s}
-.flash-textarea:focus{outline:none;border-color:var(--blue-mid)}
-.flash-btn{width:100%;margin-top:12px;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
-.flash-btn:hover{background:var(--blue-mid)}
-.flash-btn:disabled{opacity:.5;cursor:not-allowed}
+.flash-textarea{width:100%;border:1.5px solid var(--g200);border-radius:var(--rs);padding:12px 14px;font-size:13px;font-family:'Figtree',sans-serif;resize:vertical;min-height:120px;color:var(--g900);transition:border-color .15s,box-shadow .15s;line-height:1.6}
+.flash-textarea:focus{outline:none;border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(0,87,173,.07)}
+.flash-btn{width:100%;margin-top:12px;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:-.01em;font-family:'Figtree',sans-serif}
+.flash-btn:hover{background:var(--blue-mid);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,61,122,.22)}
+.flash-btn:active{transform:translateY(0);box-shadow:none}
+.flash-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
 .flash-loading{text-align:center;padding:18px;font-size:12px;color:var(--g400);display:none}
 
 .flash-deck{background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);border-radius:var(--r);padding:22px;box-shadow:var(--shs)}
 .flash-deck h3{font-size:14px;font-weight:600;margin-bottom:4px}
-.deck-meta{font-size:12px;color:var(--g400);margin-bottom:16px}
-.card-scene{perspective:1000px;height:220px;margin-bottom:16px;position:relative;overflow:hidden}
-.card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.deck-meta{font-size:12px;color:var(--g400);margin-bottom:14px;font-style:italic}
+.card-scene{perspective:1200px;height:264px;margin-bottom:18px;position:relative}
+.card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);cursor:pointer;filter:drop-shadow(0 14px 30px rgba(0,28,72,.2))}
 .card-3d.flipped{transform:rotateY(180deg)}
-.card-face{position:absolute;inset:0;border-radius:12px;border:1.5px solid var(--g200);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;backface-visibility:hidden}
-.card-front{background:var(--blue);color:#fff}
-.card-back{background:var(--g50);transform:rotateY(180deg)}
-.card-cat{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-bottom:10px}
-.card-text{font-size:15px;font-weight:500;line-height:1.55}
-.card-back .card-text{font-size:14px;color:var(--g900)}
-.card-hint{font-size:11px;opacity:.5;margin-top:12px}
+@keyframes flashCardIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.card-entering{animation:flashCardIn .36s cubic-bezier(.34,1.1,.64,1) both}
+.card-face{position:absolute;inset:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;backface-visibility:hidden;overflow:hidden}
+.card-front{background:linear-gradient(150deg,#001d40 0%,#003d7a 52%,#0052a3 100%);color:#fff;box-shadow:0 24px 52px rgba(0,25,70,.26),0 6px 14px rgba(0,25,70,.12)}
+.card-front::after{content:'';position:absolute;top:-25%;left:-12%;width:120%;height:90%;background:radial-gradient(ellipse at 28% 30%,rgba(255,255,255,.1) 0%,transparent 58%);pointer-events:none}
+.card-back{background:#fafaf7;transform:rotateY(180deg);box-shadow:0 18px 44px rgba(0,25,70,.1),0 4px 10px rgba(0,25,70,.06)}
+.card-cat{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding:4px 11px;border-radius:100px;position:relative;z-index:1}
+.card-front .card-cat{background:rgba(255,255,255,.13);color:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.2)}
+.card-back .card-cat{background:var(--blue-light);color:var(--blue);border:1px solid rgba(0,61,122,.1)}
+.card-text{font-size:15px;font-weight:500;line-height:1.55;position:relative;z-index:1}
+.card-front .card-text{font-family:var(--font-serif,serif);font-size:18px;font-style:italic;line-height:1.45;color:#fff}
+.card-back .card-text{font-size:14px;color:var(--g900);font-family:'Figtree',sans-serif;line-height:1.65}
+.card-hint{font-size:10px;letter-spacing:.07em;text-transform:uppercase;opacity:.38;margin-top:14px;position:relative;z-index:1;font-weight:700}
 .deck-controls{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.deck-btn{padding:8px 18px;border-radius:var(--rs);font-size:13px;font-weight:600;border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;transition:all .15s}
-.deck-btn:hover{background:var(--blue-light);border-color:var(--blue);color:var(--blue)}
-.deck-counter{font-size:13px;font-weight:500;color:var(--g600)}
+.deck-btn{padding:8px 18px;border-radius:var(--rs);font-size:12px;font-weight:700;border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;transition:all .17s;font-family:'Figtree',sans-serif;letter-spacing:-.01em}
+.deck-btn:hover{background:var(--blue-light);border-color:rgba(0,61,122,.3);color:var(--blue);transform:translateY(-1px)}
+.deck-counter{font-size:16px;font-weight:400;color:var(--blue-mid);font-family:var(--font-serif,serif);font-style:italic}
 .flash-select{width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:8px 12px;font-size:13px;font-family:'Figtree',sans-serif;color:var(--g900);background:#fff;cursor:pointer;transition:border-color .15s;margin-bottom:6px}
 .flash-select:focus{outline:none;border-color:var(--blue-mid)}
 .flash-autre{width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:8px 12px;font-size:13px;font-family:'Figtree',sans-serif;color:var(--g900);transition:border-color .15s;display:none;margin-bottom:6px}
@@ -237,14 +244,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .card-del-btn{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.18);border:none;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:5}
 .card-face.card-front:hover .card-del-btn{opacity:1}
 .card-del-btn:hover{background:rgba(239,68,68,.75)!important}
-.rating-bar{display:none;gap:6px;margin-top:12px;flex-wrap:wrap}
-.rating-bar.show{display:flex}
-.rbtn{flex:1;min-width:70px;padding:7px 6px;border-radius:var(--rs);border:none;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Figtree',sans-serif}
-.rbtn:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.12)}
-.rbtn-easy{background:#dcfce7;color:#166534}
-.rbtn-ok{background:#fef9c3;color:#92400e}
-.rbtn-hard{background:#fed7aa;color:#9a3412}
-.rbtn-miss{background:#fee2e2;color:#991b1b}
+.rating-bar{display:none;gap:6px;margin-top:14px}
+.rating-bar.show{display:grid;grid-template-columns:repeat(4,1fr)}
+.rbtn{padding:11px 6px;border-radius:10px;border:1.5px solid transparent;font-size:10px;font-weight:800;cursor:pointer;transition:all .17s;font-family:'Figtree',sans-serif;letter-spacing:.01em;line-height:1.3}
+.rbtn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.rbtn:active{transform:translateY(0);filter:brightness(.97)}
+.rbtn-easy{background:#d1fae5;color:#065f46;border-color:#a7f3d0}
+.rbtn-ok{background:#fef3c7;color:#78350f;border-color:#fde68a}
+.rbtn-hard{background:#ffedd5;color:#9a3412;border-color:#fdba74}
+.rbtn-miss{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
 .card-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-left:6px;display:inline-block}
 .st-easy{background:#dcfce7;color:#166534}
 .st-ok{background:#fef9c3;color:#92400e}
@@ -266,8 +274,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .stats-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .stat-chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
 .deck-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.dftag{font-size:11px;padding:3px 10px;border-radius:100px;border:1px solid var(--g200);cursor:pointer;transition:all .15s;background:#fff;color:var(--g600)}
+.dftag{font-size:11px;padding:4px 11px;border-radius:100px;border:1.5px solid var(--g200);cursor:pointer;transition:all .17s;background:#fff;color:var(--g600);font-weight:600}
 .dftag.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dftag:hover:not(.on){background:var(--blue-light);border-color:rgba(0,61,122,.28);color:var(--blue)}
 
 /* ============================
    CAMPUS MAP
@@ -704,7 +713,7 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 /* ============================
    HEATMAP STATS
    ============================ */
-.heatmap-section{margin-top:24px;padding:18px;background:var(--bg-card,#fff);border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shs)}
+.heatmap-section{margin-top:24px;padding:20px;background:var(--bg-card,#fff);border:1px solid var(--g100);border-radius:var(--r)}
 [data-theme="dark"] .heatmap-section{background:var(--bg-card);border-color:var(--border-col)}
 .heatmap-title{font-size:13px;font-weight:600;margin-bottom:4px}
 .heatmap-sub{font-size:11px;color:var(--g400);margin-bottom:14px}
@@ -2872,17 +2881,17 @@ aside.sidebar {
 .notes-resume-btn:disabled { opacity: .5; cursor: not-allowed; }
 .card-explain-btn {
   position: absolute; bottom: 10px; right: 10px;
-  padding: 5px 10px; border-radius: 7px;
-  border: 1.5px solid #7c3aed;
-  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
-  color: #4c1d95;
+  padding: 5px 12px; border-radius: 7px;
+  border: 1.5px solid rgba(0,61,122,.25);
+  background: rgba(0,61,122,.08);
+  color: var(--blue-mid);
   font-size: 11px; font-weight: 700;
   cursor: pointer; font-family: 'Figtree', sans-serif;
   transition: all .17s;
 }
 .card-explain-btn:hover {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  color: #fff; border-color: #6d28d9;
+  background: var(--blue);
+  color: #fff; border-color: var(--blue);
 }
 .planning-ia-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -5932,7 +5941,7 @@ aside.sidebar {
   <div class="flash-layout rev">
     <div>
       <div class="flash-gen">
-        <h3>✨ Générer des flashcards depuis un cours</h3>
+        <div class="slbl" style="margin-bottom:8px">Générer depuis un cours</div>
         <p>Colle ton cours ci-dessous, copie le prompt généré, puis colle le tout sur <a href="https://claude.ai/" target="_blank" style="color:var(--blue-mid)">claude.ai</a>. Importe ensuite le JSON retourné.</p>
 
         <div style="margin-bottom:10px">
@@ -5977,10 +5986,10 @@ aside.sidebar {
           </div>
         </details>
       </div>
-      <div style="margin-top:14px;background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:18px">
+      <div style="margin-top:14px;background:#fff;border:1px solid var(--g100);border-radius:var(--r);padding:18px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-size:13px;font-weight:600">📦 Deck actif</div>
-          <button onclick="openManage()" style="font-size:11px;font-weight:600;padding:4px 11px;border-radius:var(--rs);border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer">🗂️ Gérer</button>
+          <div class="slbl">Deck actif</div>
+          <button onclick="openManage()" style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--g200)';this.style.color='var(--g600)'">Gérer</button>
         </div>
         <div class="stats-row" id="statsRow"></div>
         <div class="deck-filter" id="deckFilter" style="margin-top:8px"><span class="dftag on" onclick="filterDeck(&quot;all&quot;,this)">Tout</span><span class="dftag" style="background:#fef3c7;color:#92400e;border-color:#fcd34d" onclick="filterDeck(&quot;due&quot;,this)">📅 À réviser (22)</span><span class="dftag" onclick="filterDeck(&quot;Droit&quot;,this)">Droit</span><span class="dftag" onclick="filterDeck(&quot;Droit constit.&quot;,this)">Droit constit.</span><span class="dftag" onclick="filterDeck(&quot;Microéco&quot;,this)">Microéco</span><span class="dftag" onclick="filterDeck(&quot;Macroéco&quot;,this)">Macroéco</span><span class="dftag" onclick="filterDeck(&quot;Comptabilité&quot;,this)">Comptabilité</span><span class="dftag" onclick="filterDeck(&quot;Maths&quot;,this)">Maths</span><span class="dftag" onclick="filterDeck(&quot;Sciences Po&quot;,this)">Sciences Po</span></div>
@@ -5988,8 +5997,8 @@ aside.sidebar {
       </div>
     </div>
     <div class="flash-deck rev">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <h3>📇 Réviser</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="slbl">Réviser</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="deck-share-btn" onclick="openShareModal()" title="Partager le deck">🔗 Partager</button>
           <button class="exam-mode-btn" onclick="openExamModal()">🎓 Examen</button>
@@ -6042,15 +6051,15 @@ aside.sidebar {
           </div>
         </div>
         <div class="heatmap-labels" id="heatmapLabels"><div class="heatmap-label">Mer</div><div class="heatmap-label">Jeu</div><div class="heatmap-label">Ven</div><div class="heatmap-label">Sam</div><div class="heatmap-label">Dim</div><div class="heatmap-label">Lun</div><div class="heatmap-label">Mar</div></div>
-        <div class="heatmap-grid" id="heatmapGrid"><div class="heatmap-cell" style="background:#ebedf0" title="11/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#ebedf0" title="12/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#ebedf0" title="13/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#ebedf0" title="14/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#ebedf0" title="15/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#ebedf0" title="16/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#ebedf0" title="17/3 · 0 cartes"></div></div>
+        <div class="heatmap-grid" id="heatmapGrid"><div class="heatmap-cell" style="background:#e8f0fb" title="11/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="12/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="13/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="14/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="15/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="16/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="17/3 · 0 cartes"></div></div>
         <div class="heatmap-legend">
           <span>Moins</span>
           <div class="heatmap-legend-cells">
-            <div class="heatmap-legend-cell" style="background:#ebedf0"></div>
-            <div class="heatmap-legend-cell" style="background:#c6e8b0"></div>
-            <div class="heatmap-legend-cell" style="background:#7bc96f"></div>
-            <div class="heatmap-legend-cell" style="background:#239a3b"></div>
-            <div class="heatmap-legend-cell" style="background:#196127"></div>
+            <div class="heatmap-legend-cell" style="background:#e8f0fb"></div>
+            <div class="heatmap-legend-cell" style="background:#c5d9f5"></div>
+            <div class="heatmap-legend-cell" style="background:#7baee8"></div>
+            <div class="heatmap-legend-cell" style="background:#3b7dd8"></div>
+            <div class="heatmap-legend-cell" style="background:#003d7a"></div>
           </div>
           <span>Plus</span>
         </div>
@@ -11028,7 +11037,10 @@ function renderCard(){
   document.getElementById('cQ').textContent=c.q;
   document.getElementById('cCatB').textContent=c.cat;
   document.getElementById('cR').textContent=c.r;
-  document.getElementById('card3d').classList.remove('flipped');
+  var _c3d=document.getElementById('card3d');
+  _c3d.classList.remove('flipped','card-entering');
+  void _c3d.offsetWidth;
+  _c3d.classList.add('card-entering');
   document.getElementById('flashMeta').textContent='Clique sur la carte pour voir la réponse';
   flipped=false;
   var rb=document.getElementById('ratingBar');
@@ -11779,12 +11791,12 @@ function renderHeatmap(){
   var dayLabels=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
   
   function getColor(val){
-    if(!val)return '#ebedf0';
+    if(!val)return '#e8f0fb';
     var pct=val/maxVal;
-    if(pct<0.25)return '#c6e8b0';
-    if(pct<0.5)return '#7bc96f';
-    if(pct<0.75)return '#239a3b';
-    return '#196127';
+    if(pct<0.25)return '#c5d9f5';
+    if(pct<0.5)return '#7baee8';
+    if(pct<0.75)return '#3b7dd8';
+    return '#003d7a';
   }
   
   labelsEl.innerHTML=days.map(function(d){
