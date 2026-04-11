@@ -24801,32 +24801,58 @@ window.mmHistoryDelete = function(idx) {
 };
 
 // ── Flashcard extraction ──
-window.mmSendToFlashcards = function() {
+window.mmSendToFlashcards = async function() {
   if (!mmFocusNode) return;
-  // Build a text summary of the branch nodes
-  var lines = [];
-  function collectLabels(node) {
-    lines.push(node.label);
-    var actual = node._savedChildren || node.children || [];
-    actual.forEach(collectLabels);
+  var btn = document.querySelector('.mm-focus-action-btn[onclick="mmSendToFlashcards()"]');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération…'; }
+
+  var matiere = (document.getElementById('mmMatiere') || {}).value || mmFocusNode.label || 'Cours';
+  var branchLines = mmBranchToText(mmFocusNode);
+  var branchOutline = branchLines.join('\n');
+  var courseText = mmCourseContent || document.getElementById('mmInput').value;
+
+  var prompt = '🚨 RETOURNE UNIQUEMENT DU JSON VALIDE. AUCUN TEXTE AVANT OU APRES. PAS DE MARKDOWN.\n\n'
+    + 'FORMAT STRICT — copie ce format EXACTEMENT :\n'
+    + '[{"cat":"' + matiere + '","q":"Question?","r":"Réponse"},{"cat":"' + matiere + '","q":"...","r":"..."}]\n\n'
+    + 'MATIÈRE : ' + matiere + '\n'
+    + '⚠️ GÉNÈRE 10 À 15 FLASHCARDS couvrant TOUS les concepts de la branche ci-dessous.\n'
+    + 'Chaque définition, notion, mécanisme ou règle importante doit avoir sa flashcard.\n\n'
+    + 'BRANCHE DE LA CARTE MENTALE :\n"""\n' + branchOutline + '\n"""\n\n'
+    + (courseText ? 'COURS SOURCE (contexte) :\n"""\n' + courseText.slice(0, 2500) + '\n"""\n\n' : '')
+    + 'RÉPONSE = ARRAY JSON UNIQUEMENT. ZÉRO TEXTE SUPPLÉMENTAIRE.';
+
+  try {
+    var raw = await profRequestXXL(prompt, 1500, 0.3);
+    raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
+    var start = raw.indexOf('[');
+    var end = raw.lastIndexOf(']');
+    if (start === -1 || end === -1) throw new Error('Format invalide');
+    raw = raw.slice(start, end + 1);
+
+    var cards = JSON.parse(raw);
+    if (!Array.isArray(cards) || !cards.length) throw new Error('Aucune flashcard générée');
+
+    var added = 0;
+    var now = Date.now();
+    cards.forEach(function(c) {
+      if (!c.q || !c.r) return;
+      deck.unshift({ id: now + added, cat: c.cat || matiere, q: c.q, r: c.r, sm2_n: 0, sm2_ef: 2.5, sm2_next: 0 });
+      added++;
+    });
+
+    if (!added) throw new Error('Aucune flashcard valide');
+
+    saveDeck();
+    if (typeof renderFilters === 'function') renderFilters();
+    if (typeof renderCard === 'function') renderCard();
+    if (typeof renderStats === 'function') renderStats();
+    toast(added + ' flashcard' + (added > 1 ? 's' : '') + ' créée' + (added > 1 ? 's' : '') + ' dans « ' + matiere + ' » 🃏', '✅');
+  } catch(e) {
+    console.error('[mmSendToFlashcards]', e);
+    toast('Erreur génération — réessaie', '❌');
   }
-  collectLabels(mmFocusNode);
-  var summary = lines.join(', ');
-  // Pre-fill flashcards textarea and navigate
-  var flashInput = document.getElementById('flashInput');
-  if (flashInput) flashInput.value = summary;
-  var matSelect = document.getElementById('flashMatiereSelect');
-  if (matSelect && mmFocusNode.label) {
-    // Try to match subject from mmMatiere select
-    var mmSel = document.getElementById('mmMatiere');
-    if (mmSel && mmSel.value) {
-      for (var i = 0; i < matSelect.options.length; i++) {
-        if (matSelect.options[i].value === mmSel.value) { matSelect.value = mmSel.value; break; }
-      }
-    }
-  }
-  showPage('flashcards', document.querySelector('[data-page="flashcards"]'));
-  toast('Notions copiées vers Flashcards 🃏', '✅');
+
+  if (btn) { btn.disabled = false; btn.textContent = '🃏 Créer flashcards'; }
 };
 
 // ── Quiz mode ──
