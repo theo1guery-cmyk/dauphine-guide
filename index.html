@@ -4924,6 +4924,80 @@ aside.sidebar {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   TRAJECTOIRES — Constellation de carrières
+═══════════════════════════════════════════════════════════════ */
+#page-trajectoires{display:none;flex-direction:column;height:100%}
+#page-trajectoires.active{display:flex}
+.traj-header{padding:20px 24px 10px;flex-shrink:0}
+.traj-title{font-family:'Instrument Serif',serif;font-size:clamp(22px,4vw,30px);color:var(--blue);margin:0 0 4px;letter-spacing:-.02em}
+.traj-subtitle{color:var(--g600);font-size:13px;margin:0 0 14px;max-width:60ch}
+.traj-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:2px}
+.traj-filter-btn{padding:5px 15px;border-radius:20px;border:1.5px solid var(--g200);background:var(--bg-card);color:var(--g600);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.traj-filter-btn.active,.traj-filter-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.traj-canvas-wrap{flex:1;position:relative;min-height:400px;background:#070d1a;overflow:hidden}
+#trajCanvas{display:block;width:100%;height:100%;cursor:default}
+.shooting-star{position:absolute;height:1.5px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);pointer-events:none;animation:shootStar 7s linear infinite;opacity:0}
+.shooting-star:nth-child(2){animation-delay:3.2s;width:100px;top:38%}
+.shooting-star:nth-child(3){animation-delay:5.8s;width:70px;top:62%}
+@keyframes shootStar{0%{left:-200px;opacity:0;width:120px}5%{opacity:1}80%{opacity:.6}100%{left:110%;opacity:0}}
+#trajPanel{position:fixed;top:0;right:0;height:100%;width:360px;max-width:96vw;background:var(--bg-card);box-shadow:-6px 0 40px rgba(0,0,0,.18);z-index:400;transform:translateX(100%);transition:transform .36s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+#trajPanel.open{transform:translateX(0)}
+.traj-panel-header{padding:20px 18px 12px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--g200)}
+.traj-panel-close{margin-left:auto;background:none;border:none;font-size:24px;cursor:pointer;color:var(--g400);line-height:1;padding:0 4px;flex-shrink:0}
+.traj-panel-body{padding:18px;flex:1}
+.traj-domain-badge{display:inline-block;padding:2px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:10px}
+.traj-job-title{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text-main);margin:0 0 4px;line-height:1.2}
+.traj-desc{color:var(--g600);font-size:13px;line-height:1.65;margin-bottom:14px}
+.traj-info-block{background:var(--g50);border-radius:var(--rs);padding:12px;margin-bottom:10px}
+.traj-info-label{font-size:10px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
+.traj-salary{font-size:20px;font-weight:800;color:var(--blue)}
+.traj-master-link{display:flex;align-items:center;gap:6px;color:var(--blue-mid);font-size:13px;font-weight:600;text-decoration:none}
+.traj-master-link:hover{text-decoration:underline}
+.traj-panel-footer{padding:14px 18px;border-top:1px solid var(--g200)}
+.traj-see-btn{display:block;width:100%;padding:11px;background:var(--blue);color:#fff;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;transition:background .2s}
+.traj-see-btn:hover{background:var(--blue-mid)}
+@media(max-width:600px){
+  #trajPanel{top:auto;bottom:0;right:0;left:0;width:100%;height:75vh;border-radius:20px 20px 0 0;transform:translateY(100%)}
+  #trajPanel.open{transform:translateY(0)}
+}
+[data-theme="dark"] #trajPanel{background:#141e30;border-left:1px solid #1e3050}
+[data-theme="dark"] .traj-info-block{background:#0e1928}
+[data-theme="dark"] .traj-title{color:#6ab0ff}
+
+/* ═══════════════════════════════════════════════════════════════
+   MIND MAP — TABS (IA tab + Synapse tab)
+═══════════════════════════════════════════════════════════════ */
+.mm-tabs{display:flex;gap:3px;padding:0 20px;border-bottom:1px solid var(--g200);flex-shrink:0}
+.mm-tab-btn{padding:10px 16px;border:none;background:none;font-size:13px;font-weight:700;color:var(--g600);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .18s;border-radius:8px 8px 0 0}
+.mm-tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--blue-light)}
+.mm-tab-pane{display:none;flex:1;flex-direction:column;min-height:0;overflow-y:auto}
+.mm-tab-pane.active{display:flex}
+/* Synapse canvas */
+#synapseWrap{flex:1;display:flex;flex-direction:column;min-height:0}
+.syn-toolbar{display:flex;align-items:center;gap:7px;padding:9px 14px;border-bottom:1px solid var(--g200);flex-wrap:wrap;flex-shrink:0}
+.syn-btn{padding:6px 13px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--bg-card);color:var(--g600);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:4px}
+.syn-btn:hover,.syn-btn.active{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.syn-btn.danger:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2}
+.syn-status{margin-left:auto;font-size:11px;color:var(--g400);display:flex;align-items:center;gap:5px}
+.syn-status-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:synPulse 2s infinite}
+@keyframes synPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
+.syn-canvas-outer{flex:1;position:relative;overflow:hidden;min-height:480px}
+#synSvg{width:100%;height:100%;background:var(--g50)}
+.syn-grid-bg{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,var(--g200) 1px,transparent 1px);background-size:24px 24px;opacity:.65}
+.syn-ghost-cursor{position:absolute;pointer-events:none;z-index:10;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;transition:left .9s ease,top .9s ease}
+.syn-ghost-dot{width:9px;height:9px;border-radius:50%}
+.syn-add-popup{position:absolute;background:var(--bg-card);border:1.5px solid var(--blue);border-radius:var(--r);padding:12px;box-shadow:var(--sh);z-index:50;display:none;min-width:170px}
+.syn-add-popup input{width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:7px 9px;font-size:13px;font-family:'Figtree',sans-serif;outline:none}
+.syn-add-popup input:focus{border-color:var(--blue)}
+.syn-node-text{font-size:13px;font-weight:700;fill:#fff;pointer-events:none;user-select:none}
+.syn-link{fill:none;stroke:var(--g400);stroke-width:1.8}
+.syn-link.new-link{stroke-dasharray:8 4;animation:synDash .55s linear infinite}
+@keyframes synDash{to{stroke-dashoffset:-12}}
+[data-theme="dark"] #synSvg{background:#111520}
+[data-theme="dark"] .syn-grid-bg{opacity:.22}
+[data-theme="dark"] .syn-add-popup{background:#1a2236;border-color:#4d9fff}
+
+/* ═══════════════════════════════════════════════════════════════
    MIND MAP IA
 ═══════════════════════════════════════════════════════════════ */
 .mm-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
@@ -5450,8 +5524,9 @@ aside.sidebar {
     <button class="sidebar-item" data-page="caspratiques" onclick="showPage(&#39;caspratiques&#39;,this)"><span class="s-ic">⚖️</span> Cas pratiques</button>
     <button class="sidebar-item" data-page="prof" onclick="showPage(&#39;prof&#39;,this)"><span class="s-ic">🧑‍🏫</span> Prof particulier</button>
     <button class="sidebar-item" data-page="oral" onclick="showPage(&#39;oral&#39;,this)"><span class="s-ic">🎙️</span> Simulateur d'oral</button>
-    <button class="sidebar-item" data-page="mindmap" onclick="showPage(&#39;mindmap&#39;,this)"><span class="s-ic">🗺️</span> Mind Map IA<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
-    <button class="sidebar-item" data-page="annales" onclick="showPage(&#39;annales&#39;,this)"><span class="s-ic">🔍</span> Analyseur d'annales<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
+    <button class="sidebar-item" data-page="mindmap" onclick="showPage('mindmap',this)"><span class="s-ic">🗺️</span> Mind Map IA<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
+    <button class="sidebar-item" data-page="trajectoires" onclick="showPage('trajectoires',this)"><span class="s-ic">✦</span> Trajectoires<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px;border-radius:4px;margin-left:4px">NEW</span></button>
+    <button class="sidebar-item" data-page="annales" onclick="showPage('annales',this)"><span class="s-ic">🔍</span> Analyseur d'annales<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
     <div class="sidebar-section-label">Organisation</div>
     <button class="sidebar-item" data-page="planning" onclick="showPage(&#39;planning&#39;,this)"><span class="s-ic">📅</span> Planning<span class="sb-badge" id="sidebarUrgentBadge">0</span></button>
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
@@ -9625,8 +9700,63 @@ aside.sidebar {
   </div>
 </div>
 
+<!-- ══ TRAJECTOIRES ══ -->
+<div id="page-trajectoires" class="page-section">
+  <div class="traj-header">
+    <h1 class="traj-title">✦ Trajectoires — Atlas des débouchés</h1>
+    <p class="traj-subtitle">Chaque étoile est un métier accessible depuis Dauphine. Clique pour découvrir le parcours.</p>
+    <div class="traj-filters">
+      <button class="traj-filter-btn active" onclick="trajFilter('all',this)">Tout</button>
+      <button class="traj-filter-btn" onclick="trajFilter('Droit',this)" style="--fc:#4d9fff">⚖️ Droit</button>
+      <button class="traj-filter-btn" onclick="trajFilter('Finance',this)" style="--fc:#f59e0b">💰 Finance</button>
+      <button class="traj-filter-btn" onclick="trajFilter('Santé',this)" style="--fc:#10b981">🏥 Santé</button>
+      <button class="traj-filter-btn" onclick="trajFilter('International',this)" style="--fc:#a855f7">🌍 International</button>
+    </div>
+  </div>
+  <div class="traj-canvas-wrap">
+    <canvas id="trajCanvas"></canvas>
+    <div class="shooting-star" style="width:130px;top:16%"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+  </div>
+</div>
+<!-- Trajectoires detail panel (outside page-section so it overlays) -->
+<div id="trajPanel" role="dialog" aria-modal="true" aria-label="Détails du métier">
+  <div class="traj-panel-header">
+    <span id="trajPanelIcon" style="font-size:26px;flex-shrink:0">✦</span>
+    <div style="flex:1;min-width:0">
+      <div id="trajPanelBadge" class="traj-domain-badge"></div>
+      <h2 id="trajPanelTitle" class="traj-job-title"></h2>
+    </div>
+    <button class="traj-panel-close" onclick="trajClosePanel()" aria-label="Fermer">×</button>
+  </div>
+  <div class="traj-panel-body">
+    <p id="trajPanelDesc" class="traj-desc"></p>
+    <div class="traj-info-block">
+      <div class="traj-info-label">💰 Salaire</div>
+      <div id="trajPanelSalary" class="traj-salary"></div>
+    </div>
+    <div class="traj-info-block">
+      <div class="traj-info-label">🎓 Master recommandé</div>
+      <a id="trajPanelMaster" class="traj-master-link" href="#" target="_blank" rel="noopener">
+        <span>↗</span><span id="trajPanelMasterName"></span>
+      </a>
+    </div>
+  </div>
+  <div class="traj-panel-footer">
+    <a id="trajPanelSeeBtn" class="traj-see-btn" href="#" target="_blank" rel="noopener">Voir le master sur Dauphine →</a>
+  </div>
+</div>
+
 <!-- ══ MIND MAP IA ══ -->
 <div class="page-section" id="page-mindmap">
+  <!-- Tab bar -->
+  <div class="mm-tabs">
+    <button class="mm-tab-btn active" id="mmTabBtn1" onclick="mmSwitchTab(1)">🧠 Mind Map IA</button>
+    <button class="mm-tab-btn" id="mmTabBtn2" onclick="mmSwitchTab(2)">🔗 Synapse · Collaboratif</button>
+  </div>
+  <!-- Tab 1: existing mind map -->
+  <div class="mm-tab-pane active" id="mmPane1">
   <div class="section-header">
     <div class="section-header-left">
       <div class="section-header-ic">🗺️</div>
@@ -9739,6 +9869,45 @@ aside.sidebar {
     </div>
   </div>
 </div>
+  </div><!-- end mmPane1 -->
+
+  <!-- Tab 2: Synapse -->
+  <div class="mm-tab-pane" id="mmPane2">
+    <div id="synapseWrap">
+      <div class="syn-toolbar">
+        <button class="syn-btn" id="synAddBtn" onclick="synToggleAdd()">➕ Nœud</button>
+        <button class="syn-btn" id="synConnectBtn" onclick="synToggleConnect()">🔗 Connecter</button>
+        <button class="syn-btn danger" onclick="synDeleteSelected()">🗑 Supprimer</button>
+        <button class="syn-btn" onclick="synExportSvg()">⬇️ SVG</button>
+        <button class="syn-btn" onclick="synGenFlashcards()">⚡ Flashcards</button>
+        <div class="syn-status">
+          <span class="syn-status-dot"></span>
+          <span id="synStatusText">2 étudiants dans cette carte</span>
+        </div>
+      </div>
+      <div class="syn-canvas-outer" id="synCanvasOuter">
+        <div class="syn-grid-bg"></div>
+        <svg id="synSvg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="syn-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#9ba3b0"/>
+            </marker>
+          </defs>
+          <g id="synLinksG"></g>
+          <g id="synNodesG"></g>
+        </svg>
+        <div class="syn-ghost-cursor" id="synCursor1" style="left:22%;top:28%"><span class="syn-ghost-dot" style="background:#f59e0b"></span>Alice</div>
+        <div class="syn-ghost-cursor" id="synCursor2" style="left:68%;top:58%"><span class="syn-ghost-dot" style="background:#10b981"></span>Marc</div>
+        <div class="syn-ghost-cursor" id="synCursor3" style="left:48%;top:72%"><span class="syn-ghost-dot" style="background:#a855f7"></span>Léna</div>
+        <div class="syn-add-popup" id="synAddPopup">
+          <div style="font-size:11px;font-weight:700;color:var(--g600);margin-bottom:6px">Nouveau nœud</div>
+          <input type="text" id="synAddInput" placeholder="Nom du nœud…" maxlength="40"/>
+        </div>
+      </div>
+    </div>
+  </div><!-- end mmPane2 -->
+
+</div><!-- end page-mindmap -->
 <div id="mmTooltip"></div>
 
 <!-- ══ SALLE D'ÉTUDE CO-POMODORO ══ -->
@@ -24389,6 +24558,7 @@ function mmRender() {
     var nodeL1 = depth === 0 ? '-1' : String(node._l1idx !== undefined ? node._l1idx : 0);
     g.setAttribute('data-l1', nodeL1);
     g.setAttribute('data-depth', depth);
+    g._mmNodeRef = node; // for edit mode
 
     var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     rect.setAttribute('width', rectW); rect.setAttribute('height', rectH);
@@ -25212,6 +25382,11 @@ window.mmRestartQuiz = function() {
   if (panel) mmRenderQuizQuestion(panel, panel.getAttribute('data-color'));
 };
 
+// Expose for edit mode (cross-IIFE access)
+window._mmReRender = function() { if (mmData) mmRender(); };
+window._getMmData  = function() { return mmData; };
+window._setMmData  = function(d) { mmData = d; };
+
 })();
 </script>
 
@@ -25830,6 +26005,657 @@ window.annalesReset = function() {
   document.getElementById('annalesMatiere').value = '';
   document.getElementById('annalesResult').innerHTML = '<div class="annales-result-empty"><div><div style="font-size:42px">🔍</div><strong>L\'analyse apparaîtra ici</strong><span>Choisis une matière, colle tes annales et lance l\'analyse.</span></div></div>';
 };
+
+})();
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   TRAJECTOIRES — Constellation JS
+═══════════════════════════════════════════════════════════════ */
+(function(){'use strict';
+
+var CAREERS=[
+  {id:'ap',title:'Assistant parlementaire',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'24–30 k€ net/an',desc:'Soutient députés et sénateurs en gérant agenda, dossiers et communication parlementaire.',sv:27},
+  {id:'af',title:'Avocat fiscaliste',domain:'Droit',color:'#4d9fff',master:'Master Droit des Affaires',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-affaires',salary:'≈ 42 k€ brut/an',desc:'Conseille et défend les entreprises en droit fiscal et optimise les montages financiers.',sv:42},
+  {id:'cl',title:'Chargé de lobbying',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'35–45 k€ brut/an',desc:'Définit et conduit des stratégies d\'influence auprès des pouvoirs publics.',sv:40},
+  {id:'co',title:'Compliance Officer',domain:'Droit',color:'#4d9fff',master:'M2 Droit et régulation des marchés',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-public/2e-annee-de-master-droit-et-regulation-des-marches-291',salary:'N/A',desc:'Vérifie que l\'entreprise respecte lois et régulations, met en place des programmes de conformité.',sv:45},
+  {id:'ju',title:'Juriste',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'40 k€ début · 55–60 k€ après 5 ans',desc:'Conseille les dirigeants et veille à la conformité juridique de l\'entreprise.',sv:50},
+  {id:'je',title:'Juriste d\'entreprise',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'N/A',desc:'Pilote les questions juridiques internes et assure la conformité de l\'entreprise.',sv:47},
+  {id:'ja',title:'Juriste en assurance',domain:'Droit',color:'#4d9fff',master:'Master Droit des Assurances',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-assurances',salary:'≈ 50 k€ brut/an',desc:'Gère le suivi juridique des contrats d\'assurance et conseille sur les aspects réglementaires.',sv:50},
+  {id:'jf',title:'Juriste secteur financier',domain:'Droit',color:'#4d9fff',master:'Master Droit de l\'entreprise',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-de-l-entreprise',salary:'40 k€ début · 50 k€ après 5 ans',desc:'Sécurise juridiquement les opérations financières des banques ou entreprises cotées.',sv:45},
+  {id:'no',title:'Notaire',domain:'Droit',color:'#4d9fff',master:'Master Droit Notarial',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-notarial',salary:'44 k€ brut/an',desc:'Officier public qui rédige et authentifie les actes, garantissant leur validité légale.',sv:44},
+  {id:'ma',title:'Analyste M&A',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 44,5 k€ brut/an',desc:'Recommande et structure les opérations de fusions/acquisitions pour les entreprises.',sv:44},
+  {id:'pe',title:'Analyste Private Equity',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:'Analyse et sélectionne les opportunités d\'investissement pour les fonds de capital-investissement.',sv:40},
+  {id:'fi',title:'Analyste financier',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:'Étudie en profondeur la valeur des entreprises pour conseiller investisseurs ou traders.',sv:61},
+  {id:'ai',title:'Analyste investissement',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'≈ 40 k€ brut/an',desc:'Identifie et saisit les meilleures opportunités financières pour son entreprise.',sv:40},
+  {id:'am',title:'Asset Manager',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'40 k€ début · 67,5 k€ après 5 ans',desc:'Gère et optimise un portefeuille d\'actifs, définissant stratégies d\'investissement.',sv:55},
+  {id:'br',title:'Broker',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'61 k€ brut/an',desc:'Intermédiaire entre acheteurs et vendeurs d\'actifs financiers, proposant les meilleures conditions.',sv:61},
+  {id:'cgp',title:'Conseiller en gestion de patrimoine',domain:'Finance',color:'#f59e0b',master:'M2 Gestion du Patrimoine & Banque privée',masterUrl:'https://dauphine.psl.eu/formations/masters/gestion-de-patrimoine/m2',salary:'45,6 k€ médian',desc:'Diagnostique le patrimoine d\'un client et propose des placements adaptés à ses objectifs.',sv:46},
+  {id:'tr',title:'Trader',domain:'Finance',color:'#f59e0b',master:'Master Finance',masterUrl:'https://dauphine.psl.eu/formations/masters/finance',salary:'48–70 k€ (hors bonus)',desc:'Anime les marchés financiers en négociant actifs et gérant risques pour créer des marges.',sv:59},
+  {id:'esg',title:'Analyste ESG',domain:'Finance',color:'#f59e0b',master:'Master Politiques d\'Entreprises et RSE',masterUrl:'https://dauphine.psl.eu/formations/masters/responsabilite-sociale-des-entreprises',salary:'35–45 k€ · 70–90 k€ senior',desc:'Évalue la gestion environnementale, sociale et de gouvernance des entreprises.',sv:40},
+  {id:'cam',title:'Chargé d\'accès au marché',domain:'Santé',color:'#10b981',master:'M2 Évaluation Médico-Économique',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante/2e-annee-Evaluation-medico-economique-et-acces-marche',salary:'40–50 k€ brut/an',desc:'Prépare et fait valider l\'accès sur le marché des innovations médicales.',sv:45},
+  {id:'eme',title:'Chargé évaluation médico-éco.',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–50 k€ brut/an',desc:'Évalue l\'efficacité et le coût des innovations médicales pour décisions de santé publique.',sv:42},
+  {id:'cts',title:'Conseiller technique (santé)',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'35–45 k€ brut/an',desc:'Conseille ministères ou institutions sanitaires en combinant expertise médico-économique.',sv:40},
+  {id:'ces',title:'Consultant éco. de la santé',domain:'Santé',color:'#10b981',master:'Master Économie et Gestion de la Santé',masterUrl:'https://dauphine.psl.eu/formations/masters/economie-et-gestion-de-la-sante',salary:'37,8 k€ médian · 45–55 k€ senior',desc:'Analyse données médico-économiques et conseille sur politiques de santé publique.',sv:46},
+  {id:'mae',title:'Chargé mission affaires européennes',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'≈ 38,75 k€ brut/an',desc:'Défend les intérêts d\'organisations au niveau de l\'UE en gérant projets et relations.',sv:39},
+  {id:'cds',title:'Consultant défense & sécurité',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'42 k€ · 50–55 k€ senior',desc:'Accompagne entreprises sur enjeux sécurité en évaluant risques et stratégies.',sv:46},
+  {id:'csc',title:'Consultant supply chain',domain:'International',color:'#a855f7',master:'Master Supply Chain Internationale',masterUrl:'https://dauphine.psl.eu/formations/masters/scm-2eme-annee',salary:'40 k€ début · 60 k€ après 5 ans',desc:'Conseille entreprises sur gestion logistique globale pour optimiser flux et coûts.',sv:50},
+  {id:'dp',title:'Demand Planner',domain:'International',color:'#a855f7',master:'Master Affaires internationales & développement',masterUrl:'https://dauphine.psl.eu/formations/masters/affaires-internationales-et-developpement',salary:'35–70 k€ brut/an',desc:'Prévoit la demande client pour planifier production et stocks.',sv:52}
+];
+
+var QUADRANTS={Droit:{qx:.25,qy:.28},Finance:{qx:.75,qy:.28},Santé:{qx:.25,qy:.72},International:{qx:.75,qy:.72}};
+var DOMAIN_LABELS=[
+  {domain:'Droit',qx:.25,qy:.28,color:'rgba(77,159,255,.12)'},
+  {domain:'Finance',qx:.75,qy:.28,color:'rgba(245,158,11,.1)'},
+  {domain:'Santé',qx:.25,qy:.72,color:'rgba(16,185,129,.1)'},
+  {domain:'International',qx:.75,qy:.72,color:'rgba(168,85,247,.1)'}
+];
+
+var stars=[],ambient=[],links=[],filterDomain='all';
+var canvas,ctx,raf=null,phase='enter',t=0;
+var selectedStar=null;
+
+function init(){
+  canvas=document.getElementById('trajCanvas');
+  if(!canvas)return;
+  ctx=canvas.getContext('2d');
+  resize();
+  buildStars();
+  buildAmbient();
+  buildLinks();
+  animate();
+  canvas.addEventListener('click',onCanvasClick);
+  canvas.addEventListener('mousemove',onCanvasHover);
+}
+
+function resize(){
+  var wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth;
+  canvas.height=wrap.clientHeight||500;
+}
+
+function buildStars(){
+  stars=[];
+  var W=canvas.width,H=canvas.height;
+  var byDomain={};
+  CAREERS.forEach(function(c){
+    if(!byDomain[c.domain])byDomain[c.domain]=[];
+    byDomain[c.domain].push(c);
+  });
+  Object.keys(byDomain).forEach(function(dom){
+    var q=QUADRANTS[dom];
+    var cx=q.qx*W, cy=q.qy*H;
+    var list=byDomain[dom];
+    list.forEach(function(c,i){
+      var angle=(i/list.length)*Math.PI*2+.3;
+      var r=55+Math.random()*70;
+      var tx=Math.max(18,Math.min(W-18,cx+Math.cos(angle)*r));
+      var ty=Math.max(18,Math.min(H-18,cy+Math.sin(angle)*r));
+      var sr=3+Math.min((c.sv-24)/38*3.5,3.5);
+      stars.push({
+        career:c,
+        tx:tx,ty:ty,x:W/2,y:H/2,
+        r:sr,phase:0,twinkle:Math.random()*Math.PI*2,twinkleSpeed:.02+Math.random()*.03,
+        entered:false
+      });
+    });
+  });
+}
+
+function buildAmbient(){
+  ambient=[];
+  var W=canvas.width,H=canvas.height;
+  for(var i=0;i<90;i++){
+    ambient.push({x:Math.random()*W,y:Math.random()*H,r:.5+Math.random()*1.2,tw:Math.random()*Math.PI*2,tws:.01+Math.random()*.02,a:.2+Math.random()*.4});
+  }
+}
+
+function buildLinks(){
+  links=[];
+  var byDomain={};
+  stars.forEach(function(s){
+    var d=s.career.domain;
+    if(!byDomain[d])byDomain[d]=[];
+    byDomain[d].push(s);
+  });
+  Object.keys(byDomain).forEach(function(dom){
+    var list=byDomain[dom];
+    for(var i=0;i<list.length;i++){
+      for(var j=i+1;j<list.length;j++){
+        var dx=list[i].tx-list[j].tx, dy=list[i].ty-list[j].ty;
+        if(Math.sqrt(dx*dx+dy*dy)<130){
+          links.push({a:list[i],b:list[j],dom:dom});
+        }
+      }
+    }
+  });
+}
+
+function animate(){
+  raf=requestAnimationFrame(animate);
+  t+=.016;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawBackground();
+  drawLinks();
+  drawStars();
+  if(phase==='enter'){
+    var allIn=true;
+    stars.forEach(function(s){
+      var dx=s.tx-s.x, dy=s.ty-s.y;
+      s.x+=dx*.06; s.y+=dy*.06;
+      if(Math.abs(dx)>1||Math.abs(dy)>1)allIn=false;
+    });
+    if(allIn)phase='idle';
+  }
+}
+
+function drawBackground(){
+  ambient.forEach(function(a){
+    a.tw+=a.tws;
+    var alpha=a.a*(0.5+0.5*Math.sin(a.tw));
+    ctx.beginPath();
+    ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,'+alpha+')';
+    ctx.fill();
+  });
+  // Domain labels
+  DOMAIN_LABELS.forEach(function(dl){
+    var x=dl.qx*canvas.width, y=dl.qy*canvas.height;
+    ctx.font='bold 13px Figtree,sans-serif';
+    ctx.fillStyle=dl.color.replace('.12','0.2').replace('.1','0.18');
+    ctx.textAlign='center';
+    ctx.fillText(dl.domain.toUpperCase(),x,y-72);
+  });
+}
+
+function drawLinks(){
+  links.forEach(function(lnk){
+    var sa=lnk.a, sb=lnk.b;
+    var aActive=filterDomain==='all'||filterDomain===lnk.dom;
+    if(!aActive)return;
+    ctx.beginPath();
+    ctx.moveTo(sa.x,sa.y);
+    ctx.lineTo(sb.x,sb.y);
+    ctx.strokeStyle='rgba('+hexToRgb(sa.career.color)+',.08)';
+    ctx.lineWidth=.8;
+    ctx.stroke();
+  });
+}
+
+function drawStars(){
+  stars.forEach(function(s){
+    s.twinkle+=s.twinkleSpeed;
+    var active=filterDomain==='all'||filterDomain===s.career.domain;
+    var alpha=active?1:.08;
+    var glowR=s.r*(2.5+.6*Math.sin(s.twinkle));
+    // glow
+    var grd=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,glowR*2.5);
+    grd.addColorStop(0,'rgba('+hexToRgb(s.career.color)+','+(active?.35:.03)+')');
+    grd.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,glowR*2.5,0,Math.PI*2);
+    ctx.fillStyle=grd;
+    ctx.fill();
+    // core
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r*(1+.15*Math.sin(s.twinkle)),0,Math.PI*2);
+    ctx.fillStyle='rgba('+hexToRgb(s.career.color)+','+alpha+')';
+    ctx.fill();
+    // selected ring
+    if(selectedStar&&selectedStar===s){
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r+5+2*Math.sin(t*3),0,Math.PI*2);
+      ctx.strokeStyle='rgba('+hexToRgb(s.career.color)+',.7)';
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+    }
+  });
+}
+
+function hexToRgb(hex){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return r+','+g+','+b;
+}
+
+function hitTest(cx,cy){
+  var hit=null,minD=Infinity;
+  stars.forEach(function(s){
+    if(filterDomain!=='all'&&filterDomain!==s.career.domain)return;
+    var dx=cx-s.x, dy=cy-s.y;
+    var d=Math.sqrt(dx*dx+dy*dy);
+    var hitR=Math.max(s.r+6,14);
+    if(d<hitR&&d<minD){minD=d;hit=s;}
+  });
+  return hit;
+}
+
+function onCanvasClick(e){
+  var r=canvas.getBoundingClientRect();
+  var scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
+  var mx=(e.clientX-r.left)*scaleX, my=(e.clientY-r.top)*scaleY;
+  var s=hitTest(mx,my);
+  if(s){selectedStar=s;openPanel(s);}
+  else{selectedStar=null;closePanel();}
+}
+
+function onCanvasHover(e){
+  var r=canvas.getBoundingClientRect();
+  var scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
+  var mx=(e.clientX-r.left)*scaleX, my=(e.clientY-r.top)*scaleY;
+  canvas.style.cursor=hitTest(mx,my)?'pointer':'default';
+}
+
+function openPanel(s){
+  var c=s.career;
+  document.getElementById('trajPanelBadge').textContent=c.domain;
+  document.getElementById('trajPanelBadge').style.cssText='display:inline-block;padding:2px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:10px;background:'+hexToRgb(c.color)+';color:#fff;background:'+c.color;
+  document.getElementById('trajPanelTitle').textContent=c.title;
+  document.getElementById('trajPanelDesc').textContent=c.desc;
+  document.getElementById('trajPanelSalary').textContent=c.salary;
+  document.getElementById('trajPanelMasterName').textContent=c.master;
+  document.getElementById('trajPanelMaster').href=c.masterUrl;
+  document.getElementById('trajPanelSeeBtn').href=c.masterUrl;
+  document.getElementById('trajPanel').classList.add('open');
+}
+
+window.trajClosePanel=function(){
+  selectedStar=null;
+  document.getElementById('trajPanel').classList.remove('open');
+};
+
+window.trajFilter=function(domain,btn){
+  filterDomain=domain;
+  document.querySelectorAll('.traj-filter-btn').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+};
+
+function startTraj(){
+  if(!canvas){canvas=document.getElementById('trajCanvas');}
+  if(!canvas||!canvas.parentElement.clientWidth)return;
+  resize();
+  buildStars();
+  buildAmbient();
+  buildLinks();
+  phase='enter';
+  t=0;
+  if(!raf)animate();
+}
+
+// Hook into showPage
+var _origShowPage=window.showPage;
+window.showPage=function(page,btn){
+  if(_origShowPage)_origShowPage(page,btn);
+  if(page==='trajectoires')setTimeout(startTraj,60);
+};
+
+window.addEventListener('resize',function(){
+  if(document.getElementById('page-trajectoires').classList.contains('active')){
+    resize();buildStars();buildAmbient();buildLinks();
+  }
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+  // auto-init if page is already active (rare but safe)
+  if(document.getElementById('page-trajectoires').classList.contains('active'))startTraj();
+});
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   MIND MAP — TABS + EDIT MODE + SYNAPSE
+═══════════════════════════════════════════════════════════════ */
+(function(){'use strict';
+
+/* ── Tab switching ── */
+window.mmSwitchTab=function(n){
+  document.querySelectorAll('.mm-tab-btn').forEach(function(b,i){b.classList.toggle('active',i+1===n);});
+  document.querySelectorAll('.mm-tab-pane').forEach(function(p,i){p.classList.toggle('active',i+1===n);});
+  if(n===2)synInit();
+};
+
+/* ── Mind Map edit mode ── */
+var mmEditMode=false;
+var mmCtxNode=null;
+
+window.mmToggleEdit=function(){
+  mmEditMode=!mmEditMode;
+  var btn=document.getElementById('mmEditToggle');
+  if(btn)btn.classList.toggle('active',mmEditMode);
+  var svg=document.querySelector('#mmPane1 svg');
+  if(svg)svg.style.cursor=mmEditMode?'crosshair':'default';
+  var hint=document.getElementById('mmEditHint');
+  if(hint)hint.style.display=mmEditMode?'block':'none';
+};
+
+function mmGetData(){return window._getMmData?window._getMmData():null;}
+function mmReRender(){if(window._mmReRender)window._mmReRender();}
+
+function mmFindParent(tree,target){
+  if(!tree||!tree.children)return null;
+  for(var i=0;i<tree.children.length;i++){
+    if(tree.children[i]===target)return tree;
+    var r=mmFindParent(tree.children[i],target);
+    if(r)return r;
+  }
+  return null;
+}
+
+window.mmRenameNode=function(node){
+  if(!node)return;
+  var cur=node.label||node.text||'';
+  var nv=prompt('Renommer:',cur);
+  if(nv===null)return;
+  nv=nv.trim();
+  if(!nv)return;
+  if(node.label!==undefined)node.label=nv;
+  else node.text=nv;
+  mmReRender();
+};
+
+window.mmAddChild=function(node){
+  if(!node)return;
+  if(!node.children)node.children=[];
+  node.children.push({label:'Nouveau nœud',text:'Nouveau nœud',children:[]});
+  mmReRender();
+};
+
+window.mmDeleteNode=function(node){
+  var data=mmGetData();
+  if(!data||!node||node===data)return;
+  var parent=mmFindParent(data,node);
+  if(parent&&parent.children){
+    parent.children=parent.children.filter(function(c){return c!==node;});
+    mmReRender();
+  }
+};
+
+window.mmCtxNodeRef=function(){return mmCtxNode;};
+
+function mmSetupContextMenu(){
+  var svgWrap=document.querySelector('#mmPane1 .mm-svg-wrap, #mmPane1 #mmSvgWrap');
+  if(!svgWrap)return;
+  var menu=document.getElementById('mmContextMenu');
+  if(!menu){
+    menu=document.createElement('div');
+    menu.id='mmContextMenu';
+    menu.style.cssText='position:fixed;z-index:9999;background:var(--bg-card);border:1px solid var(--g200);border-radius:var(--rs);box-shadow:var(--sh);padding:4px 0;display:none;min-width:160px';
+    menu.innerHTML='<div onclick="mmRenameNode(mmCtxNodeRef())" style="padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-main)">✏️ Renommer</div><div onclick="mmAddChild(mmCtxNodeRef())" style="padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text-main)">➕ Ajouter un enfant</div><div onclick="mmDeleteNode(mmCtxNodeRef())" style="padding:8px 14px;cursor:pointer;font-size:13px;color:#ef4444">🗑 Supprimer</div>';
+    document.body.appendChild(menu);
+  }
+  svgWrap.addEventListener('contextmenu',function(e){
+    if(!mmEditMode)return;
+    var g=e.target.closest('[data-depth]');
+    if(!g)return;
+    e.preventDefault();
+    mmCtxNode=g._mmNodeRef||null;
+    menu.style.left=e.clientX+'px';
+    menu.style.top=e.clientY+'px';
+    menu.style.display='block';
+  });
+  svgWrap.addEventListener('dblclick',function(e){
+    if(!mmEditMode)return;
+    var g=e.target.closest('[data-depth]');
+    if(!g||!g._mmNodeRef)return;
+    window.mmRenameNode(g._mmNodeRef);
+  });
+  document.addEventListener('click',function(){if(menu)menu.style.display='none';});
+}
+
+function mmSetupEditBtn(){
+  var controls=document.querySelector('#mmPane1 .mm-controls');
+  if(!controls||document.getElementById('mmEditToggle'))return;
+  var btn=document.createElement('button');
+  btn.id='mmEditToggle';
+  btn.className='mm-ctrl-btn';
+  btn.textContent='✏️ Éditer';
+  btn.onclick=window.mmToggleEdit;
+  controls.appendChild(btn);
+  var hint=document.createElement('div');
+  hint.id='mmEditHint';
+  hint.style.cssText='display:none;font-size:11px;color:var(--g400);padding:4px 10px;background:var(--blue-light);border-radius:var(--rs);margin:2px 14px 0;';
+  hint.textContent='Mode édition actif — double-clic pour renommer, clic droit pour options';
+  controls.insertAdjacentElement('afterend',hint);
+}
+
+setTimeout(function(){mmSetupContextMenu();mmSetupEditBtn();},1400);
+
+/* ═══════════════════════════════════════════════════════════════
+   SYNAPSE — Collaborative mind map
+═══════════════════════════════════════════════════════════════ */
+var synNodes=[],synLinks=[],synNextId=1;
+var synSelected=null,synConnectMode=false,synConnectSrc=null;
+var synAddMode=false,synAddPos={x:0,y:0};
+var synInited=false;
+var synDragNode=null,synDragOff={x:0,y:0};
+
+var SYN_ROOT_CLR='#003d7a';
+var SYN_BRANCH_CLRS=['#0057ad','#1a73c8','#2d8de0','#4da6f5'];
+
+function synMakeNode(label,x,y,isRoot){
+  return{id:synNextId++,label:label,x:x,y:y,w:124,h:38,isRoot:!!isRoot,
+    color:isRoot?SYN_ROOT_CLR:SYN_BRANCH_CLRS[Math.floor(Math.random()*SYN_BRANCH_CLRS.length)],selected:false};
+}
+
+function svgEl(tag,attrs){
+  var el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.keys(attrs||{}).forEach(function(k){el.setAttribute(k,attrs[k]);});
+  return el;
+}
+
+function synRender(){
+  var lG=document.getElementById('synLinksG');
+  var nG=document.getElementById('synNodesG');
+  if(!lG||!nG)return;
+  lG.innerHTML='';
+  nG.innerHTML='';
+  synLinks.forEach(function(lnk){
+    var s=synNodes.filter(function(n){return n.id===lnk.from;})[0];
+    var tgt=synNodes.filter(function(n){return n.id===lnk.to;})[0];
+    if(!s||!tgt)return;
+    var x1=s.x+s.w/2,y1=s.y+s.h/2,x2=tgt.x+tgt.w/2,y2=tgt.y+tgt.h/2;
+    var cx=(x1+x2)/2;
+    var path=svgEl('path',{d:'M'+x1+','+y1+' C'+cx+','+y1+' '+cx+','+y2+' '+x2+','+y2,'class':'syn-link'+(lnk.isNew?' new-link':''),'stroke-width':'1.8'});
+    lG.appendChild(path);
+    if(lnk.isNew)setTimeout(function(){lnk.isNew=false;synRender();},700);
+  });
+  synNodes.forEach(function(n){
+    var g=svgEl('g',{'class':'syn-node-g','transform':'translate('+n.x+','+n.y+')','data-id':n.id});
+    var rx=svgEl('rect',{width:n.w,height:n.h,rx:9,fill:n.color,stroke:n.selected?'rgba(255,255,255,.8)':'rgba(255,255,255,.25)','stroke-width':n.selected?'2.5':'1'});
+    var tx=svgEl('text',{x:n.w/2,y:n.h/2+4.5,'text-anchor':'middle','dominant-baseline':'middle','class':'syn-node-text','font-size':'13','font-weight':'700',fill:'#fff'});
+    tx.textContent=n.label.length>17?n.label.slice(0,15)+'…':n.label;
+    g.appendChild(rx);
+    g.appendChild(tx);
+    g.addEventListener('mousedown',synOnDragStart);
+    g.addEventListener('click',synOnNodeClick);
+    g.addEventListener('dblclick',synOnNodeDblclick);
+    nG.appendChild(g);
+  });
+}
+
+function synOnDragStart(e){
+  e.preventDefault();
+  var id=parseInt(e.currentTarget.getAttribute('data-id'));
+  var n=synNodes.filter(function(x){return x.id===id;})[0];
+  if(!n)return;
+  synDragNode=n;
+  var svg=document.getElementById('synSvg');
+  var r=svg.getBoundingClientRect();
+  synDragOff={x:e.clientX-r.left-n.x,y:e.clientY-r.top-n.y};
+}
+
+function synOnNodeClick(e){
+  var id=parseInt(e.currentTarget.getAttribute('data-id'));
+  var n=synNodes.filter(function(x){return x.id===id;})[0];
+  if(!n)return;
+  if(synConnectMode){
+    if(!synConnectSrc){synConnectSrc=n;n.selected=true;synRender();}
+    else if(synConnectSrc.id!==n.id){
+      var exists=synLinks.filter(function(l){return(l.from===synConnectSrc.id&&l.to===n.id)||(l.from===n.id&&l.to===synConnectSrc.id);}).length>0;
+      if(!exists)synLinks.push({from:synConnectSrc.id,to:n.id,isNew:true});
+      synConnectSrc.selected=false;synConnectSrc=null;synRender();
+    }
+    return;
+  }
+  synNodes.forEach(function(x){x.selected=false;});
+  n.selected=true;synSelected=n;synRender();
+}
+
+function synOnNodeDblclick(e){
+  var id=parseInt(e.currentTarget.getAttribute('data-id'));
+  var n=synNodes.filter(function(x){return x.id===id;})[0];
+  if(!n)return;
+  var v=prompt('Renommer:',n.label);
+  if(v!==null&&v.trim()){n.label=v.trim();synRender();}
+}
+
+document.addEventListener('mousemove',function(e){
+  if(!synDragNode)return;
+  var svg=document.getElementById('synSvg');
+  if(!svg)return;
+  var r=svg.getBoundingClientRect();
+  synDragNode.x=e.clientX-r.left-synDragOff.x;
+  synDragNode.y=e.clientY-r.top-synDragOff.y;
+  synRender();
+});
+document.addEventListener('mouseup',function(){synDragNode=null;});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Delete'&&synSelected){
+    var pane=document.getElementById('mmPane2');
+    if(pane&&pane.classList.contains('active')){
+      synLinks=synLinks.filter(function(l){return l.from!==synSelected.id&&l.to!==synSelected.id;});
+      synNodes=synNodes.filter(function(x){return x.id!==synSelected.id;});
+      synSelected=null;synRender();
+    }
+  }
+});
+
+window.synToggleAdd=function(){
+  synAddMode=!synAddMode;
+  var btn=document.getElementById('synAddBtn');
+  if(btn)btn.classList.toggle('active',synAddMode);
+  var outer=document.getElementById('synCanvasOuter');
+  if(outer)outer.style.cursor=synAddMode?'crosshair':'default';
+};
+
+window.synToggleConnect=function(){
+  synConnectMode=!synConnectMode;
+  var btn=document.getElementById('synConnectBtn');
+  if(btn)btn.classList.toggle('active',synConnectMode);
+  if(!synConnectMode&&synConnectSrc){synConnectSrc.selected=false;synConnectSrc=null;synRender();}
+};
+
+window.synDeleteSelected=function(){
+  if(!synSelected)return;
+  synLinks=synLinks.filter(function(l){return l.from!==synSelected.id&&l.to!==synSelected.id;});
+  synNodes=synNodes.filter(function(x){return x.id!==synSelected.id;});
+  synSelected=null;synRender();
+};
+
+window.synExportSvg=function(){
+  var svg=document.getElementById('synSvg');
+  if(!svg)return;
+  var data=new XMLSerializer().serializeToString(svg);
+  var blob=new Blob([data],{type:'image/svg+xml'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='synapse.svg';a.click();
+  URL.revokeObjectURL(url);
+};
+
+window.synGenFlashcards=function(){
+  var labels=synNodes.map(function(n){return n.label;}).filter(function(l){return l&&l!=='Dauphine L1';});
+  if(!labels.length){alert('Ajoutez d\'abord des nœuds !');return;}
+  if(typeof window.createFlashcardsFromTopics==='function')window.createFlashcardsFromTopics(labels);
+  else alert('Flashcards générées:\n'+labels.join('\n'));
+};
+
+function synSetupCanvas(){
+  var outer=document.getElementById('synCanvasOuter');
+  if(!outer)return;
+  outer.addEventListener('click',function(e){
+    if(!synAddMode)return;
+    if(e.target.closest('.syn-node-g'))return;
+    var r=outer.getBoundingClientRect();
+    var x=e.clientX-r.left-62, y=e.clientY-r.top-19;
+    synAddPos={x:Math.max(10,x),y:Math.max(10,y)};
+    var popup=document.getElementById('synAddPopup');
+    if(popup){
+      popup.style.left=(e.clientX-r.left)+'px';
+      popup.style.top=(e.clientY-r.top)+'px';
+      popup.style.display='block';
+      var inp=document.getElementById('synAddInput');
+      if(inp){inp.value='';inp.focus();}
+    }
+  });
+  var inp=document.getElementById('synAddInput');
+  if(inp){
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){
+        var lbl=inp.value.trim()||'Nœud';
+        synNodes.push(synMakeNode(lbl,synAddPos.x,synAddPos.y,false));
+        synRender();
+        document.getElementById('synAddPopup').style.display='none';
+        synAddMode=false;
+        var btn=document.getElementById('synAddBtn');
+        if(btn)btn.classList.remove('active');
+        var outer2=document.getElementById('synCanvasOuter');
+        if(outer2)outer2.style.cursor='default';
+      }
+      if(e.key==='Escape')document.getElementById('synAddPopup').style.display='none';
+    });
+  }
+  document.addEventListener('click',function(e){
+    var popup=document.getElementById('synAddPopup');
+    if(popup&&!popup.contains(e.target))popup.style.display='none';
+  });
+}
+
+function synAnimateCursors(){
+  var cursors=[
+    {id:'synCursor1',x:22,y:28,dx:.25,dy:.18,rx:[5,42],ry:[12,65]},
+    {id:'synCursor2',x:68,y:58,dx:-.18,dy:.22,rx:[52,85],ry:[30,78]},
+    {id:'synCursor3',x:48,y:72,dx:.12,dy:-.2,rx:[28,68],ry:[55,88]}
+  ];
+  function step(){
+    cursors.forEach(function(c){
+      var el=document.getElementById(c.id);
+      if(!el)return;
+      c.x+=c.dx*(0.4+Math.random()*.5);
+      c.y+=c.dy*(0.4+Math.random()*.5);
+      if(c.x<c.rx[0]||c.x>c.rx[1])c.dx*=-1;
+      if(c.y<c.ry[0]||c.y>c.ry[1])c.dy*=-1;
+      el.style.left=c.x+'%';
+      el.style.top=c.y+'%';
+    });
+    setTimeout(step,1600+Math.floor(Math.random()*1000));
+  }
+  step();
+}
+
+function synCycleStatus(){
+  var counts=[2,3,3,4,2,5,3,2];
+  var i=0;
+  setInterval(function(){
+    i=(i+1)%counts.length;
+    var el=document.getElementById('synStatusText');
+    if(el)el.textContent=counts[i]+' étudiants dans cette carte';
+  },28000);
+}
+
+function synInit(){
+  if(synInited)return;
+  synInited=true;
+  var outer=document.getElementById('synCanvasOuter');
+  var W=(outer&&outer.clientWidth)||800;
+  var H=(outer&&outer.clientHeight)||500;
+  var root=synMakeNode('Dauphine L1',Math.max(10,W/2-62),Math.max(10,H/2-19),true);
+  root.w=140;
+  synNodes=[root];synLinks=[];synSelected=null;
+  synRender();
+  synSetupCanvas();
+  synAnimateCursors();
+  synCycleStatus();
+}
 
 })();
 </script>
