@@ -5376,6 +5376,9 @@ aside.sidebar {
 [data-theme="dark"] .annales-flash-add{background:transparent;border-color:#5aadff;color:#5aadff}
 [data-theme="dark"] .annales-flash-add:hover{background:#1e40af}
 .annales-section-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);margin-bottom:10px;margin-top:18px}
+.annales-pdf-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.annales-pdf-btn{font-size:12px!important;padding:5px 12px!important}
+.annales-pdf-status{font-size:12px;color:var(--g500);font-weight:500}
 
 </style>
 </head>
@@ -10249,6 +10252,11 @@ aside.sidebar {
         </div>
         <div class="prof-field">
           <label for="annalesInput">Texte des annales</label>
+          <div class="annales-pdf-bar">
+            <button class="prof-btn ghost annales-pdf-btn" type="button" onclick="annalesPdfTrigger()">📎 Importer un PDF</button>
+            <span class="annales-pdf-status" id="annalesPdfStatus"></span>
+            <input type="file" id="annalesPdfInput" accept=".pdf,application/pdf" style="display:none" onchange="annalesPdfImport(this)">
+          </div>
           <textarea class="prof-textarea tall" id="annalesInput" placeholder="Colle ici les sujets d'examen (dissertations, cas pratiques, QCM…). Ex :&#10;&#10;Session 2023 :&#10;Sujet 1 : Le bicamérisme sous la Ve République&#10;Sujet 2 : Le contrôle de constitutionnalité...&#10;&#10;Session 2024 :&#10;..."></textarea>
         </div>
         <div class="prof-actions">
@@ -26189,7 +26197,59 @@ window.annalesReset = function() {
   document.getElementById('annalesInput').value = '';
   document.getElementById('annalesMatiere').value = '';
   document.getElementById('annalesResult').innerHTML = '<div class="annales-result-empty"><div><div style="font-size:42px">🔍</div><strong>L\'analyse apparaîtra ici</strong><span>Choisis une matière, colle tes annales et lance l\'analyse.</span></div></div>';
+  var st = document.getElementById('annalesPdfStatus');
+  if (st) st.textContent = '';
+  var inp = document.getElementById('annalesPdfInput');
+  if (inp) inp.value = '';
 };
+
+window.annalesPdfTrigger = function() {
+  document.getElementById('annalesPdfInput').click();
+};
+
+window.annalesPdfImport = async function(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var status = document.getElementById('annalesPdfStatus');
+  status.textContent = '⏳ Extraction en cours…';
+
+  try {
+    var pdfjsLib = await annalesLoadPdfJs();
+    var arrayBuffer = await file.arrayBuffer();
+    var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    var texts = [];
+    for (var i = 1; i <= pdf.numPages; i++) {
+      var page = await pdf.getPage(i);
+      var content = await page.getTextContent();
+      var pageText = content.items.map(function(item) { return item.str; }).join(' ');
+      texts.push(pageText.trim());
+    }
+    var fullText = texts.filter(Boolean).join('\n\n');
+    if (!fullText.trim()) throw new Error('Aucun texte extrait — le PDF est peut-être une image scannée.');
+    var ta = document.getElementById('annalesInput');
+    ta.value = ta.value ? ta.value + '\n\n' + fullText : fullText;
+    status.textContent = '✅ ' + file.name + ' (' + pdf.numPages + ' page' + (pdf.numPages > 1 ? 's' : '') + ')';
+    toast('PDF importé avec succès 📄', '✅');
+  } catch(e) {
+    status.textContent = '❌ ' + (e.message || 'Erreur lors de l\'import');
+    toast('Erreur PDF : ' + (e.message || 'Import échoué'), '❌');
+  }
+  input.value = '';
+};
+
+function annalesLoadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return new Promise(function(resolve, reject) {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.onload = function() {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = function() { reject(new Error('Impossible de charger PDF.js')); };
+    document.head.appendChild(script);
+  });
+}
 
 })();
 </script>
