@@ -5070,8 +5070,10 @@ aside.sidebar {
 /* ═══════════════════════════════════════════════════════════════
    MIND MAP IA
 ═══════════════════════════════════════════════════════════════ */
-.mm-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+.mm-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:stretch}
 @media(max-width:900px){.mm-layout{grid-template-columns:1fr}}
+#mmPane1>.wrap{flex:1;display:flex;flex-direction:column}
+#mmPane1 .mm-layout{flex:1;min-height:500px}
 .mm-map-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shs);overflow:hidden;position:relative;min-height:420px;display:flex;flex-direction:column}
 [data-theme="dark"] .mm-map-card{background:var(--bg-card);border-color:var(--border-col)}
 .mm-svg-wrap{flex:1;overflow:hidden;cursor:grab;user-select:none;min-height:400px}
