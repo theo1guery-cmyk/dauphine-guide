@@ -22449,7 +22449,7 @@ function oralRenderReport(report, compareDelta) {
   html += '</div>';
 
   html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Synthèse</strong><p>' + profNl2br(report.resume || 'Session terminée.') + '</p></div>';
-  if (report.verdict_dauphine) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Ce qu'un vrai correcteur Dauphine aurait pensé</strong><p>' + profNl2br(report.verdict_dauphine) + '</p></div>';
+  if (report.verdict_dauphine) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Ce qu\'un vrai correcteur Dauphine aurait pensé</strong><p>' + profNl2br(report.verdict_dauphine) + '</p></div>';
   if (strengths.length) {
     html += '<div class="prof-section-label">Points forts</div><div class="prof-pill-list">';
     strengths.forEach(function(item) { html += '<div class="prof-pill good">' + profEscapeHtml(item) + '</div>'; });
