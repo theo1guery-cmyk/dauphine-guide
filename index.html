@@ -25284,6 +25284,7 @@ function mmHistoryRefresh() {
   } catch(e) {}
 }
 
+window.mmHistoryRefresh = mmHistoryRefresh;
 window.mmHistoryToggle = function() {
   var panel = document.getElementById('mmHistoryPanel');
   if (panel) panel.classList.toggle('open');
