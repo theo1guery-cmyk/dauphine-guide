@@ -5086,6 +5086,9 @@ aside.sidebar {
 .syn-btn{padding:6px 13px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--bg-card);color:var(--g600);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:4px}
 .syn-btn:hover,.syn-btn.active{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
 .syn-btn.danger:hover{border-color:#ef4444;color:#ef4444;background:#fef2f2}
+@keyframes synSavePop{0%{transform:scale(1)}40%{transform:scale(1.12)}70%{transform:scale(.97)}100%{transform:scale(1)}}
+.syn-btn.saved{border-color:#16a34a!important;color:#16a34a!important;background:#f0fdf4!important;animation:synSavePop .35s ease}
+[data-theme="dark"] .syn-btn.saved{background:#052e16!important}
 .syn-status{margin-left:auto;font-size:11px;color:var(--g400);display:flex;align-items:center;gap:5px}
 .syn-status-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:synPulse 2s infinite}
 @keyframes synPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
@@ -10081,7 +10084,7 @@ aside.sidebar {
       </div>
       <div class="syn-title-bar" id="synTitleBar">
         <input type="text" id="synTitleInput" class="syn-title-input" placeholder="Titre de la carte…" maxlength="60" value="Nouvelle carte"/>
-        <button class="syn-btn" onclick="synSaveCurrentMap()">💾 Sauvegarder</button>
+        <button class="syn-btn" id="synSaveBtn" onclick="synSaveCurrentMap()">💾 Sauvegarder</button>
         <button class="syn-btn" id="synMapsPanelBtn" onclick="synToggleMapsPanel()">📂 Mes cartes</button>
         <button class="syn-btn" onclick="synNewMap()">✨ Nouvelle</button>
       </div>
@@ -27016,7 +27019,7 @@ var synDragNode=null,synDragOff={x:0,y:0};
 var synVX=0,synVY=0,synVS=1.0;
 var synPanning=false,synPanStart={x:0,y:0},synPanOrigin={x:0,y:0};
 var synCollabCode=null,synCollabUnsub=null,synCollabPresRef=null;
-var synCollabPushTimer=null,synSessionStart=0;
+var synCollabPushTimer=null,synLocalSaveTimer=null,synSessionStart=0;
 
 var SYN_ROOT_CLR='#003d7a';
 var SYN_BRANCH_CLRS=['#0057ad','#1a73c8','#2d8de0','#4da6f5'];
@@ -27343,6 +27346,24 @@ window.synSaveCurrentMap=function(){
   }
   synSetMaps(maps);
   synRenderMapsPanel();
+  /* show confirmation animation on the save button */
+  var saveBtn=document.getElementById('synSaveBtn');
+  if(saveBtn){
+    clearTimeout(saveBtn._savedTimer);
+    saveBtn.textContent='✓ Sauvegardé';
+    saveBtn.classList.add('saved');
+    saveBtn._savedTimer=setTimeout(function(){
+      saveBtn.classList.remove('saved');
+      saveBtn.textContent='💾 Sauvegarder';
+    },2000);
+  }
+  /* auto-open the maps panel so the user can see their list */
+  var panel=document.getElementById('synMapsPanel');
+  var panelBtn=document.getElementById('synMapsPanelBtn');
+  if(panel&&panel.style.display==='none'){
+    panel.style.display='block';
+    if(panelBtn)panelBtn.classList.add('active');
+  }
   toast('Carte sauvegardée ✓','💾');
 };
 
@@ -27543,7 +27564,33 @@ window.synCopyCode=function(){
     .catch(function(){toast(synCollabCode,'📋');});
 };
 
+function synAutoSaveLocal(){
+  var inp=document.getElementById('synTitleInput');
+  var title=(inp&&inp.value.trim())||'Carte sans titre';
+  var maps=synGetMaps();
+  var snap=synMapSnapshot();
+  if(synCurrentMapId){
+    var idx=-1;
+    for(var i=0;i<maps.length;i++){if(maps[i].id===synCurrentMapId){idx=i;break;}}
+    if(idx>=0){
+      maps[idx]=Object.assign(maps[idx],{title:title,updatedAt:Date.now()},snap);
+    }else{
+      synCurrentMapId=null;
+    }
+  }
+  if(!synCurrentMapId){
+    var id='syn-'+Date.now();
+    synCurrentMapId=id;
+    if(inp&&!inp.value.trim())inp.value=title;
+    maps.unshift(Object.assign({id:id,title:title,createdAt:Date.now(),updatedAt:Date.now()},snap));
+  }
+  synSetMaps(maps);
+  synRenderMapsPanel();
+}
+
 function synSchedulePush(){
+  clearTimeout(synLocalSaveTimer);
+  synLocalSaveTimer=setTimeout(synAutoSaveLocal,800);
   if(!synCollabCode||!window._fb)return;
   clearTimeout(synCollabPushTimer);
   synCollabPushTimer=setTimeout(function(){
