@@ -7729,11 +7729,13 @@ aside.sidebar {
               <input class="prof-input" id="oralPartTopic" placeholder="Ex: La séparation des pouvoirs dans la Ve République" />
             </div>
 
+            <div class="prof-section-label">📝 Contenu du cours</div>
             <div class="prof-field">
               <label for="oralCourse">Ton cours</label>
               <textarea class="prof-textarea tall" id="oralCourse" placeholder="Colle ici ton cours, tes notes ou une fiche. Le simulateur prépare ses questions à partir de ce texte."></textarea>
             </div>
 
+            <div class="prof-section-label">🎙️ Voix &amp; ambiance</div>
             <div class="oral-row">
               <div class="prof-field">
                 <label for="oralVoiceSelect">Voix du professeur</label>
@@ -7775,7 +7777,7 @@ aside.sidebar {
             <div class="oral-live">
               <label for="oralLiveTranscript" style="display:block;font-size:12px;font-weight:700;color:var(--g700)">Transcription en direct / réponse editable</label>
               <textarea class="prof-textarea" id="oralLiveTranscript" placeholder="Ta réponse transcrite apparait ici (tu peux corriger avant envoi)." disabled></textarea>
-              <div class="oral-note-live"><span class="oral-note-dot" id="oralNoteDot"></span><span id="oralNoteLabel">Le prof prend des notes…</span></div>
+              <div class="oral-note-live"><span class="oral-note-dot" id="oralNoteDot"></span><span id="oralNoteLabel">Le prof prend des notes…</span><span class="oral-wave" id="oralWave"><span class="oral-wave-bar"></span><span class="oral-wave-bar"></span><span class="oral-wave-bar"></span><span class="oral-wave-bar"></span><span class="oral-wave-bar"></span></span></div>
             </div>
           </div>
 
@@ -7784,9 +7786,23 @@ aside.sidebar {
             <div class="prof-card-sub" id="oralCompat">Chrome/Edge recommandé pour la reconnaissance vocale.</div>
             <div class="oral-status">
               <div class="oral-chip" id="oralStatusChip">Prêt</div>
-              <div class="oral-chip" id="oralTimerChip">⏱️ 12:00</div>
-              <div class="oral-chip" id="oralTurnChip">Tour 0/6</div>
+              <div class="oral-chip" id="oralTimerChip" style="display:none">⏱️ 12:00</div>
+              <div class="oral-chip" id="oralTurnChip">Question 0/6</div>
               <div class="oral-chip" id="oralModeChip">Mode normal</div>
+            </div>
+            <div class="oral-timer-ring" id="oralTimerRingWrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" class="oral-timer-arc-bg"/>
+                <circle cx="50" cy="50" r="42" class="oral-timer-arc-fg" id="oralTimerArc" stroke-dasharray="263.9" stroke-dashoffset="0"/>
+                <text x="50" y="46" class="oral-timer-ring-text" id="oralTimerRingText">12:00</text>
+                <text x="50" y="60" class="oral-timer-ring-label">temps restant</text>
+              </svg>
+            </div>
+            <div class="oral-q-track" id="oralQTrack"></div>
+            <div class="oral-score-live" id="oralScoreLive" style="display:none">
+              <span>Score estimé</span>
+              <span class="oral-score-live-val" id="oralScoreLiveVal">12.0</span>
+              <span class="oral-score-delta neutral" id="oralScoreLiveDelta">—</span>
             </div>
             <div class="oral-chat" id="oralChat">
               <div class="oral-msg system">Le professeur IA apparaîtra ici au lancement de la session.</div>
@@ -21494,6 +21510,7 @@ var oralState = {
   timerId: null,
   silenceTimerId: null,
   secondsLeft: 12 * 60,
+  totalSeconds: 12 * 60,
   listening: false,
   recognition: null,
   currentQuestion: '',
@@ -21511,6 +21528,102 @@ var oralState = {
 
 function oralSupportsRecognition() {
   return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function oralUpdateTimerRing(secondsLeft, totalSeconds) {
+  var arc = document.getElementById('oralTimerArc');
+  var text = document.getElementById('oralTimerRingText');
+  if (!arc || !text) return;
+  var total = totalSeconds || (12 * 60);
+  var circumference = 263.9;
+  var frac = Math.max(0, Math.min(1, secondsLeft / total));
+  arc.setAttribute('stroke-dashoffset', (circumference * (1 - frac)).toFixed(2));
+  arc.setAttribute('stroke', secondsLeft <= 120 ? '#dc2626' : (secondsLeft <= 300 ? '#f59e0b' : '#003d7a'));
+  text.textContent = oralFormatClock(secondsLeft);
+}
+
+function oralUpdateQTrack() {
+  var box = document.getElementById('oralQTrack');
+  if (!box) return;
+  var n = oralState.maxTurns || 6;
+  var html = '';
+  for (var i = 0; i < n; i++) {
+    var cls = 'oral-q-dot';
+    if (i < oralState.currentIndex) cls += ' done';
+    else if (i === oralState.currentIndex && oralState.active) cls += ' current';
+    html += '<span class="' + cls + '"></span>';
+  }
+  box.innerHTML = html;
+}
+
+function oralUpdateScoreLive(prevScore) {
+  var wrap = document.getElementById('oralScoreLive');
+  var val = document.getElementById('oralScoreLiveVal');
+  var delta = document.getElementById('oralScoreLiveDelta');
+  if (!wrap || !val || !delta) return;
+  if (!oralState.active) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  val.textContent = oralState.score.toFixed(1);
+  if (prevScore == null) {
+    delta.textContent = '—';
+    delta.className = 'oral-score-delta neutral';
+  } else {
+    var d = oralState.score - prevScore;
+    if (Math.abs(d) < 0.01) {
+      delta.textContent = '=';
+      delta.className = 'oral-score-delta neutral';
+    } else if (d > 0) {
+      delta.textContent = '+' + d.toFixed(1);
+      delta.className = 'oral-score-delta pos';
+    } else {
+      delta.textContent = d.toFixed(1);
+      delta.className = 'oral-score-delta neg';
+    }
+  }
+}
+
+function oralRadarSvg(criteres) {
+  var cx = 75, cy = 75, r = 52;
+  var axes = [
+    { label: 'Fond', val: Number(criteres.fond || 0) },
+    { label: 'Structure', val: Number(criteres.structure || 0) },
+    { label: 'Précision', val: Number(criteres.precision || 0) },
+    { label: 'Forme', val: Number(criteres.forme || 0) }
+  ];
+  var n = axes.length;
+  function getPoint(i, frac) {
+    var angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    return { x: cx + Math.cos(angle) * r * frac, y: cy + Math.sin(angle) * r * frac };
+  }
+  var gridHtml = [0.25, 0.5, 0.75, 1].map(function(frac) {
+    var pts = [];
+    for (var i = 0; i < n; i++) { var p = getPoint(i, frac); pts.push(p.x.toFixed(1) + ',' + p.y.toFixed(1)); }
+    return '<polygon points="' + pts.join(' ') + '" class="r-grid"/>';
+  }).join('');
+  var axesHtml = '';
+  for (var i = 0; i < n; i++) {
+    var tip = getPoint(i, 1);
+    axesHtml += '<line x1="' + cx + '" y1="' + cy + '" x2="' + tip.x.toFixed(1) + '" y2="' + tip.y.toFixed(1) + '" class="r-axis"/>';
+  }
+  var areaPoints = axes.map(function(a, i) {
+    var frac = Math.min(Math.max(a.val, 0), 20) / 20;
+    var p = getPoint(i, frac);
+    return p.x.toFixed(1) + ',' + p.y.toFixed(1);
+  }).join(' ');
+  var dotsHtml = axes.map(function(a, i) {
+    var frac = Math.min(Math.max(a.val, 0), 20) / 20;
+    var p = getPoint(i, frac);
+    return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3" class="r-dot"/>';
+  }).join('');
+  var labelsHtml = axes.map(function(a, i) {
+    var p = getPoint(i, 1.25);
+    return '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" class="r-label">' + a.label + '</text>';
+  }).join('');
+  return '<div class="oral-radar-wrap"><svg class="oral-radar-svg" width="150" height="150" viewBox="0 0 150 150">'
+    + gridHtml + axesHtml
+    + '<polygon points="' + areaPoints + '" class="r-area"/>'
+    + dotsHtml + labelsHtml
+    + '</svg></div>';
 }
 
 function oralGetSpecialMode() {
@@ -21578,15 +21691,24 @@ function oralRefreshChips() {
   if (timerChip) timerChip.textContent = '⏱️ ' + oralFormatClock(oralState.secondsLeft);
   if (turnChip) turnChip.textContent = 'Question ' + oralState.turn + '/' + oralState.maxTurns;
   if (modeChip) modeChip.textContent = 'Mode ' + oralGetSpecialMode();
+  oralUpdateTimerRing(oralState.secondsLeft, oralState.totalSeconds);
+  oralUpdateQTrack();
 }
 
 function oralPushMessage(role, text) {
   var chat = document.getElementById('oralChat');
   if (!chat) return;
-  var msg = document.createElement('div');
-  msg.className = 'oral-msg ' + role;
-  msg.innerHTML = profNl2br(text || '');
-  chat.appendChild(msg);
+  var wrapper = document.createElement('div');
+  if (role === 'system') {
+    wrapper.className = 'oral-msg system';
+    wrapper.innerHTML = profNl2br(text || '');
+  } else {
+    wrapper.className = 'oral-msg-row';
+    var icon = role === 'prof' ? '🎓' : '✏️';
+    wrapper.innerHTML = '<span class="oral-avatar ' + role + '">' + icon + '</span>'
+      + '<div class="oral-msg ' + role + '">' + profNl2br(text || '') + '</div>';
+  }
+  chat.appendChild(wrapper);
   chat.scrollTop = chat.scrollHeight;
 }
 
@@ -21634,6 +21756,10 @@ function oralSpeak(text) {
   var sel = document.getElementById('oralVoiceSelect');
   var voices = window.speechSynthesis.getVoices();
   if (sel && voices && voices.length && voices[Number(sel.value)]) u.voice = voices[Number(sel.value)];
+  var avatars = document.querySelectorAll('.oral-avatar.prof');
+  avatars.forEach(function(a) { a.classList.add('speaking'); });
+  u.onend = function() { avatars.forEach(function(a) { a.classList.remove('speaking'); }); };
+  u.onerror = function() { avatars.forEach(function(a) { a.classList.remove('speaking'); }); };
   window.speechSynthesis.speak(u);
 }
 
@@ -21642,6 +21768,8 @@ function oralStopListeningUi() {
   oralSetNotesLive(false);
   var btn = document.getElementById('oralListenBtn');
   if (btn) btn.textContent = '🎤 Commencer à parler';
+  var wave = document.getElementById('oralWave');
+  if (wave) wave.classList.remove('active');
 }
 
 function oralInitRecognition() {
@@ -21699,6 +21827,8 @@ function toggleOralListening() {
     oralState.lastSpeechAt = Date.now();
     oralSetNotesLive(true);
     if (btn) btn.textContent = '⏹️ Stop micro';
+    var wave = document.getElementById('oralWave');
+    if (wave) wave.classList.add('active');
   } catch (e) {
     toast('Micro deja actif ou indisponible', '⚠️');
   }
@@ -21849,9 +21979,16 @@ function resetOralSimulator() {
   oralSetControlState(false);
   oralSetStatus('Pret', false);
   oralSetNotesLive(false);
+  oralState.totalSeconds = 12 * 60;
   oralRefreshChips();
   var t = document.getElementById('oralLiveTranscript');
   if (t) t.value = '';
+  var scoreEl = document.getElementById('oralScoreLive');
+  if (scoreEl) scoreEl.style.display = 'none';
+  var wave = document.getElementById('oralWave');
+  if (wave) wave.classList.remove('active');
+  var avatars = document.querySelectorAll('.oral-avatar.prof');
+  avatars.forEach(function(a) { a.classList.remove('speaking'); });
   var chat = document.getElementById('oralChat');
   if (chat) chat.innerHTML = '<div class="oral-msg system">Le professeur IA apparaitra ici au lancement de la session.</div>';
   oralResetResultPanel();
@@ -22016,6 +22153,7 @@ async function startOralSession() {
     oralState.score = special === 'concours' ? 10.5 : 12;
     oralState.jokerUsed = false;
     oralState.secondsLeft = (format === 'soutenance' ? 15 : 12) * 60;
+    oralState.totalSeconds = oralState.secondsLeft;
     oralState.history = [];
     oralState.recentFeedbacks = [];
 
@@ -22056,6 +22194,8 @@ async function startOralSession() {
     }
     oralSpeak(intro + ' ' + firstQuestion);
     oralStartTimer();
+    oralUpdateQTrack();
+    oralUpdateScoreLive(null);
   } catch (error) {
     toast(error.message || 'Impossible de demarrer l oral', '❌');
   } finally {
@@ -22093,6 +22233,14 @@ async function submitOralAnswer() {
   oralMaybeInterrupt(answer);
   if (input) input.value = '';
 
+  var oralTypingId = 'oralTyping_' + Date.now();
+  var oralTypingEl = document.createElement('div');
+  oralTypingEl.id = oralTypingId;
+  oralTypingEl.className = 'oral-msg-row';
+  oralTypingEl.innerHTML = '<span class="oral-avatar prof">��</span><div class="oral-msg prof oral-typing"><span class="oral-typing-dot"></span><span class="oral-typing-dot"></span><span class="oral-typing-dot"></span></div>';
+  var oralTypingChat = document.getElementById('oralChat');
+  if (oralTypingChat) { oralTypingChat.appendChild(oralTypingEl); oralTypingChat.scrollTop = oralTypingChat.scrollHeight; }
+
   oralSetStatus('Correction et relance...', false);
   try {
     var special = oralGetSpecialMode();
@@ -22113,6 +22261,8 @@ async function submitOralAnswer() {
       + 'Question actuelle: ' + oralState.currentQuestion + '.\nHistorique recent:\n' + context;
 
     var data = profParseJson(await profRequest(prompt, 700, 0.3));
+    var typingRemove = document.getElementById(oralTypingId);
+    if (typingRemove && typingRemove.parentNode) typingRemove.parentNode.removeChild(typingRemove);
     if (!data || (!data.relance && !data.next_focus)) throw new Error('Relance indisponible');
 
     var feedback = String(data.feedback || 'Reponse recue.');
@@ -22123,7 +22273,9 @@ async function submitOralAnswer() {
     var heuristicPositive = /bon|correct|precis|solide|juste|pertinent/i.test(feedback);
     if (!isCorrect && heuristicPositive && Number(data.score_delta || 0) >= 1) isCorrect = true;
     var delta = Number(data.score_delta || 0);
+    var prevScoreForUpdate = oralState.score;
     oralState.score = oralClampScore(oralState.score + Math.max(-2, Math.min(2, delta)));
+    oralUpdateScoreLive(prevScoreForUpdate);
 
     if (!isCorrect) oralState.retryCount += 1;
 
@@ -22170,6 +22322,8 @@ async function submitOralAnswer() {
     oralSetStatus('Oral en cours', false);
     oralRenderReplay();
   } catch (error) {
+    var typingClean = document.getElementById(oralTypingId);
+    if (typingClean && typingClean.parentNode) typingClean.parentNode.removeChild(typingClean);
     oralPushMessage('system', '❌ Impossible de generer la relance: ' + (error.message || 'erreur inconnue'));
     oralSetStatus('Erreur API', true);
   }
@@ -22183,28 +22337,48 @@ function oralRenderReport(report, compareDelta) {
   var strengths = Array.isArray(report.points_forts) ? report.points_forts : [];
   var axes = Array.isArray(report.axes_amelioration) ? report.axes_amelioration : [];
   var compareTxt = '';
+  var compareColor = '#64748b';
   if (typeof compareDelta === 'number') {
-    compareTxt = compareDelta === 0 ? 'Stable vs session precedente.' : (compareDelta > 0 ? ('Progression de +' + compareDelta.toFixed(1) + ' point(s).') : ('Baisse de ' + compareDelta.toFixed(1) + ' point(s).'));
+    if (compareDelta === 0) { compareTxt = 'Stable vs session précédente.'; }
+    else if (compareDelta > 0) { compareTxt = '↑ Progression de +' + compareDelta.toFixed(1) + ' point(s).'; compareColor = '#16a34a'; }
+    else { compareTxt = '↓ Baisse de ' + compareDelta.toFixed(1) + ' point(s).'; compareColor = '#dc2626'; }
   }
 
+  var srCirc = 201.1;
+  var srOffset = (srCirc * (1 - Math.min(Math.max(note, 0), 20) / 20)).toFixed(1);
+  var srColor = note >= 14 ? '#16a34a' : note >= 10 ? '#003d7a' : '#dc2626';
+
   var html = '<div class="oral-report">';
-  html += '<div class="oral-report-grid">';
-  html += '<div class="oral-report-kpi"><strong>Note finale</strong><span>' + note.toFixed(1) + '/20</span></div>';
+
+  html += '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:10px">';
+  html += '<div class="oral-score-ring">';
+  html += '<svg class="oral-score-ring-svg" width="80" height="80" viewBox="0 0 80 80">';
+  html += '<circle cx="40" cy="40" r="32" class="sr-bg"/>';
+  html += '<circle cx="40" cy="40" r="32" class="sr-fg" stroke="' + srColor + '" stroke-dasharray="' + srCirc + '" stroke-dashoffset="' + srOffset + '"/>';
+  html += '</svg>';
+  html += '<div><div class="oral-score-ring-val">' + note.toFixed(1) + '<span style="font-size:14px;font-weight:600;color:#64748b">/20</span></div>';
+  html += '<div class="oral-score-ring-sub">Note finale</div>';
+  if (compareTxt) html += '<div class="oral-score-ring-compare" style="color:' + compareColor + '">' + profEscapeHtml(compareTxt) + '</div>';
+  html += '</div></div>';
+  html += oralRadarSvg({ fond: Number(c.fond || note), forme: Number(c.forme || note), structure: Number(c.structure || note), precision: Number(c.precision || note) });
+  html += '</div>';
+
+  html += '<div class="oral-report-kpis-grid">';
   html += '<div class="oral-report-kpi"><strong>Fond</strong><span>' + Number(c.fond || note).toFixed(1) + '</span></div>';
   html += '<div class="oral-report-kpi"><strong>Forme</strong><span>' + Number(c.forme || note).toFixed(1) + '</span></div>';
   html += '<div class="oral-report-kpi"><strong>Structure</strong><span>' + Number(c.structure || note).toFixed(1) + '</span></div>';
-  html += '<div class="oral-report-kpi"><strong>Precision juridique</strong><span>' + Number(c.precision || note).toFixed(1) + '</span></div>';
+  html += '<div class="oral-report-kpi"><strong>Précision</strong><span>' + Number(c.precision || note).toFixed(1) + '</span></div>';
   html += '</div>';
-  html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Synthese</strong><p>' + profNl2br(report.resume || 'Session terminee.') + '</p></div>';
-  if (report.verdict_dauphine) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Ce qu un vrai correcteur Dauphine aurait pense</strong><p>' + profNl2br(report.verdict_dauphine) + '</p></div>';
-  if (compareTxt) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Comparaison session precedente</strong><p>' + profNl2br(compareTxt) + '</p></div>';
+
+  html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Synthèse</strong><p>' + profNl2br(report.resume || 'Session terminée.') + '</p></div>';
+  if (report.verdict_dauphine) html += '<div class="prof-feedback"><strong style="display:block;margin-bottom:6px">Ce qu'un vrai correcteur Dauphine aurait pensé</strong><p>' + profNl2br(report.verdict_dauphine) + '</p></div>';
   if (strengths.length) {
     html += '<div class="prof-section-label">Points forts</div><div class="prof-pill-list">';
     strengths.forEach(function(item) { html += '<div class="prof-pill good">' + profEscapeHtml(item) + '</div>'; });
     html += '</div>';
   }
   if (axes.length) {
-    html += '<div class="prof-section-label">Points faibles / axes d amelioration</div><div class="prof-pill-list">';
+    html += '<div class="prof-section-label">Points à améliorer</div><div class="prof-pill-list">';
     axes.forEach(function(item) { html += '<div class="prof-pill warn">' + profEscapeHtml(item) + '</div>'; });
     html += '</div>';
   }
