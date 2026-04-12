@@ -4964,53 +4964,86 @@ aside.sidebar {
 .traj-hero-scroll-cta .arrow-down{display:inline-block;animation:trajBounceDown 2s ease-in-out infinite}
 @keyframes trajBounceDown{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 
-/* ── Network Section ── */
-.traj-network-section{position:relative;min-height:100vh;padding:60px 20px 80px;background:linear-gradient(180deg,#0f1d32 0%,#0a1525 100%)}
-.traj-network-header{text-align:center;margin-bottom:40px}
-.traj-network-header h2{font-family:'Josefin Sans',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
-.traj-network-header p{font-size:13px;color:rgba(255,255,255,.4);letter-spacing:.04em}
+/* ── Bubble Universe Section ── */
+.traj-bubbles-section{position:relative;min-height:100vh;padding:80px 20px 60px;background:linear-gradient(180deg,#0f1d32 0%,#0a1525 50%,#060e1e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.traj-bubbles-area{position:relative;width:100%;max-width:600px;height:500px;margin:0 auto}
 
-/* Toolbar */
-.traj-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin-bottom:32px}
-.traj-domain-btn{padding:8px 18px;border-radius:24px;border:1.5px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.5);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.04em}
-.traj-domain-btn:hover{border-color:rgba(255,255,255,.3);color:#fff}
-.traj-domain-btn.active{color:#fff}
-.traj-domain-btn[data-domain="all"].active{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
-.traj-domain-btn[data-domain="Droit"].active{background:rgba(77,159,255,.2);border-color:#4d9fff;color:#4d9fff}
-.traj-domain-btn[data-domain="Finance"].active{background:rgba(251,191,36,.15);border-color:#fbbf24;color:#fbbf24}
-.traj-domain-btn[data-domain="Santé"].active{background:rgba(16,185,129,.15);border-color:#10b981;color:#10b981}
-.traj-domain-btn[data-domain="International"].active{background:rgba(168,85,247,.15);border-color:#a855f7;color:#a855f7}
-.traj-compare-toggle{padding:8px 18px;border-radius:24px;border:1.5px solid rgba(212,168,83,.3);background:transparent;color:#d4a853;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.04em;margin-left:8px}
-.traj-compare-toggle:hover{background:rgba(212,168,83,.1)}
-.traj-compare-toggle.active{background:rgba(212,168,83,.2);border-color:#d4a853}
+/* Energy lines SVG */
+.traj-energy-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.traj-energy-line{stroke:rgba(255,255,255,.08);stroke-width:1;stroke-dasharray:8 8;fill:none;animation:trajEnergyFlow 1.2s linear infinite}
+@keyframes trajEnergyFlow{to{stroke-dashoffset:-30}}
 
-/* SVG network */
-.traj-svg-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;aspect-ratio:4/3}
-.traj-svg-wrap svg{width:100%;height:100%}
-.traj-node-group{cursor:pointer}
-.traj-node-group.dimmed{opacity:.12;pointer-events:none}
-.traj-node-group.dimmed-compare{opacity:.3}
-.traj-node-circle{transition:r .3s,filter .3s,stroke-width .3s}
-.traj-node-group:hover .traj-node-circle{filter:drop-shadow(0 0 12px var(--nc));stroke-width:2.5}
-.traj-node-group.selected .traj-node-circle{stroke:#d4a853;stroke-width:3;filter:drop-shadow(0 0 16px #d4a853)}
-.traj-node-label{fill:#fff;font-size:10px;font-weight:600;pointer-events:none;text-anchor:middle;dominant-baseline:central;opacity:.85}
-.traj-edge{stroke-width:1;opacity:.12;fill:none}
-.traj-edge-cross{stroke:#fff;stroke-dasharray:3 5;opacity:.06;fill:none;stroke-width:.5}
-.traj-node-group .traj-node-reveal{transform:scale(0);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s;transform-origin:center center}
-.traj-node-group.revealed .traj-node-reveal{transform:scale(1);opacity:1}
+/* Floating micro-particles */
+.traj-micro-particles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.traj-micro-dot{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(255,255,255,.15);animation:trajMicroDrift var(--md,8s) ease-in-out infinite alternate}
+@keyframes trajMicroDrift{0%{transform:translate(0,0);opacity:.1}50%{opacity:.3}100%{transform:translate(var(--dx,20px),var(--dy,-20px));opacity:.1}}
 
-/* Tooltip */
-.traj-tooltip{position:absolute;pointer-events:none;background:rgba(10,21,37,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;z-index:100;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;min-width:180px}
-.traj-tooltip.vis{opacity:1;transform:translateY(0)}
-.traj-tooltip-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
-.traj-tooltip-salary{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px}
-.traj-tooltip-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:700;color:#fff;letter-spacing:.04em;text-transform:uppercase}
+/* Domain Bubbles */
+.traj-bubble{position:absolute;z-index:2;width:160px;height:160px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);transition:transform .4s cubic-bezier(.4,0,.2,1),box-shadow .4s cubic-bezier(.4,0,.2,1),opacity .4s cubic-bezier(.4,0,.2,1),border-color .3s;will-change:transform;animation:trajBubbleFloat var(--bf-dur,5s) ease-in-out infinite,trajBubbleGlow var(--bg-dur,4s) ease-in-out infinite}
+.traj-bubble:hover{transform:translateY(var(--bf-y,0px)) scale(1.12)!important;border-color:var(--bc)}
+.traj-bubble.hidden{opacity:0;pointer-events:none;transform:scale(.3)!important}
+.traj-bubble-emoji{font-size:36px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 0 8px var(--bc))}
+.traj-bubble-name{font-family:'Josefin Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.traj-bubble-count{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);background:rgba(255,255,255,.06);padding:2px 10px;border-radius:12px;letter-spacing:.04em}
 
-/* ── Fullscreen Detail Panel ── */
+/* Bubble positions — diamond layout */
+.traj-bubble[data-domain="Droit"]{top:20px;left:50%;transform:translateX(-50%);--bf-dur:5.2s;--bg-dur:4.5s;--bc:#4d9fff}
+.traj-bubble[data-domain="Finance"]{top:50%;right:20px;transform:translateY(-50%);--bf-dur:4.8s;--bg-dur:3.8s;--bc:#fbbf24}
+.traj-bubble[data-domain="Santé"]{top:50%;left:20px;transform:translateY(-50%);--bf-dur:5.6s;--bg-dur:4.2s;--bc:#10b981}
+.traj-bubble[data-domain="International"]{bottom:20px;left:50%;transform:translateX(-50%);--bf-dur:5s;--bg-dur:3.5s;--bc:#a855f7}
+
+@keyframes trajBubbleFloat{0%,100%{transform:translateY(0px)}50%{transform:translateY(-18px)}}
+@keyframes trajBubbleGlow{0%,100%{box-shadow:0 0 30px rgba(var(--bg-r,255),var(--bg-g,255),var(--bg-b,255),.15)}50%{box-shadow:0 0 60px rgba(var(--bg-r,255),var(--bg-g,255),var(--bg-b,255),.35),0 0 120px rgba(var(--bg-r,255),var(--bg-g,255),var(--bg-b,255),.1)}}
+
+/* Per-domain glow color vars */
+.traj-bubble[data-domain="Droit"]{--bg-r:77;--bg-g:159;--bg-b:255}
+.traj-bubble[data-domain="Finance"]{--bg-r:251;--bg-g:191;--bg-b:36}
+.traj-bubble[data-domain="Santé"]{--bg-r:16;--bg-g:185;--bg-b:129}
+.traj-bubble[data-domain="International"]{--bg-r:168;--bg-g:85;--bg-b:247}
+
+.traj-bubbles-hint{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,.3);letter-spacing:.04em;transition:opacity .4s}
+
+/* ── Domain Fullscreen View ── */
+.traj-domain-view{position:relative;min-height:100vh;padding:40px 20px 80px;background:linear-gradient(180deg,#0a1525 0%,#060e1e 100%);display:none;flex-direction:column;align-items:center;opacity:0;transition:opacity .4s cubic-bezier(.4,0,.2,1)}
+.traj-domain-view.active{display:flex;opacity:1}
+.traj-domain-view-header{display:flex;align-items:center;gap:16px;margin-bottom:12px;width:100%;max-width:800px}
+.traj-domain-back{padding:10px 22px;border-radius:28px;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .3s;backdrop-filter:blur(4px);letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.traj-domain-back:hover{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.08)}
+.traj-domain-view-title{font-family:'Josefin Sans',sans-serif;font-size:clamp(28px,6vw,48px);font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;margin:24px 0 8px;text-align:center;width:100%}
+.traj-domain-view-title .dv-emoji{margin-right:12px;font-size:clamp(32px,6vw,52px)}
+.traj-domain-view-sub{font-size:14px;color:rgba(255,255,255,.35);margin-bottom:32px;text-align:center}
+
+/* Compare toggle in domain view */
+.traj-dv-compare-toggle{padding:8px 20px;border-radius:24px;border:1.5px solid rgba(212,168,83,.3);background:transparent;color:#d4a853;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .25s;letter-spacing:.04em;margin-bottom:24px}
+.traj-dv-compare-toggle:hover{background:rgba(212,168,83,.1)}
+.traj-dv-compare-toggle.active{background:rgba(212,168,83,.2);border-color:#d4a853}
+
+/* Career Cards Grid */
+.traj-cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;width:100%;max-width:800px}
+.traj-career-card{background:rgba(255,255,255,.04);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;opacity:0;will-change:transform,opacity}
+.traj-career-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--card-color);border-radius:3px 0 0 3px}
+.traj-career-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.traj-career-card.compare-selected{border-color:#d4a853;box-shadow:0 0 20px rgba(212,168,83,.2)}
+.traj-career-card.compare-selected::after{content:'\2713';position:absolute;top:12px;right:12px;width:24px;height:24px;background:#d4a853;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#060e1e}
+.traj-career-card-title{font-family:'Josefin Sans',sans-serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:.04em;margin:0 0 8px;text-transform:uppercase}
+.traj-career-card-salary{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:8px;font-weight:600}
+.traj-career-card-desc{font-size:13px;color:rgba(255,255,255,.35);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Card cascade animations */
+.traj-career-card.slide-left{animation:trajCardSlideLeft .5s cubic-bezier(.4,0,.2,1) forwards}
+.traj-career-card.slide-right{animation:trajCardSlideRight .5s cubic-bezier(.4,0,.2,1) forwards}
+.traj-career-card.slide-out-left{animation:trajCardSlideOutLeft .3s cubic-bezier(.4,0,.2,1) forwards}
+.traj-career-card.slide-out-right{animation:trajCardSlideOutRight .3s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes trajCardSlideLeft{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes trajCardSlideRight{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes trajCardSlideOutLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-60px)}}
+@keyframes trajCardSlideOutRight{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(60px)}}
+
+/* ── Career Detail Overlay ── */
 #trajDetailOverlay{position:fixed;inset:0;background:rgba(6,14,30,.95);backdrop-filter:blur(20px);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
 #trajDetailOverlay.open{opacity:1;pointer-events:auto}
-.traj-detail-panel{width:90%;max-width:560px;max-height:85vh;overflow-y:auto;transform:translateY(40px);transition:transform .5s cubic-bezier(.22,1,.36,1);padding:48px 36px;position:relative}
-#trajDetailOverlay.open .traj-detail-panel{transform:translateY(0)}
+.traj-detail-panel{width:90%;max-width:560px;max-height:85vh;overflow-y:auto;transform:translateY(40px) scale(.95);transition:transform .5s cubic-bezier(.22,1,.36,1);padding:48px 36px;position:relative}
+#trajDetailOverlay.open .traj-detail-panel{transform:translateY(0) scale(1)}
 .traj-detail-close{position:absolute;top:0;right:0;width:40px;height:40px;border:1px solid rgba(255,255,255,.15);background:transparent;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);transition:all .2s;z-index:2}
 .traj-detail-close:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.05)}
 .traj-detail-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-bottom:18px}
@@ -5044,31 +5077,36 @@ aside.sidebar {
 .traj-compare-row-value.diff{color:#fbbf24}
 .traj-compare-hint{text-align:center;font-size:12px;color:rgba(255,255,255,.3);padding:20px 0}
 
-/* Chemins communs */
-.traj-chemins{max-width:900px;margin:60px auto 0;padding:0 20px}
-.traj-chemins h3{font-family:'Josefin Sans',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase;text-align:center;margin:0 0 20px}
-.traj-chemins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.traj-chemin-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;text-align:center}
-.traj-chemin-domains{display:flex;justify-content:center;gap:6px;margin-bottom:8px}
-.traj-chemin-dot{width:8px;height:8px;border-radius:50%}
-.traj-chemin-label{font-size:11px;color:rgba(255,255,255,.4);line-height:1.4}
-
 /* ── Responsive ── */
+@media(max-width:900px){
+  .traj-cards-grid{grid-template-columns:1fr}
+  .traj-bubble{width:130px;height:130px}
+  .traj-bubble-emoji{font-size:28px}
+  .traj-bubble-name{font-size:12px}
+  .traj-bubbles-area{max-width:460px;height:400px}
+}
 @media(max-width:640px){
   .traj-hero{min-height:85vh;padding:40px 16px 30px}
   .traj-orbital-wrap{width:220px;height:220px;margin-bottom:28px}
   .traj-hero-meta{gap:16px}
-  .traj-network-section{padding:40px 12px 60px}
-  .traj-svg-wrap{aspect-ratio:3/4}
-  .traj-node-label{font-size:8px}
+  .traj-bubbles-section{padding:40px 12px 40px}
+  .traj-bubbles-area{max-width:320px;height:340px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;position:static}
+  .traj-bubble{position:static!important;width:100px;height:100px;justify-self:center;align-self:center;transform:none!important}
+  .traj-bubble-emoji{font-size:24px;margin-bottom:4px}
+  .traj-bubble-name{font-size:10px;letter-spacing:.04em}
+  .traj-bubble-count{font-size:9px;padding:2px 8px}
+  .traj-energy-svg{display:none}
+  .traj-micro-particles{display:none}
   .traj-compare-grid{grid-template-columns:1fr;gap:16px}
   .traj-detail-panel{padding:32px 20px}
-  .traj-toolbar{gap:6px}
-  .traj-domain-btn,.traj-compare-toggle{padding:6px 12px;font-size:11px}
+  .traj-domain-view{padding:24px 12px 60px}
+  .traj-career-card{padding:18px 14px}
 }
 @media(max-width:380px){
   .traj-hero-title{letter-spacing:.06em}
   .traj-orbital-wrap{width:180px;height:180px}
+  .traj-bubble{width:90px;height:90px}
+  .traj-bubble-emoji{font-size:20px}
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -9899,25 +9937,25 @@ aside.sidebar {
     </div>
   </div>
 
-  <!-- NETWORK -->
-  <div class="traj-network-section" id="trajNetworkSection">
-    <div class="traj-network-header">
-      <h2>Constellation des m&#233;tiers</h2>
-      <p>Clique sur un m&#233;tier pour en savoir plus</p>
+  <!-- BUBBLES UNIVERSE -->
+  <div class="traj-bubbles-section" id="trajBubblesSection">
+    <div class="traj-bubbles-area" id="trajBubblesArea">
+      <div class="traj-micro-particles" id="trajMicroParticles"></div>
+      <svg class="traj-energy-svg" id="trajEnergySvg" preserveAspectRatio="none"></svg>
+      <!-- Bubbles are generated by JS -->
     </div>
-    <div class="traj-toolbar" id="trajToolbar">
-      <button class="traj-domain-btn active" data-domain="all">Tout</button>
-      <button class="traj-domain-btn" data-domain="Droit">&#9878;&#65039; Droit</button>
-      <button class="traj-domain-btn" data-domain="Finance">&#128176; Finance</button>
-      <button class="traj-domain-btn" data-domain="Sant&#233;">&#127973; Sant&#233;</button>
-      <button class="traj-domain-btn" data-domain="International">&#127757; International</button>
-      <button class="traj-compare-toggle" id="trajCompareBtn">Comparer</button>
+    <div class="traj-bubbles-hint">Clique sur un domaine pour explorer ses m&#233;tiers</div>
+  </div>
+
+  <!-- DOMAIN FULLSCREEN VIEW -->
+  <div class="traj-domain-view" id="trajDomainView">
+    <div class="traj-domain-view-header">
+      <button class="traj-domain-back" id="trajDomainBack">&#8592; Retour &#224; l'univers</button>
     </div>
-    <div class="traj-svg-wrap" id="trajSvgWrap">
-      <svg id="trajNetworkSvg" viewBox="0 0 900 675" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div class="traj-tooltip" id="trajTooltip"></div>
-    </div>
-    <div class="traj-chemins" id="trajChemins"></div>
+    <div class="traj-domain-view-title" id="trajDomainViewTitle"></div>
+    <div class="traj-domain-view-sub" id="trajDomainViewSub"></div>
+    <button class="traj-dv-compare-toggle" id="trajDvCompareBtn">Comparer</button>
+    <div class="traj-cards-grid" id="trajCardsGrid"></div>
   </div>
 
 </div>
@@ -26382,11 +26420,11 @@ function annalesLoadTesseractLib() {
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   TRAJECTOIRES — Immersive Career Constellation JS
+   TRAJECTOIRES V2 — Bubble Universe + Domain Views
 ═══════════════════════════════════════════════════════════════ */
 (function(){'use strict';
 
-/* ── DATA (reference existing CAREERS array above) ── */
+/* ── DATA ── */
 var CAREERS=[
   {id:'ap',title:'Assistant parlementaire',domain:'Droit',color:'#4d9fff',master:'M2 Droit du Plaidoyer et Affaires Publiques',masterUrl:'https://dauphine.psl.eu/formations/masters/droit/m2-droit-du-plaidoyer-et-affaires-publiques',salary:'24\u201330 k\u20AC net/an',desc:'Soutient d\u00E9put\u00E9s et s\u00E9nateurs en g\u00E9rant agenda, dossiers et communication parlementaire.',sv:27},
   {id:'af',title:'Avocat fiscaliste',domain:'Droit',color:'#4d9fff',master:'Master Droit des Affaires',masterUrl:'https://dauphine.psl.eu/formations/masters/droit-des-affaires',salary:'\u2248 42 k\u20AC brut/an',desc:'Conseille et d\u00E9fend les entreprises en droit fiscal et optimise les montages financiers.',sv:42},
@@ -26424,29 +26462,21 @@ var DOMAIN_META={
 };
 
 var DOMAIN_COLORS={'Droit':'#4d9fff','Finance':'#fbbf24','Sant\u00E9':'#10b981','International':'#a855f7'};
+var DOMAIN_ORDER=['Droit','Finance','Sant\u00E9','International'];
 
-/* Cluster centers (in SVG viewBox 900x675) */
-var CLUSTER_CENTERS={
-  'Droit':{x:225,y:236},
-  'Finance':{x:675,y:236},
-  'Sant\u00E9':{x:225,y:472},
-  'International':{x:675,y:472}
-};
-
-/* Cross-domain links (domains that share skill paths) */
-var CROSS_LINKS=[
-  ['Droit','Finance'],
-  ['Finance','International'],
-  ['Sant\u00E9','International']
-];
-
-var currentFilter='all';
 var compareMode=false;
 var compareSelection=[];
-var nodePositions=[];
+var currentDomain=null;
 var _inited=false;
 
-/* ── Particles ── */
+/* ── Count careers per domain ── */
+function countByDomain(){
+  var counts={};
+  CAREERS.forEach(function(c){counts[c.domain]=(counts[c.domain]||0)+1;});
+  return counts;
+}
+
+/* ── Hero Particles ── */
 function buildParticles(){
   var container=document.getElementById('trajParticles');
   if(!container||container.children.length>0)return;
@@ -26466,7 +26496,7 @@ function setupScrollCta(){
   var btn=document.getElementById('trajScrollCta');
   if(!btn)return;
   btn.addEventListener('click',function(){
-    var target=document.getElementById('trajNetworkSection');
+    var target=document.getElementById('trajBubblesSection');
     if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
   });
 }
@@ -26482,210 +26512,160 @@ function setupParallax(){
   },{passive:true});
 }
 
-/* ── Compute Node Positions ── */
-function computeNodePositions(){
-  nodePositions=[];
-  var domains={};
-  CAREERS.forEach(function(c){
-    if(!domains[c.domain])domains[c.domain]=[];
-    domains[c.domain].push(c);
-  });
-  Object.keys(domains).forEach(function(domain){
-    var center=CLUSTER_CENTERS[domain];
-    var items=domains[domain];
-    var count=items.length;
-    var radius=Math.min(80,30+count*8);
-    items.forEach(function(career,i){
-      var angle=(2*Math.PI*i/count)-Math.PI/2;
-      var x=center.x+radius*Math.cos(angle);
-      var y=center.y+radius*Math.sin(angle);
-      nodePositions.push({career:career,x:x,y:y,domain:domain});
-    });
-  });
-}
-
-/* ── Build SVG Network ── */
-function buildNetwork(){
-  var svg=document.getElementById('trajNetworkSvg');
-  if(!svg)return;
-  svg.innerHTML='';
-  computeNodePositions();
-
-  /* Domain cluster labels */
-  var labelGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
-  Object.keys(CLUSTER_CENTERS).forEach(function(domain){
-    var c=CLUSTER_CENTERS[domain];
-    var txt=document.createElementNS('http://www.w3.org/2000/svg','text');
-    txt.setAttribute('x',c.x);
-    txt.setAttribute('y',c.y-110);
-    txt.setAttribute('text-anchor','middle');
-    txt.setAttribute('fill',DOMAIN_COLORS[domain]);
-    txt.setAttribute('font-size','12');
-    txt.setAttribute('font-weight','800');
-    txt.setAttribute('letter-spacing','0.12em');
-    txt.setAttribute('opacity','0.4');
-    txt.setAttribute('font-family','Josefin Sans, sans-serif');
-    txt.textContent=domain.toUpperCase();
-    labelGroup.appendChild(txt);
-  });
-  svg.appendChild(labelGroup);
-
-  /* Intra-domain edges */
-  var edgeGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
-  var domains={};
-  nodePositions.forEach(function(n){
-    if(!domains[n.domain])domains[n.domain]=[];
-    domains[n.domain].push(n);
-  });
-  Object.keys(domains).forEach(function(domain){
-    var nodes=domains[domain];
-    var color=DOMAIN_COLORS[domain];
-    for(var i=0;i<nodes.length;i++){
-      for(var j=i+1;j<nodes.length;j++){
-        var line=document.createElementNS('http://www.w3.org/2000/svg','line');
-        line.setAttribute('x1',nodes[i].x);
-        line.setAttribute('y1',nodes[i].y);
-        line.setAttribute('x2',nodes[j].x);
-        line.setAttribute('y2',nodes[j].y);
-        line.setAttribute('stroke',color);
-        line.setAttribute('class','traj-edge');
-        edgeGroup.appendChild(line);
-      }
-    }
-  });
-  svg.appendChild(edgeGroup);
-
-  /* Cross-domain edges */
-  var crossGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
-  CROSS_LINKS.forEach(function(pair){
-    var c1=CLUSTER_CENTERS[pair[0]];
-    var c2=CLUSTER_CENTERS[pair[1]];
-    if(c1&&c2){
-      var line=document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1',c1.x);
-      line.setAttribute('y1',c1.y);
-      line.setAttribute('x2',c2.x);
-      line.setAttribute('y2',c2.y);
-      line.setAttribute('class','traj-edge-cross');
-      line.setAttribute('stroke','#fff');
-      crossGroup.appendChild(line);
-    }
-  });
-  svg.appendChild(crossGroup);
-
-  /* Nodes */
-  var nodeGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
-  nodePositions.forEach(function(n,idx){
-    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.setAttribute('class','traj-node-group');
-    g.setAttribute('data-idx',idx);
-    g.setAttribute('data-domain',n.domain);
-    g.setAttribute('tabindex','0');
-    g.setAttribute('role','button');
-    g.setAttribute('aria-label',n.career.title);
-
-    var inner=document.createElementNS('http://www.w3.org/2000/svg','g');
-    inner.setAttribute('class','traj-node-reveal');
-
-    var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',n.x);
-    circle.setAttribute('cy',n.y);
-    circle.setAttribute('r','18');
-    circle.setAttribute('fill',DOMAIN_COLORS[n.domain]);
-    circle.setAttribute('fill-opacity','0.15');
-    circle.setAttribute('stroke',DOMAIN_COLORS[n.domain]);
-    circle.setAttribute('stroke-width','1.5');
-    circle.setAttribute('class','traj-node-circle');
-    circle.style.cssText='--nc:'+DOMAIN_COLORS[n.domain];
-    inner.appendChild(circle);
-
-    /* Truncate long titles */
-    var label=n.career.title;
-    if(label.length>18)label=label.substring(0,16)+'...';
-    var text=document.createElementNS('http://www.w3.org/2000/svg','text');
-    text.setAttribute('x',n.x);
-    text.setAttribute('y',n.y);
-    text.setAttribute('class','traj-node-label');
-    text.textContent=label;
-    inner.appendChild(text);
-
-    g.appendChild(inner);
-    nodeGroup.appendChild(g);
-
-    /* Events */
-    g.addEventListener('mouseenter',function(e){showTooltip(e,n);});
-    g.addEventListener('mouseleave',hideTooltip);
-    g.addEventListener('click',function(){handleNodeClick(n,idx);});
-    g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();handleNodeClick(n,idx);}});
-  });
-  svg.appendChild(nodeGroup);
-}
-
-/* ── Tooltip ── */
-function showTooltip(e,node){
-  var tip=document.getElementById('trajTooltip');
-  if(!tip)return;
-  var meta=DOMAIN_META[node.domain]||{};
-  tip.innerHTML='<div class="traj-tooltip-title">'+node.career.title+'</div>'
-    +'<div class="traj-tooltip-salary">'+node.career.salary+'</div>'
-    +'<span class="traj-tooltip-badge" style="background:'+DOMAIN_COLORS[node.domain]+'">'+(meta.emoji||'')+' '+node.domain+'</span>';
-  var wrap=document.getElementById('trajSvgWrap');
-  if(!wrap)return;
-  var rect=wrap.getBoundingClientRect();
-  var svgEl=document.getElementById('trajNetworkSvg');
-  var svgRect=svgEl.getBoundingClientRect();
-  var scaleX=svgRect.width/900;
-  var scaleY=svgRect.height/675;
-  var px=node.x*scaleX;
-  var py=node.y*scaleY;
-  tip.style.left=Math.min(px-90,rect.width-200)+'px';
-  tip.style.top=(py-80)+'px';
-  tip.classList.add('vis');
-}
-
-function hideTooltip(){
-  var tip=document.getElementById('trajTooltip');
-  if(tip)tip.classList.remove('vis');
-}
-
-/* ── Node Click Handler ── */
-function handleNodeClick(node,idx){
-  if(compareMode){
-    handleCompareSelect(node,idx);
-  }else{
-    openDetail(node.career);
+/* ── Micro Particles between bubbles ── */
+function buildMicroParticles(){
+  var container=document.getElementById('trajMicroParticles');
+  if(!container||container.children.length>0)return;
+  for(var i=0;i<24;i++){
+    var d=document.createElement('span');
+    d.className='traj-micro-dot';
+    var dx=(-40+Math.random()*80).toFixed(0);
+    var dy=(-40+Math.random()*80).toFixed(0);
+    d.style.cssText='top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;--dx:'+dx+'px;--dy:'+dy+'px;--md:'+(5+Math.random()*8).toFixed(1)+'s;animation-delay:'+(Math.random()*6).toFixed(1)+'s';
+    container.appendChild(d);
   }
 }
 
-/* ── Domain Filters ── */
-function setupFilters(){
-  var toolbar=document.getElementById('trajToolbar');
-  if(!toolbar)return;
-  toolbar.querySelectorAll('.traj-domain-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      toolbar.querySelectorAll('.traj-domain-btn').forEach(function(b){b.classList.remove('active');});
-      btn.classList.add('active');
-      var domain=btn.dataset.domain;
-      currentFilter=domain;
-      applyFilter();
-    });
+/* ── Energy Lines SVG ── */
+function buildEnergyLines(){
+  var svg=document.getElementById('trajEnergySvg');
+  if(!svg||svg.children.length>0)return;
+  svg.setAttribute('viewBox','0 0 600 500');
+  /* Diamond layout: top(300,80) right(520,250) left(80,250) bottom(300,420) */
+  var pts=[[300,90],[520,250],[80,250],[300,410]];
+  var pairs=[[0,1],[0,2],[1,3],[2,3],[0,3],[1,2]];
+  pairs.forEach(function(pair){
+    var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',pts[pair[0]][0]);
+    line.setAttribute('y1',pts[pair[0]][1]);
+    line.setAttribute('x2',pts[pair[1]][0]);
+    line.setAttribute('y2',pts[pair[1]][1]);
+    line.setAttribute('class','traj-energy-line');
+    svg.appendChild(line);
   });
 }
 
-function applyFilter(){
-  var groups=document.querySelectorAll('.traj-node-group');
-  groups.forEach(function(g){
-    var domain=g.getAttribute('data-domain');
-    if(currentFilter==='all'||domain===currentFilter){
-      g.classList.remove('dimmed');
-    }else{
-      g.classList.add('dimmed');
-    }
+/* ── Build Domain Bubbles ── */
+function buildBubbles(){
+  var area=document.getElementById('trajBubblesArea');
+  if(!area||area.querySelector('.traj-bubble'))return;
+  var counts=countByDomain();
+  DOMAIN_ORDER.forEach(function(domain){
+    var meta=DOMAIN_META[domain];
+    var bubble=document.createElement('div');
+    bubble.className='traj-bubble';
+    bubble.setAttribute('data-domain',domain);
+    bubble.setAttribute('role','button');
+    bubble.setAttribute('tabindex','0');
+    bubble.setAttribute('aria-label',domain+' - '+counts[domain]+' m\u00E9tiers');
+    bubble.innerHTML='<span class="traj-bubble-emoji">'+meta.emoji+'</span>'
+      +'<span class="traj-bubble-name">'+domain+'</span>'
+      +'<span class="traj-bubble-count">'+counts[domain]+' m\u00E9tiers</span>';
+    bubble.addEventListener('click',function(){openDomainView(domain);});
+    bubble.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openDomainView(domain);}});
+    area.appendChild(bubble);
   });
-  /* Also dim edges */
-  document.querySelectorAll('.traj-edge').forEach(function(e){
-    e.style.opacity=(currentFilter==='all')?'0.12':'0.04';
+}
+
+/* ── Open Domain View ── */
+function openDomainView(domain){
+  currentDomain=domain;
+  compareMode=false;
+  compareSelection=[];
+  var meta=DOMAIN_META[domain];
+  var color=DOMAIN_COLORS[domain];
+  var page=document.getElementById('page-trajectoires');
+
+  /* Hide bubbles */
+  var bubbles=document.querySelectorAll('.traj-bubble');
+  bubbles.forEach(function(b){b.classList.add('hidden');});
+  var hint=document.querySelector('.traj-bubbles-hint');
+  if(hint)hint.style.opacity='0';
+
+  /* Prepare domain view */
+  var view=document.getElementById('trajDomainView');
+  var titleEl=document.getElementById('trajDomainViewTitle');
+  var subEl=document.getElementById('trajDomainViewSub');
+  var grid=document.getElementById('trajCardsGrid');
+  var compareBtn=document.getElementById('trajDvCompareBtn');
+
+  if(titleEl)titleEl.innerHTML='<span class="dv-emoji">'+meta.emoji+'</span>'+domain;
+  var domainCareers=CAREERS.filter(function(c){return c.domain===domain;});
+  if(subEl)subEl.textContent=domainCareers.length+' m\u00E9tiers \u00E0 explorer';
+
+  /* Set background gradient with domain color */
+  view.style.background='linear-gradient(180deg, '+hexToRgba(color,0.08)+' 0%, #060e1e 100%)';
+
+  /* Reset compare */
+  if(compareBtn){compareBtn.classList.remove('active');compareBtn.textContent='Comparer';}
+
+  /* Build cards */
+  grid.innerHTML='';
+  domainCareers.forEach(function(career,i){
+    var card=document.createElement('div');
+    card.className='traj-career-card';
+    card.style.setProperty('--card-color',color);
+    card.setAttribute('data-career-id',career.id);
+    card.innerHTML='<div class="traj-career-card-title">'+career.title+'</div>'
+      +'<div class="traj-career-card-salary">'+career.salary+'</div>'
+      +'<div class="traj-career-card-desc">'+career.desc+'</div>';
+    card.addEventListener('click',function(){
+      if(compareMode){
+        handleCompareCardSelect(career,card);
+      }else{
+        openDetail(career);
+      }
+    });
+    grid.appendChild(card);
+
+    /* Staggered cascade animation */
+    var dir=(i%2===0)?'slide-left':'slide-right';
+    setTimeout(function(){card.classList.add(dir);},80*(i+1));
   });
+
+  /* Show domain view */
+  view.classList.add('active');
+
+  /* Scroll to domain view */
+  setTimeout(function(){
+    view.scrollIntoView({behavior:'smooth',block:'start'});
+  },50);
+}
+
+/* ── Close Domain View (back to bubbles) ── */
+function closeDomainView(){
+  var view=document.getElementById('trajDomainView');
+  var grid=document.getElementById('trajCardsGrid');
+  compareMode=false;
+  compareSelection=[];
+  closeCompare();
+
+  /* Animate cards out */
+  var cards=grid.querySelectorAll('.traj-career-card');
+  var total=cards.length;
+  cards.forEach(function(card,i){
+    var reverseIdx=total-1-i;
+    var dir=(reverseIdx%2===0)?'slide-out-left':'slide-out-right';
+    card.classList.remove('slide-left','slide-right');
+    setTimeout(function(){card.classList.add(dir);},40*i);
+  });
+
+  /* After cards animate out, hide view and show bubbles */
+  setTimeout(function(){
+    view.classList.remove('active');
+    view.style.background='';
+    currentDomain=null;
+
+    /* Show bubbles */
+    var bubbles=document.querySelectorAll('.traj-bubble');
+    bubbles.forEach(function(b){b.classList.remove('hidden');});
+    var hint=document.querySelector('.traj-bubbles-hint');
+    if(hint)hint.style.opacity='1';
+
+    /* Scroll to bubbles */
+    var section=document.getElementById('trajBubblesSection');
+    if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
+  },total*40+300);
 }
 
 /* ── Detail Panel ── */
@@ -26699,7 +26679,7 @@ function openDetail(career){
   setTxt('tdSalary',career.salary);
   setTxt('tdMasterName',career.master);
   var cta=document.getElementById('tdCta');
-  if(cta)cta.href=career.masterUrl;
+  if(cta){cta.href=career.masterUrl;cta.style.background='linear-gradient(135deg,'+DOMAIN_COLORS[career.domain]+','+shiftColor(DOMAIN_COLORS[career.domain],-20)+')';}
   var overlay=document.getElementById('trajDetailOverlay');
   if(overlay)overlay.classList.add('open');
   document.body.style.overflow='hidden';
@@ -26721,45 +26701,39 @@ function setupDetailClose(){
 }
 
 /* ── Compare Mode ── */
-function setupCompare(){
-  var btn=document.getElementById('trajCompareBtn');
+function setupDomainViewCompare(){
+  var btn=document.getElementById('trajDvCompareBtn');
   if(!btn)return;
   btn.addEventListener('click',function(){
     compareMode=!compareMode;
     btn.classList.toggle('active',compareMode);
-    compareSelection=[];
-    updateCompareHighlights();
-    if(!compareMode)closeCompare();
+    btn.textContent=compareMode?'Annuler la comparaison':'Comparer';
+    if(!compareMode){
+      compareSelection=[];
+      document.querySelectorAll('.traj-career-card').forEach(function(c){c.classList.remove('compare-selected');});
+      closeCompare();
+    }
   });
   var closeBtn=document.getElementById('trajCompareClose');
   if(closeBtn)closeBtn.addEventListener('click',closeCompare);
 }
 
-function handleCompareSelect(node,idx){
-  var existing=compareSelection.findIndex(function(s){return s.idx===idx;});
-  if(existing>-1){
-    compareSelection.splice(existing,1);
+function handleCompareCardSelect(career,cardEl){
+  var idx=compareSelection.findIndex(function(s){return s.career.id===career.id;});
+  if(idx>-1){
+    compareSelection.splice(idx,1);
+    cardEl.classList.remove('compare-selected');
   }else{
-    if(compareSelection.length>=2)compareSelection.shift();
-    compareSelection.push({career:node.career,idx:idx,domain:node.domain});
+    if(compareSelection.length>=2){
+      var old=compareSelection.shift();
+      var oldCard=document.querySelector('.traj-career-card[data-career-id="'+old.career.id+'"]');
+      if(oldCard)oldCard.classList.remove('compare-selected');
+    }
+    compareSelection.push({career:career,card:cardEl});
+    cardEl.classList.add('compare-selected');
   }
-  updateCompareHighlights();
   if(compareSelection.length===2)showCompare();
-}
-
-function updateCompareHighlights(){
-  document.querySelectorAll('.traj-node-group').forEach(function(g){
-    g.classList.remove('selected','dimmed-compare');
-  });
-  if(compareMode&&compareSelection.length>0){
-    var selectedIdxs=compareSelection.map(function(s){return s.idx;});
-    document.querySelectorAll('.traj-node-group').forEach(function(g){
-      var idx=parseInt(g.getAttribute('data-idx'));
-      if(selectedIdxs.indexOf(idx)>-1){
-        g.classList.add('selected');
-      }
-    });
-  }
+  else closeCompare();
 }
 
 function showCompare(){
@@ -26776,17 +26750,17 @@ function showCompare(){
       +'<div class="traj-compare-col-title">'+c.title+'</div>'
       +'<div class="traj-compare-col-desc">'+c.desc+'</div>'
       +'<div class="traj-compare-row"><span class="traj-compare-row-label">Salaire</span><span class="traj-compare-row-value">'+c.salary+'</span></div>'
-      +'<div class="traj-compare-row"><span class="traj-compare-row-label">Master</span><span class="traj-compare-row-value">'+c.master+'</span></div>';
+      +'<div class="traj-compare-row"><span class="traj-compare-row-label">Master</span><span class="traj-compare-row-value">'+c.master+'</span></div>'
+      +'<div class="traj-compare-row"><span class="traj-compare-row-label">Domaine</span><span class="traj-compare-row-value">'+c.domain+'</span></div>';
     grid.appendChild(col);
   });
-  /* Highlight salary differences */
   if(compareSelection.length===2){
     var s1=compareSelection[0].career.salary;
     var s2=compareSelection[1].career.salary;
     if(s1!==s2){
       var vals=grid.querySelectorAll('.traj-compare-row-value');
       if(vals[0])vals[0].classList.add('diff');
-      if(vals[2])vals[2].classList.add('diff');
+      if(vals[3])vals[3].classList.add('diff');
     }
   }
   panel.classList.add('open');
@@ -26797,41 +26771,27 @@ function closeCompare(){
   if(panel)panel.classList.remove('open');
 }
 
-/* ── Chemins Communs ── */
-function buildChemins(){
-  var container=document.getElementById('trajChemins');
-  if(!container)return;
-  container.innerHTML='<h3>Chemins communs</h3><div class="traj-chemins-grid"></div>';
-  var grid=container.querySelector('.traj-chemins-grid');
-  CROSS_LINKS.forEach(function(pair){
-    var card=document.createElement('div');
-    card.className='traj-chemin-card';
-    card.innerHTML='<div class="traj-chemin-domains">'
-      +'<span class="traj-chemin-dot" style="background:'+DOMAIN_COLORS[pair[0]]+'"></span>'
-      +'<span class="traj-chemin-dot" style="background:'+DOMAIN_COLORS[pair[1]]+'"></span>'
-      +'</div>'
-      +'<div class="traj-chemin-label">'+pair[0]+' & '+pair[1]+'<br><small style="opacity:.6">Competences transversales</small></div>';
-    grid.appendChild(card);
-  });
+/* ── Back button ── */
+function setupBackButton(){
+  var btn=document.getElementById('trajDomainBack');
+  if(!btn)return;
+  btn.addEventListener('click',closeDomainView);
 }
 
-/* ── Scroll Reveal (IntersectionObserver) ── */
-function setupReveal(){
-  var nodes=document.querySelectorAll('.traj-node-group');
-  if(!nodes.length)return;
-  var page=document.getElementById('page-trajectoires');
-  var observer=new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if(entry.isIntersecting){
-        var idx=parseInt(entry.target.getAttribute('data-idx'))||0;
-        setTimeout(function(){
-          entry.target.classList.add('revealed');
-        },idx*30);
-        observer.unobserve(entry.target);
-      }
-    });
-  },{threshold:0.1,root:page});
-  nodes.forEach(function(node){observer.observe(node);});
+/* ── Utility: hex to rgba ── */
+function hexToRgba(hex,a){
+  var r=parseInt(hex.slice(1,3),16);
+  var g=parseInt(hex.slice(3,5),16);
+  var b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
+/* ── Utility: shift hex color brightness ── */
+function shiftColor(hex,amt){
+  var r=Math.max(0,Math.min(255,parseInt(hex.slice(1,3),16)+amt));
+  var g=Math.max(0,Math.min(255,parseInt(hex.slice(3,5),16)+amt));
+  var b=Math.max(0,Math.min(255,parseInt(hex.slice(5,7),16)+amt));
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
 }
 
 /* ── Init ── */
@@ -26841,12 +26801,12 @@ function initTraj(){
   buildParticles();
   setupScrollCta();
   setupParallax();
-  buildNetwork();
-  setupFilters();
+  buildMicroParticles();
+  buildEnergyLines();
+  buildBubbles();
   setupDetailClose();
-  setupCompare();
-  buildChemins();
-  setTimeout(setupReveal,100);
+  setupDomainViewCompare();
+  setupBackButton();
 }
 
 /* Hook into page activation */
