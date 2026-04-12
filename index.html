@@ -27038,6 +27038,7 @@ window.mmImportToSynapse=function(){
   requestAnimationFrame(function(){
     synNodes=newNodes;synLinks=newLinks;synNextId=idCtr;synSelected=null;
     synRender();
+    synFitView();
     if(typeof toast==='function')toast('Carte importée dans Synapse 🔗','🔗');
   });
 };
@@ -27071,11 +27072,30 @@ function synApplyView(){
   var vp=document.getElementById('synViewport');
   if(vp)vp.setAttribute('transform','translate('+synVX+','+synVY+') scale('+synVS+')');
 }
+function synFitView(){
+  var outer=document.getElementById('synCanvasOuter');
+  var W=(outer&&outer.clientWidth)||800;
+  var H=(outer&&outer.clientHeight)||500;
+  if(!synNodes.length){synVX=W/2-70;synVY=H/2-19;synVS=1.0;synApplyView();return;}
+  var minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  synNodes.forEach(function(n){
+    minX=Math.min(minX,n.x);minY=Math.min(minY,n.y);
+    maxX=Math.max(maxX,n.x+(n.w||124));maxY=Math.max(maxY,n.y+(n.h||38));
+  });
+  var pad=60;
+  var bW=maxX-minX+pad*2;
+  var bH=maxY-minY+pad*2;
+  var scale=Math.max(0.15,Math.min(2.0,W/bW,H/bH));
+  synVS=scale;
+  synVX=W/2-((minX+maxX)/2)*scale;
+  synVY=H/2-((minY+maxY)/2)*scale;
+  synApplyView();
+}
 function synZoomIn(){synVS=Math.min(3.0,synVS*1.25);synApplyView();}
 function synZoomOut(){synVS=Math.max(0.15,synVS/1.25);synApplyView();}
 window.synZoomIn=synZoomIn;
 window.synZoomOut=synZoomOut;
-window.synResetView=function(){synVX=0;synVY=0;synVS=1.0;synApplyView();};
+window.synResetView=function(){synFitView();};
 
 function svgEl(tag,attrs){
   var el=document.createElementNS('http://www.w3.org/2000/svg',tag);
@@ -27508,9 +27528,9 @@ window.synLoadMapById=function(id){
   synNextId=map.nextId||1;
   synSelected=null;
   synCurrentMapId=id;
-  synVX=0;synVY=0;synVS=1.0;
   synSetCurrentTitle(map.title||'Carte sans titre');
   synRender();
+  synFitView();
   synCloseLibrary();
   toast('Carte chargée : '+map.title,'📂');
 };
@@ -27715,6 +27735,7 @@ function synInit(){
     synSetCurrentTitle('Nouvelle carte');
   }
   synRender();
+  synFitView();
   synSetupCanvas();
 }
 
