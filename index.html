@@ -27028,6 +27028,8 @@ function synMakeNode(label,x,y,isRoot,branchLevel){
     color:color,selected:false};
 }
 
+function escHtml(s){return s?s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+
 function synApplyView(){
   var vp=document.getElementById('synViewport');
   if(vp)vp.setAttribute('transform','translate('+synVX+','+synVY+') scale('+synVS+')');
