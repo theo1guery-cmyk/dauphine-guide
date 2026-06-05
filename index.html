@@ -9464,6 +9464,49 @@ aside.sidebar {
 
 <!-- PROFIL MODAL -->
 <!-- ══════════════ SETUP MODAL (PREMIER LANCEMENT) ══════════════ -->
+<!-- ════ PAYWALL PREMIUM ════ -->
+<style>
+#premiumModal{display:none;position:fixed;inset:0;background:rgba(0,10,30,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9950;align-items:center;justify-content:center;padding:20px;animation:setupModalIn .35s ease}
+#premiumModal.open{display:flex}
+.pm-feat{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-main);line-height:1.4}
+.pm-feat span{font-size:17px;flex-shrink:0;width:24px;text-align:center}
+.pm-code-in{flex:1;padding:11px 14px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:14px;font-family:'Figtree',sans-serif;letter-spacing:.5px;text-transform:uppercase;outline:none;transition:border-color .15s;background:var(--bg-card,#fff);color:var(--text-main)}
+.pm-code-in:focus{border-color:var(--blue)}
+.pm-code-btn{padding:11px 20px;border:none;background:linear-gradient(135deg,#08284d 0%,#0057ad 100%);color:#fff;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;white-space:nowrap;transition:transform .12s,box-shadow .2s}
+.pm-code-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,87,173,.35)}
+.pm-code-btn:active{transform:translateY(0)}
+.pm-lock{margin-left:auto;font-size:10px;opacity:.55;flex-shrink:0}
+.sidebar-item .pm-lock{margin-left:6px}
+</style>
+<div id="premiumModal" onclick="if(event.target===this)closePremiumModal()">
+  <div class="setup-card" style="max-width:440px">
+    <div class="setup-head">
+      <button class="setup-head-close" onclick="closePremiumModal()" title="Fermer">✕</button>
+      <div class="setup-head-ic">✦</div>
+      <div class="setup-head-title">Fonctionnalité <em>Premium</em></div>
+      <div class="setup-head-sub" id="pmFeatureSub">Les outils IA de DauphineGuide font partie de l'offre Premium.</div>
+    </div>
+    <div class="setup-body">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="pm-feat"><span>🧑‍🏫</span> Prof particulier IA — explications illimitées</div>
+        <div class="pm-feat"><span>🎓</span> Mode Apprendre — révision adaptative par IA</div>
+        <div class="pm-feat"><span>🃏</span> Flashcards générées par IA</div>
+        <div class="pm-feat"><span>🎙️</span> Simulateur d'oral avec feedback IA</div>
+        <div class="pm-feat"><span>🗺️</span> Mind Map IA</div>
+        <div class="pm-feat"><span>🌍</span> Culture G générée chaque jour</div>
+      </div>
+      <div style="border-top:1px solid var(--g200);margin:6px 0"></div>
+      <label style="font-size:12px;font-weight:600;color:var(--text-main)">Tu as un code d'accès ?</label>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="pmCodeInput" class="pm-code-in" placeholder="Ex : TEST2026" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')submitPremiumCode()">
+        <button class="pm-code-btn" onclick="submitPremiumCode()">Débloquer</button>
+      </div>
+      <div id="pmCodeMsg" style="font-size:12px;min-height:16px;font-weight:600"></div>
+      <div style="font-size:11px;color:var(--g400);text-align:center;line-height:1.5;margin-top:2px">🔒 Phase de test — l'abonnement arrive bientôt.<br>Tu veux un code ? Contacte-nous sur Insta.</div>
+    </div>
+  </div>
+</div>
+
 <div id="setupModal" onclick="if(event.target===this)closeSetupModal(false)">
   <div class="setup-card">
     <div class="setup-head">
@@ -15821,7 +15864,85 @@ function clearStageAnalyzer() {
 }
 
 // ════ SIDEBAR NAVIGATION ════
+/* ════════════════════════════════════════════
+   PREMIUM — gating des features IA + code test
+   ════════════════════════════════════════════ */
+// Pages réservées au Premium (utilisent l'IA)
+var PREMIUM_PAGES = ['prof','apprendre','flashcards','oral','mindmap','culture'];
+// Codes d'accès valides (ajoute-en quand tu veux)
+var PREMIUM_CODES = ['TEST2026'];
+var _pmPendingPage = null;
+
+function isPremium(){ return localStorage.getItem('dg_premium') === 'true'; }
+
+function openPremiumModal(pageId){
+  _pmPendingPage = pageId || null;
+  var m = document.getElementById('premiumModal');
+  if(m) m.classList.add('open');
+  var msg = document.getElementById('pmCodeMsg');
+  if(msg) msg.textContent = '';
+  var inp = document.getElementById('pmCodeInput');
+  if(inp){ inp.value=''; setTimeout(function(){ inp.focus(); }, 100); }
+  // 📊 Analytics : on mesure combien de gens tapent dans le paywall
+  if(typeof gtag === 'function') gtag('event','paywall_view',{feature: pageId || 'inconnu'});
+}
+
+function closePremiumModal(){
+  var m = document.getElementById('premiumModal');
+  if(m) m.classList.remove('open');
+}
+
+function submitPremiumCode(){
+  var inp = document.getElementById('pmCodeInput');
+  var msg = document.getElementById('pmCodeMsg');
+  if(!inp) return;
+  var code = inp.value.trim().toUpperCase();
+  if(!code){ if(msg){ msg.style.color='#dc2626'; msg.textContent='⚠️ Entre un code.'; } return; }
+  if(PREMIUM_CODES.indexOf(code) !== -1){
+    localStorage.setItem('dg_premium','true');
+    localStorage.setItem('dg_premium_code', code);
+    localStorage.setItem('dg_premium_date', new Date().toISOString());
+    if(msg){ msg.style.color='#16a34a'; msg.textContent='✓ Premium débloqué ! Accès à toutes les features IA.'; }
+    // 📊 Analytics : combien débloquent réellement
+    if(typeof gtag === 'function') gtag('event','premium_unlock',{method:'code', code: code});
+    refreshPremiumUI();
+    var dest = _pmPendingPage;
+    setTimeout(function(){
+      closePremiumModal();
+      if(dest) showPage(dest, null);
+    }, 900);
+  } else {
+    if(msg){ msg.style.color='#dc2626'; msg.textContent='✗ Code invalide.'; }
+    if(typeof gtag === 'function') gtag('event','premium_code_fail',{code: code});
+  }
+}
+
+// Ajoute / retire le cadenas 🔒 sur les items premium de la sidebar
+function refreshPremiumUI(){
+  var prem = isPremium();
+  PREMIUM_PAGES.forEach(function(pg){
+    var btn = document.querySelector('.sidebar-item[data-page="'+pg+'"]');
+    if(!btn) return;
+    var lock = btn.querySelector('.pm-lock');
+    if(prem){ if(lock) lock.remove(); }
+    else if(!lock){
+      var s = document.createElement('span');
+      s.className = 'pm-lock';
+      s.textContent = '🔒';
+      btn.appendChild(s);
+    }
+  });
+}
+// Init au chargement
+if(document.readyState !== 'loading') refreshPremiumUI();
+else document.addEventListener('DOMContentLoaded', refreshPremiumUI);
+
 function showPage(pageId, btn) {
+  // 🔒 Gate Premium : si feature IA et pas débloqué → paywall
+  if (PREMIUM_PAGES.indexOf(pageId) !== -1 && !isPremium()) {
+    openPremiumModal(pageId);
+    return;
+  }
   document.querySelectorAll('.page-section').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
