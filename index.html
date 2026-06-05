@@ -11033,6 +11033,41 @@ function updateNoCCFields() {
 var GROQ_PROXY = 'https://shiny-lake-f66d.theo1-guery.workers.dev'; // clé cachée côté Cloudflare Worker
 var GROQ_MODEL = 'llama-3.1-8b-instant';
 
+/* ════ PREMIUM — intercepteur universel des appels IA ════
+   Ajoute le code premium à chaque requête vers le Worker.
+   Si pas premium → ouvre le paywall et bloque l'appel.
+   (couvre TOUTES les features IA, même sans page dédiée) */
+(function(){
+  var WORKER_HOST = 'shiny-lake-f66d.theo1-guery.workers.dev';
+  var _origFetch = window.fetch.bind(window);
+  window.fetch = function(url, opts){
+    try{
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      if(u.indexOf(WORKER_HOST) !== -1){
+        opts = opts || {};
+        // Les requêtes de validation de code passent librement
+        var isValidate = false;
+        try{ var b = opts.body ? JSON.parse(opts.body) : null; if(b && b.action === 'validate') isValidate = true; }catch(e){}
+        if(!isValidate){
+          if(typeof isPremium === 'function' && !isPremium()){
+            if(typeof openPremiumModal === 'function') openPremiumModal(null);
+            return Promise.resolve(new Response(
+              JSON.stringify({ error: { message: "Premium requis — entre ton code d'accès." } }),
+              { status: 403, headers: { 'Content-Type': 'application/json' } }
+            ));
+          }
+          var code = '';
+          try{ code = localStorage.getItem('dg_premium_code') || ''; }catch(e){}
+          if(!opts.headers) opts.headers = {};
+          if(opts.headers instanceof Headers) opts.headers.set('X-Premium-Code', code);
+          else opts.headers['X-Premium-Code'] = code;
+        }
+      }
+    }catch(e){}
+    return _origFetch(url, opts);
+  };
+})();
+
 var CULTURE_CACHE_KEY = 'dg_culture_daily_v2';
 var CULTURE_HISTORY_KEY = 'dg_culture_history_v1';
 var CULTURE_STATE = { data: null };
@@ -15867,10 +15902,9 @@ function clearStageAnalyzer() {
 /* ════════════════════════════════════════════
    PREMIUM — gating des features IA + code test
    ════════════════════════════════════════════ */
-// Pages réservées au Premium (utilisent l'IA)
+// Pages réservées au Premium (utilisent l'IA) — gate UX immédiat à la navigation.
+// La VRAIE protection est côté Cloudflare Worker (codes invisibles + 403 si invalide).
 var PREMIUM_PAGES = ['prof','apprendre','flashcards','oral','mindmap','culture'];
-// Codes d'accès valides (ajoute-en quand tu veux)
-var PREMIUM_CODES = ['TEST2026'];
 var _pmPendingPage = null;
 
 function isPremium(){ return localStorage.getItem('dg_premium') === 'true'; }
@@ -15892,28 +15926,39 @@ function closePremiumModal(){
   if(m) m.classList.remove('open');
 }
 
-function submitPremiumCode(){
+async function submitPremiumCode(){
   var inp = document.getElementById('pmCodeInput');
   var msg = document.getElementById('pmCodeMsg');
   if(!inp) return;
   var code = inp.value.trim().toUpperCase();
   if(!code){ if(msg){ msg.style.color='#dc2626'; msg.textContent='⚠️ Entre un code.'; } return; }
-  if(PREMIUM_CODES.indexOf(code) !== -1){
-    localStorage.setItem('dg_premium','true');
-    localStorage.setItem('dg_premium_code', code);
-    localStorage.setItem('dg_premium_date', new Date().toISOString());
-    if(msg){ msg.style.color='#16a34a'; msg.textContent='✓ Premium débloqué ! Accès à toutes les features IA.'; }
-    // 📊 Analytics : combien débloquent réellement
-    if(typeof gtag === 'function') gtag('event','premium_unlock',{method:'code', code: code});
-    refreshPremiumUI();
-    var dest = _pmPendingPage;
-    setTimeout(function(){
-      closePremiumModal();
-      if(dest) showPage(dest, null);
-    }, 900);
-  } else {
-    if(msg){ msg.style.color='#dc2626'; msg.textContent='✗ Code invalide.'; }
-    if(typeof gtag === 'function') gtag('event','premium_code_fail',{code: code});
+  if(msg){ msg.style.color='var(--g400,#94a3b8)'; msg.textContent='Vérification…'; }
+  try{
+    // 🔒 Validation côté Worker (les codes valides ne sont JAMAIS dans le navigateur)
+    var res = await fetch(GROQ_PROXY, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'validate', code: code })
+    });
+    var data = await res.json();
+    if(data && data.valid){
+      localStorage.setItem('dg_premium','true');
+      localStorage.setItem('dg_premium_code', code);
+      localStorage.setItem('dg_premium_date', new Date().toISOString());
+      if(msg){ msg.style.color='#16a34a'; msg.textContent='✓ Premium débloqué ! Accès à toutes les features IA.'; }
+      if(typeof gtag === 'function') gtag('event','premium_unlock',{method:'code', code: code});
+      refreshPremiumUI();
+      var dest = _pmPendingPage;
+      setTimeout(function(){
+        closePremiumModal();
+        if(dest) showPage(dest, null);
+      }, 900);
+    } else {
+      if(msg){ msg.style.color='#dc2626'; msg.textContent='✗ Code invalide.'; }
+      if(typeof gtag === 'function') gtag('event','premium_code_fail',{code: code});
+    }
+  }catch(e){
+    if(msg){ msg.style.color='#dc2626'; msg.textContent='Erreur réseau — réessaie.'; }
   }
 }
 
