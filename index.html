@@ -9502,7 +9502,7 @@ aside.sidebar {
         <button class="pm-code-btn" onclick="submitPremiumCode()">Débloquer</button>
       </div>
       <div id="pmCodeMsg" style="font-size:12px;min-height:16px;font-weight:600"></div>
-      <div style="font-size:11px;color:var(--g400);text-align:center;line-height:1.5;margin-top:2px">🔒 Phase de test — l'abonnement arrive bientôt.<br>Tu veux un code ? Contacte-nous sur Insta.</div>
+      <div style="font-size:11px;color:var(--g400);text-align:center;line-height:1.5;margin-top:2px">✨ Chaque section offre <b>5 essais gratuits</b>.<br>🔒 Phase de test — tu veux un code ? Contacte-nous sur Insta.</div>
     </div>
   </div>
 </div>
@@ -11033,38 +11033,66 @@ function updateNoCCFields() {
 var GROQ_PROXY = 'https://shiny-lake-f66d.theo1-guery.workers.dev'; // clé cachée côté Cloudflare Worker
 var GROQ_MODEL = 'llama-3.1-8b-instant';
 
-/* ════ PREMIUM — intercepteur universel des appels IA ════
-   Ajoute le code premium à chaque requête vers le Worker.
-   Si pas premium → ouvre le paywall et bloque l'appel.
+/* ════ PREMIUM / TRIAL — état partagé ════ */
+var _dgAISection = 'default'; // section IA en cours (pour compter le trial)
+// Identifiant d'appareil stable (pour le compteur d'essais côté Worker)
+function dgDeviceId(){
+  var id = '';
+  try{ id = localStorage.getItem('dg_device_id') || ''; }catch(e){}
+  if(!id){
+    id = 'd_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    try{ localStorage.setItem('dg_device_id', id); }catch(e){}
+  }
+  return id;
+}
+
+/* ════ Intercepteur universel des appels IA ════
+   - Premium  → appels illimités (envoie le code)
+   - Sinon    → mode essai gratuit (5/section, compté par le Worker)
+   - Worker renvoie 403 si essais épuisés → on ouvre le paywall
    (couvre TOUTES les features IA, même sans page dédiée) */
 (function(){
   var WORKER_HOST = 'shiny-lake-f66d.theo1-guery.workers.dev';
   var _origFetch = window.fetch.bind(window);
   window.fetch = function(url, opts){
+    var isWorker = false, isAction = false;
     try{
       var u = (typeof url === 'string') ? url : (url && url.url) || '';
-      if(u.indexOf(WORKER_HOST) !== -1){
+      isWorker = u.indexOf(WORKER_HOST) !== -1;
+      if(isWorker){
         opts = opts || {};
-        // Les requêtes de validation de code passent librement
-        var isValidate = false;
-        try{ var b = opts.body ? JSON.parse(opts.body) : null; if(b && b.action === 'validate') isValidate = true; }catch(e){}
-        if(!isValidate){
-          if(typeof isPremium === 'function' && !isPremium()){
-            if(typeof openPremiumModal === 'function') openPremiumModal(null);
-            return Promise.resolve(new Response(
-              JSON.stringify({ error: { message: "Premium requis — entre ton code d'accès." } }),
-              { status: 403, headers: { 'Content-Type': 'application/json' } }
-            ));
-          }
+        try{ var b = opts.body ? JSON.parse(opts.body) : null; if(b && b.action) isAction = true; }catch(e){}
+        if(!isAction){
+          if(!opts.headers) opts.headers = {};
+          var setH = function(k,v){ if(opts.headers instanceof Headers) opts.headers.set(k,v); else opts.headers[k]=v; };
           var code = '';
           try{ code = localStorage.getItem('dg_premium_code') || ''; }catch(e){}
-          if(!opts.headers) opts.headers = {};
-          if(opts.headers instanceof Headers) opts.headers.set('X-Premium-Code', code);
-          else opts.headers['X-Premium-Code'] = code;
+          setH('X-Premium-Code', code);
+          setH('X-Device-Id', dgDeviceId());
+          setH('X-Trial-Section', _dgAISection || 'default');
         }
       }
     }catch(e){}
-    return _origFetch(url, opts);
+    var p = _origFetch(url, opts);
+    if(isWorker && !isAction){
+      return p.then(function(res){
+        try{
+          var prem = (typeof isPremium === 'function') && isPremium();
+          if(res.status === 403){
+            // Essais épuisés (ou premium requis) → paywall
+            if(typeof openPremiumModal === 'function') openPremiumModal(_dgAISection || null, true);
+          } else if(res.ok && !prem){
+            var rem = res.headers.get('X-Trial-Remaining');
+            if(rem !== null && typeof toast === 'function'){
+              var n = parseInt(rem);
+              if(!isNaN(n)) toast('✨ Essai gratuit : ' + n + ' restant' + (n>1?'s':'') + ' sur cette section', '✨');
+            }
+          }
+        }catch(e){}
+        return res;
+      });
+    }
+    return p;
   };
 })();
 
@@ -15909,16 +15937,25 @@ var _pmPendingPage = null;
 
 function isPremium(){ return localStorage.getItem('dg_premium') === 'true'; }
 
-function openPremiumModal(pageId){
-  _pmPendingPage = pageId || null;
+function openPremiumModal(pageId, trialExhausted){
+  // Si déjà ouvert, ne pas réafficher en boucle (plusieurs appels IA d'un coup)
   var m = document.getElementById('premiumModal');
+  if(m && m.classList.contains('open')) return;
+  _pmPendingPage = pageId || null;
   if(m) m.classList.add('open');
   var msg = document.getElementById('pmCodeMsg');
   if(msg) msg.textContent = '';
+  // Message d'en-tête adapté : essais épuisés vs simple info
+  var sub = document.getElementById('pmFeatureSub');
+  if(sub){
+    sub.textContent = trialExhausted
+      ? "Tu as utilisé tes essais gratuits sur cette section. Passe en Premium pour un accès illimité."
+      : "Les outils IA de DauphineGuide font partie de l'offre Premium.";
+  }
   var inp = document.getElementById('pmCodeInput');
   if(inp){ inp.value=''; setTimeout(function(){ inp.focus(); }, 100); }
   // 📊 Analytics : on mesure combien de gens tapent dans le paywall
-  if(typeof gtag === 'function') gtag('event','paywall_view',{feature: pageId || 'inconnu'});
+  if(typeof gtag === 'function') gtag('event','paywall_view',{feature: pageId || 'inconnu', trial_exhausted: !!trialExhausted});
 }
 
 function closePremiumModal(){
@@ -15962,20 +15999,20 @@ async function submitPremiumCode(){
   }
 }
 
-// Ajoute / retire le cadenas 🔒 sur les items premium de la sidebar
+// Badge sur les features IA : ✦ Premium (débloqué) ou ✨ (essai gratuit dispo)
 function refreshPremiumUI(){
   var prem = isPremium();
   PREMIUM_PAGES.forEach(function(pg){
     var btn = document.querySelector('.sidebar-item[data-page="'+pg+'"]');
     if(!btn) return;
-    var lock = btn.querySelector('.pm-lock');
-    if(prem){ if(lock) lock.remove(); }
-    else if(!lock){
-      var s = document.createElement('span');
-      s.className = 'pm-lock';
-      s.textContent = '🔒';
-      btn.appendChild(s);
+    var badge = btn.querySelector('.pm-lock');
+    if(!badge){
+      badge = document.createElement('span');
+      badge.className = 'pm-lock';
+      btn.appendChild(badge);
     }
+    badge.textContent = prem ? '✦' : '✨';
+    badge.title = prem ? 'Premium actif' : 'Essai gratuit disponible';
   });
 }
 // Init au chargement
@@ -15983,11 +16020,8 @@ if(document.readyState !== 'loading') refreshPremiumUI();
 else document.addEventListener('DOMContentLoaded', refreshPremiumUI);
 
 function showPage(pageId, btn) {
-  // 🔒 Gate Premium : si feature IA et pas débloqué → paywall
-  if (PREMIUM_PAGES.indexOf(pageId) !== -1 && !isPremium()) {
-    openPremiumModal(pageId);
-    return;
-  }
+  // Section IA courante (pour le compteur d'essais gratuits)
+  _dgAISection = pageId;
   document.querySelectorAll('.page-section').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
@@ -24688,6 +24722,7 @@ window.aiUndoLastActionGroup = function() {
 
 // ── Appel Groq ──
 async function aiCallGroq() {
+  _dgAISection = 'assistant'; // section dédiée pour le compteur d'essais
   var userMsg = AI_HISTORY.length ? AI_HISTORY[AI_HISTORY.length - 1].content : '';
   var messages = [{ role:'system', content: aiSystemPrompt() }].concat(AI_HISTORY.slice(-10));
   try {
