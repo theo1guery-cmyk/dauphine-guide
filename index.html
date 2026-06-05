@@ -18235,7 +18235,7 @@ const { initializeApp }   = await import('https://www.gstatic.com/firebasejs/10.
 const { getDatabase, ref, push, onChildAdded, serverTimestamp, get, set, remove, onValue, onDisconnect, update } =
   await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  signInWithPopup, GoogleAuthProvider, onAuthStateChanged,
+  signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged,
   sendEmailVerification, sendPasswordResetEmail, signOut } =
   await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
@@ -18244,6 +18244,9 @@ db   = getDatabase(app);
 auth = getAuth(app);
 firebaseOk = true;
 window._fb = { db, ref, push, onChildAdded, serverTimestamp, get, set, remove, onValue, onDisconnect, update };
+
+// Complète une éventuelle connexion Google par redirection (au retour de Google)
+getRedirectResult(auth).catch(function(e){ console.log('redirect result:', e && e.code); });
 
 // ── Auth state ──
 onAuthStateChanged(auth, async fbUser => {
@@ -18350,11 +18353,25 @@ window.doRegister = async function() {
 
 window.doGoogle = async function() {
   const provider = new GoogleAuthProvider();
-
+  provider.setCustomParameters({ prompt: 'select_account' });
+  // La popup est régulièrement cassée par Chrome (COOP / cookies tiers) :
+  // on tente la popup, et au moindre souci on bascule sur la redirection (fiable).
   try {
     await signInWithPopup(auth, provider);
   } catch(e) {
-    showAuthError('login-error', errMsg(e.code));
+    var code = e && e.code ? e.code : '';
+    var popupFailed = code === 'auth/popup-blocked'
+      || code === 'auth/popup-closed-by-user'
+      || code === 'auth/cancelled-popup-request'
+      || code === 'auth/operation-not-supported-in-this-environment'
+      || code === 'auth/internal-error'
+      || code === 'auth/web-storage-unsupported'
+      || code === 'auth/network-request-failed';
+    if (popupFailed) {
+      try { await signInWithRedirect(auth, provider); return; }
+      catch(e2) { showAuthError('login-error', errMsg(e2.code)); return; }
+    }
+    showAuthError('login-error', errMsg(code));
   }
 };
 
