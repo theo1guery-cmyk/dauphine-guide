@@ -9478,6 +9478,17 @@ aside.sidebar {
 .pm-lock{margin-left:auto;font-size:10px;opacity:.55;flex-shrink:0}
 .sidebar-item .pm-lock{margin-left:6px}
 </style>
+<!-- ════ COMPTEUR D'ESSAIS GRATUITS (pastille flottante) ════ -->
+<style>
+.trial-counter{position:fixed;top:74px;right:24px;z-index:9000;display:none;align-items:center;gap:6px;background:var(--bg-card,#fff);border:1.5px solid var(--blue,#0057ad);color:var(--blue,#0057ad);padding:7px 14px;border-radius:20px;font-size:12.5px;font-weight:600;font-family:'Figtree',sans-serif;box-shadow:0 4px 16px rgba(0,40,90,.16);cursor:pointer;transition:transform .15s,box-shadow .2s;animation:tcIn .3s ease}
+.trial-counter:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,40,90,.24)}
+.trial-counter.exhausted{border-color:#dc2626;color:#dc2626;background:var(--bg-card,#fff)}
+@keyframes tcIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(max-width:640px){.trial-counter{top:auto;bottom:84px;right:14px;font-size:12px;padding:6px 12px}}
+</style>
+<div id="trialCounter" class="trial-counter"
+     onclick="openPremiumModal(typeof _dgAISection!=='undefined'?_dgAISection:null, document.getElementById('trialCounter').classList.contains('exhausted'))"></div>
+
 <div id="premiumModal" onclick="if(event.target===this)closePremiumModal()">
   <div class="setup-card" style="max-width:440px">
     <div class="setup-head">
@@ -11079,13 +11090,17 @@ function dgDeviceId(){
         try{
           var prem = (typeof isPremium === 'function') && isPremium();
           if(res.status === 403){
-            // Essais épuisés (ou premium requis) → paywall
+            // Essais épuisés (ou premium requis) → compteur + paywall
+            if(typeof setTrialCounterValue === 'function' && !prem) setTrialCounterValue(0, 5);
             if(typeof openPremiumModal === 'function') openPremiumModal(_dgAISection || null, true);
           } else if(res.ok && !prem){
             var rem = res.headers.get('X-Trial-Remaining');
-            if(rem !== null && typeof toast === 'function'){
+            if(rem !== null){
               var n = parseInt(rem);
-              if(!isNaN(n)) toast('✨ Essai gratuit : ' + n + ' restant' + (n>1?'s':'') + ' sur cette section', '✨');
+              if(!isNaN(n)){
+                if(typeof setTrialCounterValue === 'function') setTrialCounterValue(n, 5);
+                if(typeof toast === 'function') toast('✨ Essai gratuit : ' + n + ' restant' + (n>1?'s':'') + ' sur cette section', '✨');
+              }
             }
           }
         }catch(e){}
@@ -16019,9 +16034,50 @@ function refreshPremiumUI(){
 if(document.readyState !== 'loading') refreshPremiumUI();
 else document.addEventListener('DOMContentLoaded', refreshPremiumUI);
 
+/* ════ Compteur d'essais gratuits (pastille) ════ */
+function hideTrialCounter(){
+  var el = document.getElementById('trialCounter');
+  if(el) el.style.display = 'none';
+}
+function setTrialCounterValue(remaining, limit){
+  var el = document.getElementById('trialCounter');
+  if(!el) return;
+  if(typeof isPremium === 'function' && isPremium()){ el.style.display='none'; return; }
+  limit = limit || 5;
+  if(remaining <= 0){
+    el.innerHTML = '🔒 Essais épuisés · <b>Passer Premium</b>';
+    el.classList.add('exhausted');
+  } else {
+    el.innerHTML = '✨ Essais gratuits : <b>' + remaining + '/' + limit + '</b>';
+    el.classList.remove('exhausted');
+  }
+  el.style.display = 'flex';
+}
+// Interroge le Worker pour connaître le solde de la section (sans consommer)
+async function updateTrialCounter(section){
+  var el = document.getElementById('trialCounter');
+  if(!el) return;
+  if(typeof isPremium === 'function' && isPremium()){ hideTrialCounter(); return; }
+  // Uniquement sur les sections IA principales
+  if(PREMIUM_PAGES.indexOf(section) === -1){ hideTrialCounter(); return; }
+  el.innerHTML = '✨ Essais gratuits : <b>…</b>';
+  el.classList.remove('exhausted');
+  el.style.display = 'flex';
+  try{
+    var res = await fetch(GROQ_PROXY, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'trial_status', deviceId: dgDeviceId(), section: section })
+    });
+    var data = await res.json();
+    if(data && typeof data.remaining === 'number') setTrialCounterValue(data.remaining, data.limit);
+    else hideTrialCounter();
+  }catch(e){ hideTrialCounter(); }
+}
+
 function showPage(pageId, btn) {
   // Section IA courante (pour le compteur d'essais gratuits)
   _dgAISection = pageId;
+  if(typeof updateTrialCounter === 'function') updateTrialCounter(pageId);
   document.querySelectorAll('.page-section').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
