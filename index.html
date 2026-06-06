@@ -6268,7 +6268,10 @@ aside.sidebar {
     <div class="slbl">Révision active</div>
     <div class="sh2">Flashcards <em>intelligentes</em></div>
     </div>
-    <button class="focus-trigger-btn" onclick="openFocus()" style="margin-top:4px">🌟 Mode Focus</button>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+      <button class="focus-trigger-btn" onclick="openFocus()">🌟 Mode Focus</button>
+      <button class="fc-tour-replay" onclick="fcTourStart()" title="Revoir la présentation des fonctionnalités">❓ Tuto</button>
+    </div>
     </div>
     <p class="sdesc">Colle ici n'importe quel cours ou liste de vocab — l'IA génère des flashcards interactives en secondes.</p>
   </div>
@@ -9440,6 +9443,49 @@ aside.sidebar {
 <div id="trialCounter" class="trial-counter"
      onclick="openPremiumModal(typeof _dgAISection!=='undefined'?_dgAISection:null, document.getElementById('trialCounter').classList.contains('exhausted'))"></div>
 
+<!-- ════════════ TOUR INTERACTIF FLASHCARDS ════════════ -->
+<style>
+#fcTour{position:fixed;inset:0;z-index:999999;display:none}
+#fcTour.open{display:block}
+#fcTourHole{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(6,16,34,.74);border:2.5px solid #4d9fff;pointer-events:none;transition:left .4s cubic-bezier(.4,0,.2,1),top .4s cubic-bezier(.4,0,.2,1),width .4s cubic-bezier(.4,0,.2,1),height .4s cubic-bezier(.4,0,.2,1);animation:fcTourPulse 2s ease-in-out infinite}
+@keyframes fcTourPulse{0%,100%{box-shadow:0 0 0 9999px rgba(6,16,34,.74),0 0 0 2px rgba(77,159,255,.5)}50%{box-shadow:0 0 0 9999px rgba(6,16,34,.74),0 0 0 8px rgba(77,159,255,.18)}}
+#fcTourPop{position:absolute;width:340px;max-width:calc(100vw - 28px);background:var(--bg-card,#fff);color:var(--text-main,#111827);border-radius:18px;padding:20px 22px 18px;box-shadow:0 24px 70px rgba(0,0,0,.4);transition:left .4s cubic-bezier(.4,0,.2,1),top .4s cubic-bezier(.4,0,.2,1);font-family:'Figtree',sans-serif}
+#fcTourPop.center{left:50%!important;top:50%!important;transform:translate(-50%,-50%)}
+.fc-tour-step{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#0057ad;background:#e8f0fb;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+[data-theme="dark"] .fc-tour-step{background:rgba(77,159,255,.15);color:#7cb4ff}
+#fcTourTitle{font-family:var(--font-serif,Georgia,serif);font-size:21px;font-weight:600;font-style:italic;line-height:1.2;margin-bottom:8px;color:var(--text-main,#0f172a)}
+#fcTourBody{font-size:13.5px;line-height:1.6;color:var(--g600,#475569);margin-bottom:16px}
+#fcTourDots{display:flex;gap:6px;margin-bottom:14px}
+.fc-tour-dot{width:7px;height:7px;border-radius:50%;background:var(--g200,#e2e8f0);transition:all .3s}
+.fc-tour-dot.on{background:#0057ad;width:22px;border-radius:4px}
+.fc-tour-actions{display:flex;align-items:center;gap:8px}
+.fc-tour-actions button{font-family:'Figtree',sans-serif;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;transition:all .15s;border:none;padding:9px 16px}
+#fcTourSkip{background:none;color:var(--g400,#94a3b8);padding:9px 4px!important;font-weight:600!important}
+#fcTourSkip:hover{color:var(--g600,#475569)}
+#fcTourPrev{background:var(--g100,#f1f5f9);color:var(--g600,#475569)}
+#fcTourPrev:hover{background:var(--g200,#e2e8f0)}
+#fcTourNext{background:linear-gradient(135deg,#08284d,#0057ad);color:#fff}
+#fcTourNext:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,87,173,.35)}
+@media(max-width:640px){#fcTourPop{width:calc(100vw - 28px)}}
+.fc-tour-replay{background:none;border:1.5px solid var(--g200,#e2e8f0);color:var(--g600,#475569);border-radius:var(--rs,10px);padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s;margin-left:8px}
+.fc-tour-replay:hover{border-color:var(--blue,#0057ad);color:var(--blue,#0057ad)}
+</style>
+<div id="fcTour" aria-hidden="true">
+  <div id="fcTourHole"></div>
+  <div id="fcTourPop">
+    <span class="fc-tour-step" id="fcTourStepNum">Étape 1/4</span>
+    <div id="fcTourTitle"></div>
+    <div id="fcTourBody"></div>
+    <div id="fcTourDots"></div>
+    <div class="fc-tour-actions">
+      <button id="fcTourSkip" onclick="fcTourEnd(true)">Passer</button>
+      <div style="flex:1"></div>
+      <button id="fcTourPrev" onclick="fcTourPrev()">← Précédent</button>
+      <button id="fcTourNext" onclick="fcTourNext()">Suivant →</button>
+    </div>
+  </div>
+</div>
+
 <div id="premiumModal" onclick="if(event.target===this)closePremiumModal()">
   <div class="setup-card" style="max-width:440px">
     <div class="setup-head">
@@ -11857,6 +11903,124 @@ function deleteCurrentCard(){
 
 function openManage(){renderManageList();document.getElementById('manageModal').classList.add('open');}
 function closeManage(){document.getElementById('manageModal').classList.remove('open');renderFilters();renderStats();renderCard();}
+
+/* ════════════ TOUR INTERACTIF FLASHCARDS ════════════ */
+var FC_TOUR_STEPS = [
+  {
+    sel: '#card3d',
+    title: 'La carte de révision',
+    body: "Clique sur une carte pour révéler la réponse, puis auto-évalue-toi (Facile → Retravailler). L'algorithme <b>SM-2</b> fait revenir chaque carte au bon moment. Les flèches ← → permettent de naviguer.",
+    before: function(){ try{ if(typeof flipCard==='function'){ flipCard(); setTimeout(function(){ if(_fcTourI===0) flipCard(); }, 1400); } }catch(e){} }
+  },
+  {
+    sel: '.flash-gen',
+    title: 'Générer des flashcards',
+    body: "Colle ton cours, choisis la matière, et l'<b>IA crée tes flashcards</b> en quelques secondes. Plus besoin de les écrire à la main — idéal pour transformer un chapitre entier en cartes."
+  },
+  {
+    sel: '#focusOverlay .focus-body',
+    title: 'Le Mode Focus',
+    body: "Un mode <b>plein écran avec minuteur Pomodoro</b> pour réviser tes cartes sans aucune distraction. Parfait pour une session de révision concentrée avant un partiel.",
+    scroll: false,
+    before: function(){ try{ if(typeof openFocus==='function') openFocus(); }catch(e){} },
+    after:  function(){ try{ if(typeof closeFocus==='function') closeFocus(); }catch(e){} }
+  },
+  {
+    sel: '#manageModal button[onclick^="syncToApprendre"]',
+    title: 'Envoyer vers Mode Apprendre',
+    body: "Dans <b>Gérer</b>, le bouton <b>Sync Apprendre</b> envoie tes flashcards vers le <b>Mode Apprendre</b> : tu t'entraînes alors à <b>écrire</b> les réponses (pas juste à les reconnaître). La mémorisation est bien plus solide !",
+    scroll: false,
+    before: function(){ try{ if(typeof openManage==='function') openManage(); }catch(e){} },
+    after:  function(){ try{ if(typeof closeManage==='function') closeManage(); }catch(e){} }
+  }
+];
+var _fcTourI = -1;
+
+function fcTourStart(){
+  if(typeof showPage==='function' && document.getElementById('page-flashcards') && !document.getElementById('page-flashcards').classList.contains('active')){
+    showPage('flashcards', null);
+  }
+  _fcTourI = -1;
+  document.getElementById('fcTour').classList.add('open');
+  setTimeout(function(){ fcTourGoTo(0); }, 200);
+}
+
+function fcTourGoTo(i){
+  // nettoyage de l'étape précédente (ferme un modal éventuel)
+  if(_fcTourI >= 0 && _fcTourI < FC_TOUR_STEPS.length && FC_TOUR_STEPS[_fcTourI].after){
+    try{ FC_TOUR_STEPS[_fcTourI].after(); }catch(e){}
+  }
+  if(i < 0) i = 0;
+  if(i >= FC_TOUR_STEPS.length){ fcTourEnd(false); return; }
+  _fcTourI = i;
+  var step = FC_TOUR_STEPS[i];
+  if(step.before){ try{ step.before(); }catch(e){} }
+  // laisse le temps d'ouvrir un modal / de scroller
+  setTimeout(function(){
+    var el = document.querySelector(step.sel);
+    if(el && step.scroll !== false){ try{ el.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){} }
+    setTimeout(function(){ if(_fcTourI === i) fcTourRender(step); }, (el && step.scroll !== false) ? 280 : 30);
+  }, step.before ? 380 : 50);
+}
+
+function fcTourRender(step){
+  var pop = document.getElementById('fcTourPop');
+  var hole = document.getElementById('fcTourHole');
+  if(!pop || !hole) return;
+  // remplissage texte
+  document.getElementById('fcTourStepNum').textContent = 'Étape ' + (_fcTourI+1) + '/' + FC_TOUR_STEPS.length;
+  document.getElementById('fcTourTitle').textContent = step.title;
+  document.getElementById('fcTourBody').innerHTML = step.body;
+  var dots = ''; for(var k=0;k<FC_TOUR_STEPS.length;k++){ dots += '<div class="fc-tour-dot'+(k===_fcTourI?' on':'')+'"></div>'; }
+  document.getElementById('fcTourDots').innerHTML = dots;
+  document.getElementById('fcTourPrev').style.visibility = _fcTourI===0 ? 'hidden' : 'visible';
+  document.getElementById('fcTourNext').textContent = (_fcTourI===FC_TOUR_STEPS.length-1) ? 'Terminer ✓' : 'Suivant →';
+
+  var el = document.querySelector(step.sel);
+  if(!el){
+    pop.classList.add('center');
+    hole.style.width='0'; hole.style.height='0'; hole.style.left='50%'; hole.style.top='-50px';
+    return;
+  }
+  pop.classList.remove('center');
+  var r = el.getBoundingClientRect();
+  var pad = 10;
+  hole.style.left = (r.left - pad) + 'px';
+  hole.style.top = (r.top - pad) + 'px';
+  hole.style.width = (r.width + pad*2) + 'px';
+  hole.style.height = (r.height + pad*2) + 'px';
+
+  var pw = pop.offsetWidth, ph = pop.offsetHeight;
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var top, left;
+  if(vh - r.bottom > ph + 24){ top = r.bottom + 16; }
+  else if(r.top > ph + 24){ top = r.top - ph - 16; }
+  else { top = Math.max(12, vh - ph - 12); }
+  left = r.left + r.width/2 - pw/2;
+  left = Math.min(Math.max(12, left), vw - pw - 12);
+  pop.style.top = top + 'px';
+  pop.style.left = left + 'px';
+}
+
+function fcTourNext(){ fcTourGoTo(_fcTourI + 1); }
+function fcTourPrev(){ fcTourGoTo(_fcTourI - 1); }
+
+function fcTourEnd(skipped){
+  if(_fcTourI >= 0 && _fcTourI < FC_TOUR_STEPS.length && FC_TOUR_STEPS[_fcTourI].after){
+    try{ FC_TOUR_STEPS[_fcTourI].after(); }catch(e){}
+  }
+  var t = document.getElementById('fcTour');
+  if(t) t.classList.remove('open');
+  _fcTourI = -1;
+  try{ localStorage.setItem('dg_fc_tour_done','1'); }catch(e){}
+}
+
+// repositionne la bulle si on redimensionne (mobile/rotation)
+window.addEventListener('resize', function(){
+  if(_fcTourI >= 0 && document.getElementById('fcTour') && document.getElementById('fcTour').classList.contains('open')){
+    fcTourRender(FC_TOUR_STEPS[_fcTourI]);
+  }
+});
 
 function renderManageList(){
   var list=document.getElementById('manageList');
@@ -16011,7 +16175,15 @@ function showPage(pageId, btn) {
   if (pageId === 'agenda')     { setTimeout(function(){ loadDevoirs(); renderAgenda(); renderAgendaExamBar(); }, 80); }
   if (pageId === 'notes')      { setTimeout(function(){ loadNotes(); renderNotesList(); }, 80); }
   if (pageId === 'culture')    { setTimeout(function(){ cultureGenerateGroq(false); }, 80); }
-  if (pageId === 'flashcards') { setTimeout(function(){ renderFilters(); renderCard(); renderStats(); renderHeatmap(); }, 80); }
+  if (pageId === 'flashcards') {
+    setTimeout(function(){ renderFilters(); renderCard(); renderStats(); renderHeatmap(); }, 80);
+    // Tour interactif à la toute première ouverture
+    try{
+      if(!localStorage.getItem('dg_fc_tour_done')){
+        setTimeout(function(){ if(typeof fcTourStart==='function') fcTourStart(); }, 750);
+      }
+    }catch(e){}
+  }
   if (pageId === 'home')       { setTimeout(updateHomeStats, 80); }
   if (pageId === 'oral')       { setTimeout(function(){ initProfTutor(); oralPopulateVoices(); }, 80); }
   if (pageId === 'mindmap')    { setTimeout(mmHistoryRefresh, 80); }
