@@ -6176,7 +6176,7 @@ aside.sidebar {
           <div class="sim-tab" onclick="simSem(2,this)">📗 Semestre 2</div>
         </div>
         <table class="sim-tbl" id="simTable">
-          <thead><tr><th>Matière</th><th>ECTS</th><th>CC (%)</th><th>Note CC</th><th>Note Exam</th><th>Moy.</th></tr></thead>
+          <thead><tr><th>Matière</th><th>ECTS</th><th>Coeff</th><th>CC (%)</th><th>Note CC</th><th>Note Exam</th><th>Moy.</th></tr></thead>
           <tbody id="simBody"></tbody>
         </table>
       </div>
@@ -10727,6 +10727,7 @@ function renderSimTable(){
       +'<td><div style="font-size:12px;font-weight:500">'+m.emoji+' '+nom+'</div>'
       +'<div style="font-size:10px;color:var(--g400)">'+m.desc+'</div></td>'
       +'<td><span class="ects-badge">'+m.ects+'</span></td>'
+      +'<td><span class="ects-badge" style="background:#eef2ff;color:#4338ca">'+((m.ects/4).toString().replace('.',','))+'</span></td>'
       +'<td><span class="cc-badge">'+ccPct+'%</span></td>'
       +'<td>'+ccCell+'</td>'
       +'<td>'+exCell+'</td>'
