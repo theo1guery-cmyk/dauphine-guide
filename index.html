@@ -6179,6 +6179,14 @@ aside.sidebar {
           <button class="sim-track-btn on" id="simTrackDroit" onclick="setSimTrack('droit',this)">⚖️ Cursus juridique</button>
           <button class="sim-track-btn" id="simTrackGen" onclick="setSimTrack('general',this)">📊 Sans droit (Éco-Gestion)</button>
         </div>
+        <div id="simCertWrap" style="display:none;margin-bottom:14px;align-items:center;gap:8px">
+          <label style="font-size:12.5px;font-weight:700;color:var(--g600);margin-right:6px">🎓 Certificat (optionnel)</label>
+          <select id="simCertSelect" onchange="setSimCert(this.value)" style="padding:7px 12px;border:1.5px solid var(--g200);border-radius:10px;font-size:12.5px;font-weight:600;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);cursor:pointer">
+            <option value="none">Aucun</option>
+            <option value="medias">📰 Médias &amp; Journalisme</option>
+            <option value="langues">🇬🇧 Langues &amp; enjeux contemporains (anglophone)</option>
+          </select>
+        </div>
         <div class="sim-tabs">
           <div class="sim-tab on" onclick="simSem(1,this)">📘 Semestre 1</div>
           <div class="sim-tab" onclick="simSem(2,this)">📗 Semestre 2</div>
@@ -10720,6 +10728,32 @@ var SIM_OPTION = {
   2: { id:'gen_option_s2', nom:'', sem:2, ects:0, coefFixed:0.5, cc:0, exam:100, cat:'option', emoji:'🎯', desc:'Ton option (saisis le nom)', isOption:true }
 };
 
+// ─── CERTIFICATS (mode général uniquement) ───
+var simCert = (function(){ try{ return localStorage.getItem('sim_cert') || 'none'; }catch(e){ return 'none'; } })();
+// Cours au choix du parcours Langues, par semestre
+var SIM_CERT_LANG = {
+  1: [ {v:'debating', l:'Debating / Public Speaking'}, {v:'cultural', l:'Cultural Icons'} ],
+  2: [ {v:'creative', l:'Creative Writing'}, {v:'migrations', l:'Migrations and diasporas'} ]
+};
+
+function certSubjects(sem){
+  if(simTrack !== 'general' || simCert === 'none') return [];
+  if(simCert === 'medias'){
+    return [{ id:'cert_journ_s'+sem, nom:'Initiation au journalisme', sem:sem, ects:2, coefFixed:1, cc:0, exam:100, cat:'cert', emoji:'📰', desc:'Certificat Médias & Journalisme · contrôle continu', isCert:true }];
+  }
+  if(simCert === 'langues'){
+    return [{ id:'cert_lang_s'+sem, sem:sem, ects:0, coefFixed:(sem===1?1:0.5), cc:0, exam:100, cat:'cert', emoji:'🇬🇧', desc:'Certificat Langues anglophone · contrôle continu', isCert:true, isCertLang:true }];
+  }
+  return [];
+}
+
+function setSimCert(v){
+  simCert = v;
+  try{ localStorage.setItem('sim_cert', v); }catch(e){}
+  annualScores.s1=NaN; annualScores.s2=NaN;
+  renderSimTable(); computeAvg();
+}
+
 // Coeffs personnalisés (valent pour TOUS les cursus). Tout id non listé → ECTS/4.
 var SIM_COEFF_OVERRIDES = {
   macro_data: 0.5,   // Les données de la macroéconomie (S1)
@@ -10743,7 +10777,7 @@ function simCoeffStr(m){ return simCoeff(m).toString().replace('.', ','); }
 function getSimSubjects(sem){
   if(simTrack === 'general'){
     var base = MATIERES.filter(function(m){ return m.sem===sem && m.coef>0 && m.cat!=='droit'; });
-    return base.concat([ SIM_GEN_SUBJECTS[sem], SIM_OPTION[sem] ]);
+    return base.concat([ SIM_GEN_SUBJECTS[sem], SIM_OPTION[sem] ]).concat(certSubjects(sem));
   }
   return MATIERES.filter(function(m){ return m.sem===sem && m.coef>0; });
 }
@@ -10754,6 +10788,7 @@ function setSimTrack(t, btn){
   var d=document.getElementById('simTrackDroit'), g=document.getElementById('simTrackGen');
   if(d) d.classList.toggle('on', t==='droit');
   if(g) g.classList.toggle('on', t==='general');
+  var cw=document.getElementById('simCertWrap'); if(cw) cw.style.display = (t==='general') ? 'flex' : 'none';
   annualScores.s1=NaN; annualScores.s2=NaN; // recalcul propre des deux semestres
   renderSimTable(); computeAvg();
 }
@@ -10764,6 +10799,8 @@ function setSimTrack(t, btn){
     var d=document.getElementById('simTrackDroit'), g=document.getElementById('simTrackGen');
     if(d) d.classList.toggle('on', simTrack==='droit');
     if(g) g.classList.toggle('on', simTrack==='general');
+    var cw=document.getElementById('simCertWrap'); if(cw) cw.style.display = (simTrack==='general') ? 'flex' : 'none';
+    var cs=document.getElementById('simCertSelect'); if(cs) cs.value=simCert;
     if(typeof renderSimTable==='function'){ try{ renderSimTable(); computeAvg(); }catch(e){} }
   }
   if(document.readyState !== 'loading') apply();
@@ -10780,7 +10817,7 @@ function renderSimTable(){
     var ccPct=m.cc||0;
     var savedCC=localStorage.getItem('sim_cc_'+m.id)||'';
     var savedEX=localStorage.getItem('sim_ex_'+m.id)||'';
-    var nom=m.nom.length>35?m.nom.slice(0,35)+'...':m.nom;
+    var nom=(m.nom||'').length>35?(m.nom||'').slice(0,35)+'...':(m.nom||'');
     var ccCell;
     if(ccPct>0){
       ccCell='<input class="mnote" type="number" min="0" max="20" step="0.5" placeholder="-"'
@@ -10803,11 +10840,19 @@ function renderSimTable(){
         +' style="font-size:12px;font-weight:500;border:1px solid var(--g200);border-radius:6px;padding:3px 7px;width:160px;font-family:Figtree,sans-serif;background:var(--bg-card,#fff);color:var(--text-main)"'
         +' oninput="localStorage.setItem(&quot;sim_optname_'+m.id+'&quot;,this.value)"></div>'
         +'<div style="font-size:10px;color:var(--g400);margin-top:2px">'+m.desc+'</div>';
+    } else if(m.isCertLang){
+      var choices=SIM_CERT_LANG[m.sem]||[];
+      var savedChoice=localStorage.getItem('sim_certlang_s'+m.sem)||(choices[0]&&choices[0].v);
+      var opts=choices.map(function(o){ return '<option value="'+o.v+'"'+(o.v===savedChoice?' selected':'')+'>'+o.l+'</option>'; }).join('');
+      nameCell='<div style="display:flex;align-items:center;gap:5px"><span>'+m.emoji+'</span>'
+        +'<select onchange="localStorage.setItem(&quot;sim_certlang_s'+m.sem+'&quot;,this.value)"'
+        +' style="font-size:12px;font-weight:500;border:1px solid var(--g200);border-radius:6px;padding:3px 7px;font-family:Figtree,sans-serif;background:var(--bg-card,#fff);color:var(--text-main);cursor:pointer">'+opts+'</select></div>'
+        +'<div style="font-size:10px;color:var(--g400);margin-top:2px">'+m.desc+'</div>';
     } else {
       nameCell='<div style="font-size:12px;font-weight:500">'+m.emoji+' '+nom+'</div>'
         +'<div style="font-size:10px;color:var(--g400)">'+m.desc+'</div>';
     }
-    var ectsBadge = m.isOption ? '<span style="color:var(--g400);font-size:11px">—</span>' : '<span class="ects-badge">'+m.ects+'</span>';
+    var ectsBadge = (m.ects>0) ? '<span class="ects-badge">'+m.ects+'</span>' : '<span style="color:var(--g400);font-size:11px">—</span>';
     tr.innerHTML=''
       +'<td>'+nameCell+'</td>'
       +'<td>'+ectsBadge+'</td>'
