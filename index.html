@@ -10108,6 +10108,7 @@ aside.sidebar {
         <div class="prof-actions">
           <button class="prof-btn" id="mmGenBtn" onclick="mmGenerate()">🧠 Générer la Mind Map</button>
           <button class="prof-btn ghost" type="button" onclick="mmReset()">🗑️ Réinitialiser</button>
+          <button class="prof-btn ghost" type="button" onclick="mmTourStart()" title="Revoir la présentation">❓ Tuto</button>
         </div>
       </div>
       <!-- Map panel -->
@@ -11934,28 +11935,67 @@ var FC_TOUR_STEPS = [
     after:  function(){ try{ if(typeof closeManage==='function') closeManage(); }catch(e){} }
   }
 ];
+// ── Étapes du tour Mind Map IA (aucune génération IA → 0 essai consommé) ──
+var MM_TOUR_STEPS = [
+  {
+    sel: '.mm-tabs',
+    title: 'Deux modes en un',
+    body: "<b>🧠 Mind Map IA</b> transforme ton cours en carte mentale. <b>🔗 Synapse</b> est le mode <b>collaboratif</b> pour construire une carte à plusieurs. On commence par le mode IA.",
+    before: function(){ try{ if(typeof mmSwitchTab==='function') mmSwitchTab(1); }catch(e){} }
+  },
+  {
+    sel: '#mmInput',
+    title: 'Colle ton cours',
+    body: "Choisis la matière, puis colle ici un chapitre, un résumé ou une simple liste de notions. Pas besoin de mise en forme — l'IA s'occupe de tout structurer."
+  },
+  {
+    sel: '#mmGenBtn',
+    title: 'Génère la carte',
+    body: "Un clic et l'IA <b>analyse ton cours puis le visualise</b> en carte mentale hiérarchique en quelques secondes."
+  },
+  {
+    sel: '#mmMapCard',
+    title: 'Ta carte interactive',
+    body: "La carte s'affiche ici : <b>zoom</b>, déplacement, <b>recherche</b> d'une notion, changement de <b>layout</b> (radial/arbre) et <b>export</b> SVG/PNG. Clique sur une branche pour un <b>approfondissement IA</b> et générer des <b>flashcards</b> directement depuis la carte !"
+  }
+];
+
+// ── Moteur générique (partagé Flashcards + Mind Map) ──
+var _dgTourSteps   = FC_TOUR_STEPS;
+var _dgTourDoneKey = 'dg_fc_tour_done';
 var _fcTourI = -1;
 
 function fcTourStart(){
+  _dgTourSteps = FC_TOUR_STEPS; _dgTourDoneKey = 'dg_fc_tour_done';
   if(typeof showPage==='function' && document.getElementById('page-flashcards') && !document.getElementById('page-flashcards').classList.contains('active')){
     showPage('flashcards', null);
   }
+  _dgTourLaunch();
+}
+
+function mmTourStart(){
+  _dgTourSteps = MM_TOUR_STEPS; _dgTourDoneKey = 'dg_mm_tour_done';
+  if(typeof showPage==='function' && document.getElementById('page-mindmap') && !document.getElementById('page-mindmap').classList.contains('active')){
+    showPage('mindmap', null);
+  }
+  _dgTourLaunch();
+}
+
+function _dgTourLaunch(){
   _fcTourI = -1;
   document.getElementById('fcTour').classList.add('open');
-  setTimeout(function(){ fcTourGoTo(0); }, 200);
+  setTimeout(function(){ fcTourGoTo(0); }, 250);
 }
 
 function fcTourGoTo(i){
-  // nettoyage de l'étape précédente (ferme un modal éventuel)
-  if(_fcTourI >= 0 && _fcTourI < FC_TOUR_STEPS.length && FC_TOUR_STEPS[_fcTourI].after){
-    try{ FC_TOUR_STEPS[_fcTourI].after(); }catch(e){}
+  if(_fcTourI >= 0 && _fcTourI < _dgTourSteps.length && _dgTourSteps[_fcTourI].after){
+    try{ _dgTourSteps[_fcTourI].after(); }catch(e){}
   }
   if(i < 0) i = 0;
-  if(i >= FC_TOUR_STEPS.length){ fcTourEnd(false); return; }
+  if(i >= _dgTourSteps.length){ fcTourEnd(false); return; }
   _fcTourI = i;
-  var step = FC_TOUR_STEPS[i];
+  var step = _dgTourSteps[i];
   if(step.before){ try{ step.before(); }catch(e){} }
-  // laisse le temps d'ouvrir un modal / de scroller
   setTimeout(function(){
     var el = document.querySelector(step.sel);
     if(el && step.scroll !== false){ try{ el.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){} }
@@ -11967,14 +12007,13 @@ function fcTourRender(step){
   var pop = document.getElementById('fcTourPop');
   var hole = document.getElementById('fcTourHole');
   if(!pop || !hole) return;
-  // remplissage texte
-  document.getElementById('fcTourStepNum').textContent = 'Étape ' + (_fcTourI+1) + '/' + FC_TOUR_STEPS.length;
+  document.getElementById('fcTourStepNum').textContent = 'Étape ' + (_fcTourI+1) + '/' + _dgTourSteps.length;
   document.getElementById('fcTourTitle').textContent = step.title;
   document.getElementById('fcTourBody').innerHTML = step.body;
-  var dots = ''; for(var k=0;k<FC_TOUR_STEPS.length;k++){ dots += '<div class="fc-tour-dot'+(k===_fcTourI?' on':'')+'"></div>'; }
+  var dots = ''; for(var k=0;k<_dgTourSteps.length;k++){ dots += '<div class="fc-tour-dot'+(k===_fcTourI?' on':'')+'"></div>'; }
   document.getElementById('fcTourDots').innerHTML = dots;
   document.getElementById('fcTourPrev').style.visibility = _fcTourI===0 ? 'hidden' : 'visible';
-  document.getElementById('fcTourNext').textContent = (_fcTourI===FC_TOUR_STEPS.length-1) ? 'Terminer ✓' : 'Suivant →';
+  document.getElementById('fcTourNext').textContent = (_fcTourI===_dgTourSteps.length-1) ? 'Terminer ✓' : 'Suivant →';
 
   var el = document.querySelector(step.sel);
   if(!el){
@@ -12006,19 +12045,19 @@ function fcTourNext(){ fcTourGoTo(_fcTourI + 1); }
 function fcTourPrev(){ fcTourGoTo(_fcTourI - 1); }
 
 function fcTourEnd(skipped){
-  if(_fcTourI >= 0 && _fcTourI < FC_TOUR_STEPS.length && FC_TOUR_STEPS[_fcTourI].after){
-    try{ FC_TOUR_STEPS[_fcTourI].after(); }catch(e){}
+  if(_fcTourI >= 0 && _fcTourI < _dgTourSteps.length && _dgTourSteps[_fcTourI].after){
+    try{ _dgTourSteps[_fcTourI].after(); }catch(e){}
   }
   var t = document.getElementById('fcTour');
   if(t) t.classList.remove('open');
   _fcTourI = -1;
-  try{ localStorage.setItem('dg_fc_tour_done','1'); }catch(e){}
+  try{ localStorage.setItem(_dgTourDoneKey, '1'); }catch(e){}
 }
 
 // repositionne la bulle si on redimensionne (mobile/rotation)
 window.addEventListener('resize', function(){
   if(_fcTourI >= 0 && document.getElementById('fcTour') && document.getElementById('fcTour').classList.contains('open')){
-    fcTourRender(FC_TOUR_STEPS[_fcTourI]);
+    fcTourRender(_dgTourSteps[_fcTourI]);
   }
 });
 
@@ -16186,7 +16225,14 @@ function showPage(pageId, btn) {
   }
   if (pageId === 'home')       { setTimeout(updateHomeStats, 80); }
   if (pageId === 'oral')       { setTimeout(function(){ initProfTutor(); oralPopulateVoices(); }, 80); }
-  if (pageId === 'mindmap')    { setTimeout(mmHistoryRefresh, 80); }
+  if (pageId === 'mindmap')    {
+    setTimeout(mmHistoryRefresh, 80);
+    try{
+      if(!localStorage.getItem('dg_mm_tour_done')){
+        setTimeout(function(){ if(typeof mmTourStart==='function') mmTourStart(); }, 750);
+      }
+    }catch(e){}
+  }
 
   // Reveal any .rev elements that the IntersectionObserver may have missed
   // (elements inside display:none sections are not reliably detected on first show)
