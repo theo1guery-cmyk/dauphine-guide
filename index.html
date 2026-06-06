@@ -11935,28 +11935,55 @@ var FC_TOUR_STEPS = [
     after:  function(){ try{ if(typeof closeManage==='function') closeManage(); }catch(e){} }
   }
 ];
-// ── Étapes du tour Mind Map IA (aucune génération IA → 0 essai consommé) ──
+// Helpers onglet/panneau Synapse pour le tour
+function _mmTab(n){ try{ if(typeof mmSwitchTab==='function') mmSwitchTab(n); }catch(e){} }
+function _synCollab(show){ try{ var p=document.getElementById('synCollabPanel'); if(p) p.style.display = show ? 'block' : 'none'; }catch(e){} }
+
+// ── Étapes du tour Mind Map IA + Synapse (aucune génération IA → 0 essai consommé) ──
 var MM_TOUR_STEPS = [
   {
     sel: '.mm-tabs',
     title: 'Deux modes en un',
-    body: "<b>🧠 Mind Map IA</b> transforme ton cours en carte mentale. <b>🔗 Synapse</b> est le mode <b>collaboratif</b> pour construire une carte à plusieurs. On commence par le mode IA.",
-    before: function(){ try{ if(typeof mmSwitchTab==='function') mmSwitchTab(1); }catch(e){} }
+    body: "<b>🧠 Mind Map IA</b> transforme automatiquement ton cours en carte mentale. <b>🔗 Synapse</b> te laisse construire ta carte <b>toi-même</b>, seul ou <b>à plusieurs en direct</b>. On voit les deux !",
+    before: function(){ _mmTab(1); }
   },
   {
     sel: '#mmInput',
-    title: 'Colle ton cours',
-    body: "Choisis la matière, puis colle ici un chapitre, un résumé ou une simple liste de notions. Pas besoin de mise en forme — l'IA s'occupe de tout structurer."
+    title: 'Colle ton cours (IA)',
+    body: "Choisis la matière, puis colle ici un chapitre, un résumé ou une simple liste de notions. Pas besoin de mise en forme — l'IA s'occupe de tout structurer.",
+    before: function(){ _mmTab(1); }
   },
   {
     sel: '#mmGenBtn',
-    title: 'Génère la carte',
-    body: "Un clic et l'IA <b>analyse ton cours puis le visualise</b> en carte mentale hiérarchique en quelques secondes."
+    title: 'Génère la carte (IA)',
+    body: "Un clic et l'IA <b>analyse ton cours puis le visualise</b> en carte mentale hiérarchique en quelques secondes.",
+    before: function(){ _mmTab(1); }
   },
   {
     sel: '#mmMapCard',
     title: 'Ta carte interactive',
-    body: "La carte s'affiche ici : <b>zoom</b>, déplacement, <b>recherche</b> d'une notion, changement de <b>layout</b> (radial/arbre) et <b>export</b> SVG/PNG. Clique sur une branche pour un <b>approfondissement IA</b> et générer des <b>flashcards</b> directement depuis la carte !"
+    body: "La carte s'affiche ici : <b>zoom</b>, recherche d'une notion, <b>layout</b> radial/arbre, <b>export</b> SVG/PNG. Clique une branche pour un <b>approfondissement IA</b> + générer des <b>flashcards</b> directement !",
+    before: function(){ _mmTab(1); }
+  },
+  {
+    sel: '.syn-toolbar',
+    title: '🔗 Synapse — ta carte à la main',
+    body: "Voici le mode <b>Synapse</b>, trop souvent oublié ! Ici tu construis ta carte <b>toi-même</b> : <b>➕ Nœud</b> pour ajouter une idée, <b>🔗 Connecter</b> pour les relier, organisées par branches. Parfait pour structurer tes propres idées.",
+    before: function(){ _mmTab(2); _synCollab(false); }
+  },
+  {
+    sel: '#synCollabPanel',
+    title: '🌐 Collaboration en temps réel',
+    body: "Le gros atout : <b>crée une session</b>, partage le <b>code</b> à tes camarades, et éditez la <b>même carte ensemble en direct</b> — comme un Google Docs des cartes mentales. Idéal pour réviser en groupe avant un partiel.",
+    before: function(){ _mmTab(2); _synCollab(true); },
+    after:  function(){ _synCollab(false); }
+  },
+  {
+    sel: '#synSaveBtn',
+    title: '💾 Sauvegarde & réutilise',
+    body: "<b>Sauvegarde</b> tes cartes Synapse, retrouve-les dans <b>📂 Mes synapse</b>, exporte-les en SVG, et génère des <b>⚡ flashcards</b> à partir de ta carte. Tout reste à portée de main.",
+    before: function(){ _mmTab(2); _synCollab(false); },
+    after:  function(){ _synCollab(false); _mmTab(1); }
   }
 ];
 
