@@ -10720,8 +10720,23 @@ var SIM_OPTION = {
   2: { id:'gen_option_s2', nom:'', sem:2, ects:0, coefFixed:0.5, cc:0, exam:100, cat:'option', emoji:'🎯', desc:'Ton option (saisis le nom)', isOption:true }
 };
 
-// Coefficient effectif : fixe si défini, sinon ECTS/4 (4→1, 3→0,75, 2→0,5, 1→0,25)
-function simCoeff(m){ return (m.coefFixed != null) ? m.coefFixed : (m.ects/4); }
+// Coeffs personnalisés (valent pour TOUS les cursus). Tout id non listé → ECTS/4.
+var SIM_COEFF_OVERRIDES = {
+  macro_data: 0.5,   // Les données de la macroéconomie (S1)
+  info:       0.75,  // Informatique Excel/VBA (S1)
+  maths1:     0.75,  // Outils mathématiques (S1)
+  culture_eco:0.5,   // Culture économique (S1)
+  anglais1:   0.5,   // Anglais (S1)
+  maths2:     0.5,   // Optimisation en mathématiques (S2)
+  anglais2:   0.5    // Anglais (S2)
+};
+
+// Coefficient effectif : fixe (option/intro droit) → override → sinon ECTS/4 (4→1, 3→0,75, 2→0,5, 1→0,25)
+function simCoeff(m){
+  if(m.coefFixed != null) return m.coefFixed;
+  if(SIM_COEFF_OVERRIDES[m.id] != null) return SIM_COEFF_OVERRIDES[m.id];
+  return m.ects/4;
+}
 function simCoeffStr(m){ return simCoeff(m).toString().replace('.', ','); }
 
 // Liste des matières selon le mode + semestre
