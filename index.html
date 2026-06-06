@@ -80,9 +80,7 @@ input,textarea,select{background:var(--bg-card,#fff);color:var(--text-main,#1118
 [data-theme="dark"] .exam-card{background:var(--blue-pale);border-color:var(--blue-light)}
 [data-theme="dark"] .exam-answer{background:var(--g100)}
 [data-theme="dark"] .heatmap-section{background:var(--bg-card);border-color:var(--border-col)}
-[data-theme="dark"] .rattr-section{background:var(--bg-card);border-color:var(--border-col)}
 [data-theme="dark"] .exam-field input,[data-theme="dark"] .exam-field select{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
-[data-theme="dark"] .rattr-result{background:var(--blue-pale)}
 [data-theme="dark"] .heatmap-cell[style*="#e8f0fb"]{background:#1a2744!important}
 [data-theme="dark"] .share-url-box{background:var(--g100);border-color:var(--border-col);color:var(--text-sub)}
 [data-theme="dark"] .import-code-input{background:var(--bg-card);border-color:var(--border-col);color:var(--text-main)}
@@ -737,26 +735,6 @@ footer{background:var(--g900);color:#fff;padding:44px 48px 24px}
 .heatmap-today-count{font-size:22px;font-weight:700;color:var(--blue);font-family:var(--font-serif,serif);font-style:italic;line-height:1}
 .heatmap-streak{font-size:11px;color:var(--g400);margin-top:2px}
 
-/* ============================
-   RATTRAPAGE CALCULATOR
-   ============================ */
-.rattr-section{margin-top:16px;padding:20px;background:var(--bg-card,#fff);border:1px solid var(--g200);border-radius:var(--r)}
-[data-theme="dark"] .rattr-section{background:var(--bg-card);border-color:var(--border-col)}
-.rattr-title{font-size:13px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.rattr-sub{font-size:11px;color:var(--g400);margin-bottom:14px}
-.rattr-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-.rattr-input{border:1px solid var(--g200);border-radius:var(--rs);padding:8px 12px;font-size:14px;font-weight:500;width:90px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main)}
-.rattr-input:focus{outline:none;border-color:var(--blue)}
-.rattr-select{border:1px solid var(--g200);border-radius:var(--rs);padding:8px 12px;font-size:13px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);cursor:pointer}
-.rattr-select:focus{outline:none;border-color:var(--blue)}
-.rattr-result{background:var(--blue-pale);border:1px solid var(--blue-light);border-radius:10px;padding:14px 16px;margin-top:12px;display:none}
-.rattr-result.show{display:block}
-.rattr-result-num{font-family:var(--font-serif,serif);font-size:36px;font-style:italic;color:var(--blue);line-height:1}
-.rattr-result-label{font-size:12px;color:var(--blue-mid);margin-top:3px}
-.rattr-impossible{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px 16px;margin-top:12px;font-size:12px;color:#991b1b;display:none}
-.rattr-impossible.show{display:block}
-.rattr-validated{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-top:12px;font-size:12px;color:#166534;display:none}
-.rattr-validated.show{display:block}
 
 /* Deck share button */
 .deck-share-btn{padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px}
@@ -6421,33 +6399,6 @@ aside.sidebar {
         </div>
       </div>
 
-      <!-- RATTRAPAGE CALC -->
-      <div class="rattr-section">
-        <div class="rattr-title">🧮 Calculateur de rattrapage</div>
-        <div class="rattr-sub">Quelle note faut-il avoir à l'examen pour valider la matière ?</div>
-        <div class="rattr-row">
-          <div>
-            <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">MATIÈRE</div>
-            <select class="rattr-select" id="rattrMatSelect" onchange="calcRattrapage()">
-              <option value="">-- Choisir --</option>
-            <option value="socio">Sociologie : Naissance de la question sociale (CC 50%)</option><option value="macro_data">Les données de la macroéconomie (CC 30%)</option><option value="micro1">Microéconomie — Comportement du Consommateur (CC 50%)</option><option value="compta1">Comptabilité financière (S1) (CC 50%)</option><option value="info">Informatique : Excel/VBA (CC 50%)</option><option value="ethique">Enjeux éthiques et politiques (CC 50%)</option><option value="anglais1">Anglais (S1) (CC 50%)</option><option value="maths1">Outils mathématiques (S1) (CC 50%)</option><option value="softskills1">Soft Skills (S1) (CC 100%)</option><option value="droit_intro">Introduction générale au Droit (CC 50%)</option><option value="institutions">Institutions administratives et judiciaires (CC 50%)</option><option value="sciences_po">Sciences politiques : État et démocratie (CC 50%)</option><option value="macro2">Introduction à la Macroéconomie (CC 50%)</option><option value="micro2">Microéconomie — Comportements de la firme (CC 50%)</option><option value="compta2">Comptabilité financière (S2) (CC 50%)</option><option value="maths2">Optimisation en Mathématiques (CC 50%)</option><option value="eco_eco">Enjeux écologiques : limites planétaires (CC 50%)</option><option value="anglais2">Anglais (S2) (CC 50%)</option><option value="softskills2">Soft Skills (S2) (CC 100%)</option><option value="droit_constit">Droit constitutionnel (Ve République) (CC 50%)</option><option value="droit_penal">Introduction au Droit pénal (CC 50%)</option><option value="droit_euro">Introduction au Droit européen (CC 50%)</option></select>
-          </div>
-          <div>
-            <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">NOTE CC (sur 20)</div>
-            <input type="number" class="rattr-input" id="rattrCC" min="0" max="20" step="0.5" placeholder="—" oninput="calcRattrapage()">
-          </div>
-          <div>
-            <div style="font-size:10px;font-weight:600;color:var(--g400);margin-bottom:4px">OBJECTIF (sur 20)</div>
-            <input type="number" class="rattr-input" id="rattrTarget" min="0" max="20" step="0.5" value="10" oninput="calcRattrapage()">
-          </div>
-        </div>
-        <div class="rattr-result" id="rattrResult">
-          <div class="rattr-result-num" id="rattrResultNum">—</div>
-          <div class="rattr-result-label" id="rattrResultLabel"></div>
-        </div>
-        <div class="rattr-impossible" id="rattrImpossible">❌ Impossible d'atteindre l'objectif même avec 20/20 à l'examen.</div>
-        <div class="rattr-validated" id="rattrValidated">✅ Matière déjà validée avec ta note de CC !</div>
-      </div>
     </div>
   </div>
 </section>
@@ -12514,58 +12465,6 @@ function renderHeatmap(){
   if(streakEl)streakEl.textContent=streak+'j de série 🔥';
 }
 renderHeatmap();
-
-// ─── RATTRAPAGE CALCULATOR ───
-(function(){
-  var sel=document.getElementById('rattrMatSelect');
-  if(!sel)return;
-  var mats=MATIERES.filter(function(m){return m.cc>0;});
-  mats.forEach(function(m){
-    var opt=document.createElement('option');
-    opt.value=m.id;
-    opt.textContent=m.nom+' (CC '+m.cc+'%)';
-    sel.appendChild(opt);
-  });
-})();
-
-function calcRattrapage(){
-  var selEl=document.getElementById('rattrMatSelect');
-  var ccEl=document.getElementById('rattrCC');
-  var targetEl=document.getElementById('rattrTarget');
-  var resultEl=document.getElementById('rattrResult');
-  var resultNumEl=document.getElementById('rattrResultNum');
-  var resultLabelEl=document.getElementById('rattrResultLabel');
-  var impossibleEl=document.getElementById('rattrImpossible');
-  var validatedEl=document.getElementById('rattrValidated');
-  if(!selEl||!ccEl||!targetEl)return;
-  
-  [resultEl,impossibleEl,validatedEl].forEach(function(el){if(el)el.classList.remove('show');});
-  
-  var matId=selEl.value;if(!matId)return;
-  var ccVal=parseFloat(ccEl.value);if(isNaN(ccVal))return;
-  var target=parseFloat(targetEl.value);if(isNaN(target))return;
-  
-  var mat=MATIERES.find(function(m){return m.id==matId;});
-  if(!mat)return;
-  
-  var ccPct=mat.cc/100;var exPct=(mat.exam||100-mat.cc)/100;
-  // Moy = ccVal*ccPct + examNote*exPct >= target
-  // examNote >= (target - ccVal*ccPct) / exPct
-  var needed=(target - ccVal*ccPct)/exPct;
-  
-  if(ccVal*ccPct>=target){
-    validatedEl.classList.add('show');
-    return;
-  }
-  if(needed>20){
-    impossibleEl.classList.add('show');
-    return;
-  }
-  
-  resultNumEl.textContent=Math.ceil(needed*2)/2+'/20';
-  resultLabelEl.textContent='Note minimale à l\'examen pour atteindre '+target+'/20 de moyenne (CC '+mat.cc+'% / Exam '+mat.exam+'%)';
-  resultEl.classList.add('show');
-}
 
 // ─── SHARE MODAL ───
 var currentShareCode='';
