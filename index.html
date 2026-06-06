@@ -6171,6 +6171,14 @@ aside.sidebar {
     </div>
     <div class="sim-wrap">
       <div class="sim-table-wrap rev">
+        <style>
+        .sim-track-btn{padding:8px 16px;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
+        .sim-track-btn.on{background:var(--blue,#0057ad);color:#fff;border-color:var(--blue,#0057ad)}
+        </style>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <button class="sim-track-btn on" id="simTrackDroit" onclick="setSimTrack('droit',this)">⚖️ Cursus juridique</button>
+          <button class="sim-track-btn" id="simTrackGen" onclick="setSimTrack('general',this)">📊 Sans droit (Éco-Gestion)</button>
+        </div>
         <div class="sim-tabs">
           <div class="sim-tab on" onclick="simSem(1,this)">📘 Semestre 1</div>
           <div class="sim-tab" onclick="simSem(2,this)">📗 Semestre 2</div>
@@ -10699,8 +10707,56 @@ function toggleFaq(el){const item=el.parentElement;const isOpen=item.classList.c
 let simSemester=1;
 function simSem(s,btn){simSemester=s;document.querySelectorAll('.sim-tab').forEach(x=>x.classList.remove('on'));btn.classList.add('on');renderSimTable();computeAvg()}
 
+// ─── MODE CURSUS (juridique / sans droit) ───
+var simTrack = (function(){ try{ return localStorage.getItem('sim_track') || 'droit'; }catch(e){ return 'droit'; } })();
+
+// Matières spécifiques au mode "Sans droit" (Éco-Gestion) : 1 intro droit (coeff fixe 0,5) + 1 option (coeff fixe 0,5)
+var SIM_GEN_SUBJECTS = {
+  1: { id:'gen_droit_s1', nom:'Introduction au droit public et européen', sem:1, ects:3, coefFixed:0.5, cc:50, exam:50, cat:'droit', emoji:'⚖️', desc:'État, droit constit., international, administratif' },
+  2: { id:'gen_droit_s2', nom:'Introduction au droit privé et au droit pénal', sem:2, ects:3, coefFixed:0.5, cc:50, exam:50, cat:'droit', emoji:'⚖️', desc:'Justice, preuve, sources, responsabilité' }
+};
+var SIM_OPTION = {
+  1: { id:'gen_option_s1', nom:'', sem:1, ects:0, coefFixed:0.5, cc:0, exam:100, cat:'option', emoji:'🎯', desc:'Ton option (saisis le nom)', isOption:true },
+  2: { id:'gen_option_s2', nom:'', sem:2, ects:0, coefFixed:0.5, cc:0, exam:100, cat:'option', emoji:'🎯', desc:'Ton option (saisis le nom)', isOption:true }
+};
+
+// Coefficient effectif : fixe si défini, sinon ECTS/4 (4→1, 3→0,75, 2→0,5, 1→0,25)
+function simCoeff(m){ return (m.coefFixed != null) ? m.coefFixed : (m.ects/4); }
+function simCoeffStr(m){ return simCoeff(m).toString().replace('.', ','); }
+
+// Liste des matières selon le mode + semestre
+function getSimSubjects(sem){
+  if(simTrack === 'general'){
+    var base = MATIERES.filter(function(m){ return m.sem===sem && m.coef>0 && m.cat!=='droit'; });
+    return base.concat([ SIM_GEN_SUBJECTS[sem], SIM_OPTION[sem] ]);
+  }
+  return MATIERES.filter(function(m){ return m.sem===sem && m.coef>0; });
+}
+
+function setSimTrack(t, btn){
+  simTrack = t;
+  try{ localStorage.setItem('sim_track', t); }catch(e){}
+  var d=document.getElementById('simTrackDroit'), g=document.getElementById('simTrackGen');
+  if(d) d.classList.toggle('on', t==='droit');
+  if(g) g.classList.toggle('on', t==='general');
+  annualScores.s1=NaN; annualScores.s2=NaN; // recalcul propre des deux semestres
+  renderSimTable(); computeAvg();
+}
+
+// Init : reflète le mode sauvegardé + peuple le tableau
+(function _simTrackInit(){
+  function apply(){
+    var d=document.getElementById('simTrackDroit'), g=document.getElementById('simTrackGen');
+    if(d) d.classList.toggle('on', simTrack==='droit');
+    if(g) g.classList.toggle('on', simTrack==='general');
+    if(typeof renderSimTable==='function'){ try{ renderSimTable(); computeAvg(); }catch(e){} }
+  }
+  if(document.readyState !== 'loading') apply();
+  else document.addEventListener('DOMContentLoaded', apply);
+})();
+
 function renderSimTable(){
-  var mat=MATIERES.filter(function(m){return m.sem===simSemester&&m.coef>0;});
+  var mat=getSimSubjects(simSemester);
   var body=document.getElementById('simBody');
   if(!body)return;
   body.innerHTML='';
@@ -10723,11 +10779,24 @@ function renderSimTable(){
       +' id="ex_'+m.id+'" value="'+savedEX+'"'
       +' oninput="saveNote(&quot;ex_'+m.id+'&quot;,this.value);computeAvg()"'
       +' onblur="colorNote(this)">';
+    // Cellule "Matière" : nom éditable pour l'option, sinon nom fixe
+    var nameCell;
+    if(m.isOption){
+      var savedName=localStorage.getItem('sim_optname_'+m.id)||'';
+      nameCell='<div style="display:flex;align-items:center;gap:5px"><span>'+m.emoji+'</span>'
+        +'<input type="text" placeholder="Nom de ton option…" maxlength="40" value="'+savedName.replace(/"/g,'&quot;')+'"'
+        +' style="font-size:12px;font-weight:500;border:1px solid var(--g200);border-radius:6px;padding:3px 7px;width:160px;font-family:Figtree,sans-serif;background:var(--bg-card,#fff);color:var(--text-main)"'
+        +' oninput="localStorage.setItem(&quot;sim_optname_'+m.id+'&quot;,this.value)"></div>'
+        +'<div style="font-size:10px;color:var(--g400);margin-top:2px">'+m.desc+'</div>';
+    } else {
+      nameCell='<div style="font-size:12px;font-weight:500">'+m.emoji+' '+nom+'</div>'
+        +'<div style="font-size:10px;color:var(--g400)">'+m.desc+'</div>';
+    }
+    var ectsBadge = m.isOption ? '<span style="color:var(--g400);font-size:11px">—</span>' : '<span class="ects-badge">'+m.ects+'</span>';
     tr.innerHTML=''
-      +'<td><div style="font-size:12px;font-weight:500">'+m.emoji+' '+nom+'</div>'
-      +'<div style="font-size:10px;color:var(--g400)">'+m.desc+'</div></td>'
-      +'<td><span class="ects-badge">'+m.ects+'</span></td>'
-      +'<td><span class="ects-badge" style="background:#eef2ff;color:#4338ca">'+((m.ects/4).toString().replace('.',','))+'</span></td>'
+      +'<td>'+nameCell+'</td>'
+      +'<td>'+ectsBadge+'</td>'
+      +'<td><span class="ects-badge" style="background:#eef2ff;color:#4338ca">'+simCoeffStr(m)+'</span></td>'
       +'<td><span class="cc-badge">'+ccPct+'%</span></td>'
       +'<td>'+ccCell+'</td>'
       +'<td>'+exCell+'</td>'
@@ -10753,7 +10822,7 @@ function colorNote(inp){
 }
 
 function computeAvg(){
-  const mat=MATIERES.filter(m=>m.sem===simSemester&&m.coef>0);
+  const mat=getSimSubjects(simSemester);
   let totalW=0,totalWN=0,filledEcts=0,bads=[];
   const rows=[];
   mat.forEach(m=>{
@@ -10769,7 +10838,7 @@ function computeAvg(){
     else if(!isNaN(exV))moy=exV;
     const avgEl=document.getElementById('avg_'+m.id);
     if(avgEl)avgEl.textContent=isNaN(moy)?'—':moy.toFixed(2);
-    if(!isNaN(moy)){totalW+=m.ects;totalWN+=moy*m.ects;filledEcts+=m.ects;if(moy<10)bads.push(m.nom.slice(0,25))}
+    if(!isNaN(moy)){var w=simCoeff(m);totalW+=w;totalWN+=moy*w;filledEcts+=m.ects;if(moy<10)bads.push((m.nom||'Option').slice(0,25))}
   });
   const avg=totalW>0?totalWN/totalW:NaN;
   const numEl=document.getElementById('rNum');
@@ -10804,7 +10873,7 @@ function computeAvg(){
 const annualScores={s1:NaN,s2:NaN};
 
 function updateAnnualAvg(){
-  const mat=MATIERES.filter(m=>m.sem===simSemester&&m.coef>0);
+  const mat=getSimSubjects(simSemester);
   let totalW=0,totalWN=0;
   mat.forEach(m=>{
     const ccEl=document.getElementById('cc_'+m.id);
@@ -10815,7 +10884,7 @@ function updateAnnualAvg(){
     let moy=NaN;
     if(!isNaN(exV)&&ccPct===0)moy=exV;
     else if(!isNaN(ccV)&&!isNaN(exV))moy=(ccV*ccPct/100)+(exV*(m.exam||100)/100);
-    if(!isNaN(moy)){totalW+=m.ects;totalWN+=moy*m.ects}
+    if(!isNaN(moy)){var w=simCoeff(m);totalW+=w;totalWN+=moy*w}
   });
   const avg=totalW>0?totalWN/totalW:NaN;
   if(simSemester===1)annualScores.s1=avg;
