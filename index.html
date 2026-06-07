@@ -15637,13 +15637,14 @@ function initLogin() {
     // On garde le splash affiché tant que Firebase n'est pas prêt,
     // puis : connecté → enterChat lance l'animation ; déconnecté → portail de connexion.
     (function _wait(){
-      if (window._chatCurrentUser) return; // déjà connecté → géré par enterChat
-      if (typeof window.doLogin === 'function' || _t++ > 45) {
+      if (window._chatCurrentUser) return; // déjà connecté → enterChat gère (splash/anim)
+      // On n'affiche le portail QUE si Firebase a confirmé "déconnecté/à authentifier" (évite le flash)
+      if (window._fbShowAuth || _t++ > 70) {
         var sp = document.getElementById('splashScreen'); if (sp) { sp.style.opacity='0'; sp.style.display='none'; }
         if (_ov) _ov.style.display = 'flex';
         return;
       }
-      setTimeout(_wait, 150);
+      setTimeout(_wait, 100);
     })();
     return;
   }
@@ -19089,6 +19090,8 @@ onAuthStateChanged(auth, async fbUser => {
   if (fbUser) {
     // Vérifie email confirmé
     if (!fbUser.emailVerified) {
+      window._fbShowAuth = true;
+      document.getElementById('auth-overlay').style.display = 'flex';
       showTab('verify');
       return;
     }
@@ -19100,10 +19103,13 @@ onAuthStateChanged(auth, async fbUser => {
       enterChat();
     } else {
       // Nouveau compte Google sans profil → demande promo
+      window._fbShowAuth = true;
+      document.getElementById('auth-overlay').style.display = 'flex';
       showTab('complete-profile');
       window._pendingUser = fbUser;
     }
   } else {
+    window._fbShowAuth = true;
     document.getElementById('auth-overlay').style.display = 'flex';
   }
 });
