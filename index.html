@@ -19250,11 +19250,20 @@ window.completeProfile = async function() {
 
 function enterChat() {
   document.getElementById('auth-overlay').style.display = 'none';
-  // Connexion obligatoire : 1re connexion de la session → on lance l'animation d'intro
+  // Connexion obligatoire : à la connexion, on enchaîne sur l'intro.
+  // Grande animation (morph) = SEULEMENT la 1re fois sur l'appareil. Ensuite : juste le splash logo.
   if (typeof DG_FORCE_LOGIN !== 'undefined' && DG_FORCE_LOGIN && !window._dgIntroDone) {
     window._dgIntroDone = true;
-    var _sp = document.getElementById('splashScreen'); if (_sp) { _sp.style.display='none'; }
-    if (typeof startMorphAnimation === 'function') { try { startMorphAnimation(); } catch(e){} }
+    var _firstTime = true;
+    try { _firstTime = !localStorage.getItem('dg_intro_seen'); } catch(e){}
+    if (_firstTime && typeof startMorphAnimation === 'function') {
+      try { localStorage.setItem('dg_intro_seen','1'); } catch(e){}
+      try { startMorphAnimation(); } catch(e){}
+    } else {
+      // Visites suivantes : on laisse le splash logo s'estomper normalement
+      var _sp = document.getElementById('splashScreen');
+      if (_sp) { _sp.classList.add('fade-out'); _sp.style.opacity='0'; setTimeout(function(){ _sp.style.display='none'; }, 600); }
+    }
   }
   document.getElementById('user-display').textContent = `${currentUser.pseudo} · ${currentUser.promo}`;
 
