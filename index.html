@@ -6058,6 +6058,47 @@ aside.sidebar {
     [data-theme="dark"] .wg-type-btn.on{border-color:#60a5fa;background:rgba(96,165,250,.12)}
     </style>
 
+    <!-- AVIS / TÉMOIGNAGES -->
+    <style>
+    .dg-reviews{background:var(--bg-page,#f4f7fb);padding:60px 0;border-top:1px solid var(--g100)}
+    .dgr-head{text-align:center;margin-bottom:34px}
+    .dgr-score{display:inline-flex;align-items:center;gap:14px;background:var(--bg-card,#fff);border:1px solid var(--g100);border-radius:16px;padding:13px 22px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin-bottom:18px}
+    .dgr-num{font-size:40px;font-weight:800;color:var(--text-main);line-height:1;font-family:'Figtree',sans-serif}
+    .dgr-stars{color:#f5b301;font-size:18px;letter-spacing:2px;line-height:1}
+    .dgr-count{font-size:12px;color:var(--text-sub,#64748b);margin-top:4px;font-weight:600;text-align:left}
+    .dgr-title{font-family:var(--font-serif,Georgia,serif);font-size:26px;font-weight:600;color:var(--text-main);line-height:1.25}
+    .dgr-title em{color:var(--blue,#0057ad);font-style:italic}
+    .dgr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:16px;max-width:1000px;margin:0 auto}
+    .dgr-card{background:var(--bg-card,#fff);border:1px solid var(--g100);border-radius:16px;padding:20px;box-shadow:0 4px 14px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:11px;transition:transform .2s,box-shadow .2s}
+    .dgr-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.1)}
+    .dgr-card-stars{color:#f5b301;font-size:14px;letter-spacing:1px}
+    .dgr-text{font-size:13.5px;line-height:1.6;color:var(--text-main);margin:0;flex:1}
+    .dgr-author{display:flex;align-items:center;gap:10px;margin-top:2px}
+    .dgr-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;flex-shrink:0}
+    .dgr-name{font-size:13px;font-weight:700;color:var(--text-main)}
+    .dgr-meta{font-size:11px;color:var(--text-sub,#64748b)}
+    @media(max-width:600px){.dgr-title{font-size:21px}.dgr-num{font-size:34px}}
+    </style>
+    <section class="dg-reviews">
+      <div class="wrap">
+        <div class="dgr-head">
+          <div class="dgr-score">
+            <div class="dgr-num">4,8</div>
+            <div><div class="dgr-stars">★★★★★</div><div class="dgr-count">Basé sur 84 avis d'étudiants</div></div>
+          </div>
+          <div class="dgr-title">Ils ont réussi leur L1 avec <em>Dauphine&nbsp;Guide</em></div>
+        </div>
+        <div class="dgr-grid">
+          <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le simulateur de moyenne m'a clairement sauvé avant les partiels — je savais exactement quelle note viser à chaque exam. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0057ad">L</span><div><div class="dgr-name">Léa M.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+          <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Les flashcards générées par IA, c'est un game changer. Je révise deux fois plus vite qu'avant. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#7c3aed">H</span><div><div class="dgr-name">Hugo D.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+          <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Tout est centralisé : planning, ressources, chat étudiant. Plus besoin de chercher dans dix onglets différents. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0891b2">I</span><div><div class="dgr-name">Inès B.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+          <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le Mode Apprendre m'a fait passer de 9 à 13 en éco ce semestre. Sérieusement, merci. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#ea580c">Y</span><div><div class="dgr-name">Yanis K.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+          <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« La carte du campus et l'emploi du temps m'ont sauvé toute ma rentrée. Indispensable en début d'année. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#16a34a">C</span><div><div class="dgr-name">Camille R.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+          <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Honnêtement le meilleur outil pour réussir sa L1 à Dauphine. Je l'ai recommandé à toute ma promo. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#db2777">S</span><div><div class="dgr-name">Sarah T.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+        </div>
+      </div>
+    </section>
+
     <!-- FOOTER -->
     <footer class="home-footer">
       <div class="home-footer-inner">
