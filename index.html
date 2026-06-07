@@ -8537,6 +8537,8 @@ dgRenderReviews();
   </style>
   <div class="wrap" style="padding-top:40px;padding-bottom:64px;max-width:740px">
 
+    <div id="premExpiredBanner" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:14px;padding:16px 18px;margin-bottom:18px;font-size:14px;font-weight:700;line-height:1.5">⏰ Ton Premium a <b>expiré</b> (6 mois écoulés). Renouvelle pour 5 € ci-dessous pour continuer à profiter des fonctionnalités IA 👇</div>
+
     <div class="prem-card">
       <div style="font-family:var(--font-serif,Georgia,serif);font-size:23px;font-weight:600;color:var(--text-main);margin-bottom:16px">Tout débloquer avec le <em style="color:var(--blue,#0057ad)">Premium</em></div>
       <div class="prem-feat"><span>🧑‍🏫</span><div><b>Prof particulier IA</b> — explications illimitées sur n'importe quel cours</div></div>
@@ -16560,22 +16562,44 @@ var _pmPendingPage = null;
 function isPremium(){ return localStorage.getItem('dg_premium') === 'true'; }
 
 // ── Premium lié au compte (activé par l'admin) ──
+var DG_PREMIUM_DURATION = 1000*60*60*24*183; // ~6 mois
 function dgSyncAccountPremium(){
   var u=null; try{u=window._chatCurrentUser;}catch(e){}
   if(!u || !window._fb) return;
   var fb=window._fb;
-  fb.get(fb.ref(fb.db,'users/'+u.uid+'/premium')).then(function(s){
-    if(s && s.val()===true){
-      fb.get(fb.ref(fb.db,'users/'+u.uid+'/pcode')).then(function(cs){
-        var code=(cs && cs.val())?String(cs.val()):'';
+  fb.get(fb.ref(fb.db,'users/'+u.uid)).then(function(s){
+    var d=(s && s.val())||{};
+    var done=function(){ if(typeof refreshPremiumUI==='function') refreshPremiumUI(); if(typeof updateTrialCounter==='function') updateTrialCounter(); };
+    if(d.premium===true){
+      var since=d.premiumSince||0;
+      var expired = since && (Date.now() - since > DG_PREMIUM_DURATION);
+      if(expired){
+        // Premium expiré (6 mois écoulés) → on retire + on signale le renouvellement
+        try{
+          localStorage.removeItem('dg_premium');
+          localStorage.removeItem('dg_premium_code');
+          localStorage.setItem('dg_premium_src','account');
+          localStorage.setItem('dg_premium_expired','1');
+        }catch(e){}
+      } else {
         try{
           localStorage.setItem('dg_premium','true');
-          if(code) localStorage.setItem('dg_premium_code',code);
+          if(d.pcode) localStorage.setItem('dg_premium_code', String(d.pcode));
           localStorage.setItem('dg_premium_src','account');
+          localStorage.removeItem('dg_premium_expired');
         }catch(e){}
-        if(typeof refreshPremiumUI==='function') refreshPremiumUI();
-        if(typeof updateTrialCounter==='function') updateTrialCounter();
-      }).catch(function(){});
+      }
+      done();
+    } else {
+      // Plus premium côté compte → on retire si c'était lié au compte
+      try{
+        if(localStorage.getItem('dg_premium_src')==='account'){
+          localStorage.removeItem('dg_premium');
+          localStorage.removeItem('dg_premium_code');
+          localStorage.removeItem('dg_premium_src');
+        }
+      }catch(e){}
+      done();
     }
   }).catch(function(){});
 }
@@ -16794,6 +16818,8 @@ function showPage(pageId, btn) {
         }
         var box=document.getElementById('premAdminBox');
         if(box) box.style.display = (typeof dgIsAdmin==='function' && dgIsAdmin()) ? 'block' : 'none';
+        var eb=document.getElementById('premExpiredBanner');
+        if(eb) eb.style.display = (localStorage.getItem('dg_premium_expired')==='1') ? 'block' : 'none';
       }catch(e){}
     }, 60);
   }
