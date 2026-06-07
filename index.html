@@ -16593,7 +16593,7 @@ function dgClearAccountPremium(){
 window.dgClearAccountPremium = dgClearAccountPremium;
 
 // ⚠️ LIEN DE PAIEMENT LYDIA — remplacer par le vrai lien (5€) quand prêt
-var DG_LYDIA_URL = 'https://lydia-app.com/REMPLACER-PAR-TON-LIEN-5EUR';
+var DG_LYDIA_URL = 'https://pay.lydia.me/l?t=theog667t';
 function dgGoPremiumPay(){
   try{ window.open(DG_LYDIA_URL, '_blank', 'noopener'); }catch(e){ location.href = DG_LYDIA_URL; }
   if(typeof gtag === 'function') try{ gtag('event', 'premium_pay_click'); }catch(e){}
