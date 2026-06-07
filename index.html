@@ -19265,11 +19265,8 @@ function enterChat() {
     if (_firstTime && typeof startMorphAnimation === 'function') {
       try { localStorage.setItem('dg_intro_seen','1'); } catch(e){}
       try { startMorphAnimation(); } catch(e){}
-    } else {
-      // Visites suivantes : on laisse le splash logo s'estomper normalement
-      var _sp = document.getElementById('splashScreen');
-      if (_sp) { _sp.classList.add('fade-out'); _sp.style.opacity='0'; setTimeout(function(){ _sp.style.display='none'; }, 600); }
     }
+    // Sinon : on ne touche PAS au splash → la barre de chargement va au bout et s'estompe d'elle-même (animation d'origine).
   }
   document.getElementById('user-display').textContent = `${currentUser.pseudo} · ${currentUser.promo}`;
 
