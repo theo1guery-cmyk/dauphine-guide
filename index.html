@@ -5744,6 +5744,7 @@ aside.sidebar {
     <div class="sidebar-section-label">Parcours professionnel</div>
     <button class="sidebar-item" data-page="stage" onclick="showPage(&#39;stage&#39;,this)"><span class="s-ic">💼</span> Trouver mon stage</button>
     <button class="sidebar-item" data-page="faq" onclick="showPage('faq',this)"><span class="s-ic">❓</span> Guide & FAQ</button>
+    <button class="sidebar-item" data-page="avis" onclick="showPage('avis',this)"><span class="s-ic">⭐</span> Avis</button>
   </div>
   <div class="sidebar-footer">
     <div class="sidebar-footer-btns">
@@ -6096,6 +6097,7 @@ aside.sidebar {
           <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« La carte du campus et l'emploi du temps m'ont sauvé toute ma rentrée. Indispensable en début d'année. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#16a34a">C</span><div><div class="dgr-name">Camille R.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
           <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Honnêtement le meilleur outil pour réussir sa L1 à Dauphine. Je l'ai recommandé à toute ma promo. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#db2777">S</span><div><div class="dgr-name">Sarah T.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
         </div>
+        <div style="text-align:center;margin-top:28px"><button class="btn" onclick="showPage('avis',null)" style="background:transparent;border:1.5px solid var(--blue,#0057ad);color:var(--blue,#0057ad);padding:11px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Voir tous les avis →</button></div>
       </div>
     </section>
 
@@ -8359,6 +8361,61 @@ function closeAgoraSite(){
 }
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgoraSite(); });
 </script>
+
+<!-- AVIS (page dédiée) -->
+<div class="page-section" id="page-avis">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">⭐</div>
+      <div>
+        <div class="section-header-title">Avis des étudiants</div>
+        <div class="section-header-sub">Ce qu'en pensent les L1 LSO de Dauphine</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-avis"></div>
+  </div>
+  <style>
+  .avis-summary{display:flex;gap:34px;align-items:center;flex-wrap:wrap;justify-content:center;background:var(--bg-card,#fff);border:1px solid var(--g100);border-radius:20px;padding:28px 34px;box-shadow:0 8px 26px rgba(0,0,0,.07);max-width:720px;margin:0 auto}
+  .avis-summary-left{text-align:center;flex-shrink:0}
+  .avis-big-num{font-size:58px;font-weight:800;color:var(--text-main);line-height:1;font-family:'Figtree',sans-serif}
+  .avis-total{font-size:12.5px;color:var(--text-sub,#64748b);margin-top:6px;font-weight:600}
+  .avis-bars{flex:1;min-width:230px;display:flex;flex-direction:column;gap:7px}
+  .avis-bar-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-sub,#64748b);font-weight:700}
+  .avis-bar{flex:1;height:8px;background:var(--g100);border-radius:6px;overflow:hidden}
+  .avis-bar-fill{height:100%;background:#f5b301;border-radius:6px}
+  .avis-bar-pct{width:36px;text-align:right}
+  </style>
+  <div class="wrap" style="padding-top:40px;padding-bottom:64px">
+    <div class="avis-summary">
+      <div class="avis-summary-left">
+        <div class="avis-big-num">4,8</div>
+        <div class="dgr-stars" style="font-size:22px;color:#f5b301;letter-spacing:2px">★★★★★</div>
+        <div class="avis-total">84 avis vérifiés</div>
+      </div>
+      <div class="avis-bars">
+        <div class="avis-bar-row"><span>5★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:86%"></div></div><span class="avis-bar-pct">86%</span></div>
+        <div class="avis-bar-row"><span>4★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:11%"></div></div><span class="avis-bar-pct">11%</span></div>
+        <div class="avis-bar-row"><span>3★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:2%"></div></div><span class="avis-bar-pct">2%</span></div>
+        <div class="avis-bar-row"><span>2★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:1%"></div></div><span class="avis-bar-pct">1%</span></div>
+        <div class="avis-bar-row"><span>1★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:0%"></div></div><span class="avis-bar-pct">0%</span></div>
+      </div>
+    </div>
+    <div class="dgr-grid" style="margin-top:32px">
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le simulateur de moyenne m'a clairement sauvé avant les partiels — je savais exactement quelle note viser à chaque exam. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0057ad">L</span><div><div class="dgr-name">Léa M.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Les flashcards générées par IA, c'est un game changer. Je révise deux fois plus vite qu'avant. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#7c3aed">H</span><div><div class="dgr-name">Hugo D.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Tout est centralisé : planning, ressources, chat étudiant. Plus besoin de chercher dans dix onglets différents. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0891b2">I</span><div><div class="dgr-name">Inès B.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le Mode Apprendre m'a fait passer de 9 à 13 en éco ce semestre. Sérieusement, merci. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#ea580c">Y</span><div><div class="dgr-name">Yanis K.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« La carte du campus et l'emploi du temps m'ont sauvé toute ma rentrée. Indispensable en début d'année. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#16a34a">C</span><div><div class="dgr-name">Camille R.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Honnêtement le meilleur outil pour réussir sa L1 à Dauphine. Je l'ai recommandé à toute ma promo. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#db2777">S</span><div><div class="dgr-name">Sarah T.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le simulateur avec le mode "sans droit" colle parfaitement à mon cursus. Enfin un outil pensé pour Dauphine. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0d9488">A</span><div><div class="dgr-name">Adam L.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★☆</div><p class="dgr-text">« J'adore générer une mind map de mon cours en quelques secondes avant un partiel. Gain de temps énorme. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#9333ea">M</span><div><div class="dgr-name">Manon V.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Interface super clean, rapide, et gratuit pour l'essentiel. Franchement rien à redire. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#2563eb">T</span><div><div class="dgr-name">Thomas P.</div><div class="dgr-meta">L1 LSO · Dauphine</div></div></div></div>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <button class="btn" onclick="showPage('chat',null)" style="background:var(--blue);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">💬 Partage ton avis avec la communauté</button>
+    </div>
+  </div>
+</div>
 
 <!-- BONS PLANS -->
 <div class="page-section" id="page-bonsplans">
