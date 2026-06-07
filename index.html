@@ -8269,7 +8269,7 @@ aside.sidebar {
   </div>
   <div class="asso-grid" id="assoGrid">
     <div class="ac rev" data-asso="integ"><div class="ac-top"><div class="ac-logo">🎉</div><div><div class="ac-name">BDE Dauphine</div><span class="atag at-integ">Intégration</span></div></div><p class="ac-desc">L'asso incontournable — soirées, WEI, Gala, vie festive et intégration des nouveaux étudiants.</p><div class="ac-foot"><span class="ac-mem">👥 ~800 membres</span><a class="btn-ac" href="https://assosdedauphine.fr/" target="_blank">Voir ↗</a></div></div>
-    <div class="ac rev" data-asso="debat" style="border:1.5px solid #0057ad;box-shadow:0 6px 22px rgba(0,87,173,.18)"><div class="ac-top"><div class="ac-logo">🏛️</div><div><div class="ac-name">AGORA DAU ✦</div><span class="atag at-inter">Réflexion &amp; débat</span></div></div><p class="ac-desc"><strong>Analyser · Débattre · Synthétiser</strong> les grands enjeux du monde. Cycle mensuel : analyse écrite, débat structuré en présentiel, puis synthèse publiée sur LinkedIn. Rigueur, pluralisme et production collective — toutes filières bienvenues.</p><div class="ac-foot"><span class="ac-mem">✦ Nouvelle asso · 2026</span><a class="btn-ac" href="mailto:agora.dau@gmail.com">Rejoindre ↗</a></div></div>
+    <div class="ac rev" data-asso="debat" onclick="openAgoraSite()" style="border:1.5px solid #0057ad;box-shadow:0 6px 22px rgba(0,87,173,.18);cursor:pointer"><div class="ac-top"><div class="ac-logo">🏛️</div><div><div class="ac-name">AGORA DAU ✦</div><span class="atag at-inter">Réflexion &amp; débat</span></div></div><p class="ac-desc"><strong>Analyser · Débattre · Synthétiser</strong> les grands enjeux du monde. Cycle mensuel : analyse écrite, débat structuré en présentiel, puis synthèse publiée sur LinkedIn. Rigueur, pluralisme et production collective — toutes filières bienvenues.</p><div class="ac-foot"><span class="ac-mem">✦ Nouvelle asso · 2026</span><a class="btn-ac" href="https://theo1guery-cmyk.github.io/AgoraDau/" onclick="event.preventDefault();event.stopPropagation();openAgoraSite()">Voir le site ↗</a></div></div>
     <div class="ac rev" data-asso="sport"><div class="ac-top"><div class="ac-logo">🏅</div><div><div class="ac-name">AS Dauphine</div><span class="atag at-sport">Sport</span></div></div><p class="ac-desc">20+ sections sportives : foot, basket, tennis, natation, escalade, rugby, badminton…</p><div class="ac-foot"><span class="ac-mem">👥 ~1200 membres</span><a class="btn-ac" href="https://assosdedauphine.fr/category/sport/" target="_blank">Voir ↗</a></div></div>
     <div class="ac rev" data-asso="sport"><div class="ac-top"><div class="ac-logo">⛵</div><div><div class="ac-name">Club Voile (CVDo)</div><span class="atag at-sport">Sport nautique</span></div></div><p class="ac-desc">WE de voile et participation à la Spi, plus grosse régate étudiante de France.</p><div class="ac-foot"><span class="ac-mem">Ouvert à tous</span><a class="btn-ac" href="https://assosdedauphine.fr/cvdo-club-voile-de-dauphine/" target="_blank">Voir ↗</a></div></div>
     <div class="ac rev" data-asso="sport"><div class="ac-top"><div class="ac-logo">⛷️</div><div><div class="ac-name">Ski Club (SCUD)</div><span class="atag at-sport">Sports d'hiver</span></div></div><p class="ac-desc">Sports d'hiver — séjours et week-ends ski organisés chaque année.</p><div class="ac-foot"><span class="ac-mem"><a href="https://theo1guery-cmyk.github.io/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a29313339362f383e3b2f2a3233343f1a32352e373b3336743c28">[email&nbsp;protected]</a></span><a class="btn-ac" href="https://assosdedauphine.fr/scud-ski-club/" target="_blank">Voir ↗</a></div></div>
@@ -8291,6 +8291,31 @@ aside.sidebar {
 </section>
 </div>
 </div>
+
+<!-- MODAL : site AGORA DAU -->
+<div id="agoraModal" onclick="if(event.target===this)closeAgoraSite()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(6,16,34,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:24px;align-items:center;justify-content:center">
+  <div style="width:100%;max-width:1100px;height:90vh;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.45)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e2e8f0;flex-shrink:0">
+      <div style="font-weight:800;font-size:14px;color:#0f172a">🏛️ AGORA DAU</div>
+      <div style="display:flex;gap:8px">
+        <a href="https://theo1guery-cmyk.github.io/AgoraDau/" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:#0057ad;text-decoration:none;padding:7px 13px;border:1.5px solid #0057ad;border-radius:9px">Ouvrir en plein onglet ↗</a>
+        <button onclick="closeAgoraSite()" style="font-size:13px;font-weight:700;border:none;background:#0057ad;color:#fff;border-radius:9px;padding:7px 15px;cursor:pointer;font-family:'Figtree',sans-serif">✕ Fermer</button>
+      </div>
+    </div>
+    <iframe id="agoraFrame" src="" title="Site AGORA DAU" style="flex:1;width:100%;border:none" loading="lazy"></iframe>
+  </div>
+</div>
+<script>
+function openAgoraSite(){
+  var m=document.getElementById('agoraModal'), f=document.getElementById('agoraFrame');
+  if(f && !f.getAttribute('src')) f.setAttribute('src','https://theo1guery-cmyk.github.io/AgoraDau/');
+  if(m) m.style.display='flex';
+}
+function closeAgoraSite(){
+  var m=document.getElementById('agoraModal'); if(m) m.style.display='none';
+}
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgoraSite(); });
+</script>
 
 <!-- BONS PLANS -->
 <div class="page-section" id="page-bonsplans">
