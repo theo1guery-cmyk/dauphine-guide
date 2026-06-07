@@ -6134,7 +6134,14 @@ aside.sidebar {
     <div class="section-header-date" id="sh-date-page-dauphishare"></div>
   </div>
   <style>
-  .ds-hero{background:linear-gradient(160deg,#21386b 0%,#152748 100%);border-radius:22px;padding:42px 30px;text-align:center;color:#fff;box-shadow:0 20px 60px rgba(20,40,90,.3)}
+  .ds-hero{position:relative;overflow:hidden;background:linear-gradient(160deg,#21386b 0%,#152748 100%);border-radius:22px;padding:48px 30px;text-align:center;color:#fff;box-shadow:0 24px 60px rgba(20,40,90,.35)}
+  .ds-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:34px 34px;pointer-events:none}
+  .ds-hero::after{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:380px;height:380px;background:radial-gradient(circle,rgba(212,184,120,.25),transparent 70%);pointer-events:none}
+  .ds-hero > *{position:relative;z-index:1}
+  .ds-step{display:flex;gap:12px;align-items:flex-start;background:var(--bg-card,#fff);border:1px solid var(--g100);border-radius:14px;padding:16px}
+  .ds-step-n{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:#21386b;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  .ds-step-t{font-weight:800;font-size:14px;color:var(--text-main)}
+  .ds-step-d{font-size:12.5px;color:var(--text-sub,#64748b);line-height:1.5;margin-top:2px}
   .ds-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:30px;padding:6px 14px;font-size:11.5px;font-weight:700;color:#e9d9a8;margin-bottom:16px}
   .ds-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:#d4b878}
   .ds-logo{display:inline-flex;align-items:center;gap:10px}
@@ -6174,6 +6181,21 @@ aside.sidebar {
       <div class="ds-feat"><div class="ds-feat-ic">📄</div><div class="ds-feat-t">Annales & corrigés</div><div class="ds-feat-d">Les sujets des années passées pour t'entraîner.</div></div>
       <div class="ds-feat"><div class="ds-feat-ic">📖</div><div class="ds-feat-t">Cours & fiches</div><div class="ds-feat-d">Les cours et fiches de révision de la communauté.</div></div>
       <div class="ds-feat"><div class="ds-feat-ic">🤝</div><div class="ds-feat-t">Collaboratif</div><div class="ds-feat-d">Dépose tes docs, profite de ceux des autres.</div></div>
+    </div>
+
+    <div style="margin-top:36px">
+      <div style="font-family:var(--font-serif,Georgia,serif);font-size:22px;font-weight:600;color:var(--text-main);text-align:center;margin-bottom:18px">Comment ça marche ?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+        <div class="ds-step"><div class="ds-step-n">1</div><div><div class="ds-step-t">Explore</div><div class="ds-step-d">Parcours les documents par cursus et par matière.</div></div></div>
+        <div class="ds-step"><div class="ds-step-n">2</div><div><div class="ds-step-t">Télécharge</div><div class="ds-step-d">Récupère annales, cours et fiches en un clic.</div></div></div>
+        <div class="ds-step"><div class="ds-step-n">3</div><div><div class="ds-step-t">Partage</div><div class="ds-step-d">Dépose tes propres docs pour aider ta promo.</div></div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:36px;background:linear-gradient(135deg,#d4b878,#ecdcb0);border-radius:20px;padding:32px;text-align:center;color:#21386b">
+      <div style="font-family:var(--font-serif,Georgia,serif);font-size:24px;font-weight:700;margin-bottom:6px">Rejoins la communauté DauphiShare</div>
+      <div style="font-size:14px;opacity:.85;margin:0 auto 18px;max-width:480px;line-height:1.55">Plus on partage, plus tout le monde réussit. Trouve ce qu'il te faut, ou dépose ton premier document dès maintenant.</div>
+      <a href="https://dauphishare.fr/app/" target="_blank" rel="noopener" style="background:#21386b;color:#fff;font-weight:800;font-size:15px;border-radius:30px;padding:14px 30px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 22px rgba(33,56,107,.3)">Accéder à DauphiShare →</a>
     </div>
   </div>
 </div>
