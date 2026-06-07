@@ -5745,7 +5745,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="stage" onclick="showPage(&#39;stage&#39;,this)"><span class="s-ic">💼</span> Trouver mon stage</button>
     <button class="sidebar-item" data-page="faq" onclick="showPage('faq',this)"><span class="s-ic">❓</span> Guide & FAQ</button>
     <button class="sidebar-item" data-page="avis" onclick="showPage('avis',this)"><span class="s-ic">⭐</span> Avis</button>
-    <button class="sidebar-item" id="dgAdminPremiumBtn" style="display:none" onclick="openAdminPrem()"><span class="s-ic">💎</span> Activer Premium <span class="sb-badge" style="background:#16a34a;color:#fff;font-size:9px;padding:1px 6px;border-radius:4px;margin-left:4px">ADMIN</span></button>
+    <button class="sidebar-item" data-page="premium" onclick="showPage('premium',this)"><span class="s-ic">💎</span> Passer Premium</button>
   </div>
   <div class="sidebar-footer">
     <div class="sidebar-footer-btns">
@@ -8510,6 +8510,66 @@ function dgLoadReviews(){
 dgRenderReviews();
 (function waitFb(){ if(window._fb){ dgLoadReviews(); } else { setTimeout(waitFb,300); } })();
 </script>
+
+<!-- PAGE : Passer Premium -->
+<div class="page-section" id="page-premium">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">💎</div>
+      <div>
+        <div class="section-header-title">Passer Premium</div>
+        <div class="section-header-sub">Débloque toutes les fonctionnalités IA</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-premium"></div>
+  </div>
+  <style>
+  .prem-card{background:var(--bg-card,#fff);border:1px solid var(--g100);border-radius:18px;padding:24px;box-shadow:0 6px 22px rgba(0,0,0,.06);margin-bottom:18px}
+  .prem-feat{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text-main);line-height:1.5;margin-bottom:11px}
+  .prem-feat span{font-size:18px;flex-shrink:0;width:24px}
+  .prem-step{display:flex;gap:12px;margin-bottom:14px}
+  .prem-step-n{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--blue,#0057ad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  .prem-step-b{font-size:13.5px;color:var(--text-main);line-height:1.55}
+  .prem-hl{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px 14px;font-size:13px;color:#9a3412;line-height:1.55}
+  [data-theme="dark"] .prem-hl{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.3);color:#fdba74}
+  .prem-info{background:var(--blue-light,#eef4ff);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--blue-mid,#1e40af);line-height:1.55}
+  [data-theme="dark"] .prem-info{background:rgba(77,159,255,.1);color:#9fc4ff}
+  </style>
+  <div class="wrap" style="padding-top:40px;padding-bottom:64px;max-width:740px">
+
+    <div class="prem-card">
+      <div style="font-family:var(--font-serif,Georgia,serif);font-size:23px;font-weight:600;color:var(--text-main);margin-bottom:16px">Tout débloquer avec le <em style="color:var(--blue,#0057ad)">Premium</em></div>
+      <div class="prem-feat"><span>🧑‍🏫</span><div><b>Prof particulier IA</b> — explications illimitées sur n'importe quel cours</div></div>
+      <div class="prem-feat"><span>🃏</span><div><b>Flashcards IA</b> — génère des centaines de cartes depuis ton cours</div></div>
+      <div class="prem-feat"><span>🎓</span><div><b>Mode Apprendre</b> — révision adaptative pilotée par l'IA</div></div>
+      <div class="prem-feat"><span>🗺️</span><div><b>Mind Map IA</b> — ton cours en carte mentale en quelques secondes</div></div>
+      <div class="prem-feat"><span>🎙️</span><div><b>Simulateur d'oral</b> avec feedback IA</div></div>
+      <div class="prem-feat"><span>🌍</span><div><b>Culture G</b>, <b>analyse d'annales</b> et <b>cas pratiques</b> par IA</div></div>
+      <div class="prem-feat"><span>♾️</span><div><b>Générations illimitées</b> — fini les 5 essais par section</div></div>
+    </div>
+
+    <div class="prem-card" style="text-align:center">
+      <div style="font-size:46px;font-weight:800;color:var(--text-main);line-height:1;font-family:'Figtree',sans-serif">5 €</div>
+      <div style="font-size:13px;color:var(--text-sub,#64748b);margin-top:4px;margin-bottom:16px">pour 6 mois · renouvelable</div>
+      <button onclick="dgGoPremiumPay()" style="background:linear-gradient(135deg,#08284d,#0057ad);color:#fff;padding:14px 28px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Figtree',sans-serif;box-shadow:0 6px 18px rgba(0,87,173,.3)">✦ Payer 5 € via Lydia →</button>
+      <div class="prem-info" style="margin-top:18px;text-align:left">💡 <b>Pourquoi c'est payant ?</b> Les fonctionnalités IA tournent sur des modèles qui <b>coûtent de l'argent à chaque utilisation</b>. Les 5 € servent <b>uniquement</b> à couvrir ces frais d'IA, pour garder un service rapide et illimité. Tout le reste du site (planning, simulateur, chat, ressources, campus…) reste <b>100 % gratuit</b>.</div>
+    </div>
+
+    <div class="prem-card">
+      <div style="font-size:16px;font-weight:800;color:var(--text-main);margin-bottom:16px">📋 Comment activer ton Premium</div>
+      <div class="prem-step"><div class="prem-step-n">1</div><div class="prem-step-b"><b>Connecte-toi</b> à ton compte (chat étudiant) si ce n'est pas déjà fait.</div></div>
+      <div class="prem-step"><div class="prem-step-n">2</div><div class="prem-step-b">Clique sur <b>Payer 5 € via Lydia</b> et effectue le paiement.</div></div>
+      <div class="prem-step"><div class="prem-step-n">3</div><div class="prem-step-b"><b>Très important :</b> dans la <b>note / le libellé du paiement</b>, indique ton <b>pseudo</b> et l'<b>email de ton compte</b> — sinon on ne peut pas retrouver ton compte pour l'activer.</div></div>
+      <div class="prem-step"><div class="prem-step-n">4</div><div class="prem-step-b">On <b>active ton compte</b> rapidement → le Premium apparaît sur <b>tous tes appareils</b>, sans rien à taper. ✨</div></div>
+      <div class="prem-hl" id="premMyInfo">🔐 Connecte-toi pour voir le pseudo et l'email exacts à mettre dans ton paiement.</div>
+      <div style="font-size:12px;color:var(--text-sub,#64748b);margin-top:12px">🔁 Renouvelable tous les <b>6 mois</b>. Une question ? Écris-nous sur Instagram.</div>
+    </div>
+
+    <div id="premAdminBox" style="display:none;text-align:center">
+      <button onclick="openAdminPrem()" style="background:#16a34a;color:#fff;padding:11px 22px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">🔧 Activer des comptes (admin)</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL : admin activer premium -->
 <div id="adminPremModal" onclick="if(event.target===this)closeAdminPrem()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(6,16,34,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
@@ -16720,6 +16780,21 @@ function showPage(pageId, btn) {
     }catch(e){}
   }
   if (pageId === 'avis' && typeof dgRenderReviews === 'function') { setTimeout(dgRenderReviews, 60); }
+  if (pageId === 'premium') {
+    setTimeout(function(){
+      try{
+        var u=null; try{u=window._chatCurrentUser;}catch(e){}
+        var info=document.getElementById('premMyInfo');
+        if(info){
+          info.innerHTML = u
+            ? ('✅ À recopier dans la note de ton paiement :<br>Pseudo : <b>'+dgEsc(u.pseudo||'')+'</b> · Email : <b>'+dgEsc(u.email||'')+'</b>')
+            : '🔐 Connecte-toi pour voir le pseudo et l\'email exacts à mettre dans ton paiement.';
+        }
+        var box=document.getElementById('premAdminBox');
+        if(box) box.style.display = (typeof dgIsAdmin==='function' && dgIsAdmin()) ? 'block' : 'none';
+      }catch(e){}
+    }, 60);
+  }
 
   // Reveal any .rev elements that the IntersectionObserver may have missed
   // (elements inside display:none sections are not reliably detected on first show)
