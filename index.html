@@ -8379,7 +8379,8 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgora
         <div class="avis-bar-row"><span>1★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:0%"></div></div><span class="avis-bar-pct">0%</span></div>
       </div>
     </div>
-    <div class="dgr-grid" style="margin-top:32px">
+    <div id="avisUserReviews" class="dgr-grid" style="margin-top:32px"></div>
+    <div class="dgr-grid" style="margin-top:16px">
       <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Ça donne tellement envie d'apprendre et j'ai hâte de pouvoir l'utiliser pour mes partiels, mais aussi dès que j'ai besoin d'un renseignement ! C'est vraiment le site de rêve, surtout pour ceux qui arrivent et sont un peu perdus. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0057ad">D</span><div><div class="dgr-name">Dalia</div><div class="dgr-meta">Admise en L1 · Dauphine</div></div></div></div>
       <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« C'est vraiment super pour rester organisé et réviser, surtout avec les flashcards et l'IA qui aident beaucoup pour mémoriser ! Vous avez vraiment fait un bon guide. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#7c3aed">L</span><div><div class="dgr-name">Lauralice</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
       <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le site est vraiment incroyable, pour de vrai franchement. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0891b2">W</span><div><div class="dgr-name">Whenal</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
@@ -8390,10 +8391,82 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgora
       <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Wow, le site est grave bien, merci beaucoup ! Ça a l'air vraiment utile. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#2563eb">L</span><div><div class="dgr-name">Lily</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
     </div>
     <div style="text-align:center;margin-top:32px">
-      <button class="btn" onclick="showPage('chat',null)" style="background:var(--blue);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">💬 Partage ton avis avec la communauté</button>
+      <button class="btn" onclick="openReviewModal()" style="background:var(--blue);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">✍️ Partager mon avis</button>
     </div>
   </div>
 </div>
+
+<!-- MODAL : laisser un avis -->
+<div id="avisModal" onclick="if(event.target===this)closeReviewModal()" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(6,16,34,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:460px;background:var(--bg-card,#fff);border-radius:18px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.42)">
+    <div style="font-family:var(--font-serif,Georgia,serif);font-size:22px;font-weight:600;color:var(--text-main);margin-bottom:4px">Partager mon avis</div>
+    <div style="font-size:13px;color:var(--text-sub,#64748b);margin-bottom:18px">Ton retour aide les futurs L1 💙</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-main);margin-bottom:6px">Ta note</div>
+    <div id="avisStarPick" style="font-size:32px;color:#d8dee9;cursor:pointer;letter-spacing:5px;margin-bottom:16px;user-select:none">
+      <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+    </div>
+    <textarea id="avisTextInput" maxlength="300" placeholder="Qu'est-ce que tu penses de Dauphine Guide ?" style="width:100%;min-height:90px;border:1.5px solid var(--g200);border-radius:12px;padding:12px;font-size:14px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);resize:vertical;box-sizing:border-box"></textarea>
+    <div id="avisError" style="display:none;color:#ef4444;font-size:12px;margin-top:8px;font-weight:600"></div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button onclick="closeReviewModal()" style="flex:1;padding:11px;border:1.5px solid var(--g200);background:none;color:var(--text-sub,#64748b);border-radius:10px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Annuler</button>
+      <button onclick="submitReview()" style="flex:2;padding:11px;border:none;background:var(--blue,#0057ad);color:#fff;border-radius:10px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Publier mon avis</button>
+    </div>
+  </div>
+</div>
+<script>
+var _avisStars=0, _avisLoaded=false;
+function dgEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setAvisStars(n){
+  _avisStars=n;
+  var box=document.getElementById('avisStarPick'); if(!box) return;
+  Array.prototype.forEach.call(box.children,function(s){ s.style.color=(+s.getAttribute('data-v')<=n)?'#f5b301':'#d8dee9'; });
+}
+(function(){ var box=document.getElementById('avisStarPick'); if(box){ Array.prototype.forEach.call(box.children,function(s){ s.onclick=function(){ setAvisStars(+s.getAttribute('data-v')); }; }); } })();
+function openReviewModal(){
+  var u=null; try{u=window._chatCurrentUser;}catch(e){}
+  if(!u){ alert('Connecte-toi (chat étudiant) pour laisser un avis 🙂'); showPage('chat',null); return; }
+  _avisStars=0; setAvisStars(0);
+  var t=document.getElementById('avisTextInput'); if(t) t.value='';
+  var e=document.getElementById('avisError'); if(e) e.style.display='none';
+  var m=document.getElementById('avisModal'); if(m) m.style.display='flex';
+}
+function closeReviewModal(){ var m=document.getElementById('avisModal'); if(m) m.style.display='none'; }
+function submitReview(){
+  var u=null; try{u=window._chatCurrentUser;}catch(e){}
+  var err=document.getElementById('avisError');
+  function fail(msg){ if(err){ err.textContent=msg; err.style.display='block'; } }
+  if(!u){ fail('Tu dois être connecté.'); return; }
+  if(!_avisStars){ fail('Choisis une note (clique sur les étoiles).'); return; }
+  var txt=(document.getElementById('avisTextInput').value||'').trim();
+  if(txt.length<3){ fail('Écris quelques mots sur ton avis.'); return; }
+  if(!window._fb){ fail('Base indisponible, réessaie dans un instant.'); return; }
+  try{
+    var fb=window._fb;
+    fb.push(fb.ref(fb.db,'reviews'), { name:u.pseudo||'Étudiant', promo:u.promo||'L1', stars:_avisStars, text:txt, uid:u.uid, ts:Date.now() });
+    closeReviewModal();
+  }catch(e){ fail('Erreur : '+((e&&e.message)||e)); }
+}
+function dgReviewCard(r){
+  var n=Math.max(1,Math.min(5,r.stars||5));
+  var stars='★'.repeat(n)+'☆'.repeat(5-n);
+  var name=dgEsc(r.name||'Étudiant');
+  var colors=['#0057ad','#7c3aed','#0891b2','#ea580c','#16a34a','#db2777','#0d9488','#2563eb','#9333ea'];
+  var c=colors[(name.charCodeAt(0)||0)%colors.length];
+  return '<div class="dgr-card"><div class="dgr-card-stars">'+stars+'</div><p class="dgr-text">« '+dgEsc(r.text)+' »</p><div class="dgr-author"><span class="dgr-avatar" style="background:'+c+'">'+name.charAt(0).toUpperCase()+'</span><div><div class="dgr-name">'+name+'</div><div class="dgr-meta">'+dgEsc(r.promo||'L1')+' · Dauphine</div></div></div></div>';
+}
+function dgLoadReviews(){
+  if(_avisLoaded || !window._fb) return;
+  _avisLoaded=true;
+  var fb=window._fb;
+  fb.onValue(fb.ref(fb.db,'reviews'), function(snap){
+    var box=document.getElementById('avisUserReviews'); if(!box) return;
+    var items=[]; snap.forEach(function(c){ items.push(c.val()); });
+    items.reverse();
+    box.innerHTML=items.map(dgReviewCard).join('');
+  });
+}
+(function waitFb(){ if(window._fb){ dgLoadReviews(); } else { setTimeout(waitFb,300); } })();
+</script>
 
 <!-- BONS PLANS -->
 <div class="page-section" id="page-bonsplans">
