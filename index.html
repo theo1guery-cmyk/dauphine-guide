@@ -8605,11 +8605,12 @@ function adminSearchUsers(){
   var box=document.getElementById('adminResults'); if(box) box.innerHTML='<div style="font-size:13px;color:var(--text-sub)">Recherche…</div>';
   var fb=window._fb;
   fb.get(fb.ref(fb.db,'users')).then(function(snap){
-    var out=[];
-    snap.forEach(function(c){ var v=c.val()||{}; if(!q || (v.pseudo||'').toLowerCase().indexOf(q)>=0) out.push({uid:c.key,v:v}); });
+    var out=[], total=0, prems=0;
+    snap.forEach(function(c){ total++; var v=c.val()||{}; if(v.premium===true) prems++; if(!q || (v.pseudo||'').toLowerCase().indexOf(q)>=0) out.push({uid:c.key,v:v}); });
+    var head='<div style="font-size:13px;font-weight:800;color:var(--text-main);margin-bottom:10px;padding:8px 10px;background:var(--blue-light,#eef4ff);border-radius:8px">👥 '+total+' comptes créés · ✦ '+prems+' premium</div>';
     out=out.slice(0,40);
-    if(!out.length){ box.innerHTML='<div style="font-size:13px;color:var(--text-sub,#64748b)">Aucun étudiant trouvé.</div>'; return; }
-    box.innerHTML=out.map(function(o){
+    if(!out.length){ box.innerHTML=head+'<div style="font-size:13px;color:var(--text-sub,#64748b)">Aucun étudiant trouvé.</div>'; return; }
+    box.innerHTML=head+out.map(function(o){
       var prem=o.v.premium===true;
       return '<div style="display:flex;align-items:center;gap:8px;border:1px solid var(--g100);border-radius:10px;padding:8px 10px">'
         +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--text-main)">'+dgEsc(o.v.pseudo||'—')+(prem?' <span style="color:#16a34a">✦ Premium</span>':'')+'</div>'
@@ -9081,6 +9082,9 @@ function adminSetPremium(uid,on){
 <div class="page-section" id="page-chat">
 
 <!-- ══ AUTH ══ -->
+<style>
+#auth-overlay{position:fixed;inset:0;--bg:rgba(0,45,110,.96);--bg2:rgba(0,37,88,.96);--surface:rgba(0,61,122,.96);--surface2:rgba(0,71,160,.96);--border:rgba(255,255,255,.10);--border2:rgba(255,255,255,.16);--accent:#4d9fff;--accent-h:#6cb4ff;--white:#fff;--text:#e8f0fb;--muted:#8da0cc;--muted2:#5e78a8;z-index:99998!important;background:linear-gradient(160deg,#002d6e 0%,#001b44 100%)!important}
+</style>
 <div id="auth-overlay">
   <div class="login-box">
     <div class="login-logo">
@@ -15606,6 +15610,13 @@ if (document.readyState === 'loading') {
 
 var currentAccess = null;
 
+// Connexion obligatoire par compte (mettre false pour revenir à l'ancien écran de code d'accès)
+var DG_FORCE_LOGIN = true;
+function dgRelocateAuthOverlay(){
+  var ov = document.getElementById('auth-overlay');
+  if (ov && ov.parentElement !== document.body) document.body.appendChild(ov);
+}
+
 function initLogin() {
   // Mode widget : bypass total de l'auth
   if (new URLSearchParams(window.location.search).has('widget')) {
@@ -15614,7 +15625,30 @@ function initLogin() {
     hideLoginScreen();
     return;
   }
-  // Vérifier si une session existe déjà (localStorage pour persistance sur mobile)
+
+  // ── CONNEXION OBLIGATOIRE PAR COMPTE ──
+  if (DG_FORCE_LOGIN) {
+    currentAccess = 'full';
+    applyAccess('full');
+    hideLoginScreen();
+    dgRelocateAuthOverlay();
+    var _ov = document.getElementById('auth-overlay');
+    var _t = 0;
+    // On garde le splash affiché tant que Firebase n'est pas prêt,
+    // puis : connecté → enterChat lance l'animation ; déconnecté → portail de connexion.
+    (function _wait(){
+      if (window._chatCurrentUser) return; // déjà connecté → géré par enterChat
+      if (typeof window.doLogin === 'function' || _t++ > 45) {
+        var sp = document.getElementById('splashScreen'); if (sp) { sp.style.opacity='0'; sp.style.display='none'; }
+        if (_ov) _ov.style.display = 'flex';
+        return;
+      }
+      setTimeout(_wait, 150);
+    })();
+    return;
+  }
+
+  // ── Ancien mode "code d'accès" (désactivé tant que DG_FORCE_LOGIN = true) ──
   var saved = localStorage.getItem('dg_access');
   if (saved === 'full' || saved === 'limited') {
     currentAccess = saved;
@@ -15622,10 +15656,8 @@ function initLogin() {
     hideLoginScreen();
     return;
   }
-  // Sinon afficher l'écran de connexion
   var screen = document.getElementById('loginScreen');
   if (screen) screen.style.display = 'flex';
-  // Focus automatique sur le champ
   setTimeout(function() {
     var inp = document.getElementById('loginInput');
     if (inp) inp.focus();
@@ -19218,6 +19250,12 @@ window.completeProfile = async function() {
 
 function enterChat() {
   document.getElementById('auth-overlay').style.display = 'none';
+  // Connexion obligatoire : 1re connexion de la session → on lance l'animation d'intro
+  if (typeof DG_FORCE_LOGIN !== 'undefined' && DG_FORCE_LOGIN && !window._dgIntroDone) {
+    window._dgIntroDone = true;
+    var _sp = document.getElementById('splashScreen'); if (_sp) { _sp.style.display='none'; }
+    if (typeof startMorphAnimation === 'function') { try { startMorphAnimation(); } catch(e){} }
+  }
   document.getElementById('user-display').textContent = `${currentUser.pseudo} · ${currentUser.promo}`;
 
   const promoMeta = {
