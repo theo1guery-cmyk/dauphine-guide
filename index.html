@@ -8367,29 +8367,13 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgora
   <div class="wrap" style="padding-top:40px;padding-bottom:64px">
     <div class="avis-summary">
       <div class="avis-summary-left">
-        <div class="avis-big-num">4,8</div>
-        <div class="dgr-stars" style="font-size:22px;color:#f5b301;letter-spacing:2px">★★★★★</div>
-        <div class="avis-total">50 avis vérifiés</div>
+        <div class="avis-big-num" id="avisBigNum">5,0</div>
+        <div class="dgr-stars" id="avisStars" style="font-size:22px;color:#f5b301;letter-spacing:2px">★★★★★</div>
+        <div class="avis-total" id="avisTotal">8 avis</div>
       </div>
-      <div class="avis-bars">
-        <div class="avis-bar-row"><span>5★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:86%"></div></div><span class="avis-bar-pct">86%</span></div>
-        <div class="avis-bar-row"><span>4★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:11%"></div></div><span class="avis-bar-pct">11%</span></div>
-        <div class="avis-bar-row"><span>3★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:2%"></div></div><span class="avis-bar-pct">2%</span></div>
-        <div class="avis-bar-row"><span>2★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:1%"></div></div><span class="avis-bar-pct">1%</span></div>
-        <div class="avis-bar-row"><span>1★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:0%"></div></div><span class="avis-bar-pct">0%</span></div>
-      </div>
+      <div class="avis-bars" id="avisBars"></div>
     </div>
     <div id="avisUserReviews" class="dgr-grid" style="margin-top:32px"></div>
-    <div class="dgr-grid" style="margin-top:16px">
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Ça donne tellement envie d'apprendre et j'ai hâte de pouvoir l'utiliser pour mes partiels, mais aussi dès que j'ai besoin d'un renseignement ! C'est vraiment le site de rêve, surtout pour ceux qui arrivent et sont un peu perdus. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0057ad">D</span><div><div class="dgr-name">Dalia</div><div class="dgr-meta">Admise en L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« C'est vraiment super pour rester organisé et réviser, surtout avec les flashcards et l'IA qui aident beaucoup pour mémoriser ! Vous avez vraiment fait un bon guide. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#7c3aed">L</span><div><div class="dgr-name">Lauralice</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le site est vraiment incroyable, pour de vrai franchement. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0891b2">W</span><div><div class="dgr-name">Whenal</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Génial ! J'ai vu la présentation de toutes les fonctionnalités, t'es chaud de fou d'avoir fait ça. Merci à toi. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#ea580c">J</span><div><div class="dgr-name">Jasper</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Je suis rentré dessus, j'ai cru que c'était le site officiel. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#16a34a">A</span><div><div class="dgr-name">Amine</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le site est top ! J'ai pas tout regardé en détail mais ça me semble super complet, très fonctionnel et intuitif. Merci ! 🙏 »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#db2777">M</span><div><div class="dgr-name">Max</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Le design du site est incroyable. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#0d9488">A</span><div><div class="dgr-name">Alexandre</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-      <div class="dgr-card"><div class="dgr-card-stars">★★★★★</div><p class="dgr-text">« Wow, le site est grave bien, merci beaucoup ! Ça a l'air vraiment utile. »</p><div class="dgr-author"><span class="dgr-avatar" style="background:#2563eb">L</span><div><div class="dgr-name">Lily</div><div class="dgr-meta">L1 · Dauphine</div></div></div></div>
-    </div>
     <div style="text-align:center;margin-top:32px">
       <button class="btn" onclick="openReviewModal()" style="background:var(--blue);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">✍️ Partager mon avis</button>
     </div>
@@ -8414,14 +8398,25 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgora
   </div>
 </div>
 <script>
-var _avisStars=0, _avisLoaded=false;
+var _avisStars=0, _avisLoaded=false, _avisFb=[];
+var ADMIN_PSEUDO='Théo91140';
+var STATIC_REVIEWS=[
+  {name:'Dalia', promo:'Admise en L1', stars:5, text:"Ça donne tellement envie d'apprendre et j'ai hâte de pouvoir l'utiliser pour mes partiels, mais aussi dès que j'ai besoin d'un renseignement ! C'est vraiment le site de rêve, surtout pour ceux qui arrivent et sont un peu perdus."},
+  {name:'Lauralice', promo:'L1', stars:5, text:"C'est vraiment super pour rester organisé et réviser, surtout avec les flashcards et l'IA qui aident beaucoup pour mémoriser ! Vous avez vraiment fait un bon guide."},
+  {name:'Whenal', promo:'L1', stars:5, text:"Le site est vraiment incroyable, pour de vrai franchement."},
+  {name:'Jasper', promo:'L1', stars:5, text:"Génial ! J'ai vu la présentation de toutes les fonctionnalités, t'es chaud de fou d'avoir fait ça. Merci à toi."},
+  {name:'Amine', promo:'L1', stars:5, text:"Je suis rentré dessus, j'ai cru que c'était le site officiel."},
+  {name:'Max', promo:'L1', stars:5, text:"Le site est top ! J'ai pas tout regardé en détail mais ça me semble super complet, très fonctionnel et intuitif. Merci ! 🙏"},
+  {name:'Alexandre', promo:'L1', stars:5, text:"Le design du site est incroyable."},
+  {name:'Lily', promo:'L1', stars:5, text:"Wow, le site est grave bien, merci beaucoup ! Ça a l'air vraiment utile."}
+];
 function dgEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function setAvisStars(n){
-  _avisStars=n;
-  var box=document.getElementById('avisStarPick'); if(!box) return;
-  Array.prototype.forEach.call(box.children,function(s){ s.style.color=(+s.getAttribute('data-v')<=n)?'#f5b301':'#d8dee9'; });
-}
+function dgIsAdmin(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return !!(u && u.pseudo===ADMIN_PSEUDO); }
+function dgCurUid(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return u?u.uid:null; }
+
+function setAvisStars(n){ _avisStars=n; var box=document.getElementById('avisStarPick'); if(!box) return; Array.prototype.forEach.call(box.children,function(s){ s.style.color=(+s.getAttribute('data-v')<=n)?'#f5b301':'#d8dee9'; }); }
 (function(){ var box=document.getElementById('avisStarPick'); if(box){ Array.prototype.forEach.call(box.children,function(s){ s.onclick=function(){ setAvisStars(+s.getAttribute('data-v')); }; }); } })();
+
 function openReviewModal(){
   var u=null; try{u=window._chatCurrentUser;}catch(e){}
   if(!u){ alert('Connecte-toi (chat étudiant) pour laisser un avis 🙂'); showPage('chat',null); return; }
@@ -8431,6 +8426,7 @@ function openReviewModal(){
   var m=document.getElementById('avisModal'); if(m) m.style.display='flex';
 }
 function closeReviewModal(){ var m=document.getElementById('avisModal'); if(m) m.style.display='none'; }
+
 function submitReview(){
   var u=null; try{u=window._chatCurrentUser;}catch(e){}
   var err=document.getElementById('avisError');
@@ -8440,31 +8436,76 @@ function submitReview(){
   var txt=(document.getElementById('avisTextInput').value||'').trim();
   if(txt.length<3){ fail('Écris quelques mots sur ton avis.'); return; }
   if(!window._fb){ fail('Base indisponible, réessaie dans un instant.'); return; }
-  try{
-    var fb=window._fb;
-    fb.push(fb.ref(fb.db,'reviews'), { name:u.pseudo||'Étudiant', promo:u.promo||'L1', stars:_avisStars, text:txt, uid:u.uid, ts:Date.now() });
-    closeReviewModal();
-  }catch(e){ fail('Erreur : '+((e&&e.message)||e)); }
+  var fb=window._fb;
+  var doPush=function(){ fb.push(fb.ref(fb.db,'reviews'), { name:u.pseudo||'Étudiant', promo:u.promo||'L1', stars:_avisStars, text:txt, uid:u.uid, ts:Date.now() }); closeReviewModal(); };
+  fb.get(fb.ref(fb.db,'banned/'+u.uid)).then(function(s){
+    if(s && s.exists()){ fail('Tu ne peux plus publier d\'avis.'); return; }
+    doPush();
+  }).catch(function(){ doPush(); });
 }
-function dgReviewCard(r){
+
+function deleteReview(key){
+  if(!key || !window._fb) return;
+  if(!confirm('Supprimer cet avis ?')) return;
+  var fb=window._fb; fb.remove(fb.ref(fb.db,'reviews/'+key));
+}
+function banReviewer(uid){
+  if(!dgIsAdmin() || !uid || !window._fb) return;
+  var nm=''; _avisFb.forEach(function(it){ if(it.val && it.val.uid===uid) nm=it.val.name||nm; });
+  if(!confirm('Bannir '+(nm||'cet utilisateur')+' ? Il ne pourra plus publier d\'avis et ses avis seront supprimés.')) return;
+  var fb=window._fb;
+  fb.set(fb.ref(fb.db,'banned/'+uid), { name:nm, ts:Date.now() });
+  _avisFb.forEach(function(it){ if(it.val && it.val.uid===uid) fb.remove(fb.ref(fb.db,'reviews/'+it.key)); });
+}
+
+function dgReviewCard(r, key){
   var n=Math.max(1,Math.min(5,r.stars||5));
   var stars='★'.repeat(n)+'☆'.repeat(5-n);
   var name=dgEsc(r.name||'Étudiant');
   var colors=['#0057ad','#7c3aed','#0891b2','#ea580c','#16a34a','#db2777','#0d9488','#2563eb','#9333ea'];
   var c=colors[(name.charCodeAt(0)||0)%colors.length];
-  return '<div class="dgr-card"><div class="dgr-card-stars">'+stars+'</div><p class="dgr-text">« '+dgEsc(r.text)+' »</p><div class="dgr-author"><span class="dgr-avatar" style="background:'+c+'">'+name.charAt(0).toUpperCase()+'</span><div><div class="dgr-name">'+name+'</div><div class="dgr-meta">'+dgEsc(r.promo||'L1')+' · Dauphine</div></div></div></div>';
+  var admin=dgIsAdmin(), me=dgCurUid(), actions='';
+  if(key){
+    if((me && r.uid===me) || admin){ actions+='<button onclick="deleteReview(\''+key+'\')" title="Supprimer" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:2px 4px">🗑</button>'; }
+    if(admin && r.uid && r.uid!==me){ actions+='<button onclick="banReviewer(\''+r.uid+'\')" title="Bannir l\'auteur" style="background:none;border:none;color:#b91c1c;cursor:pointer;font-size:14px;padding:2px 4px">⛔</button>'; }
+  }
+  var actionsHtml = actions ? '<div style="display:flex;gap:2px;margin-left:auto">'+actions+'</div>' : '';
+  return '<div class="dgr-card"><div class="dgr-card-stars">'+stars+'</div><p class="dgr-text">« '+dgEsc(r.text)+' »</p><div class="dgr-author"><span class="dgr-avatar" style="background:'+c+'">'+name.charAt(0).toUpperCase()+'</span><div style="flex:1;min-width:0"><div class="dgr-name">'+name+'</div><div class="dgr-meta">'+dgEsc(r.promo||'L1')+' · Dauphine</div></div>'+actionsHtml+'</div></div>';
 }
+
+function dgComputeSummary(all){
+  var count=all.length, sum=0, dist=[0,0,0,0,0];
+  all.forEach(function(r){ var n=Math.max(1,Math.min(5,r.stars||5)); sum+=n; dist[n-1]++; });
+  var avg = count ? (sum/count) : 0;
+  var numEl=document.getElementById('avisBigNum'); if(numEl) numEl.textContent=(Math.round(avg*10)/10).toString().replace('.',',');
+  var totEl=document.getElementById('avisTotal'); if(totEl) totEl.textContent=count+' avis';
+  var stEl=document.getElementById('avisStars'); if(stEl){ var rn=Math.round(avg); stEl.innerHTML='★'.repeat(rn)+'☆'.repeat(5-rn); }
+  var barsEl=document.getElementById('avisBars');
+  if(barsEl){ var h=''; for(var s=5;s>=1;s--){ var pct=count?Math.round(dist[s-1]/count*100):0; h+='<div class="avis-bar-row"><span>'+s+'★</span><div class="avis-bar"><div class="avis-bar-fill" style="width:'+pct+'%"></div></div><span class="avis-bar-pct">'+pct+'%</span></div>'; } barsEl.innerHTML=h; }
+}
+
+function dgRenderReviews(){
+  var box=document.getElementById('avisUserReviews');
+  if(box){
+    var fbCards=_avisFb.map(function(it){ return dgReviewCard(it.val, it.key); });
+    var staticCards=STATIC_REVIEWS.map(function(r){ return dgReviewCard(r, null); });
+    box.innerHTML=fbCards.concat(staticCards).join('');
+  }
+  dgComputeSummary(_avisFb.map(function(it){return it.val;}).concat(STATIC_REVIEWS));
+}
+
 function dgLoadReviews(){
   if(_avisLoaded || !window._fb) return;
   _avisLoaded=true;
   var fb=window._fb;
   fb.onValue(fb.ref(fb.db,'reviews'), function(snap){
-    var box=document.getElementById('avisUserReviews'); if(!box) return;
-    var items=[]; snap.forEach(function(c){ items.push(c.val()); });
-    items.reverse();
-    box.innerHTML=items.map(dgReviewCard).join('');
+    _avisFb=[]; snap.forEach(function(c){ _avisFb.push({key:c.key, val:c.val()}); });
+    _avisFb.reverse();
+    dgRenderReviews();
   });
 }
+
+dgRenderReviews();
 (function waitFb(){ if(window._fb){ dgLoadReviews(); } else { setTimeout(waitFb,300); } })();
 </script>
 
@@ -16567,6 +16608,7 @@ function showPage(pageId, btn) {
       }
     }catch(e){}
   }
+  if (pageId === 'avis' && typeof dgRenderReviews === 'function') { setTimeout(dgRenderReviews, 60); }
 
   // Reveal any .rev elements that the IntersectionObserver may have missed
   // (elements inside display:none sections are not reliably detected on first show)
