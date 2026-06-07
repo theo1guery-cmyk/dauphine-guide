@@ -5460,17 +5460,6 @@ aside.sidebar {
 
 <!-- LOGIN SCREEN -->
 <div id="prankScreen"><div class="prank-msg">MATHILDE TROU DU CUL</div></div>
-<div id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">D</div>
-    <div class="login-title">DauphineGuide</div>
-    <div class="login-sub">Guide L1 LSO · Paris-Dauphine PSL<br>Entre ton code d'accès pour continuer</div>
-    <input class="login-input" id="loginInput" type="password" placeholder="••••••••" maxlength="20" autocomplete="off" autocapitalize="none" onkeydown="if(event.key===&#39;Enter&#39;)submitLogin()">
-    <button class="login-btn" onclick="submitLogin()">Accéder →</button>
-    <div class="login-error" id="loginError"></div>
-    <div class="login-footer">Site non officiel · Paris-Dauphine PSL · 2025-2026</div>
-  </div>
-</div>
 
 <!-- ══════════════ MORPH ANIMATION ══════════════ -->
 <div id="morphOverlay">
@@ -5714,7 +5703,6 @@ aside.sidebar {
     <div class="sidebar-section-label">Navigation</div>
     <button class="sidebar-item active" data-page="home" onclick="showPage(&#39;home&#39;,this)"><span class="s-ic">🏠</span> Accueil</button>
     <div class="sidebar-section-label drive-only">Ressources</div>
-    <button class="sidebar-item drive-only" data-page="ressources" onclick="showPage(&#39;ressources&#39;,this)"><span class="s-ic">📚</span> Ressources péda.</button>
     <button class="sidebar-item" data-page="simulateur" onclick="showPage(&#39;simulateur&#39;,this)"><span class="s-ic">🧮</span> Simulateur moyenne</button>
     <div class="sidebar-section-label">Révision</div>
     <button class="sidebar-item" data-page="flashcards" onclick="showPage(&#39;flashcards&#39;,this)"><span class="s-ic">🃏</span> Flashcards</button>
@@ -6131,47 +6119,6 @@ aside.sidebar {
   </div>
 </div>
 <!-- RESSOURCES -->
-<div class="page-section" id="page-ressources">
-  <div class="section-header">
-    <div class="section-header-left">
-      <div class="section-header-ic">📚</div>
-      <div>
-        <div class="section-header-title">Ressources pédagogiques</div>
-        <div class="section-header-sub">Cours &amp; Drive S2</div>
-      </div>
-    </div>
-    <div class="section-header-date" id="sh-date-page-ressources">Mardi 17 mars 2026</div>
-  </div>
-<div class="wrap" style="padding-top:48px;padding-bottom:64px">
-<section class="mat-section drive-only" id="matieres">
-  <div class="rev" style="margin-bottom:24px">
-    <div class="slbl">Ressources pédagogiques</div>
-    <div class="sh2">Toutes les <em>matières</em> du S2</div>
-    <p class="sdesc">Cours résumés, annales et corrigés — accès direct aux dossiers Drive.</p>
-  </div>
-  <div class="tabs rev" id="matTabs">
-    <button class="tab on" onclick="filterMat(&#39;all&#39;,this)">Tout voir</button>
-    <button class="tab" onclick="filterMat(&#39;droit&#39;,this)">⚖️ Droit</button>
-    <button class="tab" onclick="filterMat(&#39;eco&#39;,this)">📈 Économie</button>
-    <button class="tab" onclick="filterMat(&#39;gestion&#39;,this)">📊 Gestion</button>
-    <button class="tab" onclick="filterMat(&#39;autre&#39;,this)">🌍 Autres</button>
-  </div>
-  <div class="mat-grid" id="matGrid">
-    <div class="mat-card rev" data-cat="droit"><div class="mat-head"><div class="mat-em" style="background:#dbeafe">🏛️</div><div><div class="mat-name">Droit constitutionnel <a href="https://drive.google.com/drive/u/1/folders/1fwaIzgLFmh2y2HLBd-HEo6-9Aj2mi2Lh" target="_blank" class="dchip">📁</a></div><span class="mat-badge bd">4 ECTS · 50/50</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1fwaIzgLFmh2y2HLBd-HEo6-9Aj2mi2Lh" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1fwaIzgLFmh2y2HLBd-HEo6-9Aj2mi2Lh" target="_blank">Annales</a><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1fwaIzgLFmh2y2HLBd-HEo6-9Aj2mi2Lh" target="_blank">Corrigés</a></div></div><div class="res-row"><span>⚡ Jurisprudence &amp; arrêts</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1fwaIzgLFmh2y2HLBd-HEo6-9Aj2mi2Lh" target="_blank">Fiches</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Droit Constitutionnel&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Droit Constitutionnel&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="droit"><div class="mat-head"><div class="mat-em" style="background:#fee2e2">🔏</div><div><div class="mat-name">Droit pénal <a href="https://drive.google.com/drive/u/1/folders/1Ibhx1k1hciFG3tXDvINBi5r9RxjASgde" target="_blank" class="dchip">📁</a></div><span class="mat-badge bd">2 ECTS · 50/50 · Salomon</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1Ibhx1k1hciFG3tXDvINBi5r9RxjASgde" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1Ibhx1k1hciFG3tXDvINBi5r9RxjASgde" target="_blank">Annales</a><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1Ibhx1k1hciFG3tXDvINBi5r9RxjASgde" target="_blank">Corrigés</a></div></div><div class="res-row"><span>📝 Cas pratiques</span><div class="rlinks drive-only"><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1Ibhx1k1hciFG3tXDvINBi5r9RxjASgde" target="_blank">Voir</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Droit penal&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Droit penal&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="droit"><div class="mat-head"><div class="mat-em" style="background:#ede9fe">🇪🇺</div><div><div class="mat-name">Droit européen <a href="https://drive.google.com/drive/u/1/folders/1YDxhUdu05KODnu9WGC0GdD0yisqjbuzj" target="_blank" class="dchip">📁</a></div><span class="mat-badge bd">2 ECTS · 50/50</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1YDxhUdu05KODnu9WGC0GdD0yisqjbuzj" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1YDxhUdu05KODnu9WGC0GdD0yisqjbuzj" target="_blank">Annales</a></div></div><div class="res-row"><span>🏛️ Institutions UE</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1YDxhUdu05KODnu9WGC0GdD0yisqjbuzj" target="_blank">Fiches</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Droit Europeen&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Droit Europeen&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="eco"><div class="mat-head"><div class="mat-em" style="background:#d1fae5">📈</div><div><div class="mat-name">Microéconomie <a href="https://drive.google.com/drive/u/1/folders/1WLwsjyCq-8IE3eeIEJkT1voMMB-9HNSR" target="_blank" class="dchip">📁</a></div><span class="mat-badge be">2 ECTS · 50/50 · Mezher</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1WLwsjyCq-8IE3eeIEJkT1voMMB-9HNSR" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1WLwsjyCq-8IE3eeIEJkT1voMMB-9HNSR" target="_blank">Annales</a><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1WLwsjyCq-8IE3eeIEJkT1voMMB-9HNSR" target="_blank">Corrigés</a></div></div><div class="res-row"><span>🧮 Exercices numériques</span><div class="rlinks drive-only"><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1WLwsjyCq-8IE3eeIEJkT1voMMB-9HNSR" target="_blank">Séries</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Microeconomie&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Microeconomie&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="eco"><div class="mat-head"><div class="mat-em" style="background:#cffafe">🌐</div><div><div class="mat-name">Macroéconomie <a href="https://drive.google.com/drive/u/1/folders/1gSs3bowOLvpF3Q-pS_C2VIeb9JzIfb_0" target="_blank" class="dchip">📁</a></div><span class="mat-badge be">4 ECTS · 50/50 · Tripier</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1gSs3bowOLvpF3Q-pS_C2VIeb9JzIfb_0" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1gSs3bowOLvpF3Q-pS_C2VIeb9JzIfb_0" target="_blank">Annales</a><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1gSs3bowOLvpF3Q-pS_C2VIeb9JzIfb_0" target="_blank">Corrigés</a></div></div><div class="res-row"><span>📊 Solow, OG/DG</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1gSs3bowOLvpF3Q-pS_C2VIeb9JzIfb_0" target="_blank">Fiches</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Macroeconomie&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Macroeconomie&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="eco"><div class="mat-head"><div class="mat-em" style="background:#fef9c3">🔢</div><div><div class="mat-name">Mathématiques <a href="https://drive.google.com/drive/u/1/folders/1Bx_SVX5HOdyYFeWtI0HEm1AUbIS8C7n9" target="_blank" class="dchip">📁</a></div><span class="mat-badge be">3 ECTS · 100% exam · Ouzik</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Méthodes &amp; exercices</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1Bx_SVX5HOdyYFeWtI0HEm1AUbIS8C7n9" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1Bx_SVX5HOdyYFeWtI0HEm1AUbIS8C7n9" target="_blank">Annales</a></div></div><div class="res-row"><span>⚠️ CC Maths (08 avril)</span><div class="rlinks drive-only"><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1Bx_SVX5HOdyYFeWtI0HEm1AUbIS8C7n9" target="_blank">Préparer</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Mathematiques&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Mathematiques&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="gestion"><div class="mat-head"><div class="mat-em" style="background:#dcfce7">📊</div><div><div class="mat-name">Comptabilité financière <a href="https://drive.google.com/drive/u/1/folders/1yWZZeNpjT0MxyXeNUm5HZdR6LgnLccbO" target="_blank" class="dchip">📁</a></div><span class="mat-badge bg">3 ECTS · 50/50</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; exercices</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1yWZZeNpjT0MxyXeNUm5HZdR6LgnLccbO" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1yWZZeNpjT0MxyXeNUm5HZdR6LgnLccbO" target="_blank">Annales</a><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1yWZZeNpjT0MxyXeNUm5HZdR6LgnLccbO" target="_blank">Corrigés</a></div></div><div class="res-row"><span>💰 Amortissements &amp; journal</span><div class="rlinks drive-only"><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1yWZZeNpjT0MxyXeNUm5HZdR6LgnLccbO" target="_blank">Exos</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Comptabilite&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Comptabilite&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="gestion"><div class="mat-head"><div class="mat-em" style="background:#f0fdf4">🏢</div><div><div class="mat-name">Introduction à la Gestion <a href="https://drive.google.com/drive/u/1/folders/1yIK402sgGWGq8TRbI2B8BoyWUNWiCR-8" target="_blank" class="dchip">📁</a></div><span class="mat-badge bg">2 ECTS · 100% exam QCM</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1yIK402sgGWGq8TRbI2B8BoyWUNWiCR-8" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1yIK402sgGWGq8TRbI2B8BoyWUNWiCR-8" target="_blank">Annales</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Gestion&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Gestion&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="autre"><div class="mat-head"><div class="mat-em" style="background:#fff7ed">🗳️</div><div><div class="mat-name">Sciences politiques <a href="https://drive.google.com/drive/u/1/folders/1Khtb-UgA_kpzOYSfGNMGZvBKf54YHkAM" target="_blank" class="dchip">📁</a></div><span class="mat-badge ba">4 ECTS · 50/50</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1Khtb-UgA_kpzOYSfGNMGZvBKf54YHkAM" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1Khtb-UgA_kpzOYSfGNMGZvBKf54YHkAM" target="_blank">Annales</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Sciences politiques&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Sciences politiques&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="autre"><div class="mat-head"><div class="mat-em" style="background:#f0fdfa">🌱</div><div><div class="mat-name">Enjeux écologiques <a href="https://drive.google.com/drive/u/1/folders/1VJwTysiJT8UmZHI3HNIQoMLH3tFUOcDk" target="_blank" class="dchip">📁</a></div><span class="mat-badge ba">2 ECTS · 50/50</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; fiches</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1VJwTysiJT8UmZHI3HNIQoMLH3tFUOcDk" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1VJwTysiJT8UmZHI3HNIQoMLH3tFUOcDk" target="_blank">Annales</a></div></div><div class="res-row"><span>⚠️ Examen 12 mai</span><div class="rlinks drive-only"><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1VJwTysiJT8UmZHI3HNIQoMLH3tFUOcDk" target="_blank">Préparer</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Enjeux Ecologiques&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Enjeux Ecologiques&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-    <div class="mat-card rev" data-cat="autre"><div class="mat-head"><div class="mat-em" style="background:#fce7f3">🇬🇧</div><div><div class="mat-name">Anglais <a href="https://drive.google.com/drive/u/1/folders/1w6dYJuhgjcycIKMYliKpkPtD6Hn3rzd9" target="_blank" class="dchip">📁</a></div><span class="mat-badge ba">2 ECTS · 50/50 · Hocquard</span></div></div><div class="mat-res"><div class="res-row"><span>📖 Cours &amp; vocab</span><div class="rlinks drive-only"><a class="rl rl-c" href="https://drive.google.com/drive/u/1/folders/1w6dYJuhgjcycIKMYliKpkPtD6Hn3rzd9" target="_blank">Cours</a><a class="rl rl-a" href="https://drive.google.com/drive/u/1/folders/1w6dYJuhgjcycIKMYliKpkPtD6Hn3rzd9" target="_blank">Annales</a></div></div><div class="res-row"><span>🔬 Labo Anglais (D306)</span><div class="rlinks drive-only"><a class="rl rl-e" href="https://drive.google.com/drive/u/1/folders/1w6dYJuhgjcycIKMYliKpkPtD6Hn3rzd9" target="_blank">Exos</a></div></div><div class="res-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--g100)"><span>📝 Mes notes</span><div class="rlinks"><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="openNotesForMat(&#39;Anglais&#39;)" style="background:var(--blue-light);color:var(--blue-mid);cursor:pointer">Voir notes</a><a class="rl" href="https://theo1guery-cmyk.github.io/dauphine-guide/#notes" onclick="newNoteForMat(&#39;Anglais&#39;)" style="background:#f0fdf4;color:#166534;cursor:pointer">+ Nouvelle</a></div></div></div></div>
-  </div>
-</section>
-</div>
-</div>
 
 <!-- SIMULATEUR -->
 <div class="page-section" id="page-simulateur">
@@ -6518,16 +6465,7 @@ aside.sidebar {
   </div>
 
   <script charset="utf-8">
-  // ════════════════════════════════════════
-  // SYSTÈME DE CONNEXION — DauphineGuide
-  // Déclaré en GLOBAL SCOPE (accessible partout)
-  // ════════════════════════════════════════
-  window.ACCESS_CODES = {
-    'DAUPHINE2025':         'full',    // ← Code accès complet (Drive inclus)
-    'VISITEUR2025':         'limited', // ← Code accès limité (sans Drive)
-    'DAUPHINE26':           'prank'    // ← 😈
-  };
-  
+
   (function() {
     var CARDS = [{"cat": "Droit", "q": "Qu'est-ce que la règle de droit ?", "r": "Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.", "status": "none"}, {"cat": "Droit", "q": "Hiérarchie des normes (pyramide de Kelsen)", "r": "Constitution → Traités int. → Lois organiques → Lois ordinaires → Règlements (décrets, arrêtés).", "status": "none"}, {"cat": "Droit", "q": "Qu'est-ce que l'effet relatif des conventions ?", "r": "Le contrat ne crée d'obligations qu'entre les parties — ne profite ni ne nuit aux tiers (art. 1199 C.civ).", "status": "none"}, {"cat": "Droit", "q": "Définition de l'infraction pénale", "r": "Fait prévu et puni par la loi. 3 éléments : légal, matériel, moral.", "status": "none"}, {"cat": "Droit", "q": "Nullum crimen, nulla poena sine lege", "r": "Principe de légalité des peines : on ne peut être puni que pour un fait prévu par un texte antérieur.", "status": "none"}, {"cat": "Droit", "q": "Conseil de l'Europe vs Union européenne", "r": "CdE : 46 États, CEDH. UE : 27 États, marché unique, CJUE, droit contraignant.", "status": "none"}, {"cat": "Droit constit.", "q": "Exécutif bicéphale sous la Ve République", "r": "Président (élu SUD, 5 ans) + Premier ministre nommé par le Président, responsable devant l'AN.", "status": "none"}, {"cat": "Droit constit.", "q": "Qu'est-ce qu'une QPC ?", "r": "Question Prioritaire de Constitutionnalité : contester la conformité d'une loi aux droits fondamentaux (art. 61-1).", "status": "none"}, {"cat": "Microéco", "q": "Contrainte budgétaire du consommateur", "r": "pX·X + pY·Y ≤ R — dépenses limitées au revenu R aux prix pX, pY.", "status": "none"}, {"cat": "Microéco", "q": "Condition d'optimum du consommateur", "r": "TmS(x/y) = px/py — le taux marginal de substitution égale le rapport des prix.", "status": "none"}, {"cat": "Microéco", "q": "Effet de substitution", "r": "Hausse de prix d'un bien → substitution vers le bien moins cher, à utilité constante.", "status": "none"}, {"cat": "Microéco", "q": "Optimum de Pareto", "r": "Allocation où améliorer la situation d'un agent est impossible sans détériorer celle d'un autre.", "status": "none"}, {"cat": "Macroéco", "q": "PIB par l'approche dépenses", "r": "PIB = C + I + G + (X − M)", "status": "none"}, {"cat": "Macroéco", "q": "Modèle de Solow (résumé)", "r": "Y = f(K, L). Capital s'accumule jusqu'à l'état stationnaire. Croissance LT = progrès technique.", "status": "none"}, {"cat": "Macroéco", "q": "3 fonctions de la monnaie", "r": "Intermédiaire des échanges · Unité de compte · Réserve de valeur.", "status": "none"}, {"cat": "Comptabilité", "q": "Principe de prudence", "r": "On comptabilise les pertes probables immédiatement, mais on n'anticipe pas les gains futurs.", "status": "none"}, {"cat": "Comptabilité", "q": "Résultat net comptable", "r": "Résultat = Produits – Charges. Bénéfice si > 0, perte si < 0.", "status": "none"}, {"cat": "Comptabilité", "q": "Différence charge / décaissement", "r": "Charge diminue le résultat (ex. amortissement). Décaissement = sortie de trésorerie réelle.", "status": "none"}, {"cat": "Maths", "q": "Condition nécessaire d'extremum f(x,y)", "r": "∂f/∂x = 0 ET ∂f/∂y = 0 (point critique). Vérifier le hessien pour la suffisance.", "status": "none"}, {"cat": "Maths", "q": "Méthode du Lagrangien", "r": "L(x,y,λ) = f(x,y) − λ·g(x,y). Résoudre ∇L = 0 pour optimiser sous contrainte g(x,y) = 0.", "status": "none"}, {"cat": "Sciences Po", "q": "3 types de légitimité (Weber)", "r": "Traditionnelle (coutume) · Charismatique (personnalité) · Rationnelle-légale (droit, procédure).", "status": "none"}, {"cat": "Sciences Po", "q": "Gouvernement représentatif", "r": "Délégation du pouvoir à des représentants élus, distinct de la démocratie directe. Principe de mandat.", "status": "none"}];
     var ap = { pile:[], cur:null, ok:0, ko:0, total:0, cat:'all' };
@@ -15649,56 +15587,6 @@ function initLogin() {
     return;
   }
 
-  // ── Ancien mode "code d'accès" (désactivé tant que DG_FORCE_LOGIN = true) ──
-  var saved = localStorage.getItem('dg_access');
-  if (saved === 'full' || saved === 'limited') {
-    currentAccess = saved;
-    applyAccess(currentAccess);
-    hideLoginScreen();
-    return;
-  }
-  var screen = document.getElementById('loginScreen');
-  if (screen) screen.style.display = 'flex';
-  setTimeout(function() {
-    var inp = document.getElementById('loginInput');
-    if (inp) inp.focus();
-  }, 300);
-}
-
-function submitLogin() {
-  try {
-    var inp = document.getElementById('loginInput');
-    var errEl = document.getElementById('loginError');
-    if (!inp) return;
-    var code = inp.value.trim().toUpperCase();
-    var access = ACCESS_CODES[code];
-    if (access) {
-      // Succès
-      currentAccess = access;
-      try {
-        localStorage.setItem('dg_access', access);
-      } catch(e) {
-        console.log('localStorage failed:', e);
-      }
-      errEl.textContent = '';
-      inp.style.borderColor = '#16a34a';
-      inp.style.background = '#f0fdf4';
-      setTimeout(function() {
-        applyAccess(access);
-        hideLoginScreen();
-        startMorphAnimation();
-      }, 400);
-    } else {
-      // Erreur
-      inp.classList.add('error');
-      errEl.textContent = 'Code incorrect — réessaie.';
-      setTimeout(function() { inp.classList.remove('error'); }, 400);
-      inp.value = '';
-      inp.focus();
-    }
-  } catch(e) {
-    console.log('submitLogin error:', e);
-  }
 }
 
 function applyAccess(access) {
