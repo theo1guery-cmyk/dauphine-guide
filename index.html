@@ -8569,7 +8569,7 @@ dgRenderReviews();
 
     <div id="premAdminBox" style="display:none;gap:10px;justify-content:center;flex-wrap:wrap">
       <button onclick="openAdminPrem()" style="background:#16a34a;color:#fff;padding:11px 22px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">🔧 Activer des comptes (admin)</button>
-      <button onclick="var b=document.getElementById('premExpiredBanner'); if(b){ var show=b.style.display!=='block'; b.style.display=show?'block':'none'; if(show) window.scrollTo({top:0,behavior:'smooth'}); }" style="background:none;border:1.5px solid var(--g200);color:var(--text-sub,#64748b);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">👁 Aperçu message d'expiration</button>
+      <button onclick="dgShowExpiredPopup()" style="background:none;border:1.5px solid var(--g200);color:var(--text-sub,#64748b);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">👁 Aperçu du popup</button>
     </div>
   </div>
 </div>
@@ -8637,6 +8637,17 @@ function adminSetPremium(uid,on){
   setTimeout(adminSearchUsers, 400);
 }
 </script>
+
+<!-- POPUP : Premium expiré -->
+<div id="expiredPopup" onclick="if(event.target===this)dgCloseExpiredPopup()" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(6,16,34,.72);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:22px">
+  <div style="width:100%;max-width:420px;background:var(--bg-card,#fff);border-radius:20px;padding:30px 26px;box-shadow:0 30px 80px rgba(0,0,0,.45);text-align:center">
+    <div style="font-size:46px;margin-bottom:8px">⏰</div>
+    <div style="font-family:var(--font-serif,Georgia,serif);font-size:23px;font-weight:600;color:var(--text-main);margin-bottom:8px">Ton Premium a expiré</div>
+    <div style="font-size:14px;color:var(--text-sub,#64748b);line-height:1.6;margin-bottom:22px">Tes 6 mois sont écoulés. Renouvelle pour <b>5 €</b> et continue à profiter de toutes les fonctionnalités IA. 🚀</div>
+    <button onclick="dgCloseExpiredPopup(); showPage('premium',null);" style="display:block;width:100%;background:linear-gradient(135deg,#08284d,#0057ad);color:#fff;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Figtree',sans-serif;box-shadow:0 6px 18px rgba(0,87,173,.3)">✦ Renouveler mon Premium →</button>
+    <button onclick="dgCloseExpiredPopup()" style="background:none;border:none;color:var(--g400,#94a3b8);font-size:13px;font-weight:600;cursor:pointer;margin-top:14px;font-family:'Figtree',sans-serif">Plus tard</button>
+  </div>
+</div>
 
 <!-- BONS PLANS -->
 <div class="page-section" id="page-bonsplans">
@@ -16582,6 +16593,7 @@ function dgSyncAccountPremium(){
           localStorage.setItem('dg_premium_src','account');
           localStorage.setItem('dg_premium_expired','1');
         }catch(e){}
+        if(typeof dgShowExpiredPopup==='function') setTimeout(dgShowExpiredPopup, 1200);
       } else {
         try{
           localStorage.setItem('dg_premium','true');
@@ -16626,6 +16638,22 @@ function dgGoPremiumPay(){
   if(typeof gtag === 'function') try{ gtag('event', 'premium_pay_click'); }catch(e){}
 }
 window.dgGoPremiumPay = dgGoPremiumPay;
+
+// ── Popup "Premium expiré" (au démarrage) ──
+function dgShowExpiredPopup(){ var m=document.getElementById('expiredPopup'); if(m) m.style.display='flex'; }
+function dgCloseExpiredPopup(){ var m=document.getElementById('expiredPopup'); if(m) m.style.display='none'; }
+window.dgShowExpiredPopup=dgShowExpiredPopup; window.dgCloseExpiredPopup=dgCloseExpiredPopup;
+// Au chargement de l'app : si premium expiré, on affiche le popup (sauf sur l'écran de code d'accès)
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){
+    try{
+      if(localStorage.getItem('dg_premium_expired')!=='1') return;
+      var ls=document.getElementById('loginScreen');
+      if(ls && getComputedStyle(ls).display!=='none') return; // écran code d'accès affiché → on attend
+      dgShowExpiredPopup();
+    }catch(e){}
+  }, 3500);
+});
 
 function openPremiumModal(pageId, trialExhausted){
   // Si déjà ouvert, ne pas réafficher en boucle (plusieurs appels IA d'un coup)
