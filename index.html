@@ -8569,7 +8569,8 @@ dgRenderReviews();
 
     <div id="premAdminBox" style="display:none;gap:10px;justify-content:center;flex-wrap:wrap">
       <button onclick="openAdminPrem()" style="background:#16a34a;color:#fff;padding:11px 22px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">🔧 Activer des comptes (admin)</button>
-      <button onclick="dgShowExpiredPopup()" style="background:none;border:1.5px solid var(--g200);color:var(--text-sub,#64748b);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">👁 Aperçu du popup</button>
+      <button onclick="dgShowExpiredPopup()" style="background:none;border:1.5px solid var(--g200);color:var(--text-sub,#64748b);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">👁 Aperçu expiration</button>
+      <button onclick="dgShowPremiumWelcome()" style="background:none;border:1.5px solid #f0b429;color:#b8860b;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">🥇 Aperçu accueil Premium</button>
     </div>
   </div>
 </div>
@@ -8646,6 +8647,49 @@ function adminSetPremium(uid,on){
     <div style="font-size:14px;color:var(--text-sub,#64748b);line-height:1.6;margin-bottom:22px">Tes 6 mois sont écoulés. Renouvelle pour <b>5 €</b> et continue à profiter de toutes les fonctionnalités IA. 🚀</div>
     <button onclick="dgCloseExpiredPopup(); showPage('premium',null);" style="display:block;width:100%;background:linear-gradient(135deg,#08284d,#0057ad);color:#fff;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Figtree',sans-serif;box-shadow:0 6px 18px rgba(0,87,173,.3)">✦ Renouveler mon Premium →</button>
     <button onclick="dgCloseExpiredPopup()" style="background:none;border:none;color:var(--g400,#94a3b8);font-size:13px;font-weight:600;cursor:pointer;margin-top:14px;font-family:'Figtree',sans-serif">Plus tard</button>
+  </div>
+</div>
+
+<!-- POPUP : Bienvenue Premium (gold) -->
+<style>
+#premiumWelcome{display:none;position:fixed;inset:0;z-index:100001;background:radial-gradient(circle at 50% 30%,rgba(40,30,5,.85),rgba(4,6,12,.92));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:22px}
+.pw-card{position:relative;overflow:hidden;width:100%;max-width:430px;background:linear-gradient(160deg,#16161f 0%,#0b0b12 100%);border:1.5px solid rgba(255,215,0,.45);border-radius:24px;padding:38px 28px 30px;text-align:center;box-shadow:0 0 70px rgba(255,200,0,.28),0 30px 80px rgba(0,0,0,.55);animation:pwPop .65s cubic-bezier(.2,1.15,.3,1) both}
+.pw-card::after{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-20deg);animation:pwSweep 2.6s ease-in-out .5s infinite;pointer-events:none}
+@keyframes pwPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+@keyframes pwSweep{0%{left:-60%}100%{left:170%}}
+.pw-badge{font-size:62px;display:inline-block;line-height:1;animation:pwGlow 1.9s ease-in-out infinite}
+@keyframes pwGlow{0%,100%{transform:scale(1) translateY(0);filter:drop-shadow(0 0 12px rgba(255,215,0,.6))}50%{transform:scale(1.1) translateY(-4px);filter:drop-shadow(0 0 28px rgba(255,215,0,.95))}}
+.pw-kicker{margin-top:10px;font-size:11px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:#d9b84a}
+.pw-title{margin-top:6px;font-size:28px;font-weight:900;line-height:1.1;background:linear-gradient(90deg,#b8860b,#ffd700,#fff6c0,#ffd700,#b8860b);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:pwShimmer 2.6s linear infinite}
+@keyframes pwShimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+.pw-sub{font-size:14px;color:#c7c9d6;line-height:1.6;margin:12px 0 18px}
+.pw-feats{text-align:left;display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
+.pw-feat{display:flex;align-items:center;gap:10px;font-size:13.5px;color:#eef0f8;opacity:0;transform:translateY(8px);animation:pwUp .5s ease forwards}
+.pw-feat span{color:#ffd700;font-size:15px}
+.pw-feat:nth-child(1){animation-delay:.5s}.pw-feat:nth-child(2){animation-delay:.65s}.pw-feat:nth-child(3){animation-delay:.8s}.pw-feat:nth-child(4){animation-delay:.95s}
+@keyframes pwUp{to{opacity:1;transform:translateY(0)}}
+.pw-btn{display:block;width:100%;background:linear-gradient(135deg,#f0b429,#ffd700);color:#1a1408;font-weight:900;font-size:15px;border:none;border-radius:12px;padding:14px;cursor:pointer;font-family:'Figtree',sans-serif;box-shadow:0 8px 24px rgba(255,200,0,.4)}
+.pw-btn:hover{filter:brightness(1.05)}
+#pwConfetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:24px}
+#pwConfetti span{position:absolute;top:-24px;border-radius:2px;animation-name:pwFall;animation-timing-function:linear;animation-iteration-count:1;animation-fill-mode:forwards}
+@keyframes pwFall{0%{transform:translateY(-24px) rotate(0);opacity:1}100%{transform:translateY(440px) rotate(560deg);opacity:0}}
+</style>
+<div id="premiumWelcome" onclick="if(event.target===this)dgClosePremiumWelcome()">
+  <div class="pw-card">
+    <div id="pwConfetti"></div>
+    <div style="position:relative;z-index:1">
+      <div class="pw-badge">💎</div>
+      <div class="pw-kicker">Premium activé</div>
+      <div class="pw-title">Bienvenue dans le Premium</div>
+      <div class="pw-sub">Toutes les fonctionnalités IA sont désormais <b style="color:#ffd700">débloquées</b>. Profite-en à fond pour cartonner ta L1 ✨</div>
+      <div class="pw-feats">
+        <div class="pw-feat"><span>✦</span> Générations IA <b>illimitées</b> (fini les essais)</div>
+        <div class="pw-feat"><span>✦</span> Prof particulier, Flashcards, Mode Apprendre</div>
+        <div class="pw-feat"><span>✦</span> Mind Map IA, Simulateur d'oral, Culture G</div>
+        <div class="pw-feat"><span>✦</span> Actif sur tous tes appareils, pendant 6 mois</div>
+      </div>
+      <button class="pw-btn" onclick="dgClosePremiumWelcome()">C'est parti ! 🚀</button>
+    </div>
   </div>
 </div>
 
@@ -16601,6 +16645,13 @@ function dgSyncAccountPremium(){
           localStorage.setItem('dg_premium_src','account');
           localStorage.removeItem('dg_premium_expired');
         }catch(e){}
+        // 1re ouverture après une (ré)activation → animation de bienvenue Premium
+        try{
+          if(d.premiumSince && localStorage.getItem('dg_premium_welcomed')!==String(d.premiumSince)){
+            localStorage.setItem('dg_premium_welcomed', String(d.premiumSince));
+            if(typeof dgShowPremiumWelcome==='function') setTimeout(dgShowPremiumWelcome, 1400);
+          }
+        }catch(e){}
       }
       done();
     } else {
@@ -16643,6 +16694,23 @@ window.dgGoPremiumPay = dgGoPremiumPay;
 function dgShowExpiredPopup(){ var m=document.getElementById('expiredPopup'); if(m) m.style.display='flex'; }
 function dgCloseExpiredPopup(){ var m=document.getElementById('expiredPopup'); if(m) m.style.display='none'; }
 window.dgShowExpiredPopup=dgShowExpiredPopup; window.dgCloseExpiredPopup=dgCloseExpiredPopup;
+
+// ── Popup "Bienvenue Premium" (1re ouverture après activation) ──
+function dgShowPremiumWelcome(){
+  var m=document.getElementById('premiumWelcome'); if(!m) return;
+  var c=document.getElementById('pwConfetti');
+  if(c){
+    var cols=['#ffd700','#ffec8b','#fff5cc','#f0b429','#ffffff','#e6b800'];
+    var h=''; for(var i=0;i<40;i++){
+      var left=Math.random()*100, sz=6+Math.floor(Math.random()*7);
+      h+='<span style="left:'+left+'%;width:'+sz+'px;height:'+Math.round(sz*0.45)+'px;background:'+cols[i%cols.length]+';animation-delay:'+(Math.random()*0.7).toFixed(2)+'s;animation-duration:'+(2.2+Math.random()*1.8).toFixed(2)+'s"></span>';
+    }
+    c.innerHTML=h;
+  }
+  m.style.display='flex';
+}
+function dgClosePremiumWelcome(){ var m=document.getElementById('premiumWelcome'); if(m) m.style.display='none'; }
+window.dgShowPremiumWelcome=dgShowPremiumWelcome; window.dgClosePremiumWelcome=dgClosePremiumWelcome;
 // Au chargement de l'app : si premium expiré, on affiche le popup (sauf sur l'écran de code d'accès)
 document.addEventListener('DOMContentLoaded', function(){
   setTimeout(function(){
