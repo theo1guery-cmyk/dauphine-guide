@@ -9804,8 +9804,10 @@ function adminSetPremium(uid,on){
         <div class="pm-feat"><span>🌍</span> Culture G générée chaque jour</div>
       </div>
       <div style="border-top:1px solid var(--g200);margin:6px 0"></div>
-      <div style="text-align:center;font-size:13px;color:var(--text-main);line-height:1.6"><b>Pour passer Premium :</b> connecte-toi à ton compte, puis ton accès est activé <b>directement sur ton compte</b> après paiement ✨</div>
-      <label style="font-size:12px;font-weight:600;color:var(--text-main);margin-top:6px">Tu as un code d'accès ?</label>
+      <button onclick="dgGoPremiumPay()" style="display:block;width:100%;text-align:center;background:linear-gradient(135deg,#08284d,#0057ad);color:#fff;padding:14px 18px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Figtree',sans-serif;box-shadow:0 6px 18px rgba(0,87,173,.3)">✦ Passer Premium — 5 €</button>
+      <div style="text-align:center;font-size:11px;color:var(--g400);line-height:1.5;margin-top:2px">Paiement rapide via Lydia · ton compte est ensuite activé ✨</div>
+      <div style="border-top:1px solid var(--g200);margin:4px 0"></div>
+      <label style="font-size:12px;font-weight:600;color:var(--text-main)">Tu as un code d'accès ?</label>
       <div style="display:flex;gap:8px">
         <input type="text" id="pmCodeInput" class="pm-code-in" placeholder="Entre ton code…" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')submitPremiumCode()">
         <button class="pm-code-btn" onclick="submitPremiumCode()">Débloquer</button>
@@ -16529,6 +16531,14 @@ function dgClearAccountPremium(){
   }catch(e){}
 }
 window.dgClearAccountPremium = dgClearAccountPremium;
+
+// ⚠️ LIEN DE PAIEMENT LYDIA — remplacer par le vrai lien (5€) quand prêt
+var DG_LYDIA_URL = 'https://lydia-app.com/REMPLACER-PAR-TON-LIEN-5EUR';
+function dgGoPremiumPay(){
+  try{ window.open(DG_LYDIA_URL, '_blank', 'noopener'); }catch(e){ location.href = DG_LYDIA_URL; }
+  if(typeof gtag === 'function') try{ gtag('event', 'premium_pay_click'); }catch(e){}
+}
+window.dgGoPremiumPay = dgGoPremiumPay;
 
 function openPremiumModal(pageId, trialExhausted){
   // Si déjà ouvert, ne pas réafficher en boucle (plusieurs appels IA d'un coup)
