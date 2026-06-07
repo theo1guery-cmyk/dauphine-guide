@@ -9186,6 +9186,11 @@ function adminSetPremium(uid,on){
       <button class="google-btn" onclick="resendVerif()">Renvoyer l'email</button>
     </div>
 
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);text-align:center">
+      <button onclick="dgContinueAsVisitor()" style="background:none;border:1.5px solid rgba(255,255,255,.32);color:#e8f0fb;font-weight:700;font-size:14px;border-radius:12px;padding:12px 20px;cursor:pointer;font-family:'Figtree',sans-serif;width:100%">Continuer en tant que visiteur →</button>
+      <div style="font-size:11.5px;color:#8da0cc;margin-top:9px;line-height:1.5">✓ Accès à <b>toutes les fonctionnalités</b> — un compte rend juste l'expérience plus <b>personnalisée</b> (premium, chat, progression sauvegardée).</div>
+    </div>
+
   </div>
 </div>
 
@@ -15635,6 +15640,22 @@ function dgRelocateAuthOverlay(){
   if (ov && ov.parentElement !== document.body) document.body.appendChild(ov);
 }
 
+// Continuer sans compte : on ferme le portail et on entre en mode visiteur
+function dgContinueAsVisitor(){
+  try{ sessionStorage.setItem('dg_visitor','1'); }catch(e){}
+  var ov = document.getElementById('auth-overlay'); if (ov) ov.style.display = 'none';
+  var sp = document.getElementById('splashScreen'); if (sp) { sp.style.display = 'none'; }
+  // Si on était sur le chat (réservé aux comptes), on revient à l'accueil
+  try{ var pc = document.getElementById('page-chat'); if (pc && pc.classList.contains('active') && typeof showPage === 'function') showPage('home', null); }catch(e){}
+  // Intro : grande animation à la 1re visite, sinon rien
+  if (!window._dgIntroDone) {
+    window._dgIntroDone = true;
+    var ft = true; try { ft = !localStorage.getItem('dg_intro_seen'); } catch(e){}
+    if (ft && typeof startMorphAnimation === 'function') { try { localStorage.setItem('dg_intro_seen','1'); } catch(e){} try { startMorphAnimation(); } catch(e){} }
+  }
+}
+window.dgContinueAsVisitor = dgContinueAsVisitor;
+
 function initLogin() {
   // Mode widget : bypass total de l'auth
   if (new URLSearchParams(window.location.search).has('widget')) {
@@ -16904,6 +16925,8 @@ function showPage(pageId, btn) {
     }catch(e){}
   }
   if (pageId === 'avis' && typeof dgRenderReviews === 'function') { setTimeout(dgRenderReviews, 60); }
+  // Le chat est réservé aux comptes → un visiteur voit le portail de connexion
+  if (pageId === 'chat') { try { if (!window._chatCurrentUser) { var _av = document.getElementById('auth-overlay'); if (_av) _av.style.display = 'flex'; } } catch(e){} }
   if (pageId === 'premium') {
     setTimeout(function(){
       try{
