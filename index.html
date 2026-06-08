@@ -15723,6 +15723,15 @@ function hideLoginScreen() {
 function startMorphAnimation() {
   window._orbitalRunning = true;
 
+  /* Filet de sécurité : quoi qu'il arrive, on nettoie tous les résidus du morph + on masque l'overlay après 9s */
+  setTimeout(function(){
+    try{
+      document.querySelectorAll('.m-shard,.m-shard-emoji,.m-ring,.m-dot,.m-ripple,.m-trail,.m-wave,.m-preview,.m-ghost-item,.m-ghost-scan,.m-ghost-head,.m-wipe,#morphGhostSidebar').forEach(function(e){e.remove();});
+      var mo=document.getElementById('morphOverlay'); if(mo){ mo.style.opacity='0'; mo.style.pointerEvents='none'; mo.style.display='none'; }
+      window._orbitalRunning = false;
+    }catch(e){}
+  }, 9000);
+
   /* Force-hide the splash screen immediately — on Safari/iPad the CSS
      transition can stall and leave it stuck above the morph overlay */
   (function() {
@@ -16170,7 +16179,7 @@ function startMorphAnimation() {
       setTimeout(function(){ wipe.style.transform='scaleX(0)'; },60);
       setTimeout(function(){
         wipe.remove(); ghost.remove(); ghostHead.remove(); scan.remove();
-        document.querySelectorAll('.m-ghost-item,.m-wave,.m-preview,.m-trail').forEach(function(e){e.remove();});
+        document.querySelectorAll('.m-ghost-item,.m-wave,.m-preview,.m-trail,.m-shard,.m-shard-emoji,.m-ring,.m-dot,.m-ripple,.m-wipe,#morphGhostSidebar').forEach(function(e){e.remove();});
         overlay.classList.remove('active'); overlay.style.cssText='display:none';
         logo.className='m-logo';
         if(glow) glow.className='m-glow';
