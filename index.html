@@ -5496,6 +5496,13 @@ aside.sidebar {
 
 <!-- MOBILE -->
 <!-- ══════════════ ONBOARDING OVERLAY ══════════════ -->
+<style>
+.onb-pop{opacity:0;transform:translateY(12px) scale(.9);transition:opacity .45s ease,transform .45s cubic-bezier(.2,1.25,.4,1)}
+.onb-pop.in{opacity:1;transform:none}
+.onb-gem{opacity:0;transform:scale(.4)}
+.onb-gem.in{opacity:1;animation:onbGemFloat 2.1s ease-in-out infinite}
+@keyframes onbGemFloat{0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 8px rgba(212,184,106,.5))}50%{transform:translateY(-6px) scale(1.09);filter:drop-shadow(0 0 24px rgba(212,184,106,.95))}}
+</style>
 <div id="onb-overlay" class="onb-overlay hidden">
   <div class="onb-modal">
     <div class="onb-top">
@@ -5672,10 +5679,10 @@ aside.sidebar {
     <div class="onb-slide" id="onb-s11">
       <div class="onb-anim">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:236px">
-          <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">🧑‍🏫</div>Prof particulier</div>
-          <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">🗺️</div>Mind Map IA</div>
-          <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">🎙️</div>Simulateur d'oral</div>
-          <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">⚖️</div>Cas pratiques</div>
+          <div class="onb-pop" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">🧑‍🏫</div>Prof particulier</div>
+          <div class="onb-pop" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">🗺️</div>Mind Map IA</div>
+          <div class="onb-pop" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">🎙️</div>Simulateur d'oral</div>
+          <div class="onb-pop" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:11px;font-weight:600"><div style="font-size:22px">⚖️</div>Cas pratiques</div>
         </div>
       </div>
       <div class="onb-title">Tes <em>profs IA</em> perso</div>
@@ -5685,7 +5692,7 @@ aside.sidebar {
     <!-- NOUVEAU — DauphiShare -->
     <div class="onb-slide" id="onb-s12">
       <div class="onb-anim">
-        <div style="display:flex;align-items:center;gap:11px">
+        <div class="onb-pop" style="display:flex;align-items:center;gap:11px">
           <div style="width:48px;height:48px;border-radius:11px;background:#fff;color:#21386b;font-family:var(--font-serif,Georgia,serif);font-weight:800;font-style:italic;font-size:28px;display:flex;align-items:center;justify-content:center">D</div>
           <div style="text-align:left"><div style="color:#fff;font-weight:800;font-size:14px">DauphiShare</div><div style="color:rgba(255,255,255,.6);font-size:11px">📄 annales · 📖 cours · 🤝 fiches</div></div>
         </div>
@@ -5698,8 +5705,8 @@ aside.sidebar {
     <div class="onb-slide" id="onb-s13">
       <div class="onb-anim">
         <div style="display:flex;flex-direction:column;align-items:center;gap:9px">
-          <div style="font-size:46px">💎</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
+          <div class="onb-gem" style="font-size:46px">💎</div>
+          <div class="onb-pop" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
             <span style="background:rgba(212,184,106,.2);border:1px solid #d4b878;color:#f0e2b8;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px">IA illimitée</span>
             <span style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px">5 € / 6 mois</span>
           </div>
@@ -21098,6 +21105,9 @@ function onbPlaySlide(idx) {
   else if (idx === 8) onbPlayMap();
   else if (idx === 9) onbPlayFan();
   else if (idx === 10) onbPlayTl();
+  else if (idx === 11) onbPlayIa();
+  else if (idx === 12) onbPlayShare();
+  else if (idx === 13) onbPlayPrem();
   else if (idx === onbTotal - 1) onbPlayFinish();
 }
 
@@ -21231,6 +21241,25 @@ function onbPlayFan() {
     void c.offsetWidth;
     c.style.animation = '';
   });
+}
+
+function onbPlayIa() {
+  var els = document.querySelectorAll('#onb-s11 .onb-pop');
+  els.forEach(function(e){ e.classList.remove('in'); });
+  els.forEach(function(e,i){ onbAnimTimers.push(setTimeout(function(){ e.classList.add('in'); }, 120 + i*130)); });
+}
+function onbPlayShare() {
+  var els = document.querySelectorAll('#onb-s12 .onb-pop');
+  els.forEach(function(e){ e.classList.remove('in'); });
+  els.forEach(function(e,i){ onbAnimTimers.push(setTimeout(function(){ e.classList.add('in'); }, 150 + i*180)); });
+}
+function onbPlayPrem() {
+  var gem = document.querySelector('#onb-s13 .onb-gem');
+  var els = document.querySelectorAll('#onb-s13 .onb-pop');
+  if (gem) gem.classList.remove('in');
+  els.forEach(function(e){ e.classList.remove('in'); });
+  if (gem) onbAnimTimers.push(setTimeout(function(){ gem.classList.add('in'); }, 120));
+  els.forEach(function(e,i){ onbAnimTimers.push(setTimeout(function(){ e.classList.add('in'); }, 520 + i*150)); });
 }
 
 /* S11 — Timeline */
