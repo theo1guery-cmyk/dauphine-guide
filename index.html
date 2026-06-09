@@ -13121,6 +13121,14 @@ openManage=function(){
     if(pct>=100){pct=100;clearInterval(iv);bar.style.width='100%';setTimeout(function(){splash.classList.add('fade-out');setTimeout(function(){splash.style.display='none';},700);},600);}
     bar.style.width=Math.min(pct,100)+'%';
   },100);
+  // Sécurité ultime : on force la disparition du splash après 4,5 s, quoi qu'il arrive (anti-blocage mobile)
+  setTimeout(function(){
+    try{ clearInterval(iv); }catch(e){}
+    if(splash && getComputedStyle(splash).display!=='none'){
+      splash.classList.add('fade-out'); splash.style.opacity='0'; splash.style.pointerEvents='none';
+      setTimeout(function(){ splash.style.display='none'; }, 600);
+    }
+  }, 4500);
 })();
 
 // ─── LOCALSTORAGE DECK PERSISTENCE ───
@@ -15728,6 +15736,7 @@ function startMorphAnimation() {
     try{
       document.querySelectorAll('.m-shard,.m-shard-emoji,.m-ring,.m-dot,.m-ripple,.m-trail,.m-wave,.m-preview,.m-ghost-item,.m-ghost-scan,.m-ghost-head,.m-wipe,#morphGhostSidebar').forEach(function(e){e.remove();});
       var mo=document.getElementById('morphOverlay'); if(mo){ mo.style.opacity='0'; mo.style.pointerEvents='none'; mo.style.display='none'; }
+      var spl=document.getElementById('splashScreen'); if(spl){ spl.style.opacity='0'; spl.style.pointerEvents='none'; spl.style.display='none'; }
       window._orbitalRunning = false;
     }catch(e){}
   }, 9000);
@@ -15797,35 +15806,21 @@ function startMorphAnimation() {
   var vw = window.innerWidth, vh = window.innerHeight;
   var cx = vw/2, cy = vh/2;
 
-  /* ══ VERSION MOBILE : Utiliser le splash screen existant ══ */
+  /* ══ VERSION MOBILE : pas d'orbital — on estompe simplement le splash (fiable, sans intervalle) ══ */
   if(isMobile){
     var splash = document.getElementById('splashScreen');
     if(splash){
-      splash.style.display = 'flex';
-      splash.classList.remove('fade-out');
       var bar = document.getElementById('splashBar');
-      if(bar){
-        bar.style.width = '0%';
-        var animateBar = setInterval(function(){
-          var current = parseFloat(bar.style.width) || 0;
-          current += Math.random() * 20 + 10;
-          if(current >= 95) {
-            clearInterval(animateBar);
-            bar.style.width = '100%';
-            setTimeout(function(){
-              splash.classList.add('fade-out');
-              setTimeout(function(){
-                splash.style.display = 'none';
-                window._orbitalRunning = false;
-                if(typeof initOnboarding === 'function') initOnboarding();
-              }, 600);
-            }, 300);
-          } else {
-            bar.style.width = Math.min(current, 95) + '%';
-          }
-        }, 80);
-      }
+      if(bar) bar.style.width = '100%';
+      setTimeout(function(){
+        splash.classList.add('fade-out');
+        splash.style.opacity = '0';
+        splash.style.pointerEvents = 'none';
+        setTimeout(function(){ splash.style.display = 'none'; }, 600);
+      }, 500);
     }
+    window._orbitalRunning = false;
+    if (typeof initOnboarding === 'function') setTimeout(initOnboarding, 1100);
     return;
   }
 
