@@ -8871,18 +8871,7 @@ function dgInstallNow(){
   if(_dgDeferredPrompt){ _dgDeferredPrompt.prompt(); _dgDeferredPrompt.userChoice.then(function(){ _dgDeferredPrompt=null; closeInstall(); }); }
 }
 window.openInstall=openInstall; window.closeInstall=closeInstall;
-// Affichage auto à la 1re visite (si pas déjà installé)
-document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){
-    try{
-      var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      if(standalone) return;
-      if(localStorage.getItem('dg_install_seen')==='1') return;
-      var ls=document.getElementById('loginScreen'); if(ls && getComputedStyle(ls).display!=='none') return;
-      openInstall();
-    }catch(e){}
-  }, 6000);
-});
+// (Pas d'ouverture automatique : le tuto s'affiche uniquement quand on clique sur « Installer l'app ».)
 </script>
 
 <!-- BONS PLANS -->
