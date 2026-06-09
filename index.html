@@ -6174,7 +6174,11 @@ aside.sidebar {
       </div>
       <div class="home-footer-bottom">
         <span>© 2026 DauphineGuide — Projet étudiant non affilié à l'Université Paris-Dauphine PSL</span>
-        <span>ADE · Dauphine L1 LSO</span>
+        <span style="display:flex;gap:16px;flex-wrap:wrap">
+          <a href="#" onclick="openLegal('mentions');return false;" style="color:rgba(255,255,255,.6);text-decoration:none;cursor:pointer">Mentions légales</a>
+          <a href="#" onclick="openLegal('cgu');return false;" style="color:rgba(255,255,255,.6);text-decoration:none;cursor:pointer">CGU</a>
+          <a href="#" onclick="openLegal('privacy');return false;" style="color:rgba(255,255,255,.6);text-decoration:none;cursor:pointer">Confidentialité</a>
+        </span>
       </div>
     </footer>
   </div>
@@ -8872,6 +8876,97 @@ function dgInstallNow(){
 }
 window.openInstall=openInstall; window.closeInstall=closeInstall;
 // (Pas d'ouverture automatique : le tuto s'affiche uniquement quand on clique sur « Installer l'app ».)
+</script>
+
+<!-- MODAL : Légal -->
+<style>
+#legalModal{display:none;position:fixed;inset:0;z-index:100000;background:rgba(6,16,34,.78);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:16px}
+.legal-card{width:100%;max-width:640px;max-height:90vh;background:var(--bg-card,#fff);border-radius:18px;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden}
+.legal-head{display:flex;align-items:center;gap:6px;padding:14px 16px;border-bottom:1px solid var(--g100);flex-wrap:wrap}
+.legal-tab{border:none;background:var(--g100,#f1f5f9);color:var(--text-sub,#64748b);font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:9px;cursor:pointer;font-family:'Figtree',sans-serif}
+.legal-tab.on{background:var(--blue,#0057ad);color:#fff}
+.legal-x{margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-sub,#64748b)}
+.legal-body{overflow:auto;padding:20px 22px}
+.legal-pane{display:none;font-size:13px;line-height:1.65;color:var(--text-main)}
+.legal-pane.on{display:block}
+.legal-pane h3{font-size:19px;font-weight:800;margin:0 0 2px;color:var(--text-main)}
+.legal-pane h4{font-size:14px;font-weight:800;margin:16px 0 4px;color:var(--blue,#0057ad)}
+.legal-pane p{margin:0 0 8px;color:var(--text-sub,#475569)}
+.legal-upd{font-size:11px;color:var(--g400,#94a3b8);margin-bottom:14px}
+</style>
+<div id="legalModal" onclick="if(event.target===this)closeLegal()">
+  <div class="legal-card">
+    <div class="legal-head">
+      <button class="legal-tab" id="ltab-mentions" onclick="openLegal('mentions')">Mentions légales</button>
+      <button class="legal-tab" id="ltab-cgu" onclick="openLegal('cgu')">CGU</button>
+      <button class="legal-tab" id="ltab-privacy" onclick="openLegal('privacy')">Confidentialité</button>
+      <button class="legal-x" onclick="closeLegal()">✕</button>
+    </div>
+    <div class="legal-body">
+      <div class="legal-pane" id="legal-mentions">
+        <h3>Mentions légales</h3>
+        <div class="legal-upd">Dernière mise à jour : juin 2026</div>
+        <h4>Éditeur</h4>
+        <p>DauphineGuide est un projet étudiant édité à titre personnel par <b>Théo Guery</b>. Contact : <b>contact.dauphineguide@gmail.com</b>.</p>
+        <p><b>Site non-officiel</b>, indépendant et <b>non affilié</b> à l'Université Paris-Dauphine - PSL.</p>
+        <h4>Directeur de la publication</h4>
+        <p>Théo Guery.</p>
+        <h4>Hébergement</h4>
+        <p>Le site est hébergé par <b>GitHub Pages</b> (GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). Des services tiers sont utilisés pour le fonctionnement : <b>Cloudflare</b> (proxy), <b>Google Firebase</b> (comptes & base de données).</p>
+        <h4>Propriété intellectuelle</h4>
+        <p>Le contenu original du site (textes, interface, code) est la propriété de l'éditeur. Les marques, logos et ressources appartenant à des tiers (associations, partenaires, étudiants) restent la propriété de leurs auteurs respectifs.</p>
+      </div>
+      <div class="legal-pane" id="legal-cgu">
+        <h3>Conditions Générales d'Utilisation</h3>
+        <div class="legal-upd">Dernière mise à jour : juin 2026</div>
+        <h4>1. Objet</h4>
+        <p>DauphineGuide met à disposition des outils d'aide à la réussite en L1 (simulateur de moyenne, flashcards, outils IA, planning, chat étudiant, etc.). L'utilisation du site implique l'acceptation des présentes conditions.</p>
+        <h4>2. Accès & compte</h4>
+        <p>L'accès est en grande partie gratuit. La création d'un compte est facultative (sauf pour le chat) ; tu peux continuer en tant que visiteur. Tu t'engages à fournir des informations exactes.</p>
+        <h4>3. Comportement</h4>
+        <p>Sur les espaces communautaires (chat, avis), tu t'engages à rester respectueux et à ne pas publier de contenu illégal, haineux, ou de spam. L'éditeur peut modérer, supprimer un contenu ou suspendre/bannir un compte en cas d'abus.</p>
+        <h4>4. Offre Premium</h4>
+        <p>Certaines fonctionnalités IA sont accessibles via l'offre Premium (<b>5 € pour 6 mois</b>), payable via Lydia. Cette contribution sert à couvrir les frais de fonctionnement de l'IA. Le Premium est lié à ton compte et activé manuellement après réception du paiement. S'agissant d'un service numérique fourni immédiatement, aucun remboursement n'est dû une fois l'accès activé, sauf problème technique imputable au service.</p>
+        <h4>5. Contenu généré par IA</h4>
+        <p>Les contenus produits par l'intelligence artificielle sont fournis « en l'état », à titre d'aide. Ils peuvent contenir des <b>erreurs ou imprécisions</b> et ne remplacent pas les cours officiels : vérifie toujours les informations importantes.</p>
+        <h4>6. Responsabilité</h4>
+        <p>Le site étant non-officiel, les informations (emploi du temps, coefficients, dates, etc.) sont fournies à titre indicatif sans garantie d'exactitude. L'éditeur ne saurait être tenu responsable d'éventuelles erreurs ou de leur usage.</p>
+        <h4>7. Évolutions</h4>
+        <p>Les présentes CGU peuvent être modifiées à tout moment. La version en vigueur est celle publiée sur le site.</p>
+      </div>
+      <div class="legal-pane" id="legal-privacy">
+        <h3>Politique de confidentialité</h3>
+        <div class="legal-upd">Dernière mise à jour : juin 2026</div>
+        <p>Cette politique explique quelles données sont traitées et comment. Responsable du traitement : <b>Théo Guery</b> — <b>contact.dauphineguide@gmail.com</b>.</p>
+        <h4>Données collectées</h4>
+        <p>• <b>Compte</b> : adresse email, pseudo, promo.<br>• <b>Chat</b> : messages publiés.<br>• <b>Avis</b> : pseudo, note et texte.<br>• <b>Usage</b> : pages consultées (Google Analytics), identifiant d'appareil (compteur d'essais gratuits), statut Premium.</p>
+        <h4>Finalités</h4>
+        <p>Fournir et personnaliser le service, gérer le Premium, modérer les espaces communautaires, et mesurer l'audience.</p>
+        <h4>Base légale</h4>
+        <p>Exécution du service, intérêt légitime (sécurité, statistiques) et consentement (mesure d'audience).</p>
+        <h4>Sous-traitants & transferts</h4>
+        <p>Des prestataires techniques traitent certaines données : <b>Google</b> (Firebase – authentification & base, Analytics), <b>Cloudflare</b> (proxy des requêtes IA), <b>Groq</b> (traitement des textes soumis à l'IA), <b>Lydia</b> (paiement). Certaines données peuvent être traitées hors de l'UE (notamment aux États-Unis).</p>
+        <h4>Conservation</h4>
+        <p>Les données de compte sont conservées tant que le compte existe. Elles sont supprimées sur demande.</p>
+        <h4>Tes droits (RGPD)</h4>
+        <p>Tu disposes d'un droit d'accès, de rectification, d'effacement et d'opposition. Pour l'exercer, écris à <b>contact.dauphineguide@gmail.com</b>.</p>
+        <h4>Stockage local & cookies</h4>
+        <p>Le site utilise le stockage local de ton navigateur (préférences, session, compteur d'essais). Google Analytics dépose des cookies de mesure d'audience. Tes données ne sont jamais revendues.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function openLegal(which){
+  ['mentions','cgu','privacy'].forEach(function(k){
+    var p=document.getElementById('legal-'+k), t=document.getElementById('ltab-'+k);
+    if(p) p.classList.toggle('on', k===which);
+    if(t) t.classList.toggle('on', k===which);
+  });
+  var m=document.getElementById('legalModal'); if(m){ m.style.display='flex'; var b=m.querySelector('.legal-body'); if(b) b.scrollTop=0; }
+}
+function closeLegal(){ var m=document.getElementById('legalModal'); if(m) m.style.display='none'; }
+window.openLegal=openLegal; window.closeLegal=closeLegal;
 </script>
 
 <!-- BONS PLANS -->
