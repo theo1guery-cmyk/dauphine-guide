@@ -5457,6 +5457,17 @@ aside.sidebar {
   <div class="splash-sub">Guide L1 LSO</div>
   <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
 </div>
+<script>
+/* Splash : animation + disparition GARANTIES (script isolé, fonctionne même si le reste du JS plante) */
+(function(){
+  var s=document.getElementById('splashScreen'), b=document.getElementById('splashBar');
+  if(!s) return;
+  var p=0;
+  var iv=setInterval(function(){ p+=Math.random()*9+5; if(b) b.style.width=Math.min(p,100)+'%'; if(p>=100) clearInterval(iv); }, 90);
+  function hide(){ try{clearInterval(iv);}catch(e){} if(b) b.style.width='100%'; s.classList.add('fade-out'); s.style.opacity='0'; s.style.pointerEvents='none'; setTimeout(function(){ s.style.display='none'; }, 600); }
+  setTimeout(hide, 3200);
+})();
+</script>
 
 <!-- LOGIN SCREEN -->
 <div id="prankScreen"><div class="prank-msg">MATHILDE TROU DU CUL</div></div>
