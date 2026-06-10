@@ -8704,16 +8704,25 @@ function adminSearchUsers(){
     }).join('');
   }).catch(function(e){ if(box) box.innerHTML='<div style="font-size:12px;color:#ef4444">Erreur : '+((e&&e.message)||e)+'</div>'; });
 }
-function adminSetPremium(uid,on){
+async function adminSetPremium(uid,on){
   if(!dgIsAdmin() || !window._fb) return;
   var fb=window._fb;
   if(on){
     var code=(document.getElementById('adminPcode').value||'').trim();
     if(!code){ alert('Entre d\'abord un code à attribuer (un de tes codes valides de la liste PREMIUM_CODES).'); return; }
+    // On vérifie que le code est RÉELLEMENT valide côté serveur (sinon premium sans IA = bug)
+    try{
+      var vr = await fetch('https://shiny-lake-f66d.theo1-guery.workers.dev', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'validate', code: code }) });
+      var vd = await vr.json();
+      if(!vd || !vd.valid){ alert('⚠️ Ce code n\'est PAS valide (absent de PREMIUM_CODES). Activation annulée — utilise un de tes 30 codes.'); return; }
+    }catch(e){
+      if(!confirm('Impossible de vérifier le code (réseau). Activer quand même ?')) return;
+    }
     try{ localStorage.setItem('dg_admin_pcode',code); }catch(e){}
     fb.set(fb.ref(fb.db,'users/'+uid+'/premium'), true);
     fb.set(fb.ref(fb.db,'users/'+uid+'/pcode'), code);
     fb.set(fb.ref(fb.db,'users/'+uid+'/premiumSince'), Date.now());
+    alert('✅ Compte activé en Premium.');
   } else {
     fb.set(fb.ref(fb.db,'users/'+uid+'/premium'), false);
     fb.remove(fb.ref(fb.db,'users/'+uid+'/pcode'));
@@ -23384,6 +23393,12 @@ async function generateRevisionSheetXXL() {
   var result = document.getElementById('profFicheResult');
   if (!source) {
     toast('Colle d\'abord ton cours', '⚠️');
+    return;
+  }
+  // Mode XXL = plusieurs appels IA → réservé au Premium (sinon ça viderait les essais d'un coup)
+  if (!(typeof isPremium === 'function' && isPremium())) {
+    if (typeof openPremiumModal === 'function') openPremiumModal('prof', false);
+    else toast('Le Mode XXL est réservé au Premium ✦', '🔒');
     return;
   }
   profSetButtonLoading('profFicheXXLBtn', true, 'XXL...', '🚀 Mode XXL');
