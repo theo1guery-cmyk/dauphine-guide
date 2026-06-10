@@ -23419,37 +23419,24 @@ async function generateRevisionSheetXXL() {
   }
   profSetButtonLoading('profFicheXXLBtn', true, 'XXL...', '🚀 Mode XXL');
   profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
-  profSetFicheProgress(5, 'Découpage du cours…');
-  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>Mode XXL en cours</strong><span>Analyse par blocs, fusion et rédaction finale en plusieurs étapes.</span></div></div>';
+  profSetFicheProgress(15, 'Analyse complète du cours…');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>Mode XXL en cours</strong><span>Analyse approfondie de tout ton cours, puis rédaction de la fiche.</span></div></div>';
   try {
+    // Premium = Gemini (contexte 1M) → un seul appel sur tout le cours, bien plus fiable que le découpage
     var clean = source.replace(/\r/g, '').trim();
-    var chunks = profChunkCourseText(clean, 2000, 150);
-    if (!chunks.length) throw new Error('Cours vide après découpage');
-
-    var summaries = [];
-    for (var i = 0; i < chunks.length; i++) {
-      var pct = 10 + Math.round((i / chunks.length) * 50);
-      profSetFicheProgress(pct, 'Analyse du bloc ' + (i + 1) + '/' + chunks.length + '…');
-      var summary = await profExtractChunkSummary(chunks[i], i + 1, chunks.length);
-      summaries.push(summary);
-      // Pause entre chaque bloc pour rester sous le rate limit (6000 TPM/min)
-      if (i < chunks.length - 1) {
-        for (var s = 10; s > 0; s--) {
-          profSetFicheProgress(pct, 'Bloc ' + (i + 1) + '/' + chunks.length + ' — pause ' + s + 's…');
-          await new Promise(function(r) { setTimeout(r, 1000); });
-        }
-      }
-    }
-
-    profSetFicheProgress(72, 'Fusion des connaissances…');
-    var kb = profMergeChunkSummaries(summaries);
-
-    profSetFicheProgress(86, 'Rédaction de la fiche finale…');
-    var finalData = await profBuildFinalSheetFromKnowledge(kb);
-    if (!finalData) throw new Error('Réponse finale illisible');
+    profSetFicheProgress(55, 'Rédaction de la fiche approfondie…');
+    var prompt = 'Tu es un excellent tuteur pour un étudiant de L1 à Paris-Dauphine. '
+      + 'À partir du COURS COMPLET ci-dessous, rédige une FICHE DE RÉVISION approfondie et structurée. '
+      + 'Réponds UNIQUEMENT en JSON valide, sans texte autour, au format : '
+      + '{"sections":[{"titre":"...","contenu":"..."}],"questions":[{"question":"...","reponse":"..."}]}. '
+      + 'Fais 8 à 12 sections DENSES (définitions précises, mécanismes, exemples concrets, pièges à éviter) couvrant tout le cours, '
+      + 'et 8 questions VRAIMENT difficiles avec leurs réponses complètes. '
+      + 'COURS :\n' + clean.slice(0, 25000);
+    var data = profParseJson(await profRequestXXL(prompt, 4000, 0.3));
+    if (!data || !(data.sections && data.sections.length)) throw new Error('Réponse illisible — réessaie dans un instant.');
 
     profSetFicheProgress(96, 'Mise en forme…');
-    profRenderRevisionData(finalData, result);
+    profRenderRevisionData(data, result);
     profSetFicheProgress(100, 'Fiche XXL prête ✅');
     setTimeout(profHideFicheProgress, 1200);
   } catch (error) {
