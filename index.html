@@ -23291,15 +23291,17 @@ async function profBuildFinalSheetFromKnowledge(kb) {
   // Délai entre les deux appels finaux
   await new Promise(function(r) { setTimeout(r, 8000); });
 
-  // Étape B : génère les questions difficiles
-  var qJson = JSON.stringify({ questions: (kb.questions || []).slice(0, 20) }).slice(0, 4000);
-  var promptB = 'À partir de ces questions/réponses de cours L1, sélectionne et reformule les 8 plus difficiles. '
+  // Étape B : génère les questions difficiles À PARTIR DES CONCEPTS (jamais une entrée vide)
+  var qSrc = JSON.stringify({ concepts: (kb.concepts || []).slice(0, 30) }).slice(0, 4500);
+  var promptB = 'À partir de ce cours L1 (concepts ci-dessous), crée 6 à 8 questions VRAIMENT difficiles avec leurs réponses complètes, pour tester la compréhension en profondeur. '
     + 'Réponds UNIQUEMENT en JSON: {"questions":[{"question":"...","reponse":"..."}]}. '
-    + 'Questions source:\n' + qJson;
-  var rawB = await profRequestXXL(promptB, 900, 0.2);
+    + 'Concepts du cours:\n' + qSrc;
+  var rawB = await profRequestXXL(promptB, 1100, 0.3);
   var dataB = profParseJson(rawB) || { questions: [] };
+  // Sécurité : on retire toute "question" qui serait en fait un message d'erreur de l'IA
+  var qs = (dataB.questions || []).filter(function(q){ var t=((q && (q.question || q.q)) || '').toLowerCase(); return t && t.indexOf('aucune question') === -1 && t.indexOf('erreur') !== 0; });
 
-  return { sections: dataA.sections || [], questions: dataB.questions || [] };
+  return { sections: dataA.sections || [], questions: qs };
 }
 
 function profRenderRevisionData(data, result) {
@@ -23309,7 +23311,9 @@ function profRenderRevisionData(data, result) {
   });
   sectionsHtml += '</div>';
   var questionsHtml = '<div class="prof-section-label">Questions difficiles</div><div class="prof-qa">';
-  (data.questions || []).forEach(function(item, index) {
+  // On écarte les éventuels messages d'erreur de l'IA glissés dans les questions
+  var _qs = (data.questions || []).filter(function(item){ var t=((item && item.question) || '').toLowerCase(); return t && t.indexOf('aucune question') === -1 && t.indexOf('erreur') !== 0; });
+  _qs.forEach(function(item, index) {
     questionsHtml += '<div class="prof-question"><strong>' + (index + 1) + '. ' + profEscapeHtml(item.question || '') + '</strong><button type="button" onclick="toggleProfAnswer(this)">Voir la réponse</button><div class="prof-answer">' + profNl2br(item.reponse || '') + '</div></div>';
   });
   questionsHtml += '</div>';
