@@ -16907,7 +16907,11 @@ function clearStageAnalyzer() {
 var PREMIUM_PAGES = ['prof','apprendre','flashcards','oral','mindmap','culture'];
 var _pmPendingPage = null;
 
-function isPremium(){ return localStorage.getItem('dg_premium') === 'true'; }
+function isPremium(){
+  // Premium = flag ET code présent (sinon le serveur refuse → on évite les états incohérents)
+  try { return localStorage.getItem('dg_premium') === 'true' && !!(localStorage.getItem('dg_premium_code') || '').trim(); }
+  catch(e){ return false; }
+}
 
 // ── Premium lié au compte (activé par l'admin) ──
 var DG_PREMIUM_DURATION = 1000*60*60*24*183; // ~6 mois
