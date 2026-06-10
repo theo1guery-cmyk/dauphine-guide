@@ -22852,12 +22852,20 @@ function profSetButtonLoading(buttonId, isLoading, loadingText, idleText) {
   button.innerHTML = isLoading ? '<span class="prof-spinner"></span> ' + loadingText : idleText;
 }
 
+// En-têtes IA fiables : on envoie EXPLICITEMENT le code premium (sans dépendre de l'intercepteur global)
+function dgAiHeaders(extra){
+  var h = { 'Content-Type': 'application/json' };
+  try { h['X-Premium-Code'] = localStorage.getItem('dg_premium_code') || ''; } catch(e){}
+  try { h['X-Device-Id'] = (typeof dgDeviceId === 'function') ? dgDeviceId() : ''; } catch(e){}
+  try { h['X-Trial-Section'] = (typeof _dgAISection !== 'undefined' && _dgAISection) ? _dgAISection : 'prof'; } catch(e){}
+  if (extra) for (var k in extra) h[k] = extra[k];
+  return h;
+}
+
 async function profRequest(prompt, maxTokens, temperature) {
   var res = await fetch(GROQ_PROXY, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: dgAiHeaders(),
     body: JSON.stringify({
       model: GROQ_MODEL,
       max_tokens: maxTokens || 1200,
@@ -22880,7 +22888,7 @@ async function profRequestXXL(prompt, maxTokens, temperature) {
   for (var attempt = 0; attempt < MAX_RETRIES; attempt++) {
     var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Groq-Tier': 'xxl' },
+      headers: dgAiHeaders({ 'X-Groq-Tier': 'xxl' }),
       body: JSON.stringify({
         model: XXL_MODEL,
         max_tokens: maxTokens || 800,
