@@ -8483,7 +8483,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAgora
 <script>
 var _avisStars=0, _avisLoaded=false, _avisFb=[];
 var ADMIN_PSEUDO='Théo91140';
-var ADMIN_UID='SbpFJrxEiKT0g4MEGQAbwA0Jinp1';
+var ADMIN_UID='JmM1jPDzFLXUYYlMXsSItNQX1dG2';
 var STATIC_REVIEWS=[
   {name:'Dalia', promo:'Admise en L1', stars:5, text:"Ça donne tellement envie d'apprendre et j'ai hâte de pouvoir l'utiliser pour mes partiels, mais aussi dès que j'ai besoin d'un renseignement ! C'est vraiment le site de rêve, surtout pour ceux qui arrivent et sont un peu perdus."},
   {name:'Lauralice', promo:'L1', stars:5, text:"C'est vraiment super pour rester organisé et réviser, surtout avec les flashcards et l'IA qui aident beaucoup pour mémoriser ! Vous avez vraiment fait un bon guide."},
@@ -8495,7 +8495,7 @@ var STATIC_REVIEWS=[
   {name:'Lily', promo:'L1', stars:5, text:"Wow, le site est grave bien, merci beaucoup ! Ça a l'air vraiment utile."}
 ];
 function dgEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function dgIsAdmin(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return !!(u && (u.uid===ADMIN_UID || u.pseudo===ADMIN_PSEUDO)); }
+function dgIsAdmin(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return !!(u && u.uid===ADMIN_UID); }
 function dgCurUid(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return u?u.uid:null; }
 
 function setAvisStars(n){ _avisStars=n; var box=document.getElementById('avisStarPick'); if(!box) return; Array.prototype.forEach.call(box.children,function(s){ s.style.color=(+s.getAttribute('data-v')<=n)?'#f5b301':'#d8dee9'; }); }
