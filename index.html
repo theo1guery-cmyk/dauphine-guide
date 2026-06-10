@@ -8495,7 +8495,7 @@ var STATIC_REVIEWS=[
   {name:'Lily', promo:'L1', stars:5, text:"Wow, le site est grave bien, merci beaucoup ! Ça a l'air vraiment utile."}
 ];
 function dgEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function dgIsAdmin(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return !!(u && u.uid===ADMIN_UID); }
+function dgIsAdmin(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return !!(u && (u.uid===ADMIN_UID || u.pseudo===ADMIN_PSEUDO)); }
 function dgCurUid(){ var u=null; try{u=window._chatCurrentUser;}catch(e){} return u?u.uid:null; }
 
 function setAvisStars(n){ _avisStars=n; var box=document.getElementById('avisStarPick'); if(!box) return; Array.prototype.forEach.call(box.children,function(s){ s.style.color=(+s.getAttribute('data-v')<=n)?'#f5b301':'#d8dee9'; }); }
