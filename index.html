@@ -23574,10 +23574,8 @@ async function generateRevisionSheetXXL() {
     profHideFicheProgress();
     var em = error && error.message ? error.message : '';
     var human = em;
-    if (em === 'XXL_NOT_GEMINI') {
-      human = 'Ton code premium n\'est pas reconnu par le serveur (ou Gemini est saturé), donc le Mode XXL ne peut pas tourner. Revérifie ton code premium, ou réessaie dans un instant.';
-    } else if (/request too large|tokens per minute|TPM/i.test(em)) {
-      human = 'Le serveur a basculé sur le moteur gratuit, trop limité pour une fiche aussi grosse. Vérifie que ton code premium est bien actif, puis réessaie.';
+    if (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em)) {
+      human = 'Le moteur IA est très demandé en ce moment 🙂 Patiente 1 à 2 minutes, puis relance le Mode XXL — ça repassera tout seul.';
     }
     result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(human) + '</span></div></div>';
   } finally {
