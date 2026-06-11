@@ -23799,6 +23799,18 @@ function schemaWrap(s, max) {
   if (cur) lines.push(cur);
   return lines;
 }
+// Réduit la police jusqu'à ce que le texte tienne sur une ligne dans maxW (px)
+function schemaFit(text, maxW, base, min, factor) {
+  factor = factor || 0.58; var f = base; var s = String(text == null ? '' : text);
+  while (f > min && (s.length * f * factor) > maxW) f -= 0.5;
+  return f;
+}
+// Découpe le texte pour qu'il tienne dans maxW (px) à la taille fs
+function schemaWrapW(text, maxW, fs, factor) {
+  factor = factor || 0.56;
+  var mc = Math.max(5, Math.floor(maxW / (fs * factor)));
+  return schemaWrap(text, mc);
+}
 function schemaWrapSVG(W, H, inner) {
   var accent = '#7a2e2e', rule = '#5b4327';
   var defs = '<defs><radialGradient id="schParch" cx="50%" cy="40%" r="80%"><stop offset="0%" stop-color="#f4ecd6"/><stop offset="70%" stop-color="#ece0c2"/><stop offset="100%" stop-color="#d9c79e"/></radialGradient></defs>';
@@ -23815,14 +23827,15 @@ function schemaWrapSVG(W, H, inner) {
 function schemaBuildConceptSVG(d) {
   var W = 600, pad = 40, inkD = '#3a2c1a', ink2 = '#6b5436', accent = '#7a2e2e', rule = '#5b4327', boxFill = '#f4ecd6';
   var branches = (d.branches || []).slice(0, 4);
-  var defLines = schemaWrap(d.definition || '', 64);
+  var defLines = schemaWrapW(d.definition || '', W - 2*pad, 13, 0.54);
   var retenir = (d.retenir || []).slice(0, 4);
-  var titleLines = schemaWrap(d.titre || 'Concept', 34);
   var y = 70;
   var hdr = '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="4" fill="' + accent + '">✦ FICHE CONCEPT ✦</text>';
   y += 34;
-  titleLines.forEach(function(ln,i){ hdr += '<text x="300" y="' + (y+i*30) + '" text-anchor="middle" font-size="28" font-style="italic" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
-  y += (titleLines.length-1)*30 + 20;
+  var tFont = schemaFit(d.titre || 'Concept', 500, 28, 16, 0.55);
+  var titleLines = schemaWrapW(d.titre || 'Concept', 500, tFont, 0.55);
+  titleLines.forEach(function(ln,i){ hdr += '<text x="300" y="' + (y+i*(tFont+4)) + '" text-anchor="middle" font-size="' + tFont + '" font-style="italic" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
+  y += (titleLines.length-1)*(tFont+4) + 20;
   hdr += '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="2" fill="' + ink2 + '">' + schemaEsc((d.matiere||'').toUpperCase()) + ' · L1 LSO</text>';
   y += 14;
   hdr += '<line x1="220" y1="' + y + '" x2="380" y2="' + y + '" stroke="' + accent + '" stroke-width="1"/><circle cx="300" cy="' + y + '" r="3" fill="' + accent + '"/>';
@@ -23832,29 +23845,45 @@ function schemaBuildConceptSVG(d) {
   defLines.forEach(function(ln,i){ body += '<text x="' + pad + '" y="' + (y+i*18) + '" font-size="13" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
   y += defLines.length*18 + 16;
   var cy = y + 30;
+  var cTit = (d.central&&d.central.titre)||d.titre||'';
+  var cFont = schemaFit(cTit, 170, 14, 9, 0.5);
   body += '<ellipse cx="300" cy="' + cy + '" rx="95" ry="33" fill="#efe2c2" stroke="' + rule + '" stroke-width="2"/>';
-  body += '<text x="300" y="' + (cy-2) + '" text-anchor="middle" font-size="14" font-style="italic" fill="' + inkD + '">' + schemaEsc((d.central&&d.central.titre)||d.titre||'') + '</text>';
+  body += '<text x="300" y="' + (cy-2) + '" text-anchor="middle" font-size="' + cFont + '" font-style="italic" fill="' + inkD + '">' + schemaEsc(cTit) + '</text>';
   if (d.central && d.central.sub) body += '<text x="300" y="' + (cy+15) + '" text-anchor="middle" font-size="10" fill="' + ink2 + '">' + schemaEsc(d.central.sub) + '</text>';
   var n = branches.length || 1;
-  var gap = 12, bw = Math.floor((W - 2*pad - gap*(n-1)) / n), bh = 76;
-  var by = cy + 33 + 40;
-  branches.forEach(function(b,i){
-    var bx = pad + i*(bw+gap), cxBox = bx + bw/2;
+  var gap = 12, bw = Math.floor((W - 2*pad - gap*(n-1)) / n);
+  var avail = bw - 14;
+  // Pré-calcul du contenu de chaque case pour tailler une hauteur commune
+  var prep = branches.map(function(b){
+    return {
+      b: b,
+      titF: schemaFit((b.titre||'').toUpperCase(), avail, 12.5, 8, 0.62),
+      subL: b.sub ? schemaWrapW(b.sub, avail, 10.5, 0.55) : [],
+      detL: b.detail ? schemaWrapW(b.detail, avail, 10, 0.55) : []
+    };
+  });
+  var bh = 56;
+  prep.forEach(function(p){ var h = 22 + p.subL.length*13 + p.detL.length*12 + 8; if (h > bh) bh = h; });
+  var by = cy + 33 + 38;
+  prep.forEach(function(p,i){
+    var cxBox = pad + i*(bw+gap) + bw/2;
     body += '<path d="M300 ' + (cy+33) + ' Q ' + cxBox + ' ' + (cy+45) + ' ' + cxBox + ' ' + by + '" stroke="' + accent + '" stroke-width="1.3" fill="none"/>';
   });
-  branches.forEach(function(b,i){
+  prep.forEach(function(p,i){
     var bx = pad + i*(bw+gap), mid = bx + bw/2;
     body += '<rect x="' + bx + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="6" fill="' + boxFill + '" stroke="' + rule + '" stroke-width="1.5"/>';
-    body += '<text x="' + mid + '" y="' + (by+24) + '" text-anchor="middle" font-size="12.5" font-weight="bold" fill="' + inkD + '">' + schemaEsc((b.titre||'').toUpperCase()) + '</text>';
-    if (b.sub) body += '<text x="' + mid + '" y="' + (by+44) + '" text-anchor="middle" font-size="10.5" fill="' + ink2 + '">' + schemaEsc(b.sub) + '</text>';
-    if (b.detail) body += '<text x="' + mid + '" y="' + (by+60) + '" text-anchor="middle" font-size="10" fill="' + ink2 + '">' + schemaEsc(b.detail) + '</text>';
+    var line = by + 18;
+    body += '<text x="' + mid + '" y="' + line + '" text-anchor="middle" font-size="' + p.titF + '" font-weight="bold" fill="' + inkD + '">' + schemaEsc((p.b.titre||'').toUpperCase()) + '</text>';
+    line += 16;
+    p.subL.forEach(function(sl){ body += '<text x="' + mid + '" y="' + line + '" text-anchor="middle" font-size="10.5" fill="' + ink2 + '">' + schemaEsc(sl) + '</text>'; line += 13; });
+    p.detL.forEach(function(dl){ body += '<text x="' + mid + '" y="' + line + '" text-anchor="middle" font-size="10" fill="' + ink2 + '">' + schemaEsc(dl) + '</text>'; line += 12; });
   });
   y = by + bh + 30;
   if (retenir.length) {
     body += '<text x="' + pad + '" y="' + y + '" font-size="12" font-weight="bold" letter-spacing="1" fill="' + accent + '">À RETENIR</text>';
     y += 22;
     retenir.forEach(function(r){
-      schemaWrap('❧ ' + r, 70).forEach(function(ln){ body += '<text x="' + (pad+4) + '" y="' + y + '" font-size="12.5" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; y += 17; });
+      schemaWrapW('❧ ' + r, W - 2*pad - 4, 12.5, 0.54).forEach(function(ln){ body += '<text x="' + (pad+4) + '" y="' + y + '" font-size="12.5" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; y += 17; });
     });
     y += 8;
   }
@@ -23874,31 +23903,38 @@ function schemaBuildConceptSVG(d) {
 function schemaBuildLibreSVG(d) {
   var W = 600, inkD = '#3a2c1a', ink2 = '#6b5436', accent = '#7a2e2e', rule = '#5b4327', boxFill = '#f4ecd6';
   var branches = (d.branches || []).slice(0, 6);
-  var titleLines = schemaWrap(d.titre || 'Schéma', 36);
   var y = 70;
   var hdr = '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="4" fill="' + accent + '">✦ CARTE MENTALE ✦</text>';
   y += 34;
-  titleLines.forEach(function(ln,i){ hdr += '<text x="300" y="' + (y+i*28) + '" text-anchor="middle" font-size="26" font-style="italic" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
-  y += (titleLines.length-1)*28 + 18;
+  var tFont = schemaFit(d.titre || 'Schéma', 500, 26, 15, 0.55);
+  var titleLines = schemaWrapW(d.titre || 'Schéma', 500, tFont, 0.55);
+  titleLines.forEach(function(ln,i){ hdr += '<text x="300" y="' + (y+i*(tFont+3)) + '" text-anchor="middle" font-size="' + tFont + '" font-style="italic" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
+  y += (titleLines.length-1)*(tFont+3) + 18;
   if (d.matiere) { hdr += '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="2" fill="' + ink2 + '">' + schemaEsc((d.matiere||'').toUpperCase()) + '</text>'; y += 14; }
   hdr += '<line x1="220" y1="' + y + '" x2="380" y2="' + y + '" stroke="' + accent + '" stroke-width="1"/><circle cx="300" cy="' + y + '" r="3" fill="' + accent + '"/>';
   y += 34;
-  var cbw = 230, cbh = 46, cbx = 300 - cbw/2, cby = y;
+  var cbw = 240, cbh = 46, cbx = 300 - cbw/2, cby = y;
+  var cTit = (d.central&&d.central.titre)||d.titre||'';
+  var cFont = schemaFit(cTit, cbw - 24, 15, 10, 0.5);
   var body = '<rect x="' + cbx + '" y="' + cby + '" width="' + cbw + '" height="' + cbh + '" rx="23" fill="#efe2c2" stroke="' + rule + '" stroke-width="2"/>';
-  body += '<text x="300" y="' + (cby+29) + '" text-anchor="middle" font-size="15" font-style="italic" fill="' + inkD + '">' + schemaEsc((d.central&&d.central.titre)||d.titre||'') + '</text>';
+  body += '<text x="300" y="' + (cby+29) + '" text-anchor="middle" font-size="' + cFont + '" font-style="italic" fill="' + inkD + '">' + schemaEsc(cTit) + '</text>';
   var spineTop = cby + cbh;
   y = spineTop + 16;
-  var boxW = 234, leftX = 300 - 16 - boxW, rightX = 300 + 16, rowGap = 14, maxBottom = y, spineBottom = y;
+  var boxW = 244, leftX = 300 - 14 - boxW, rightX = 300 + 14, rowGap = 14, maxBottom = y, spineBottom = y;
+  var availB = boxW - 24;
   branches.forEach(function(b,i){
-    var pts = (b.points || []).slice(0, 4);
-    var bh = 30 + Math.max(1, pts.length)*15 + 6;
+    var titL = schemaWrapW(b.titre || '', availB, 12.5, 0.6);
+    var ptLines = [];
+    (b.points || []).slice(0, 4).forEach(function(p){ ptLines = ptLines.concat(schemaWrapW('• ' + p, availB, 11, 0.56)); });
+    var bh = 12 + titL.length*16 + 4 + ptLines.length*14 + 8;
     var left = (i % 2 === 0), bx = left ? leftX : rightX, by = y, midY = by + bh/2;
     body += '<line x1="300" y1="' + midY + '" x2="' + (left ? bx+boxW : bx) + '" y2="' + midY + '" stroke="' + accent + '" stroke-width="1.2"/>';
     body += '<circle cx="300" cy="' + midY + '" r="2.5" fill="' + accent + '"/>';
     body += '<rect x="' + bx + '" y="' + by + '" width="' + boxW + '" height="' + bh + '" rx="7" fill="' + boxFill + '" stroke="' + rule + '" stroke-width="1.4"/>';
-    body += '<text x="' + (bx+12) + '" y="' + (by+21) + '" font-size="12.5" font-weight="bold" fill="' + inkD + '">' + schemaEsc(b.titre||'') + '</text>';
-    var py = by + 39;
-    pts.forEach(function(p){ schemaWrap('• ' + p, 36).forEach(function(ln){ body += '<text x="' + (bx+12) + '" y="' + py + '" font-size="11" fill="' + ink2 + '">' + schemaEsc(ln) + '</text>'; py += 14; }); });
+    var line = by + 20;
+    titL.forEach(function(tl){ body += '<text x="' + (bx+12) + '" y="' + line + '" font-size="12.5" font-weight="bold" fill="' + inkD + '">' + schemaEsc(tl) + '</text>'; line += 16; });
+    line += 4;
+    ptLines.forEach(function(pl){ body += '<text x="' + (bx+12) + '" y="' + line + '" font-size="11" fill="' + ink2 + '">' + schemaEsc(pl) + '</text>'; line += 14; });
     if (by + bh > maxBottom) maxBottom = by + bh;
     spineBottom = midY;
     y = by + bh + rowGap;
