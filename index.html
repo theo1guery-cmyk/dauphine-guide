@@ -23593,8 +23593,16 @@ async function generateRevisionSheetXXL() {
       + '   • Inclus les exemples concrets, les dates, les noms d\'auteurs et les exceptions cités dans le cours.\n'
       + '- Termine par "questions" : 8 à 12 questions d\'examen VRAIMENT difficiles avec des réponses complètes et rédigées.\n'
       + '\nObjectif : qu\'un étudiant qui révise UNIQUEMENT cette fiche maîtrise 100% du cours. Sois complet et précis avant d\'être court.\n'
+      + '\nIMPORTANT : réponds en JSON COMPACT (pas d\'espaces ni de retours à la ligne inutiles entre les éléments JSON) pour tenir dans la réponse.\n'
       + '\nCOURS COMPLET :\n' + clean.slice(0, 28000);
-    var data = profParseJson(await profRequestXXL(prompt, 8000, 0.35));
+    // gemini-2.5-flash "réfléchit" avant de répondre -> il faut un gros budget de tokens
+    // sinon la réflexion mange tout et la réponse JSON revient vide/coupée.
+    var data = profParseJson(await profRequestXXL(prompt, 20000, 0.35, { 'X-AI-Purpose': 'fiche-xxl' }));
+    if (!data || !(data.sections && data.sections.length)) {
+      // 2e tentative (réponse parfois vide à cause du "thinking")
+      profSetFicheProgress(70, 'Nouvelle tentative…');
+      data = profParseJson(await profRequestXXL(prompt, 24000, 0.4, { 'X-AI-Purpose': 'fiche-xxl' }));
+    }
     if (!data || !(data.sections && data.sections.length)) throw new Error('Réponse illisible — réessaie dans un instant.');
 
     profSetFicheProgress(96, 'Mise en forme…');
