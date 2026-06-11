@@ -22883,7 +22883,42 @@ function profParseJson(raw) {
   if (aStart !== -1 && aEnd > aStart) {
     try { return JSON.parse(clean.slice(aStart, aEnd + 1)); } catch (error3) {}
   }
+  // Dernier recours : réparer un JSON tronqué (réponse coupée par la limite de tokens)
+  if (start !== -1) {
+    var body = clean.slice(start);
+    // 1) on tente de fermer guillemets/accolades manquants
+    try { var r = JSON.parse(profCloseTruncatedJson(body)); if (r) return r; } catch (e4) {}
+    // 2) on recule jusqu'au dernier objet complet "...}" et on referme
+    var idx = body.length;
+    for (var n = 0; n < 40; n++) {
+      idx = body.lastIndexOf('}', idx - 1);
+      if (idx <= 0) break;
+      try { var r2 = JSON.parse(profCloseTruncatedJson(body.slice(0, idx + 1))); if (r2 && r2.sections) return r2; } catch (e5) {}
+    }
+  }
   return null;
+}
+
+// Ferme proprement un JSON coupé en cours de route (guillemets/accolades/crochets manquants)
+function profCloseTruncatedJson(s) {
+  var inStr = false, esc = false, stack = [];
+  for (var i = 0; i < s.length; i++) {
+    var c = s.charAt(i);
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === '\\') esc = true;
+      else if (c === '"') inStr = false;
+      continue;
+    }
+    if (c === '"') inStr = true;
+    else if (c === '{' || c === '[') stack.push(c);
+    else if (c === '}' || c === ']') stack.pop();
+  }
+  var out = s;
+  if (inStr) out += '"';
+  out = out.replace(/[\s,]+$/, '');
+  for (var j = stack.length - 1; j >= 0; j--) out += (stack[j] === '{' ? '}' : ']');
+  return out;
 }
 
 function profSetButtonLoading(buttonId, isLoading, loadingText, idleText) {
