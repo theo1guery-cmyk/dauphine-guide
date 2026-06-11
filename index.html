@@ -23579,11 +23579,19 @@ async function generateRevisionSheetXXL() {
   } catch (error) {
     profHideFicheProgress();
     var em = error && error.message ? error.message : '';
-    var human = em;
-    if (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em)) {
-      human = 'Le moteur IA est très demandé en ce moment 🙂 Patiente 1 à 2 minutes, puis relance le Mode XXL — ça repassera tout seul.';
+    var saturated = (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em));
+    if (saturated) {
+      result.innerHTML = ''
+        + '<div class="prof-empty" style="padding:26px 18px"><div>'
+        +   '<div style="font-size:42px">⏳</div>'
+        +   '<strong style="font-size:17px">Le moteur IA récupère</strong>'
+        +   '<span style="display:block;margin:6px 0 4px">Une grosse fiche XXL fatigue l\'IA 😅</span>'
+        +   '<span style="display:block;color:var(--g400,#94a3b8);font-size:12.5px;margin-bottom:18px">👉 Reviens dans <strong>~10 minutes</strong> pour relancer le Mode XXL, ou génère une <strong>fiche plus courte</strong> tout de suite (ça passe toujours).</span>'
+        +   '<button class="prof-btn" onclick="generateRevisionSheet()" style="background:linear-gradient(135deg,#0057ad,#0a84ff);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-weight:800;cursor:pointer">📚 Générer une fiche courte maintenant</button>'
+        + '</div></div>';
+    } else {
+      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(em) + '</span></div></div>';
     }
-    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(human) + '</span></div></div>';
   } finally {
     profSetButtonLoading('profFicheXXLBtn', false, 'XXL...', '🚀 Mode XXL');
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
