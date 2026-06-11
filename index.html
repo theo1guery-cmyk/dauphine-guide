@@ -5767,6 +5767,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="simulateur" onclick="showPage(&#39;simulateur&#39;,this)"><span class="s-ic">🧮</span> Simulateur moyenne</button>
     <div class="sidebar-section-label">Révision</div>
     <button class="sidebar-item" data-page="flashcards" onclick="showPage(&#39;flashcards&#39;,this)"><span class="s-ic">🃏</span> Flashcards</button>
+    <button class="sidebar-item" data-page="fiches" onclick="showPage('fiches',this)"><span class="s-ic">📄</span> Fiches IA</button>
     <button class="sidebar-item" data-page="apprendre" onclick="showPage(&#39;apprendre&#39;,this)"><span class="s-ic">🎓</span> Mode Apprendre</button>
     <button class="sidebar-item" data-page="pomodoro" onclick="showPage(&#39;pomodoro&#39;,this)"><span class="s-ic">⏱️</span> Pomodoro</button>
     <button class="sidebar-item" data-page="caspratiques" onclick="showPage(&#39;caspratiques&#39;,this)"><span class="s-ic">⚖️</span> Cas pratiques</button>
@@ -7984,7 +7985,6 @@ aside.sidebar {
           <div class="prof-subtabs">
             <button class="prof-subtab on" onclick="switchDroitTool('arret', this)">📋 Fiche d'arrêt</button>
             <button class="prof-subtab" onclick="switchDroitTool('dissertation', this)">📐 Plan de dissertation</button>
-            <button class="prof-subtab" onclick="switchDroitTool('fiche', this)">📚 Fiche de révision</button>
           </div>
 
           <div class="prof-droit-panel active" id="prof-droit-arret">
@@ -8043,38 +8043,6 @@ aside.sidebar {
             </div>
           </div>
 
-          <div class="prof-droit-panel" id="prof-droit-fiche">
-            <div class="prof-droit-grid">
-              <div class="prof-card">
-                <div class="prof-card-title">Condense un cours en fiche dure à oublier</div>
-                <div class="prof-card-sub">Résumé structuré, idées-clés, puis cinq questions difficiles pour vérifier la compréhension réelle.</div>
-                <div class="prof-field">
-                  <label for="profFicheCours">Cours à condenser</label>
-                  <textarea class="prof-textarea tall" id="profFicheCours" placeholder="Colle ici ton cours, tes notes ou une partie de polycopié."></textarea>
-                </div>
-                <div class="prof-actions">
-                  <button class="prof-btn" id="profFicheBtn" onclick="generateRevisionSheet()">📚 Générer la fiche</button>
-                  <button class="prof-btn secondary" id="profFicheXXLBtn" onclick="generateRevisionSheetXXL()">🚀 Mode XXL</button>
-                  <button class="prof-btn ghost" type="button" onclick="resetProfRevisionSheet()">🗑️ Réinitialiser</button>
-                </div>
-                <div id="profFicheProgress" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;background:var(--g50)">
-                  <div id="profFicheProgressLabel" style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px">Préparation…</div>
-                  <div style="height:6px;background:var(--g200);border-radius:999px;overflow:hidden">
-                    <div id="profFicheProgressBar" style="height:100%;width:0;background:linear-gradient(90deg,#003d7a,#2563eb);transition:width .25s ease"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="prof-card" id="profFicheResult">
-                <div class="prof-empty">
-                  <div>
-                    <div style="font-size:38px">🧠</div>
-                    <strong>La fiche de révision apparaîtra ici</strong>
-                    <span>Une synthèse exploitable tout de suite, avec questions de vérification.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -8977,6 +8945,67 @@ function openLegal(which){
 function closeLegal(){ var m=document.getElementById('legalModal'); if(m) m.style.display='none'; }
 window.openLegal=openLegal; window.closeLegal=closeLegal;
 </script>
+
+<!-- FICHES IA -->
+<div class="page-section" id="page-fiches">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">📄</div>
+      <div>
+        <div class="section-header-title">Fiches IA</div>
+        <div class="section-header-sub">Transforme n'importe quel cours en fiche de révision</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-fiches"></div>
+  </div>
+  <style>
+  .fiche-hero{background:linear-gradient(135deg,#08284d,#0057ad);border-radius:18px;padding:22px 24px;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(0,87,173,.25)}
+  .fiche-hero-ic{font-size:40px}
+  .fiche-hero h2{font-family:var(--font-serif,Georgia,serif);font-size:22px;font-weight:600;margin:0 0 4px}
+  .fiche-hero p{font-size:13px;color:rgba(255,255,255,.82);margin:0;line-height:1.5}
+  .fiche-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:860px){.fiche-grid{grid-template-columns:1fr}}
+  </style>
+  <div class="wrap" style="padding-top:30px;padding-bottom:64px">
+    <div class="fiche-hero">
+      <div class="fiche-hero-ic">📄</div>
+      <div style="flex:1;min-width:200px">
+        <h2>Ta fiche de révision en quelques secondes</h2>
+        <p>Colle ton cours → résumé structuré + questions difficiles. Avec le <b>Mode XXL ✦</b> (Premium), génère une fiche approfondie et <b>télécharge-la en PDF</b> prête à imprimer.</p>
+      </div>
+    </div>
+    <div class="fiche-grid">
+      <div class="prof-card">
+        <div class="prof-card-title">Condense un cours en fiche</div>
+        <div class="prof-card-sub">Résumé structuré, idées-clés, puis questions difficiles pour vérifier la compréhension réelle.</div>
+        <div class="prof-field">
+          <label for="profFicheCours">Cours à condenser</label>
+          <textarea class="prof-textarea tall" id="profFicheCours" placeholder="Colle ici ton cours, tes notes ou une partie de polycopié."></textarea>
+        </div>
+        <div class="prof-actions">
+          <button class="prof-btn" id="profFicheBtn" onclick="generateRevisionSheet()">📚 Générer la fiche</button>
+          <button class="prof-btn secondary" id="profFicheXXLBtn" onclick="generateRevisionSheetXXL()">🚀 Mode XXL ✦</button>
+          <button class="prof-btn ghost" type="button" onclick="resetProfRevisionSheet()">🗑️ Réinitialiser</button>
+        </div>
+        <div id="profFicheProgress" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;background:var(--g50)">
+          <div id="profFicheProgressLabel" style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px">Préparation…</div>
+          <div style="height:6px;background:var(--g200);border-radius:999px;overflow:hidden">
+            <div id="profFicheProgressBar" style="height:100%;width:0;background:linear-gradient(90deg,#003d7a,#2563eb);transition:width .25s ease"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="prof-card" id="profFicheResult">
+          <div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>La fiche apparaîtra ici</strong><span>Une synthèse exploitable tout de suite, avec questions de vérification.</span></div></div>
+        </div>
+        <div style="text-align:center;margin-top:12px">
+          <button class="prof-btn" onclick="exportFichePDF()" style="background:linear-gradient(135deg,#08284d,#0057ad);color:#fff">📄 Télécharger en PDF ✦</button>
+          <div style="font-size:11px;color:var(--g400);margin-top:5px">Export PDF prêt à imprimer · réservé au Premium</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- BONS PLANS -->
 <div class="page-section" id="page-bonsplans">
@@ -23304,7 +23333,46 @@ async function profBuildFinalSheetFromKnowledge(kb) {
   return { sections: dataA.sections || [], questions: qs };
 }
 
+function exportFichePDF() {
+  if (!(typeof isPremium === 'function' && isPremium())) {
+    if (typeof openPremiumModal === 'function') openPremiumModal('fiches', false);
+    else toast('Export PDF réservé au Premium ✦', '🔒');
+    return;
+  }
+  var d = window._lastFicheData;
+  if (!d || !(d.sections && d.sections.length)) { toast('Génère d\'abord une fiche', '⚠️'); return; }
+  var E = (typeof profEscapeHtml === 'function') ? profEscapeHtml : function(s){return String(s||'');};
+  var NL = (typeof profNl2br === 'function') ? profNl2br : function(s){return E(s);};
+  var css = '@page{margin:16mm}'
+    + 'body{font-family:Georgia,"Times New Roman",serif;color:#1a1a1a;line-height:1.55;max-width:780px;margin:0 auto;padding:16px}'
+    + '.pf-head{display:flex;align-items:center;gap:12px;border-bottom:2px solid #0057ad;padding-bottom:14px;margin-bottom:22px}'
+    + '.pf-logo{width:44px;height:44px;border-radius:9px;background:#0057ad;color:#fff;font-style:italic;font-weight:bold;font-size:26px;display:flex;align-items:center;justify-content:center}'
+    + '.pf-title{font-size:23px;font-weight:bold;color:#0a2a52}.pf-sub{font-size:12px;color:#666}'
+    + '.pf-sec{margin-bottom:15px;page-break-inside:avoid}'
+    + '.pf-sec h2{font-size:15px;color:#0057ad;margin:0 0 4px;border-left:3px solid #0057ad;padding-left:8px}'
+    + '.pf-sec p{margin:0;font-size:13px}'
+    + '.pf-qh{font-size:17px;color:#0a2a52;margin:24px 0 10px;border-top:1px solid #ccc;padding-top:14px}'
+    + '.pf-q{margin-bottom:11px;page-break-inside:avoid;font-size:13px}.pf-q b{color:#0a2a52}'
+    + '.pf-a{margin-top:3px;color:#333;padding-left:10px;border-left:2px solid #e0e0e0}'
+    + '.pf-foot{margin-top:28px;text-align:center;font-size:10px;color:#999}';
+  var html = '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Fiche de révision — DauphineGuide</title><style>' + css + '</style></head><body>';
+  html += '<div class="pf-head"><div class="pf-logo">D</div><div><div class="pf-title">Fiche de révision</div><div class="pf-sub">DauphineGuide · L1 LSO · Paris-Dauphine PSL</div></div></div>';
+  (d.sections || []).forEach(function(s){ html += '<div class="pf-sec"><h2>' + E(s.titre || '') + '</h2><p>' + NL(s.contenu || '') + '</p></div>'; });
+  var qs = (d.questions || []).filter(function(q){ var t=((q && q.question)||'').toLowerCase(); return t && t.indexOf('aucune question')===-1 && t.indexOf('erreur')!==0; });
+  if (qs.length) {
+    html += '<h2 class="pf-qh">Questions difficiles</h2>';
+    qs.forEach(function(q,i){ html += '<div class="pf-q"><b>' + (i+1) + '. ' + E(q.question || '') + '</b><div class="pf-a">' + NL(q.reponse || '') + '</div></div>'; });
+  }
+  html += '<div class="pf-foot">Fiche générée avec DauphineGuide ✦</div></body></html>';
+  var w = window.open('', '_blank');
+  if (!w) { toast('Autorise les pop-ups pour télécharger', '⚠️'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+  setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 500);
+  if (typeof gtag === 'function') try{ gtag('event','fiche_pdf_export'); }catch(e){}
+}
+
 function profRenderRevisionData(data, result) {
+  try { window._lastFicheData = data; } catch(e){}
   var sectionsHtml = '<div class="prof-structured">';
   (data.sections || []).forEach(function(section) {
     sectionsHtml += '<div class="prof-structured-block"><strong>' + profEscapeHtml(section.titre || '') + '</strong><p>' + profNl2br(section.contenu || '') + '</p></div>';
