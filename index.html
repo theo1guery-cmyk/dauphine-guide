@@ -23553,7 +23553,21 @@ async function generateRevisionSheetXXL() {
     if (!data || !(data.sections && data.sections.length)) throw new Error('Réponse illisible — réessaie dans un instant.');
 
     profSetFicheProgress(96, 'Mise en forme…');
-    profRenderRevisionData(data, result);
+    // La fiche XXL est longue et faite pour le PDF -> on ne l'affiche PAS à l'écran,
+    // on stocke les données et on propose le téléchargement.
+    try { window._lastFicheData = data; } catch(e){}
+    var nbSec = (data.sections || []).length;
+    var nbQ = ((data.questions || []).filter(function(q){ var t=((q&&q.question)||'').toLowerCase(); return t && t.indexOf('aucune question')===-1 && t.indexOf('erreur')!==0; })).length;
+    result.innerHTML = ''
+      + '<div class="prof-empty" style="padding:30px 18px">'
+      +   '<div>'
+      +     '<div style="font-size:46px">✅</div>'
+      +     '<strong style="font-size:18px">Ta fiche XXL est prête !</strong>'
+      +     '<span style="display:block;margin:6px 0 4px">' + nbSec + ' sections · ' + nbQ + ' questions difficiles</span>'
+      +     '<span style="display:block;color:var(--g400,#94a3b8);font-size:12.5px;margin-bottom:18px">Elle est trop complète pour l\'écran — récupère-la en vraie fiche PDF, propre et prête à imprimer.</span>'
+      +     '<button class="prof-btn" onclick="exportFichePDF()" style="background:linear-gradient(135deg,#0057ad,#0a84ff);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,87,173,.35)">📄 Ouvrir ma fiche PDF ✦</button>'
+      +   '</div>'
+      + '</div>';
     profSetFicheProgress(100, 'Fiche XXL prête ✅');
     setTimeout(profHideFicheProgress, 1200);
   } catch (error) {
