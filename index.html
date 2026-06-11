@@ -22934,6 +22934,12 @@ async function profRequestXXL(prompt, maxTokens, temperature) {
 
     if (res.ok) {
       var data = await res.json();
+      // Le Mode XXL DOIT passer par Gemini (Groq ne peut pas encaisser un cours entier).
+      // Si le Worker a utilisé Groq, c'est que le code premium n'est pas reconnu côté serveur.
+      var usedModel = (data && data.model) ? String(data.model) : '';
+      if (usedModel && usedModel.toLowerCase().indexOf('gemini') === -1) {
+        throw new Error('XXL_NOT_GEMINI');
+      }
       return data && data.choices && data.choices[0] && data.choices[0].message
         ? data.choices[0].message.content.trim() : '';
     }
@@ -23543,7 +23549,14 @@ async function generateRevisionSheetXXL() {
     setTimeout(profHideFicheProgress, 1200);
   } catch (error) {
     profHideFicheProgress();
-    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+    var em = error && error.message ? error.message : '';
+    var human = em;
+    if (em === 'XXL_NOT_GEMINI') {
+      human = 'Ton code premium n\'est pas reconnu par le serveur (ou Gemini est saturé), donc le Mode XXL ne peut pas tourner. Revérifie ton code premium, ou réessaie dans un instant.';
+    } else if (/request too large|tokens per minute|TPM/i.test(em)) {
+      human = 'Le serveur a basculé sur le moteur gratuit, trop limité pour une fiche aussi grosse. Vérifie que ton code premium est bien actif, puis réessaie.';
+    }
+    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(human) + '</span></div></div>';
   } finally {
     profSetButtonLoading('profFicheXXLBtn', false, 'XXL...', '🚀 Mode XXL');
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
