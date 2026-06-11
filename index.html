@@ -22944,6 +22944,7 @@ async function profRequest(prompt, maxTokens, temperature) {
   var res = await fetch(GROQ_PROXY, {
     method: 'POST',
     headers: dgAiHeaders(),
+    signal: (window._aiAbort && window._aiAbort.signal) || undefined,
     body: JSON.stringify({
       model: GROQ_MODEL,
       max_tokens: maxTokens || 1200,
@@ -22966,9 +22967,11 @@ async function profRequestXXL(prompt, maxTokens, temperature, extraHeaders) {
   if (extraHeaders) for (var hk in extraHeaders) hdr[hk] = extraHeaders[hk];
 
   for (var attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    if (window._aiAbort && window._aiAbort.signal.aborted) throw new Error('AbortError');
     var res = await fetch(GROQ_PROXY, {
       method: 'POST',
       headers: dgAiHeaders(hdr),
+      signal: (window._aiAbort && window._aiAbort.signal) || undefined,
       body: JSON.stringify({
         model: XXL_MODEL,
         max_tokens: maxTokens || 800,
@@ -22987,6 +22990,7 @@ async function profRequestXXL(prompt, maxTokens, temperature, extraHeaders) {
         // C'est transitoire : on patiente et on réessaie au lieu de planter.
         if (attempt < MAX_RETRIES - 1) {
           for (var gs = 8; gs > 0; gs--) {
+            if (window._aiAbort && window._aiAbort.signal.aborted) throw new Error('AbortError');
             profSetFicheProgress(null, 'Gemini saturé — nouvelle tentative dans ' + gs + 's…');
             await new Promise(function(r) { setTimeout(r, 1000); });
           }
@@ -23007,6 +23011,7 @@ async function profRequestXXL(prompt, maxTokens, temperature, extraHeaders) {
       if (attempt < MAX_RETRIES - 1) {
         // Affiche un compte à rebours
         for (var s = waitSecs; s > 0; s--) {
+          if (window._aiAbort && window._aiAbort.signal.aborted) throw new Error('AbortError');
           profSetFicheProgress(null, 'Rate limit — reprise dans ' + s + 's…');
           await new Promise(function(r) { setTimeout(r, 1000); });
         }
@@ -23275,6 +23280,11 @@ function resetProfDissertation() {
 }
 
 function resetProfRevisionSheet() {
+  // Annule toute génération en cours (stoppe les requêtes IA -> plus de gaspillage de crédits)
+  try { if (window._aiAbort) window._aiAbort.abort(); } catch(e){}
+  window._aiBusy = false;
+  profSetButtonLoading('profFicheXXLBtn', false, 'XXL...', '🚀 Mode XXL');
+  profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
   var input = document.getElementById('profFicheCours');
   var res = document.getElementById('profFicheResult');
   var pWrap = document.getElementById('profFicheProgress');
@@ -23539,6 +23549,9 @@ async function generateRevisionSheet() {
     toast('Colle d\'abord ton cours', '⚠️');
     return;
   }
+  if (window._aiBusy) { toast('Une génération est déjà en cours…', '⏳'); return; }
+  window._aiBusy = true;
+  window._aiAbort = new AbortController();
   profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Création de la fiche</strong><span>Résumé, architecture du cours et questions difficiles en préparation.</span></div></div>';
   try {
@@ -23549,10 +23562,18 @@ async function generateRevisionSheet() {
     if (!data) throw new Error('Réponse illisible');
     profRenderRevisionData(data, result);
   } catch (error) {
-    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Fiche indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
+    if (!profIsAbort(error)) result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Fiche indisponible</strong><span>' + profEscapeHtml(error.message) + '</span></div></div>';
   } finally {
+    window._aiBusy = false;
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
   }
+}
+
+// Détecte une annulation volontaire (Réinitialiser) pour ne pas afficher d'erreur
+function profIsAbort(error) {
+  if (!error) return false;
+  var m = ((error.name || '') + ' ' + (error.message || '')).toLowerCase();
+  return m.indexOf('abort') !== -1;
 }
 
 async function generateRevisionSheetXXL() {
@@ -23568,6 +23589,9 @@ async function generateRevisionSheetXXL() {
     else toast('Le Mode XXL est réservé au Premium ✦', '🔒');
     return;
   }
+  if (window._aiBusy) { toast('Une génération est déjà en cours…', '⏳'); return; }
+  window._aiBusy = true;
+  window._aiAbort = new AbortController();
   profSetButtonLoading('profFicheXXLBtn', true, 'XXL...', '🚀 Mode XXL');
   profSetButtonLoading('profFicheBtn', true, 'Fiche...', '📚 Générer la fiche');
   profSetFicheProgress(15, 'Analyse complète du cours…');
@@ -23626,20 +23650,25 @@ async function generateRevisionSheetXXL() {
   } catch (error) {
     profHideFicheProgress();
     var em = error && error.message ? error.message : '';
-    var saturated = (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em));
-    if (saturated) {
-      result.innerHTML = ''
-        + '<div class="prof-empty" style="padding:26px 18px"><div>'
-        +   '<div style="font-size:42px">⏳</div>'
-        +   '<strong style="font-size:17px">Le moteur IA récupère</strong>'
-        +   '<span style="display:block;margin:6px 0 4px">Une grosse fiche XXL fatigue l\'IA 😅</span>'
-        +   '<span style="display:block;color:var(--g400,#94a3b8);font-size:12.5px;margin-bottom:18px">👉 Reviens dans <strong>~10 minutes</strong> pour relancer le Mode XXL, ou génère une <strong>fiche plus courte</strong> tout de suite (ça passe toujours).</span>'
-        +   '<button class="prof-btn" onclick="generateRevisionSheet()" style="background:linear-gradient(135deg,#0057ad,#0a84ff);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-weight:800;cursor:pointer">📚 Générer une fiche courte maintenant</button>'
-        + '</div></div>';
+    if (profIsAbort(error)) {
+      // Annulation volontaire (Réinitialiser) -> on ne montre pas d'erreur
     } else {
-      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(em) + '</span></div></div>';
+      var saturated = (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em));
+      if (saturated) {
+        result.innerHTML = ''
+          + '<div class="prof-empty" style="padding:26px 18px"><div>'
+          +   '<div style="font-size:42px">⏳</div>'
+          +   '<strong style="font-size:17px">Le moteur IA récupère</strong>'
+          +   '<span style="display:block;margin:6px 0 4px">Une grosse fiche XXL fatigue l\'IA 😅</span>'
+          +   '<span style="display:block;color:var(--g400,#94a3b8);font-size:12.5px;margin-bottom:18px">👉 Reviens dans <strong>~10 minutes</strong> pour relancer le Mode XXL, ou génère une <strong>fiche plus courte</strong> tout de suite (ça passe toujours).</span>'
+          +   '<button class="prof-btn" onclick="generateRevisionSheet()" style="background:linear-gradient(135deg,#0057ad,#0a84ff);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-weight:800;cursor:pointer">📚 Générer une fiche courte maintenant</button>'
+          + '</div></div>';
+      } else {
+        result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Mode XXL indisponible</strong><span>' + profEscapeHtml(em) + '</span></div></div>';
+      }
     }
   } finally {
+    window._aiBusy = false;
     profSetButtonLoading('profFicheXXLBtn', false, 'XXL...', '🚀 Mode XXL');
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
   }
@@ -27836,6 +27865,9 @@ window.analyseAnnales = async function() {
     else toast('L\'analyseur d\'annales est réservé au Premium ✦', '🔒');
     return;
   }
+  if (window._aiBusy) { toast('Une analyse est déjà en cours…', '⏳'); return; }
+  window._aiBusy = true;
+  window._aiAbort = new AbortController();
 
   profSetButtonLoading('annalesBtn', true, '🔍 Analyse…', '🔍 Analyser les annales');
   result.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--g500)">'
@@ -27875,13 +27907,17 @@ window.analyseAnnales = async function() {
       });
     });
   } catch(e) {
-    var em = e && e.message ? e.message : '';
-    var human = em;
-    if (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em)) {
-      human = 'Le moteur IA est très demandé en ce moment 🙂 Patiente 1 à 2 minutes, puis relance l\'analyse.';
+    if (!(typeof profIsAbort === 'function' && profIsAbort(e))) {
+      var em = e && e.message ? e.message : '';
+      var human = em;
+      if (em === 'XXL_NOT_GEMINI' || /request too large|tokens per minute|TPM/i.test(em)) {
+        human = 'Le moteur IA est très demandé en ce moment 🙂 Patiente 1 à 2 minutes, puis relance l\'analyse.';
+      }
+      result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Analyse impossible</strong><span>' + profEscapeHtml(human) + '</span></div></div>';
+      toast('Erreur d\'analyse', '❌');
     }
-    result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Analyse impossible</strong><span>' + profEscapeHtml(human) + '</span></div></div>';
-    toast('Erreur d\'analyse', '❌');
+  } finally {
+    window._aiBusy = false;
   }
   profSetButtonLoading('annalesBtn', false, '🔍 Analyse…', '🔍 Analyser les annales');
 };
@@ -28030,6 +28066,9 @@ function annalesAddFlashcard(q, r, matiere) {
 }
 
 window.annalesReset = function() {
+  try { if (window._aiAbort) window._aiAbort.abort(); } catch(e){}
+  window._aiBusy = false;
+  profSetButtonLoading('annalesBtn', false, '🔍 Analyse…', '🔍 Analyser les annales');
   document.getElementById('annalesInput').value = '';
   document.getElementById('annalesMatiere').value = '';
   document.getElementById('annalesResult').innerHTML = '<div class="annales-result-empty"><div><div style="font-size:42px">🔍</div><strong>L\'analyse apparaîtra ici</strong><span>Choisis une matière, colle tes annales et lance l\'analyse.</span></div></div>';
