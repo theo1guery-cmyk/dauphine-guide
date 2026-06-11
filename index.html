@@ -5769,6 +5769,7 @@ aside.sidebar {
     <button class="sidebar-item" data-page="flashcards" onclick="showPage(&#39;flashcards&#39;,this)"><span class="s-ic">🃏</span> Flashcards</button>
     <button class="sidebar-item" data-page="apprendre" onclick="showPage(&#39;apprendre&#39;,this)"><span class="s-ic">🎓</span> Mode Apprendre</button>
     <button class="sidebar-item" data-page="fiches" onclick="showPage('fiches',this)"><span class="s-ic">📄</span> Fiches IA</button>
+    <button class="sidebar-item" data-page="schemas" onclick="showPage('schemas',this)"><span class="s-ic">📜</span> Schémas<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px;border-radius:4px;margin-left:4px">NEW</span></button>
     <button class="sidebar-item" data-page="pomodoro" onclick="showPage(&#39;pomodoro&#39;,this)"><span class="s-ic">⏱️</span> Pomodoro</button>
     <button class="sidebar-item" data-page="caspratiques" onclick="showPage(&#39;caspratiques&#39;,this)"><span class="s-ic">⚖️</span> Cas pratiques</button>
     <button class="sidebar-item" data-page="prof" onclick="showPage(&#39;prof&#39;,this)"><span class="s-ic">🧑‍🏫</span> Prof particulier</button>
@@ -9011,6 +9012,77 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
         <div style="text-align:center;margin-top:12px">
           <button class="prof-btn" onclick="exportFichePDF()" style="background:linear-gradient(135deg,#08284d,#0057ad);color:#fff">📄 Télécharger en PDF ✦</button>
           <div style="font-size:11px;color:var(--g400);margin-top:5px">Export PDF prêt à imprimer · réservé au Premium</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHÉMAS -->
+<div class="page-section" id="page-schemas">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">📜</div>
+      <div>
+        <div class="section-header-title">Schémas</div>
+        <div class="section-header-sub">Fiches-concept & cartes mentales, style manuscrit ancien</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-schemas"></div>
+  </div>
+  <style>
+  .sch-hero{background:linear-gradient(135deg,#5b4327,#8a6a3b);border-radius:18px;padding:22px 24px;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(91,67,39,.3)}
+  .sch-hero-ic{font-size:40px}
+  .sch-hero h2{font-family:var(--font-serif,Georgia,serif);font-size:22px;font-weight:600;margin:0 0 4px}
+  .sch-hero p{font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.5}
+  .sch-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:860px){.sch-grid{grid-template-columns:1fr}}
+  .sch-modes{display:flex;gap:8px;margin-bottom:14px}
+  .sch-mode{flex:1;padding:12px;border:1.5px solid var(--g200);border-radius:12px;background:var(--bg-card,#fff);color:var(--text-main);cursor:pointer;text-align:center;font-family:'Figtree',sans-serif;transition:all .15s}
+  .sch-mode b{display:block;font-size:13.5px;font-weight:800;margin-bottom:2px}
+  .sch-mode span{font-size:11px;color:var(--g500)}
+  .sch-mode.on{border-color:#8a6a3b;background:#fbf6ea;box-shadow:0 4px 14px rgba(138,106,59,.18)}
+  [data-theme="dark"] .sch-mode.on{background:#2a2418}
+  #schResult svg{width:100%;height:auto;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12)}
+  </style>
+  <div class="wrap" style="padding-top:30px;padding-bottom:64px">
+    <div class="sch-hero">
+      <div class="sch-hero-ic">📜</div>
+      <div style="flex:1;min-width:200px">
+        <h2>Transforme une notion en schéma élégant</h2>
+        <p>Une <b>fiche-concept</b> ou une <b>carte mentale</b> au style parchemin, générée par l'IA et <b>téléchargeable en PDF</b>. Parfait pour réviser et afficher au mur.</p>
+      </div>
+    </div>
+    <div class="sch-grid">
+      <div class="prof-card">
+        <div class="prof-card-title">Génère ton schéma</div>
+        <div class="prof-card-sub">Choisis le format, donne une notion (ou colle un cours), et laisse l'IA composer.</div>
+        <div class="sch-modes">
+          <div class="sch-mode on" id="schModeConcept" onclick="setSchemaMode('concept',this)"><b>📘 Fiche concept</b><span>1 notion → définition + schéma</span></div>
+          <div class="sch-mode" id="schModeLibre" onclick="setSchemaMode('libre',this)"><b>🗺️ Schéma libre</b><span>un cours → carte mentale</span></div>
+        </div>
+        <div class="prof-field">
+          <label for="schInput"><span id="schInputLabel">Notion à schématiser</span></label>
+          <textarea class="prof-textarea tall" id="schInput" placeholder="Ex : La séparation des pouvoirs"></textarea>
+        </div>
+        <div class="prof-actions">
+          <button class="prof-btn" id="schBtn" onclick="generateSchemaSheet()" style="background:linear-gradient(135deg,#5b4327,#8a6a3b);color:#fff;border:none;font-weight:800">📜 Générer le schéma</button>
+          <button class="prof-btn ghost" type="button" onclick="resetSchema()">🗑️ Réinitialiser</button>
+        </div>
+        <div id="schProgress" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;background:var(--g50)">
+          <div id="schProgressLabel" style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px">Préparation…</div>
+          <div style="height:6px;background:var(--g200);border-radius:999px;overflow:hidden">
+            <div id="schProgressBar" style="height:100%;width:0;background:linear-gradient(90deg,#5b4327,#b8860b);transition:width .25s ease"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="prof-card" id="schResult">
+          <div class="prof-empty"><div><div style="font-size:38px">📜</div><strong>Ton schéma apparaîtra ici</strong><span>Choisis un format et lance la génération.</span></div></div>
+        </div>
+        <div style="text-align:center;margin-top:12px">
+          <button class="prof-btn" onclick="exportSchemaPDF()" style="background:linear-gradient(135deg,#5b4327,#8a6a3b);color:#fff">📄 Télécharger en PDF</button>
+          <div style="font-size:11px;color:var(--g400);margin-top:5px">PDF parchemin prêt à imprimer</div>
         </div>
       </div>
     </div>
@@ -16945,7 +17017,7 @@ function clearStageAnalyzer() {
    ════════════════════════════════════════════ */
 // Pages réservées au Premium (utilisent l'IA) — gate UX immédiat à la navigation.
 // La VRAIE protection est côté Cloudflare Worker (codes invisibles + 403 si invalide).
-var PREMIUM_PAGES = ['prof','apprendre','flashcards','oral','mindmap','culture','fiches','annales'];
+var PREMIUM_PAGES = ['prof','apprendre','flashcards','oral','mindmap','culture','fiches','annales','schemas'];
 var _pmPendingPage = null;
 
 function isPremium(){
@@ -23689,6 +23761,217 @@ async function generateRevisionSheetXXL() {
     profSetButtonLoading('profFicheXXLBtn', false, 'XXL...', '🚀 Mode XXL');
     profSetButtonLoading('profFicheBtn', false, 'Fiche...', '📚 Générer la fiche');
   }
+}
+
+/* ══════════ SCHÉMAS (fiche concept / carte mentale, style parchemin) ══════════ */
+var _schemaMode = 'concept';
+function setSchemaMode(mode, el) {
+  _schemaMode = mode;
+  document.querySelectorAll('.sch-mode').forEach(function(m){ m.classList.remove('on'); });
+  if (el) el.classList.add('on');
+  var lbl = document.getElementById('schInputLabel');
+  var ta = document.getElementById('schInput');
+  if (mode === 'concept') {
+    if (lbl) lbl.textContent = 'Notion à schématiser';
+    if (ta) ta.placeholder = 'Ex : La séparation des pouvoirs';
+  } else {
+    if (lbl) lbl.textContent = 'Cours à transformer en carte mentale';
+    if (ta) ta.placeholder = 'Colle ici ton cours ou tes notes.';
+  }
+}
+function schemaSetProgress(p, label) {
+  var w = document.getElementById('schProgress'), b = document.getElementById('schProgressBar'), l = document.getElementById('schProgressLabel');
+  if (!w || !b || !l) return;
+  w.style.display = '';
+  if (p != null) b.style.width = Math.max(0, Math.min(100, p)) + '%';
+  if (label) l.textContent = label;
+}
+function schemaHideProgress() { var w = document.getElementById('schProgress'); if (w) w.style.display = 'none'; }
+function schemaEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function schemaWrap(s, max) {
+  s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+  if (!s) return [];
+  var words = s.split(' '), lines = [], cur = '';
+  words.forEach(function(w){
+    if (cur && (cur + ' ' + w).length > max) { lines.push(cur); cur = w; }
+    else cur = cur ? cur + ' ' + w : w;
+  });
+  if (cur) lines.push(cur);
+  return lines;
+}
+function schemaWrapSVG(W, H, inner) {
+  var accent = '#7a2e2e', rule = '#5b4327';
+  var defs = '<defs><radialGradient id="schParch" cx="50%" cy="40%" r="80%"><stop offset="0%" stop-color="#f4ecd6"/><stop offset="70%" stop-color="#ece0c2"/><stop offset="100%" stop-color="#d9c79e"/></radialGradient></defs>';
+  var bg = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="url(#schParch)"/>'
+    + '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="none" stroke="#b59b6a" stroke-width="40" opacity="0.2"/>';
+  var border = '<rect x="20" y="20" width="' + (W-40) + '" height="' + (H-40) + '" fill="none" stroke="' + rule + '" stroke-width="2.5"/>'
+    + '<rect x="27" y="27" width="' + (W-54) + '" height="' + (H-54) + '" fill="none" stroke="' + rule + '" stroke-width="1"/>';
+  var c = '<g stroke="' + accent + '" stroke-width="2" fill="none" opacity="0.85">'
+    + '<path d="M36 60 q0 -24 24 -24"/><path d="M' + (W-36) + ' 60 q0 -24 -24 -24"/>'
+    + '<path d="M36 ' + (H-60) + ' q0 24 24 24"/><path d="M' + (W-36) + ' ' + (H-60) + ' q0 24 -24 24"/></g>';
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Georgia, \'Times New Roman\', serif">'
+    + '<title>Schéma — DauphineGuide</title>' + defs + bg + border + c + inner + '</svg>';
+}
+function schemaBuildConceptSVG(d) {
+  var W = 600, pad = 40, inkD = '#3a2c1a', ink2 = '#6b5436', accent = '#7a2e2e', rule = '#5b4327', boxFill = '#f4ecd6';
+  var branches = (d.branches || []).slice(0, 4);
+  var defLines = schemaWrap(d.definition || '', 64);
+  var retenir = (d.retenir || []).slice(0, 4);
+  var titleLines = schemaWrap(d.titre || 'Concept', 34);
+  var y = 70;
+  var hdr = '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="4" fill="' + accent + '">✦ FICHE CONCEPT ✦</text>';
+  y += 34;
+  titleLines.forEach(function(ln,i){ hdr += '<text x="300" y="' + (y+i*30) + '" text-anchor="middle" font-size="28" font-style="italic" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
+  y += (titleLines.length-1)*30 + 20;
+  hdr += '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="2" fill="' + ink2 + '">' + schemaEsc((d.matiere||'').toUpperCase()) + ' · L1 LSO</text>';
+  y += 14;
+  hdr += '<line x1="220" y1="' + y + '" x2="380" y2="' + y + '" stroke="' + accent + '" stroke-width="1"/><circle cx="300" cy="' + y + '" r="3" fill="' + accent + '"/>';
+  y += 30;
+  var body = '<text x="' + pad + '" y="' + y + '" font-size="12" font-weight="bold" letter-spacing="1" fill="' + accent + '">DÉFINITION</text>';
+  y += 20;
+  defLines.forEach(function(ln,i){ body += '<text x="' + pad + '" y="' + (y+i*18) + '" font-size="13" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
+  y += defLines.length*18 + 16;
+  var cy = y + 30;
+  body += '<ellipse cx="300" cy="' + cy + '" rx="95" ry="33" fill="#efe2c2" stroke="' + rule + '" stroke-width="2"/>';
+  body += '<text x="300" y="' + (cy-2) + '" text-anchor="middle" font-size="14" font-style="italic" fill="' + inkD + '">' + schemaEsc((d.central&&d.central.titre)||d.titre||'') + '</text>';
+  if (d.central && d.central.sub) body += '<text x="300" y="' + (cy+15) + '" text-anchor="middle" font-size="10" fill="' + ink2 + '">' + schemaEsc(d.central.sub) + '</text>';
+  var n = branches.length || 1;
+  var gap = 12, bw = Math.floor((W - 2*pad - gap*(n-1)) / n), bh = 76;
+  var by = cy + 33 + 40;
+  branches.forEach(function(b,i){
+    var bx = pad + i*(bw+gap), cxBox = bx + bw/2;
+    body += '<path d="M300 ' + (cy+33) + ' Q ' + cxBox + ' ' + (cy+45) + ' ' + cxBox + ' ' + by + '" stroke="' + accent + '" stroke-width="1.3" fill="none"/>';
+  });
+  branches.forEach(function(b,i){
+    var bx = pad + i*(bw+gap), mid = bx + bw/2;
+    body += '<rect x="' + bx + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="6" fill="' + boxFill + '" stroke="' + rule + '" stroke-width="1.5"/>';
+    body += '<text x="' + mid + '" y="' + (by+24) + '" text-anchor="middle" font-size="12.5" font-weight="bold" fill="' + inkD + '">' + schemaEsc((b.titre||'').toUpperCase()) + '</text>';
+    if (b.sub) body += '<text x="' + mid + '" y="' + (by+44) + '" text-anchor="middle" font-size="10.5" fill="' + ink2 + '">' + schemaEsc(b.sub) + '</text>';
+    if (b.detail) body += '<text x="' + mid + '" y="' + (by+60) + '" text-anchor="middle" font-size="10" fill="' + ink2 + '">' + schemaEsc(b.detail) + '</text>';
+  });
+  y = by + bh + 30;
+  if (retenir.length) {
+    body += '<text x="' + pad + '" y="' + y + '" font-size="12" font-weight="bold" letter-spacing="1" fill="' + accent + '">À RETENIR</text>';
+    y += 22;
+    retenir.forEach(function(r){
+      schemaWrap('❧ ' + r, 70).forEach(function(ln){ body += '<text x="' + (pad+4) + '" y="' + y + '" font-size="12.5" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; y += 17; });
+    });
+    y += 8;
+  }
+  if (d.citation && d.citation.texte) {
+    body += '<line x1="' + pad + '" y1="' + y + '" x2="' + (W-pad) + '" y2="' + y + '" stroke="#b59b6a" stroke-width="1"/>';
+    y += 28;
+    schemaWrap('« ' + d.citation.texte + ' »', 56).forEach(function(ln){ body += '<text x="300" y="' + y + '" text-anchor="middle" font-size="13.5" font-style="italic" fill="' + rule + '">' + schemaEsc(ln) + '</text>'; y += 20; });
+    if (d.citation.auteur) { body += '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="1" fill="' + accent + '">— ' + schemaEsc(d.citation.auteur) + '</text>'; y += 20; }
+  }
+  y += 10;
+  body += '<g transform="translate(300,' + (y+8) + ')"><circle r="20" fill="none" stroke="' + accent + '" stroke-width="1.4" opacity="0.8"/><circle r="14" fill="none" stroke="' + accent + '" stroke-width="0.8" opacity="0.8"/><text y="5" text-anchor="middle" font-size="13" fill="' + accent + '" font-style="italic">D</text></g>';
+  y += 40;
+  body += '<text x="300" y="' + y + '" text-anchor="middle" font-size="9" letter-spacing="2" fill="' + ink2 + '">DAUPHINEGUIDE</text>';
+  y += 24;
+  return schemaWrapSVG(W, y, hdr + body);
+}
+function schemaBuildLibreSVG(d) {
+  var W = 600, inkD = '#3a2c1a', ink2 = '#6b5436', accent = '#7a2e2e', rule = '#5b4327', boxFill = '#f4ecd6';
+  var branches = (d.branches || []).slice(0, 6);
+  var titleLines = schemaWrap(d.titre || 'Schéma', 36);
+  var y = 70;
+  var hdr = '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="4" fill="' + accent + '">✦ CARTE MENTALE ✦</text>';
+  y += 34;
+  titleLines.forEach(function(ln,i){ hdr += '<text x="300" y="' + (y+i*28) + '" text-anchor="middle" font-size="26" font-style="italic" fill="' + inkD + '">' + schemaEsc(ln) + '</text>'; });
+  y += (titleLines.length-1)*28 + 18;
+  if (d.matiere) { hdr += '<text x="300" y="' + y + '" text-anchor="middle" font-size="11" letter-spacing="2" fill="' + ink2 + '">' + schemaEsc((d.matiere||'').toUpperCase()) + '</text>'; y += 14; }
+  hdr += '<line x1="220" y1="' + y + '" x2="380" y2="' + y + '" stroke="' + accent + '" stroke-width="1"/><circle cx="300" cy="' + y + '" r="3" fill="' + accent + '"/>';
+  y += 34;
+  var cbw = 230, cbh = 46, cbx = 300 - cbw/2, cby = y;
+  var body = '<rect x="' + cbx + '" y="' + cby + '" width="' + cbw + '" height="' + cbh + '" rx="23" fill="#efe2c2" stroke="' + rule + '" stroke-width="2"/>';
+  body += '<text x="300" y="' + (cby+29) + '" text-anchor="middle" font-size="15" font-style="italic" fill="' + inkD + '">' + schemaEsc((d.central&&d.central.titre)||d.titre||'') + '</text>';
+  var spineTop = cby + cbh;
+  y = spineTop + 16;
+  var boxW = 234, leftX = 300 - 16 - boxW, rightX = 300 + 16, rowGap = 14, maxBottom = y, spineBottom = y;
+  branches.forEach(function(b,i){
+    var pts = (b.points || []).slice(0, 4);
+    var bh = 30 + Math.max(1, pts.length)*15 + 6;
+    var left = (i % 2 === 0), bx = left ? leftX : rightX, by = y, midY = by + bh/2;
+    body += '<line x1="300" y1="' + midY + '" x2="' + (left ? bx+boxW : bx) + '" y2="' + midY + '" stroke="' + accent + '" stroke-width="1.2"/>';
+    body += '<circle cx="300" cy="' + midY + '" r="2.5" fill="' + accent + '"/>';
+    body += '<rect x="' + bx + '" y="' + by + '" width="' + boxW + '" height="' + bh + '" rx="7" fill="' + boxFill + '" stroke="' + rule + '" stroke-width="1.4"/>';
+    body += '<text x="' + (bx+12) + '" y="' + (by+21) + '" font-size="12.5" font-weight="bold" fill="' + inkD + '">' + schemaEsc(b.titre||'') + '</text>';
+    var py = by + 39;
+    pts.forEach(function(p){ schemaWrap('• ' + p, 36).forEach(function(ln){ body += '<text x="' + (bx+12) + '" y="' + py + '" font-size="11" fill="' + ink2 + '">' + schemaEsc(ln) + '</text>'; py += 14; }); });
+    if (by + bh > maxBottom) maxBottom = by + bh;
+    spineBottom = midY;
+    y = by + bh + rowGap;
+  });
+  body = '<line x1="300" y1="' + spineTop + '" x2="300" y2="' + spineBottom + '" stroke="' + rule + '" stroke-width="1.5"/>' + body;
+  y = maxBottom + 24;
+  body += '<g transform="translate(300,' + (y+6) + ')"><circle r="18" fill="none" stroke="' + accent + '" stroke-width="1.3" opacity="0.8"/><text y="5" text-anchor="middle" font-size="12" fill="' + accent + '" font-style="italic">D</text></g>';
+  y += 34;
+  body += '<text x="300" y="' + y + '" text-anchor="middle" font-size="9" letter-spacing="2" fill="' + ink2 + '">DAUPHINEGUIDE</text>';
+  y += 22;
+  return schemaWrapSVG(W, y, hdr + body);
+}
+async function generateSchemaSheet() {
+  var input = document.getElementById('schInput').value.trim();
+  var result = document.getElementById('schResult');
+  if (!input) { toast('Donne une notion ou colle un cours', '⚠️'); return; }
+  if (window._aiBusy) { toast('Une génération est déjà en cours…', '⏳'); return; }
+  window._aiBusy = true;
+  window._aiAbort = new AbortController();
+  profSetButtonLoading('schBtn', true, 'Génération…', '📜 Générer le schéma');
+  schemaSetProgress(30, 'L\'IA compose ton schéma…');
+  result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">🖋️</div><strong>Composition en cours</strong><span>Mise en page sur parchemin…</span></div></div>';
+  try {
+    var mode = _schemaMode, prompt;
+    if (mode === 'concept') {
+      prompt = 'Tu es un pédagogue de Paris-Dauphine (L1). À partir de la NOTION, crée une fiche-concept claire et JUSTE. '
+        + 'Réponds UNIQUEMENT en JSON valide, sans texte autour : '
+        + '{"titre":"nom de la notion","matiere":"matière concernée","definition":"2 à 3 phrases précises","central":{"titre":"idée centrale 2-4 mots","sub":"2-3 mots"},"branches":[{"titre":"PILIER 1-2 mots","sub":"2-4 mots","detail":"2-4 mots"}],"retenir":["point clé court","point clé court","point clé court"],"citation":{"texte":"citation courte et pertinente","auteur":"auteur"}}. '
+        + 'Donne 3 à 4 branches (les composantes/piliers du concept). 3 points "retenir" très courts. '
+        + 'NOTION : ' + input.slice(0, 4000);
+    } else {
+      prompt = 'Tu es un pédagogue. À partir du TEXTE, crée une carte mentale structurée et fidèle au contenu. '
+        + 'Réponds UNIQUEMENT en JSON valide, sans texte autour : '
+        + '{"titre":"titre du schéma","matiere":"matière","central":{"titre":"idée centrale 2-4 mots"},"branches":[{"titre":"thème 1-4 mots","points":["sous-idée courte","sous-idée courte"]}]}. '
+        + 'Donne 4 à 6 branches maximum, chacune avec 2 à 4 points TRÈS courts (max ~6 mots chacun). '
+        + 'TEXTE : ' + input.slice(0, 9000);
+    }
+    var data = profParseJson(await profRequest(prompt, 1600, 0.3));
+    if (!data) throw new Error('Réponse illisible — réessaie.');
+    schemaSetProgress(85, 'Dessin du schéma…');
+    var svg = (mode === 'concept') ? schemaBuildConceptSVG(data) : schemaBuildLibreSVG(data);
+    window._lastSchemaSVG = svg;
+    result.innerHTML = svg;
+    schemaSetProgress(100, 'Schéma prêt ✅');
+    setTimeout(schemaHideProgress, 1000);
+  } catch (e) {
+    schemaHideProgress();
+    if (!profIsAbort(e)) result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">❌</div><strong>Schéma indisponible</strong><span>' + profEscapeHtml(e.message) + '</span></div></div>';
+  } finally {
+    window._aiBusy = false;
+    profSetButtonLoading('schBtn', false, 'Génération…', '📜 Générer le schéma');
+  }
+}
+function exportSchemaPDF() {
+  var svg = window._lastSchemaSVG;
+  if (!svg) { toast('Génère d\'abord un schéma', '⚠️'); return; }
+  var html = '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Schéma — DauphineGuide</title>'
+    + '<style>@page{margin:8mm} html,body{margin:0;padding:0} body{display:flex;justify-content:center;padding:8px} svg{width:100%;max-width:720px;height:auto}</style></head><body>' + svg + '</body></html>';
+  var w = window.open('', '_blank');
+  if (!w) { toast('Autorise les pop-ups pour télécharger', '⚠️'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+  setTimeout(function(){ try { w.focus(); w.print(); } catch(e){} }, 500);
+  if (typeof gtag === 'function') try { gtag('event', 'schema_pdf_export'); } catch(e){}
+}
+function resetSchema() {
+  try { if (window._aiAbort) window._aiAbort.abort(); } catch(e){}
+  window._aiBusy = false;
+  profSetButtonLoading('schBtn', false, 'Génération…', '📜 Générer le schéma');
+  var i = document.getElementById('schInput'); if (i) i.value = '';
+  schemaHideProgress();
+  var r = document.getElementById('schResult');
+  if (r) r.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">📜</div><strong>Ton schéma apparaîtra ici</strong><span>Choisis un format et lance la génération.</span></div></div>';
+  window._lastSchemaSVG = null;
 }
 
 function toggleProfAnswer(button) {
