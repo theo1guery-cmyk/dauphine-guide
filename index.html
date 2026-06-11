@@ -7923,7 +7923,7 @@ aside.sidebar {
             <div class="prof-exam-top">
               <div>
                 <div class="prof-card-title">Configurer l'examen blanc</div>
-                <div class="prof-card-sub">Tu peux imposer ton sujet, ou laisser l'IA en tirer un réaliste au hasard dans la matière choisie.</div>
+                <div class="prof-card-sub">Colle ton cours pour un sujet et une correction sur-mesure, impose ton propre sujet, ou laisse l'IA en tirer un au hasard.</div>
               </div>
               <button class="prof-btn secondary" type="button" onclick="profGenerateExamSubject(true)">🎲 Sujet aléatoire</button>
             </div>
@@ -7932,6 +7932,10 @@ aside.sidebar {
               <select class="prof-select" id="profExamMatiere">
                 <option value="">Choisis une matière</option>
               </select>
+            </div>
+            <div class="prof-field">
+              <label for="profExamCours">Ton cours <span>optionnel — colle-le pour un sujet et une correction basés sur TON cours</span></label>
+              <textarea class="prof-textarea" id="profExamCours" placeholder="Colle ici ton cours / chapitre. L'IA en tirera un sujet d'examen réaliste et corrigera ta copie par rapport à ce contenu précis."></textarea>
             </div>
             <div class="prof-field">
               <label>Durée</label>
@@ -23137,8 +23141,15 @@ async function profGenerateExamSubject(silent) {
   profSetButtonLoading('profExamSujetBtn', true, 'Sujet...', 'Générer');
   try {
     var matterName = profFindMatterName(matterId);
+    var coursEl = document.getElementById('profExamCours');
+    var cours = coursEl ? coursEl.value.trim() : '';
     var prompt = 'Tu es un enseignant de Paris Dauphine en ' + matterName + '. Génère un sujet d\'examen blanc réaliste de niveau L1. '
       + 'Réponds en une seule ligne, sans commentaire autour. Le sujet doit être exploitable immédiatement et ressembler à un vrai partiel.';
+    if (cours) {
+      prompt = 'Tu es un enseignant de Paris Dauphine en ' + matterName + '. À partir du COURS ci-dessous, génère UN sujet d\'examen blanc réaliste de niveau L1, '
+        + 'qui porte précisément sur une notion importante traitée dans ce cours (dissertation, question ou cas pratique selon la matière). '
+        + 'Réponds en une seule ligne, sans commentaire autour, sujet directement exploitable.\n\nCOURS :\n' + cours.slice(0, 12000);
+    }
     var raw = await profRequest(prompt, 180, 0.55);
     document.getElementById('profExamSujet').value = raw.replace(/^Sujet\s*:?\s*/i, '').trim();
     return document.getElementById('profExamSujet').value;
@@ -23181,6 +23192,8 @@ async function startProfExam() {
     if (!subject) throw new Error('Impossible de générer le sujet');
     profTutorState.examMatterName = profFindMatterName(matterId);
     profTutorState.examSubject = subject;
+    var examCoursEl = document.getElementById('profExamCours');
+    profTutorState.examCours = examCoursEl ? examCoursEl.value.trim() : '';
     profTutorState.examSecondsLeft = profTutorState.examDurationMinutes * 60;
     profTutorState.examPaused = false;
     if (profTutorState.examTimerId) clearInterval(profTutorState.examTimerId);
@@ -23226,7 +23239,9 @@ async function submitProfExam() {
   }
   result.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">⏳</div><strong>Correction du partiel blanc</strong><span>L\'IA corrige ta copie avec le même niveau d\'exigence.</span></div></div>';
   try {
+    var examCours = profTutorState.examCours || '';
     var prompt = 'Tu es un correcteur exigeant de Paris Dauphine. Matière: ' + profTutorState.examMatterName + '. Sujet: ' + profTutorState.examSubject + '. '
+      + (examCours ? 'IMPORTANT : évalue la copie PAR RAPPORT au cours fourni ci-dessous (vérifie l\'exactitude des notions, repère les oublis et les erreurs au regard de ce cours précis).\n\nCOURS DE RÉFÉRENCE :\n' + examCours.slice(0, 9000) + '\n\n' : '')
       + 'Tu corriges une copie d\'examen blanc et tu réponds uniquement en JSON valide au format: '
       + '{"note":13.5,"resume":"appréciation courte","commentaire_global":"3 à 5 phrases","parties":[{"titre":"Introduction","verdict":"...","commentaire":"..."},{"titre":"Développement","verdict":"...","commentaire":"..."},{"titre":"Conclusion","verdict":"...","commentaire":"..."},{"titre":"Méthode et gestion du temps","verdict":"...","commentaire":"..."}],"points_forts":["..."],"axes_amelioration":["..."]}. '
       + 'Copie: ' + copy.slice(0, 6500);
@@ -23245,6 +23260,8 @@ function resetProfExam() {
   document.getElementById('profExamCopy').value = '';
   profShowExamStage('profExamSetup');
 }
+
+// (le champ "Ton cours" reste rempli volontairement pour relancer un autre sujet sur le même cours)
 
 function resetProfCorrection() {
   var mat = document.getElementById('profCorrectionMatiere');
