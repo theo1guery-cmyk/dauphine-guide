@@ -22850,7 +22850,9 @@ function profEscapeHtml(value) {
 }
 
 function profNl2br(value) {
-  return profEscapeHtml(value).replace(/\n/g, '<br>');
+  return profEscapeHtml(value)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
 }
 
 function profFindMatterName(matterId) {
@@ -23342,22 +23344,43 @@ function exportFichePDF() {
   var d = window._lastFicheData;
   if (!d || !(d.sections && d.sections.length)) { toast('Génère d\'abord une fiche', '⚠️'); return; }
   var E = (typeof profEscapeHtml === 'function') ? profEscapeHtml : function(s){return String(s||'');};
-  var NL = (typeof profNl2br === 'function') ? profNl2br : function(s){return E(s);};
+  // Formatteur : gère **gras** et listes "- " pour un rendu PDF propre
+  function NL(raw){
+    var lines = String(raw||'').replace(/\r/g,'').split('\n');
+    var out = '', inList = false;
+    function inline(t){ return E(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>'); }
+    lines.forEach(function(ln){
+      var t = ln.trim();
+      var bullet = /^[-•*]\s+/.test(t);
+      if (bullet) {
+        if (!inList) { out += '<ul>'; inList = true; }
+        out += '<li>' + inline(t.replace(/^[-•*]\s+/, '')) + '</li>';
+      } else {
+        if (inList) { out += '</ul>'; inList = false; }
+        if (t) out += '<div class="pf-line">' + inline(t) + '</div>';
+      }
+    });
+    if (inList) out += '</ul>';
+    return out;
+  }
   var css = '@page{margin:16mm}'
     + 'body{font-family:Georgia,"Times New Roman",serif;color:#1a1a1a;line-height:1.55;max-width:780px;margin:0 auto;padding:16px}'
     + '.pf-head{display:flex;align-items:center;gap:12px;border-bottom:2px solid #0057ad;padding-bottom:14px;margin-bottom:22px}'
     + '.pf-logo{width:44px;height:44px;border-radius:9px;background:#0057ad;color:#fff;font-style:italic;font-weight:bold;font-size:26px;display:flex;align-items:center;justify-content:center}'
     + '.pf-title{font-size:23px;font-weight:bold;color:#0a2a52}.pf-sub{font-size:12px;color:#666}'
     + '.pf-sec{margin-bottom:15px;page-break-inside:avoid}'
-    + '.pf-sec h2{font-size:15px;color:#0057ad;margin:0 0 4px;border-left:3px solid #0057ad;padding-left:8px}'
+    + '.pf-sec h2{font-size:15px;color:#0057ad;margin:0 0 6px;border-left:3px solid #0057ad;padding-left:8px}'
     + '.pf-sec p{margin:0;font-size:13px}'
+    + '.pf-line{font-size:12.5px;margin:0 0 4px}'
+    + '.pf-sec ul{margin:3px 0 6px;padding-left:20px}.pf-sec li{font-size:12.5px;margin-bottom:3px}'
+    + 'b{color:#0a2a52}'
     + '.pf-qh{font-size:17px;color:#0a2a52;margin:24px 0 10px;border-top:1px solid #ccc;padding-top:14px}'
     + '.pf-q{margin-bottom:11px;page-break-inside:avoid;font-size:13px}.pf-q b{color:#0a2a52}'
     + '.pf-a{margin-top:3px;color:#333;padding-left:10px;border-left:2px solid #e0e0e0}'
     + '.pf-foot{margin-top:28px;text-align:center;font-size:10px;color:#999}';
   var html = '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Fiche de révision — DauphineGuide</title><style>' + css + '</style></head><body>';
   html += '<div class="pf-head"><div class="pf-logo">D</div><div><div class="pf-title">Fiche de révision</div><div class="pf-sub">DauphineGuide · L1 LSO · Paris-Dauphine PSL</div></div></div>';
-  (d.sections || []).forEach(function(s){ html += '<div class="pf-sec"><h2>' + E(s.titre || '') + '</h2><p>' + NL(s.contenu || '') + '</p></div>'; });
+  (d.sections || []).forEach(function(s){ html += '<div class="pf-sec"><h2>' + E(s.titre || '') + '</h2><div class="pf-body">' + NL(s.contenu || '') + '</div></div>'; });
   var qs = (d.questions || []).filter(function(q){ var t=((q && q.question)||'').toLowerCase(); return t && t.indexOf('aucune question')===-1 && t.indexOf('erreur')!==0; });
   if (qs.length) {
     html += '<h2 class="pf-qh">Questions difficiles</h2>';
@@ -23493,14 +23516,25 @@ async function generateRevisionSheetXXL() {
     // Premium = Gemini (contexte 1M) → un seul appel sur tout le cours, bien plus fiable que le découpage
     var clean = source.replace(/\r/g, '').trim();
     profSetFicheProgress(55, 'Rédaction de la fiche approfondie…');
-    var prompt = 'Tu es un excellent tuteur pour un étudiant de L1 à Paris-Dauphine. '
-      + 'À partir du COURS COMPLET ci-dessous, rédige une FICHE DE RÉVISION approfondie et structurée. '
-      + 'Réponds UNIQUEMENT en JSON valide, sans texte autour, au format : '
+    var prompt = 'Tu es le meilleur professeur particulier de Paris-Dauphine. '
+      + 'Ta mission : transformer le COURS COMPLET ci-dessous en une VRAIE FICHE DE RÉVISION EXHAUSTIVE, destinée à être imprimée en PDF et à remplacer entièrement le cours pour réviser. '
+      + 'RÈGLE ABSOLUE : NE PERDS RIEN. Toutes les notions, définitions, dates, auteurs, théories, formules, mécanismes, distinctions, classifications, exemples et exceptions du cours DOIVENT figurer dans la fiche. '
+      + 'Tu peux reformuler plus clairement et condenser le superflu, mais aucune information importante ne doit disparaître. '
+      + '\n\nRÉPONDS UNIQUEMENT EN JSON VALIDE, sans aucun texte autour, au format strict : '
       + '{"sections":[{"titre":"...","contenu":"..."}],"questions":[{"question":"...","reponse":"..."}]}. '
-      + 'Fais 8 à 12 sections DENSES (définitions précises, mécanismes, exemples concrets, pièges à éviter) couvrant tout le cours, '
-      + 'et 8 questions VRAIMENT difficiles avec leurs réponses complètes. '
-      + 'COURS :\n' + clean.slice(0, 25000);
-    var data = profParseJson(await profRequestXXL(prompt, 4000, 0.3));
+      + '\n\nCONSIGNES DE STRUCTURE :\n'
+      + '- Suis l\'ORDRE et le PLAN du cours (parties, chapitres, sous-parties). Crée AUTANT de sections que nécessaire pour tout couvrir (généralement 10 à 25 sections, ne te limite pas).\n'
+      + '- Chaque "titre" = un titre clair et précis (ex: "II.A — La distinction acte juridique / fait juridique").\n'
+      + '- Chaque "contenu" doit être RICHE et bien mis en forme avec ces conventions de texte :\n'
+      + '   • Mets les TERMES-CLÉS et mots importants en gras avec des **doubles astérisques**.\n'
+      + '   • Utilise des listes à puces : commence la ligne par "- " pour énumérer.\n'
+      + '   • Pour une définition, écris : "**Terme** : définition précise."\n'
+      + '   • Sépare les idées par des sauts de ligne pour la lisibilité.\n'
+      + '   • Inclus les exemples concrets, les dates, les noms d\'auteurs et les exceptions cités dans le cours.\n'
+      + '- Termine par "questions" : 8 à 12 questions d\'examen VRAIMENT difficiles avec des réponses complètes et rédigées.\n'
+      + '\nObjectif : qu\'un étudiant qui révise UNIQUEMENT cette fiche maîtrise 100% du cours. Sois complet et précis avant d\'être court.\n'
+      + '\nCOURS COMPLET :\n' + clean.slice(0, 28000);
+    var data = profParseJson(await profRequestXXL(prompt, 8000, 0.35));
     if (!data || !(data.sections && data.sections.length)) throw new Error('Réponse illisible — réessaie dans un instant.');
 
     profSetFicheProgress(96, 'Mise en forme…');
