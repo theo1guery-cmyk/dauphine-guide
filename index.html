@@ -22938,6 +22938,15 @@ async function profRequestXXL(prompt, maxTokens, temperature) {
       // Si le Worker a utilisé Groq, c'est que le code premium n'est pas reconnu côté serveur.
       var usedModel = (data && data.model) ? String(data.model) : '';
       if (usedModel && usedModel.toLowerCase().indexOf('gemini') === -1) {
+        // Gemini saturé -> le Worker a basculé sur Groq (incapable d'encaisser une fiche XXL).
+        // C'est transitoire : on patiente et on réessaie au lieu de planter.
+        if (attempt < MAX_RETRIES - 1) {
+          for (var gs = 8; gs > 0; gs--) {
+            profSetFicheProgress(null, 'Gemini saturé — nouvelle tentative dans ' + gs + 's…');
+            await new Promise(function(r) { setTimeout(r, 1000); });
+          }
+          continue;
+        }
         throw new Error('XXL_NOT_GEMINI');
       }
       return data && data.choices && data.choices[0] && data.choices[0].message
