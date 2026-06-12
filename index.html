@@ -13683,7 +13683,7 @@ function openShareModal(){
   // Firebase -> le code marche depuis N'IMPORTE QUEL appareil/compte
   window._dgShareCloudOk=false;
   try{
-    if(firebaseOk&&window._fb&&window._fb.set&&window._fb.ref){
+    if(window._fb&&window._fb.set&&window._fb.ref){
       window._fb.set(window._fb.ref(window._fb.db,'shared-decks/'+currentShareCode),{data:encoded,n:cards.length,ts:Date.now()})
         .then(function(){ window._dgShareCloudOk=true; try{ toast('\u2705 Deck partag\u00e9 ! Le code marche partout','\u2705'); }catch(e){} })
         .catch(function(err){ window._dgShareCloudOk=false; try{ toast('⚠️ Cloud refusé ('+((err&&err.code)||(err&&err.message)||'règles Firebase')+') — le code ne marchera que sur cet appareil','⚠️'); }catch(e){} });
@@ -13738,7 +13738,7 @@ async function importFromCode(){
     }
   }catch(e){}
   // 2) Firebase (depuis un autre appareil / compte / navigation privée)
-  if(!(firebaseOk&&window._fb&&window._fb.get&&window._fb.ref)){
+  if(!(window._fb&&window._fb.get&&window._fb.ref)){
     toast('Connecte-toi pour importer par code','\u26A0\uFE0F'); return;
   }
   try{
@@ -13760,7 +13760,7 @@ async function importFromCode(){
 function dgTryLoadSharedDeckFromUrl(){
   var code=window._pendingDeckCode;
   if(!code)return;
-  if(!(firebaseOk&&window._fb&&window._fb.get&&window._fb.ref)){ setTimeout(dgTryLoadSharedDeckFromUrl,1200); return; }
+  if(!(window._fb&&window._fb.get&&window._fb.ref)){ setTimeout(dgTryLoadSharedDeckFromUrl,1200); return; }
   window._fb.get(window._fb.ref(window._fb.db,'shared-decks/'+code)).then(function(snap){
     if(snap&&snap.exists()){
       try{
