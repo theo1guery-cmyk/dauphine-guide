@@ -10937,6 +10937,10 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
         </div>
       </div>
       <!-- Map panel -->
+      <style>
+        #mmMapCard:fullscreen, #mmMapCard:-webkit-full-screen { width:100vw; height:100vh; background:var(--bg-card,#fff); padding:14px; box-sizing:border-box; display:flex; flex-direction:column; }
+        #mmMapCard:fullscreen .mm-svg-wrap, #mmMapCard:-webkit-full-screen .mm-svg-wrap { flex:1; height:auto; }
+      </style>
       <div class="mm-map-card" id="mmMapCard">
         <div class="mm-empty" id="mmEmpty">
           <div>
@@ -10953,6 +10957,7 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
           <button class="mm-ctrl-btn" onclick="mmZoomIn()">＋ Zoom</button>
           <button class="mm-ctrl-btn" onclick="mmZoomOut()">－ Zoom</button>
           <button class="mm-ctrl-btn" onclick="mmFit()">⊞ Ajuster</button>
+          <button class="mm-ctrl-btn" id="mmFsBtn" onclick="mmToggleFullscreen()" title="Plein écran">⛶ Plein écran</button>
           <button class="mm-ctrl-btn active" id="mmLayoutToggleBtn" onclick="mmToggleLayout()" title="Changer de layout">🌐 Radial</button>
           <button class="mm-ctrl-btn" onclick="mmExportSvg()">📥 SVG</button>
           <button class="mm-ctrl-btn" onclick="mmExportPng()">🖼️ PNG</button>
@@ -26663,7 +26668,7 @@ window.mmGenerate = async function() {
 
   var prompt = 'Tu es un expert pédagogique spécialisé en cartographie cognitive universitaire.' + matiereCtx + '\n\n'
     + 'COURS À ANALYSER :\n' + input.slice(0, 12000) + '\n\n'
-    + 'MISSION : Cartographier TOUT le cours sans rien perdre. Extraire et structurer l\'INTÉGRALITÉ des concepts, notions, définitions, acteurs, mécanismes, distinctions et exemples EXPLICITEMENT présents dans ce cours. Couvre chaque partie du plan. Chaque label doit être un terme précis tiré du texte, jamais une catégorie générique inventée.\n\n'
+    + 'MISSION : Cartographier l\'ESSENTIEL du cours. Une mind map est une VUE D\'ENSEMBLE SYNTHÉTIQUE, pas un recopiage. Couvre toutes les grandes parties du plan, mais ne garde QUE les notions vraiment importantes — pas de remplissage, pas de détails secondaires. Chaque label doit être un terme précis tiré du texte, jamais une catégorie générique inventée. Le détail sera creusé à la demande (bouton Focus), donc reste synthétique ici.\n\n'
     + 'INTERDICTIONS ABSOLUES — ces labels génériques sont PROHIBÉS :\n'
     + '❌ "Introduction", "Conclusion", "Résumé", "Points importants", "Généralités", "Notions clés", "Aspects", "Éléments", "Caractéristiques", "Définition", "Présentation", "Vue d\'ensemble"\n\n'
     + 'RÈGLES DE PRÉCISION OBLIGATOIRES :\n'
@@ -26681,14 +26686,13 @@ window.mmGenerate = async function() {
     + '  ]},\n'
     + '  {"label":"[Mécanisme 2 nommé dans le cours]","children":[...]}\n'
     + ']}\n\n'
-    + 'RÈGLES STRUCTURELLES :\n'
-    + '- Maximum 8 enfants directs par nœud\n'
-    + '- Jusqu\'à 4 niveaux de profondeur si le cours est riche\n'
+    + 'RÈGLES STRUCTURELLES (PRIORITÉ À LA LISIBILITÉ) :\n'
+    + '- Maximum 3 niveaux de profondeur\n'
+    + '- Entre 5 et 7 branches au niveau 1 (une par grande partie/thème essentiel du cours)\n'
+    + '- Chaque branche : 2 à 4 sous-notions ESSENTIELLES seulement (pas plus)\n'
+    + '- CIBLE : 25 à 40 nœuds AU TOTAL maximum. Va à l\'essentiel, quitte à regrouper.\n'
     + '- Labels courts : 2-5 mots PRÉCIS maximum (jamais de périphrases vagues)\n'
-    + '- Entre 5 et 9 branches au niveau 1 (une par grande partie/thème du cours)\n'
-    + '- Chaque branche doit avoir 3 à 6 sous-notions concrètes\n'
-    + '- Sois EXHAUSTIF : développe chaque branche pour ne rien laisser de côté du cours\n'
-    + '- Si le cours cite des articles, arrêts, auteurs ou dates : les inclure comme nœuds de niveau 3 ou 4\n'
+    + '- Garde uniquement les notions importantes (auteurs/dates/arrêts majeurs OK, mais pas le détail secondaire)\n'
     + '- Réponds UNIQUEMENT avec le JSON valide, rien d\'autre';
 
   try {
@@ -26863,13 +26867,20 @@ function mmRender() {
   function drawNode(node) {
     var depth = node._depth;
     var label = String(node.label || '');
-    var maxChars = depth === 0 ? 40 : depth === 1 ? 28 : 22;
-    var displayLabel = label.length > maxChars ? label.slice(0, maxChars - 1) + '…' : label;
     var fontSize = depth === 0 ? 18 : depth === 1 ? 15 : 13;
     var padding = depth === 0 ? 17 : depth === 1 ? 13 : 10;
-    var textW = displayLabel.length * fontSize * 0.58;
+    // Largeur de ligne cible (en caractères) ; on enroule sur 2 lignes max au lieu de tronquer
+    var lineChars = depth === 0 ? 22 : depth === 1 ? 18 : 16;
+    var mmLines = (typeof schemaWrap === 'function') ? schemaWrap(label, lineChars) : [label];
+    if (mmLines.length > 2) { mmLines = [mmLines[0], mmLines.slice(1).join(' ')]; if (mmLines[1].length > lineChars + 2) mmLines[1] = mmLines[1].slice(0, lineChars + 1) + '…'; }
+    if (!mmLines.length) mmLines = [label];
+    var displayLabel = mmLines.join(' '); // pour le tooltip : si != label, c'est tronqué
+    var longest = 0;
+    mmLines.forEach(function(l){ if (l.length > longest) longest = l.length; });
+    var lineH = fontSize * 1.22;
+    var textW = longest * fontSize * 0.58;
     var rectW = textW + padding * 2;
-    var rectH = fontSize + padding * 1.4;
+    var rectH = mmLines.length * lineH + padding * 1.1;
     var rx = depth === 0 ? 14 : depth === 1 ? 10 : 8;
 
     var bgColor, textColor;
@@ -26917,13 +26928,19 @@ function mmRender() {
     g.appendChild(rect);
 
     var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', rectW / 2); text.setAttribute('y', rectH / 2 + fontSize * 0.35);
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('fill', textColor);
     text.setAttribute('font-size', fontSize);
     text.setAttribute('font-family', 'Figtree, sans-serif');
     text.setAttribute('font-weight', depth <= 1 ? '700' : '600');
-    text.textContent = displayLabel;
+    var startY = (rectH - mmLines.length * lineH) / 2 + fontSize * 0.82;
+    mmLines.forEach(function(lineTxt, li) {
+      var tsp = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      tsp.setAttribute('x', rectW / 2);
+      tsp.setAttribute('y', startY + li * lineH);
+      tsp.textContent = lineTxt;
+      text.appendChild(tsp);
+    });
     g.appendChild(text);
 
     // Collapse indicator (only for non-L1 with children, since L1 gets the focus pill instead)
@@ -27096,6 +27113,23 @@ window.mmFit     = function() {
   }
   mmApplyTransform();
 };
+window.mmToggleFullscreen = function() {
+  var el = document.getElementById('mmMapCard');
+  if (!el) return;
+  var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if (!fsEl) {
+    var req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) req.call(el);
+  } else {
+    var exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exit) exit.call(document);
+  }
+};
+document.addEventListener('fullscreenchange', function() {
+  var btn = document.getElementById('mmFsBtn');
+  var fs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  if (btn) btn.textContent = fs ? '⛶ Quitter' : '⛶ Plein écran';
+});
 
 window.mmExportSvg = function() {
   if (!mmSVG) return;
