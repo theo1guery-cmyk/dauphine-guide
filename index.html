@@ -5668,7 +5668,7 @@ aside.sidebar {
           <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#4d9fff"></div><div class="onb-tl-txt">DauphiShare · drive partagé</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#4d9fff" data-w="90"></div></div></div>
           <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#a78bfa"></div><div class="onb-tl-txt">Mode Apprendre (IA)</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#a78bfa" data-w="75"></div></div></div>
           <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#34d399"></div><div class="onb-tl-txt">Trouver mon stage</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#34d399" data-w="80"></div></div></div>
-          <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#fb923c"></div><div class="onb-tl-txt">News juridiques</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#fb923c" data-w="70"></div></div></div>
+          <div class="onb-tl-item"><div class="onb-tl-dot" style="background:#fb923c"></div><div class="onb-tl-txt">News</div><div class="onb-tl-bar"><div class="onb-tl-fill" style="background:#fb923c" data-w="70"></div></div></div>
         </div>
       </div>
       <div class="onb-title">Ressources & <em>Stage</em></div>
@@ -5782,7 +5782,7 @@ aside.sidebar {
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
     <div class="sidebar-section-label">Actualités</div>
     <button class="sidebar-item" data-page="culture" onclick="showPage(&#39;culture&#39;,this)"><span class="s-ic">🌍</span> Culture G</button>
-    <button class="sidebar-item" data-page="news" onclick="showPage(&#39;news&#39;,this)"><span class="s-ic">📰</span> News juridiques</button>
+    <button class="sidebar-item" data-page="news" onclick="showPage(&#39;news&#39;,this)"><span class="s-ic">📰</span> News</button>
     <div class="sidebar-section-label">Communauté</div>
     <button class="sidebar-item" data-page="chat" onclick="showPage('chat',this)"><span class="s-ic">💬</span> Chat étudiant</button>
     <button class="sidebar-item" data-page="salle" onclick="showPage(&#39;salle&#39;,this)"><span class="s-ic">🧑‍🤝‍🧑</span> Salle d'étude live<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px">NEW</span></button>
@@ -5982,7 +5982,7 @@ aside.sidebar {
               <button onclick="event.stopPropagation();renderHomeNewsCarousel();this.textContent='✅';setTimeout(()=>this.textContent='🔄',1200)" title="Synchroniser les news" style="background:rgba(255,255,255,.15);border:none;border-radius:6px;color:#fff;font-size:11px;padding:3px 7px;cursor:pointer;flex-shrink:0">🔄</button>
             </div>
           </div>
-          <div id="homeNewsCarousel" style="flex:1;position:relative;overflow:hidden;min-height:120px"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:8px;padding:8px 0"><div style="font-size:28px">📰</div><div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6">Génère des actus<br>dans <strong style="color:rgba(255,255,255,.7)">News juridiques</strong></div></div></div>
+          <div id="homeNewsCarousel" style="flex:1;position:relative;overflow:hidden;min-height:120px"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:8px;padding:8px 0"><div style="font-size:28px">📰</div><div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6">Génère des actus<br>dans <strong style="color:rgba(255,255,255,.7)">News</strong></div></div></div>
           <div class="hc-link" style="margin-top:8px">Voir toutes les news →</div>
         </div>
       </div>
@@ -6076,7 +6076,7 @@ aside.sidebar {
           </button>
           <button class="wg-type-btn" data-type="news" onclick="wgSelectType('news',this)">
             <div style="font-size:20px;margin-bottom:4px">📰</div>
-            <div style="font-weight:700;font-size:12px">News juridiques</div>
+            <div style="font-weight:700;font-size:12px">News</div>
             <div style="font-size:10px;color:var(--text-sub);margin-top:2px">Dernière actu générée</div>
           </button>
         </div>
@@ -7486,8 +7486,8 @@ aside.sidebar {
     <div class="section-header-left">
       <div class="section-header-ic">📰</div>
       <div>
-        <div class="section-header-title">News juridiques</div>
-        <div class="section-header-sub">Actualités droit &amp; éco · générées par IA</div>
+        <div class="section-header-title">News</div>
+        <div class="section-header-sub">L'actu essentielle pour les étudiants · générée par IA</div>
       </div>
     </div>
     <div class="section-header-date" id="sh-date-page-news">Mardi 17 mars 2026</div>
@@ -7496,13 +7496,13 @@ aside.sidebar {
   <!-- TABS -->
   <div class="news-tabs-bar">
     <button class="news-tab active" data-tab="semaine" onclick="switchNewsTab(&#39;semaine&#39;,this)">
-      🗞️ Semaine
+      🗞️ Essentiel
     </button>
     <button class="news-tab" data-tab="jour" onclick="switchNewsTab(&#39;jour&#39;,this)">
-      📅 Jour
+      📅 Du jour
     </button>
     <button class="news-tab" data-tab="constit" onclick="switchNewsTab(&#39;constit&#39;,this)">
-      🏛️ Droit constit.
+      ⚖️ Droit &amp; politique
     </button>
     <button class="news-tab" data-tab="eco" onclick="switchNewsTab(&#39;eco&#39;,this)">
       📈 Économie
@@ -7515,39 +7515,39 @@ aside.sidebar {
     <div class="news-panel active" id="news-panel-semaine">
       <div class="news-panel-header">
         <div>
-          <div class="news-panel-title">🗞️ News de la semaine</div>
-          <div class="news-panel-sub">Principales actualités juridiques &amp; économiques</div>
+          <div class="news-panel-title">🗞️ L'essentiel de la semaine</div>
+          <div class="news-panel-sub">Les grandes actus à connaître, tous sujets</div>
         </div>
         <button class="news-gen-btn" id="newsGenBtn-semaine" onclick="openNewsModal('semaine')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-semaine">
-        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">🗞️</div><div>Clique sur <strong>Générer</strong> pour obtenir les actus de la semaine via Claude</div></div>
+        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">🗞️</div><div>Clique sur <strong>Générer</strong> pour obtenir les actus de la semaine</div></div>
       </div>
     </div>
 
     <div class="news-panel" id="news-panel-jour">
       <div class="news-panel-header">
         <div>
-          <div class="news-panel-title">📅 News du jour</div>
-          <div class="news-panel-sub">Actualités fraîches du jour</div>
+          <div class="news-panel-title">📅 L'actu du jour</div>
+          <div class="news-panel-sub">Les infos fraîches du jour, tous sujets</div>
         </div>
         <button class="news-gen-btn" id="newsGenBtn-jour" onclick="openNewsModal('jour')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-jour">
-        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">📅</div><div>Clique sur <strong>Générer</strong> pour obtenir les actus du jour via Claude</div></div>
+        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">📅</div><div>Clique sur <strong>Générer</strong> pour obtenir les actus du jour</div></div>
       </div>
     </div>
 
     <div class="news-panel" id="news-panel-constit">
       <div class="news-panel-header">
         <div>
-          <div class="news-panel-title">🏛️ Droit constitutionnel</div>
-          <div class="news-panel-sub">Décisions, QPC, réformes institutionnelles</div>
+          <div class="news-panel-title">⚖️ Droit &amp; politique</div>
+          <div class="news-panel-sub">Lois, réformes, décisions, vie politique FR/UE</div>
         </div>
         <button class="news-gen-btn" id="newsGenBtn-constit" onclick="openNewsModal('constit')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-constit">
-        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">🏛️</div><div>Clique sur <strong>Générer</strong> pour obtenir l'actu constitutionnelle via Claude</div></div>
+        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">🏛️</div><div>Clique sur <strong>Générer</strong> pour obtenir l'actu droit &amp; politique</div></div>
       </div>
     </div>
 
@@ -7560,7 +7560,7 @@ aside.sidebar {
         <button class="news-gen-btn" id="newsGenBtn-eco" onclick="openNewsModal('eco')">✨ Générer</button>
       </div>
       <div class="news-panel-list" id="news-list-eco">
-        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">📈</div><div>Clique sur <strong>Générer</strong> pour obtenir l'actu économique via Claude</div></div>
+        <div class="news-empty-tab"><div style="font-size:40px;margin-bottom:10px">📈</div><div>Clique sur <strong>Générer</strong> pour obtenir l'actu économique</div></div>
       </div>
     </div>
 
@@ -18493,21 +18493,21 @@ function newsKey(type) { return 'dauphine_news_' + type; }
 
 var NEWS_PROMPTS = {
   semaine: {
-    title: '🗞️ News de la semaine',
+    title: '🗞️ L\'essentiel de la semaine',
     prompt: function(date) {
-      return 'Tu es un juriste spécialisé dans l\'actualité juridique française. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les 5-7 principales actualités juridiques FR/EU de cette semaine. RÈGLES : (1) Articles UNIQUEMENT de cette semaine. (2) Liens vérifiés sur : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr. (3) Pas d\'articles sans source vérifiable. (4) Retourne UNIQUEMENT un JSON valide. Format : [{"titre":"Titre","resume":"2-3 phrases L1","lien":"https://url-real.fr","source":"Média"}]. Si moins de 5 articles valides, retourne ce que tu trouves.';
+      return 'Tu es un journaliste qui résume l\'actualité pour des étudiants. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les 6-8 principales actualités de cette semaine (tous sujets : France, monde, politique, économie, société, sciences/tech). RÈGLES : (1) Articles UNIQUEMENT de cette semaine. (2) Liens vérifiés (lemonde.fr, lesechos.fr, francetvinfo.fr, reuters.com, etc.). (3) Pas d\'article sans source vérifiable. (4) Retourne UNIQUEMENT un JSON valide. Format : [{"titre":"Titre","resume":"2-3 phrases claires","lien":"https://url-real.fr","source":"Média"}]. Si moins de 6 articles valides, retourne ce que tu trouves.';
     }
   },
   jour: {
-    title: '📅 News du jour',
+    title: '📅 L\'actu du jour',
     prompt: function(date) {
-      return 'Tu es un juriste spécialisé dans l\'actualité juridique française. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les 3-5 actualités juridiques françaises d\'aujourd\'hui. RÈGLES : (1) Articles du jour uniquement. (2) Liens vérifiés : lemonde.fr, lesechos.fr, legifrance.gouv.fr, conseil-constitutionnel.fr. (3) Source officielle obligatoire. (4) Retourne UNIQUEMENT JSON. Format : [{"titre":"Titre","resume":"2-3 phrases","lien":"https://url-real.fr","source":"Média"}]. Qualité > quantité.';
+      return 'Tu es un journaliste qui résume l\'actualité pour des étudiants. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les 4-6 actualités importantes d\'aujourd\'hui (tous sujets : France, monde, politique, économie, société). RÈGLES : (1) Articles du jour uniquement. (2) Liens vérifiés et accessibles. (3) Source fiable obligatoire. (4) Retourne UNIQUEMENT JSON. Format : [{"titre":"Titre","resume":"2-3 phrases","lien":"https://url-real.fr","source":"Média"}]. Qualité > quantité.';
     }
   },
   constit: {
-    title: '🏛️ Droit constitutionnel',
+    title: '⚖️ Droit & politique',
     prompt: function(date) {
-      return 'Tu es un constitutionnaliste. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les actualités récentes de droit constitutionnel (1-4 semaines). RÈGLES : (1) Articles récents seulement. (2) Sources vérifiées : conseil-constitutionnel.fr, legifrance.gouv.fr, Le Monde, Les Échos. (3) Liens accessibles. (4) JSON valide uniquement. Format : [{"titre":"Titre","resume":"Résumé L1","lien":"https://url-real.fr","source":"Source"}]. Qualité importante.';
+      return 'Tu es un journaliste spécialisé droit et vie politique. Nous sommes le ' + date + '. TÂCHE : Utilise UNIQUEMENT Google Search pour les actualités récentes de droit et de politique FR/UE (lois, réformes, décisions de justice, Conseil constitutionnel, vie parlementaire) des 1-4 dernières semaines. RÈGLES : (1) Articles récents seulement. (2) Sources vérifiées (legifrance.gouv.fr, conseil-constitutionnel.fr, Le Monde, Les Échos, vie-publique.fr). (3) Liens accessibles. (4) JSON valide uniquement. Format : [{"titre":"Titre","resume":"Résumé clair","lien":"https://url-real.fr","source":"Source"}].';
     }
   },
   eco: {
@@ -18683,7 +18683,7 @@ function renderHomeNewsCarousel() {
   try { saved = JSON.parse(localStorage.getItem('dauphine_news')); } catch(e) {}
 
   if (!saved || !saved.items || !saved.items.length) {
-    container.innerHTML = '<div class="home-news-empty"><div style="font-size:28px;margin-bottom:8px">📰</div><div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.5">Va dans <strong style=\"color:rgba(255,255,255,.75)\">News juridiques</strong><br>pour générer les actus</div></div>';
+    container.innerHTML = '<div class="home-news-empty"><div style="font-size:28px;margin-bottom:8px">📰</div><div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.5">Va dans <strong style=\"color:rgba(255,255,255,.75)\">News</strong><br>pour générer les actus</div></div>';
     if (dotsEl) dotsEl.innerHTML = '';
     return;
   }
@@ -18761,7 +18761,7 @@ function renderHomeNewsCarousel() {
   }
   if (!saved) { try { saved = JSON.parse(localStorage.getItem('dauphine_news')); } catch(e) {} }
   if (!saved || !saved.items || !saved.items.length) {
-    container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:8px;padding:8px 0"><div style="font-size:28px">📰</div><div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6">Génère des actus<br>dans <strong style=\"color:rgba(255,255,255,.7)\">News juridiques</strong></div></div>';
+    container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:8px;padding:8px 0"><div style="font-size:28px">📰</div><div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.6">Génère des actus<br>dans <strong style=\"color:rgba(255,255,255,.7)\">News</strong></div></div>';
     if (dotsEl) dotsEl.innerHTML = '';
     if (_homeNewsTimer) { clearInterval(_homeNewsTimer); _homeNewsTimer = null; }
     return;
@@ -25821,7 +25821,7 @@ var AI_PAGE_LABELS = {
   home:'Accueil', planning:'Planning', simulateur:'Simulateur de moyenne',
   flashcards:'Flashcards', apprendre:'Mode Apprendre', pomodoro:'Pomodoro',
   notes:'Prise de notes', prof:'Prof particulier', oral:'Simulateur d\'oral',
-  caspratiques:'Cas pratiques', culture:'Culture G', news:'News juridiques',
+  caspratiques:'Cas pratiques', culture:'Culture G', news:'News',
   chat:'Chat étudiant', campus:'Plan du campus', ressources:'Ressources',
   assos:'Assos Dauphine', bonsplans:'Bons plans', stage:'Trouver un stage',
   pslsport:'PSL Sport', bu:'BU Dauphine', faq:'Guide & FAQ'
