@@ -6420,10 +6420,13 @@ aside.sidebar {
 
   <!-- Toolbar épurée -->
   <div class="fc2-bar">
-    <button class="fc2-ibtn primary" onclick="toggleFcGen()">➕ Créer des cartes</button>
+    <button class="fc2-ibtn primary" onclick="toggleFcGen()">➕ Créer</button>
     <div class="fc2-spacer"></div>
+    <button class="fc2-ibtn" onclick="openFocus()" title="Mode Focus plein écran">🌟 Focus</button>
+    <button class="fc2-ibtn" onclick="showPage('apprendre',null)" title="Aller au Mode Apprendre">🎓 Apprendre</button>
+    <button class="fc2-ibtn" onclick="openExamModal()" title="Mode Examen">📝 Examen</button>
     <button class="fc2-ibtn" onclick="shuffleDeck()" title="Mélanger le deck">🔀</button>
-    <button class="fc2-ibtn" onclick="openManage()" title="Gérer le deck">⚙️ Gérer</button>
+    <button class="fc2-ibtn" onclick="openManage()" title="Gérer le deck">⚙️</button>
   </div>
 
   <!-- Générateur (masqué par défaut) -->
@@ -6509,11 +6512,9 @@ aside.sidebar {
     <div style="font-size:12px;color:var(--g600);margin-top:6px" id="deckInfo">22 cartes</div>
 
     <div class="fc2-opts-grid">
-      <button class="fc2-ibtn" onclick="openFocus()">🌟 Mode Focus</button>
-      <button class="fc2-ibtn" onclick="openExamModal()">🎓 Examen</button>
-      <button class="fc2-ibtn" onclick="openShareModal()">🔗 Partager</button>
+      <button class="fc2-ibtn" onclick="openShareModal()">🔗 Partager à un ami</button>
       <button class="fc2-ibtn" onclick="exportPDF('all')">📄 Export PDF</button>
-      <button class="fc2-ibtn" onclick="fcTourStart()">❓ Tuto</button>
+      <button class="fc2-ibtn" onclick="fcTourStart()">❓ Revoir le tuto</button>
     </div>
 
     <div class="heatmap-section" style="margin-top:20px">
@@ -13659,23 +13660,26 @@ function generateShareCode(){
 function openShareModal(){
   var modal=document.getElementById('shareModal');
   if(!modal)return;
-  
+  var cards=(typeof deck!=='undefined'&&Array.isArray(deck))?deck.slice(0,150):[];
+  if(!cards.length){toast('Ton deck est vide','\u26A0\uFE0F');return;}
   currentShareCode=generateShareCode();
-  var encoded=btoa(encodeURIComponent(JSON.stringify(deck.slice(0,50))));
+  var encoded=btoa(encodeURIComponent(JSON.stringify(cards)));
   shareCodeStore[currentShareCode]=encoded;
-  
-  // Also save in localStorage for cross-session sharing
+  // localStorage (utile sur le même appareil)
   try{
     var existing=JSON.parse(localStorage.getItem('dauphine_shares')||'{}');
     existing[currentShareCode]=encoded;
-    // Keep only last 20 codes
     var keys=Object.keys(existing);
     if(keys.length>20){delete existing[keys[0]];}
     localStorage.setItem('dauphine_shares',JSON.stringify(existing));
   }catch(e){}
-  
-  var shareUrl=window.location.href.split('?')[0]+'?deck='+currentShareCode+'&data='+encoded.slice(0,200);
-  
+  // Firebase -> le code marche depuis N'IMPORTE QUEL appareil/compte
+  try{
+    if(firebaseOk&&window._fb&&window._fb.set&&window._fb.ref){
+      window._fb.set(window._fb.ref(window._fb.db,'shared-decks/'+currentShareCode),{data:encoded,n:cards.length,ts:Date.now()});
+    }
+  }catch(e){}
+  var shareUrl=window.location.href.split('?')[0]+'?deck='+currentShareCode;
   document.getElementById('shareCode').textContent=currentShareCode;
   document.getElementById('shareUrl').textContent=shareUrl;
   modal.classList.add('open');
@@ -13698,57 +13702,84 @@ function copyShareUrl(){
   }).catch(function(){toast('Copie manuelle dans le champ','⚠️');});
 }
 
-function importFromCode(){
-  var code=document.getElementById('importCodeInput').value.trim().toUpperCase();
-  if(!code||code.length!==6){toast('Code à 6 caractères requis','⚠️');return;}
-  
-  // Try localStorage first
+function dgImportDeckCards(cards,code){
+  if(!Array.isArray(cards)||!cards.length)return false;
+  deck=cards.concat(deck);
+  if(typeof saveDeck==='function')saveDeck();
+  if(typeof renderFilters==='function')renderFilters();
+  if(typeof renderCard==='function')renderCard();
+  if(typeof renderStats==='function')renderStats();
+  toast(cards.length+' cartes importées'+(code?' ('+code+')':'')+' \u2728','\u2728');
+  if(typeof closeShareModal==='function')closeShareModal();
+  return true;
+}
+async function importFromCode(){
+  var inp=document.getElementById('importCodeInput');
+  var code=(inp?inp.value:'').trim().toUpperCase();
+  if(!code||code.length!==6){toast('Code à 6 caractères requis','\u26A0\uFE0F');return;}
+  // 1) localStorage (même appareil)
   try{
     var shares=JSON.parse(localStorage.getItem('dauphine_shares')||'{}');
     if(shares[code]){
-      var cards=JSON.parse(decodeURIComponent(atob(shares[code])));
-      if(Array.isArray(cards)&&cards.length){
-        deck=cards.concat(deck);
-        saveDeck();renderFilters();renderCard();renderStats();
-        toast(cards.length+' cartes importées depuis le code '+code,'✨');
-        closeShareModal();return;
+      var c1=JSON.parse(decodeURIComponent(atob(shares[code])));
+      if(dgImportDeckCards(c1,code))return;
+    }
+  }catch(e){}
+  // 2) Firebase (depuis un autre appareil / compte / navigation privée)
+  try{
+    if(firebaseOk&&window._fb&&window._fb.get&&window._fb.ref){
+      toast('Recherche du deck…','\u23F3');
+      var snap=await window._fb.get(window._fb.ref(window._fb.db,'shared-decks/'+code));
+      if(snap&&snap.exists()){
+        var v=snap.val();var enc=(v&&v.data)?v.data:v;
+        var c2=JSON.parse(decodeURIComponent(atob(enc)));
+        if(dgImportDeckCards(c2,code))return;
       }
     }
   }catch(e){}
-  
-  // Try URL param
-  var urlParams=new URLSearchParams(window.location.search);
-  if(urlParams.get('deck')===code){
-    try{
-      var data=urlParams.get('data');
-      if(data){
-        var cards2=JSON.parse(decodeURIComponent(atob(data+'==')));
-        if(Array.isArray(cards2)&&cards2.length){
-          deck=cards2.concat(deck);
-          saveDeck();renderFilters();renderCard();renderStats();
-          toast(cards2.length+' cartes importées !','✨');
-          closeShareModal();return;
-        }
-      }
-    }catch(e){}
-  }
-  
-  toast('Code introuvable — le deck doit être partagé depuis le même appareil','❌');
+  toast('Code introuvable — vérifie le code et ta connexion','\u274C');
 }
 
-// Check URL params on load for imported deck
+// Au chargement : si ?deck=CODE dans l'URL, on importe le deck partagé
+function dgTryLoadSharedDeckFromUrl(){
+  var code=window._pendingDeckCode;
+  if(!code)return;
+  if(!(firebaseOk&&window._fb&&window._fb.get&&window._fb.ref)){ setTimeout(dgTryLoadSharedDeckFromUrl,1200); return; }
+  window._fb.get(window._fb.ref(window._fb.db,'shared-decks/'+code)).then(function(snap){
+    if(snap&&snap.exists()){
+      try{
+        var v=snap.val();var enc=(v&&v.data)?v.data:v;
+        var cards=JSON.parse(decodeURIComponent(atob(enc)));
+        if(Array.isArray(cards)&&cards.length&&typeof deck!=='undefined'){
+          window._pendingDeckCode=null;
+          deck=cards.concat(deck);
+          if(typeof saveDeck==='function')saveDeck();
+          if(typeof renderFilters==='function')renderFilters();
+          if(typeof renderCard==='function')renderCard();
+          if(typeof renderStats==='function')renderStats();
+          toast(cards.length+' cartes reçues d\'un ami ! \uD83D\uDD17','\u2728');
+        }
+      }catch(e){}
+    }
+  }).catch(function(){});
+}
 (function(){
   try{
     var params=new URLSearchParams(window.location.search);
     var deckCode=params.get('deck');
     var deckData=params.get('data');
     if(deckCode&&deckData){
+      // ancien format (données dans l'URL)
       var cards=JSON.parse(decodeURIComponent(atob(deckData+'==')));
       if(Array.isArray(cards)&&cards.length){
         deck=cards.concat(deck);
         saveDeck();renderFilters();renderCard();renderStats();
-        toast(cards.length+' cartes importées depuis un lien partagé 🔗','✨');
+        toast(cards.length+' cartes importées depuis un lien 🔗','\u2728');
       }
+    }else if(deckCode){
+      // nouveau format : récupération depuis Firebase
+      window._pendingDeckCode=deckCode;
+      dgTryLoadSharedDeckFromUrl();
     }
   }catch(e){}
 })();
