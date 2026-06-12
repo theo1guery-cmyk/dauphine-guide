@@ -6394,148 +6394,154 @@ aside.sidebar {
   </div>
 <div class="wrap" style="padding-top:48px;padding-bottom:64px">
 <section class="flash-section" id="flashcards">
-  <div class="rev" style="margin-bottom:24px">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div>
-    <div class="slbl">Révision active</div>
-    <div class="sh2">Flashcards <em>intelligentes</em></div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
-      <button class="focus-trigger-btn" onclick="openFocus()">🌟 Mode Focus</button>
-      <button class="fc-tour-replay" onclick="fcTourStart()" title="Revoir la présentation des fonctionnalités">❓ Tuto</button>
-    </div>
-    </div>
-    <p class="sdesc">Colle ici n'importe quel cours ou liste de vocab — l'IA génère des flashcards interactives en secondes.</p>
+<style>
+  .fc2-wrap{max-width:780px;margin:0 auto}
+  .fc2-filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+  .fc2-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .fc2-bar .fc2-spacer{flex:1}
+  .fc2-ibtn{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:11px;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--text-main);font-weight:700;font-size:13px;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
+  .fc2-ibtn:hover{border-color:var(--blue,#0057ad);color:var(--blue,#0057ad)}
+  .fc2-ibtn.primary{background:linear-gradient(135deg,#08284d,#0057ad);color:#fff;border:none}
+  .fc2-gen{border:1px solid var(--g200);border-radius:16px;padding:18px;margin:6px 0 22px;background:var(--g50)}
+  .fc2-info{font-size:12.5px;color:var(--g500);text-align:center;margin:18px 0 12px}
+  .fc2-stage{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .fc2-stage .card-scene{width:100%}
+  .fc2-opts{margin-top:30px;border-top:1px solid var(--g100);padding-top:14px}
+  .fc2-opts>summary{font-weight:700;font-size:13px;cursor:pointer;color:var(--g600);user-select:none;list-style:none;padding:4px 0}
+  .fc2-opts>summary::-webkit-details-marker{display:none}
+  .fc2-opts>summary::before{content:'\25B8';margin-right:8px;display:inline-block;transition:transform .15s}
+  .fc2-opts[open]>summary::before{transform:rotate(90deg)}
+  .fc2-opts-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+</style>
+<div class="fc2-wrap" id="flashcards-inner">
+
+  <!-- Filtres matière -->
+  <div class="deck-filter fc2-filters" id="deckFilter"></div>
+
+  <!-- Toolbar épurée -->
+  <div class="fc2-bar">
+    <button class="fc2-ibtn primary" onclick="toggleFcGen()">➕ Créer des cartes</button>
+    <div class="fc2-spacer"></div>
+    <button class="fc2-ibtn" onclick="shuffleDeck()" title="Mélanger le deck">🔀</button>
+    <button class="fc2-ibtn" onclick="openManage()" title="Gérer le deck">⚙️ Gérer</button>
   </div>
-  <div class="flash-layout rev">
-    <div>
-      <div class="flash-gen">
-        <div class="slbl" style="margin-bottom:8px">Générer depuis un cours</div>
-        <p>Colle ton cours ci-dessous, copie le prompt généré, puis colle le tout sur <a href="https://claude.ai/" target="_blank" style="color:var(--blue-mid)">claude.ai</a>. Importe ensuite le JSON retourné.</p>
 
-        <div style="margin-bottom:10px">
-          <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📚 Matière des flashcards</label>
-          <select class="flash-select" id="flashMatiereSelect" onchange="toggleAutreMatiere()">
-            <option value="">-- Choisir une matière --</option>
-            <option value="Droit">Droit</option>
-            <option value="Droit constit.">Droit constitutionnel</option>
-            <option value="Droit pénal">Droit pénal</option>
-            <option value="Droit européen">Droit européen</option>
-            <option value="Microéco">Microéconomie</option>
-            <option value="Macroéco">Macroéconomie</option>
-            <option value="Comptabilité">Comptabilité</option>
-            <option value="Maths">Mathématiques</option>
-            <option value="Sciences Po">Sciences politiques</option>
-            <option value="Sociologie">Sociologie</option>
-            <option value="Anglais">Anglais</option>
-            <option value="Gestion">Gestion</option>
-            <option value="Enjeux écologiques">Enjeux écologiques</option>
-            <option value="autre">Autre (préciser)</option>
-          </select>
-          <input type="text" id="flashMatiereAutre" class="flash-autre" placeholder="Nom de la matière...">
-        </div>
-        <div style="margin-bottom:12px">
-          <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📚 Étape 1 — Colle ton cours ici</label>
-          <textarea class="flash-textarea" id="flashInput" placeholder="Ex : La microéconomie analyse les comportements des agents..." style="min-height:100px"></textarea>
-        </div>
-
-        <button class="flash-btn" id="flashGenBtn" onclick="generateFlashcardsGroq()">✨ Générer les flashcards</button>
-        <div class="flash-loading" id="flashLoading" style="display:none">⏳ Generation en cours…</div>
-
-        <details style="margin-top:12px">
-          <summary style="font-size:11px;color:var(--g400);cursor:pointer;user-select:none">🔧 Fallback manuel (copier-coller)</summary>
-          <div style="margin-top:10px">
-            <button class="flash-btn" onclick="copyPrompt()" id="copyPromptBtn" style="background:var(--blue-mid);margin-bottom:10px">📋 Copier le prompt pour Claude</button>
-            <div id="promptPreview" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:12px;max-height:80px;overflow:hidden">
-              <em>Le prompt apparaîtra ici...</em>
-            </div>
-            <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📥 Colle le JSON retourné par Claude</label>
-            <textarea id="flashJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;},...]" style="width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:Figtree,sans-serif;resize:vertical;min-height:80px;color:var(--text-main,#111827);background:var(--bg-card,#fff);transition:border-color .15s"></textarea>
-            <button class="flash-btn" onclick="importFlashJSON()" style="margin-top:8px">✨ Importer les flashcards</button>
-          </div>
-        </details>
+  <!-- Générateur (masqué par défaut) -->
+  <div class="fc2-gen" id="fcGenPanel" style="display:none">
+    <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📚 Matière</label>
+    <select class="flash-select" id="flashMatiereSelect" onchange="toggleAutreMatiere()">
+      <option value="">-- Choisir une matière --</option>
+      <option value="Droit">Droit</option>
+      <option value="Droit constit.">Droit constitutionnel</option>
+      <option value="Droit pénal">Droit pénal</option>
+      <option value="Droit européen">Droit européen</option>
+      <option value="Microéco">Microéconomie</option>
+      <option value="Macroéco">Macroéconomie</option>
+      <option value="Comptabilité">Comptabilité</option>
+      <option value="Maths">Mathématiques</option>
+      <option value="Sciences Po">Sciences politiques</option>
+      <option value="Sociologie">Sociologie</option>
+      <option value="Anglais">Anglais</option>
+      <option value="Gestion">Gestion</option>
+      <option value="Enjeux écologiques">Enjeux écologiques</option>
+      <option value="autre">Autre (préciser)</option>
+    </select>
+    <input type="text" id="flashMatiereAutre" class="flash-autre" placeholder="Nom de la matière...">
+    <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin:12px 0 4px">📝 Colle ton cours — l'IA en fait des flashcards</label>
+    <textarea class="flash-textarea" id="flashInput" placeholder="Ex : La microéconomie analyse les comportements des agents..." style="min-height:95px"></textarea>
+    <button class="flash-btn" id="flashGenBtn" onclick="generateFlashcardsGroq()" style="margin-top:10px">✨ Générer les flashcards</button>
+    <div class="flash-loading" id="flashLoading" style="display:none">⏳ Génération en cours…</div>
+    <details style="margin-top:12px">
+      <summary style="font-size:11px;color:var(--g400);cursor:pointer;user-select:none">🔧 Méthode manuelle (copier-coller)</summary>
+      <div style="margin-top:10px">
+        <button class="flash-btn" onclick="copyPrompt()" id="copyPromptBtn" style="background:var(--blue-mid);margin-bottom:10px">📋 Copier le prompt</button>
+        <div id="promptPreview" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;color:var(--g600);line-height:1.6;margin-bottom:12px;max-height:80px;overflow:hidden"><em>Le prompt apparaîtra ici...</em></div>
+        <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin-bottom:4px">📥 Colle le JSON retourné</label>
+        <textarea id="flashJsonInput" placeholder="[{&quot;cat&quot;:&quot;Droit&quot;,&quot;q&quot;:&quot;Question ?&quot;,&quot;r&quot;:&quot;Reponse.&quot;},...]" style="width:100%;border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;font-size:11px;font-family:Figtree,sans-serif;resize:vertical;min-height:80px;color:var(--text-main,#111827);background:var(--bg-card,#fff)"></textarea>
+        <button class="flash-btn" onclick="importFlashJSON()" style="margin-top:8px">✨ Importer</button>
       </div>
-      <div style="margin-top:14px;background:#fff;border:1px solid var(--g100);border-radius:var(--r);padding:18px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="slbl">Deck actif</div>
-          <button onclick="openManage()" style="font-size:11px;font-weight:700;padding:5px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:#fff;color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--g200)';this.style.color='var(--g600)'">Gérer</button>
+    </details>
+  </div>
+
+  <!-- LA CARTE (centrale) -->
+  <div class="deck-meta fc2-info" id="flashMeta">Clique sur la carte pour voir la réponse</div>
+  <div class="fc2-stage">
+    <div class="card-scene">
+      <div class="card-3d" id="card3d" onclick="flipCard()">
+        <div class="card-face card-front">
+          <button class="card-del-btn" onclick="event.stopPropagation();deleteCurrentCard()" title="Supprimer">✕</button>
+          <div class="card-cat" id="cCat">Droit</div>
+          <div class="card-text" id="cQ">Qu'est-ce que la règle de droit ?</div>
+          <div class="card-hint">Clique pour voir la réponse →</div><div id="sm2Label" style="font-size: 10px; color: rgb(156, 163, 175); margin-top: 6px; font-weight: 600; letter-spacing: 0.04em; display: none;"></div>
         </div>
-        <div class="stats-row" id="statsRow"></div>
-        <div class="deck-filter" id="deckFilter" style="margin-top:8px"><span class="dftag on" onclick="filterDeck(&quot;all&quot;,this)">Tout</span><span class="dftag" style="background:#fef3c7;color:#92400e;border-color:#fcd34d" onclick="filterDeck(&quot;due&quot;,this)">📅 À réviser (22)</span><span class="dftag" onclick="filterDeck(&quot;Droit&quot;,this)">Droit</span><span class="dftag" onclick="filterDeck(&quot;Droit constit.&quot;,this)">Droit constit.</span><span class="dftag" onclick="filterDeck(&quot;Microéco&quot;,this)">Microéco</span><span class="dftag" onclick="filterDeck(&quot;Macroéco&quot;,this)">Macroéco</span><span class="dftag" onclick="filterDeck(&quot;Comptabilité&quot;,this)">Comptabilité</span><span class="dftag" onclick="filterDeck(&quot;Maths&quot;,this)">Maths</span><span class="dftag" onclick="filterDeck(&quot;Sciences Po&quot;,this)">Sciences Po</span></div>
-        <div style="font-size:12px;color:var(--g600);margin-top:6px" id="deckInfo">22 cartes</div>
+        <div class="card-face card-back">
+          <div class="card-cat" id="cCatB">Droit</div>
+          <div class="card-text" id="cR">Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.</div>
+          <button class="card-explain-btn" onclick="event.stopPropagation();explainCard()" title="Expliquer cette notion">💡 Expliquer</button>
+        </div>
       </div>
     </div>
-    <div class="flash-deck rev">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div class="slbl">Réviser</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="deck-share-btn" onclick="openShareModal()" title="Partager le deck">🔗 Partager</button>
-          <button class="exam-mode-btn" onclick="openExamModal()">🎓 Examen</button>
-          <button class="pdf-btn" onclick="exportPDF(&#39;all&#39;)" title="Exporter tout en PDF">📄</button>
-          <button class="deck-btn" onclick="shuffleDeck()" style="font-size:11px;padding:4px 10px">🔀</button>
+    <div class="deck-controls">
+      <button class="deck-btn" onclick="prevCard()">← Précédente</button>
+      <span class="deck-counter" id="cardCtr">1 / 22</span>
+      <button class="deck-btn" onclick="nextCard()">Suivante →</button>
+    </div>
+    <div class="rating-bar" id="ratingBar">
+      <button class="rbtn rbtn-easy" onclick="rateCard('easy')">✅ Facile</button>
+      <button class="rbtn rbtn-ok" onclick="rateCard('ok')">🟡 Moyen</button>
+      <button class="rbtn rbtn-hard" onclick="rateCard('hard')">🟠 Difficile</button>
+      <button class="rbtn rbtn-miss" onclick="rateCard('miss')">❌ À retravailler</button>
+    </div>
+  </div>
+
+  <!-- Options & stats (repliées) -->
+  <details class="fc2-opts">
+    <summary>Plus d'options, recherche & stats</summary>
+
+    <div class="flash-search-wrap" style="margin-top:14px">
+      <span class="flash-search-icon">🔍</span>
+      <input class="flash-search-input" id="flashSearch" placeholder="Rechercher dans les cartes…" oninput="searchCards(this.value)" autocomplete="off">
+      <button class="flash-search-clear" id="flashSearchClear" onclick="clearSearch()">✕</button>
+    </div>
+    <div class="flash-search-count" id="flashSearchCount"></div>
+
+    <div class="stats-row" id="statsRow" style="margin-top:14px"></div>
+    <div style="font-size:12px;color:var(--g600);margin-top:6px" id="deckInfo">22 cartes</div>
+
+    <div class="fc2-opts-grid">
+      <button class="fc2-ibtn" onclick="openFocus()">🌟 Mode Focus</button>
+      <button class="fc2-ibtn" onclick="openExamModal()">🎓 Examen</button>
+      <button class="fc2-ibtn" onclick="openShareModal()">🔗 Partager</button>
+      <button class="fc2-ibtn" onclick="exportPDF('all')">📄 Export PDF</button>
+      <button class="fc2-ibtn" onclick="fcTourStart()">❓ Tuto</button>
+    </div>
+
+    <div class="heatmap-section" style="margin-top:20px">
+      <div class="heatmap-title">📅 Activité de révision — 7 derniers jours</div>
+      <div class="heatmap-sub">Nombre de cartes révisées par jour</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:10px">
+        <div>
+          <div class="heatmap-today-count" id="heatmapTodayCount">0</div>
+          <div class="heatmap-streak">cartes aujourd'hui · <span id="heatmapStreak">0j de série 🔥</span></div>
         </div>
       </div>
-      <div class="flash-search-wrap" style="margin-bottom:10px">
-  <span class="flash-search-icon">🔍</span>
-  <input class="flash-search-input" id="flashSearch" placeholder="Rechercher dans les cartes…" oninput="searchCards(this.value)" autocomplete="off">
-  <button class="flash-search-clear" id="flashSearchClear" onclick="clearSearch()">✕</button>
+      <div class="heatmap-labels" id="heatmapLabels"></div>
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+      <div class="heatmap-legend">
+        <span>Moins</span>
+        <div class="heatmap-legend-cells">
+          <div class="heatmap-legend-cell" style="background:#e8f0fb"></div>
+          <div class="heatmap-legend-cell" style="background:#c5d9f5"></div>
+          <div class="heatmap-legend-cell" style="background:#7baee8"></div>
+          <div class="heatmap-legend-cell" style="background:#3b7dd8"></div>
+          <div class="heatmap-legend-cell" style="background:#003d7a"></div>
+        </div>
+        <span>Plus</span>
+      </div>
+    </div>
+  </details>
+
 </div>
-<div class="flash-search-count" id="flashSearchCount"></div>
-<div class="deck-meta" id="flashMeta">Clique sur la carte pour voir la réponse</div>
-      <div class="card-scene">
-        <div class="card-3d" id="card3d" onclick="flipCard()">
-          <div class="card-face card-front">
-            <button class="card-del-btn" onclick="event.stopPropagation();deleteCurrentCard()" title="Supprimer">✕</button>
-            <div class="card-cat" id="cCat">Droit</div>
-            <div class="card-text" id="cQ">Qu'est-ce que la règle de droit ?</div>
-            <div class="card-hint">Clique pour voir la réponse →</div><div id="sm2Label" style="font-size: 10px; color: rgb(156, 163, 175); margin-top: 6px; font-weight: 600; letter-spacing: 0.04em; display: none;"></div>
-          </div>
-          <div class="card-face card-back">
-            <div class="card-cat" id="cCatB">Droit</div>
-            <div class="card-text" id="cR">Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.</div>
-            <button class="card-explain-btn" onclick="event.stopPropagation();explainCard()" title="Expliquer cette notion">💡 Expliquer</button>
-          </div>
-        </div>
-      </div>
-      <div class="deck-controls">
-        <button class="deck-btn" onclick="prevCard()">← Précédente</button>
-        <span class="deck-counter" id="cardCtr">1 / 22</span>
-        <button class="deck-btn" onclick="nextCard()">Suivante →</button>
-      </div>
-      <div class="rating-bar" id="ratingBar">
-        <button class="rbtn rbtn-easy" onclick="rateCard(&#39;easy&#39;)">✅ Facile</button>
-        <button class="rbtn rbtn-ok" onclick="rateCard(&#39;ok&#39;)">🟡 Moyen</button>
-        <button class="rbtn rbtn-hard" onclick="rateCard(&#39;hard&#39;)">🟠 Difficile</button>
-        <button class="rbtn rbtn-miss" onclick="rateCard(&#39;miss&#39;)">❌ À retravailler</button>
-      </div>
-
-      <!-- HEATMAP -->
-      <div class="heatmap-section" style="margin-top:18px">
-        <div class="heatmap-title">📅 Activité de révision — 7 derniers jours</div>
-        <div class="heatmap-sub">Nombre de cartes révisées par jour</div>
-        <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:10px">
-          <div>
-            <div class="heatmap-today-count" id="heatmapTodayCount">0</div>
-            <div class="heatmap-streak">cartes aujourd'hui · <span id="heatmapStreak">0j de série 🔥</span></div>
-          </div>
-        </div>
-        <div class="heatmap-labels" id="heatmapLabels"><div class="heatmap-label">Mer</div><div class="heatmap-label">Jeu</div><div class="heatmap-label">Ven</div><div class="heatmap-label">Sam</div><div class="heatmap-label">Dim</div><div class="heatmap-label">Lun</div><div class="heatmap-label">Mar</div></div>
-        <div class="heatmap-grid" id="heatmapGrid"><div class="heatmap-cell" style="background:#e8f0fb" title="11/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="12/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="13/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="14/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="15/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="16/3 · 0 cartes"></div><div class="heatmap-cell" style="background:#e8f0fb" title="17/3 · 0 cartes"></div></div>
-        <div class="heatmap-legend">
-          <span>Moins</span>
-          <div class="heatmap-legend-cells">
-            <div class="heatmap-legend-cell" style="background:#e8f0fb"></div>
-            <div class="heatmap-legend-cell" style="background:#c5d9f5"></div>
-            <div class="heatmap-legend-cell" style="background:#7baee8"></div>
-            <div class="heatmap-legend-cell" style="background:#3b7dd8"></div>
-            <div class="heatmap-legend-cell" style="background:#003d7a"></div>
-          </div>
-          <span>Plus</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
 </section>
 </div>
 </div>
@@ -12730,6 +12736,13 @@ function nextCard(){const d=getFilteredDeck();cardIdx=(cardIdx+1)%d.length;rende
 function prevCard(){const d=getFilteredDeck();cardIdx=(cardIdx-1+d.length)%d.length;renderCard()}
 function shuffleDeck(){deck=[...deck].sort(()=>Math.random()-.5);cardIdx=0;renderCard();toast('Deck mélangé !','🔀')}
 
+function toggleFcGen(){
+  var p = document.getElementById('fcGenPanel');
+  if(!p) return;
+  var open = p.style.display !== 'none';
+  p.style.display = open ? 'none' : 'block';
+  if(!open){ var ta = document.getElementById('flashInput'); if(ta) setTimeout(function(){ ta.focus(); }, 50); }
+}
 function renderFilters(){
   var cats=[];
   deck.forEach(function(c){if(cats.indexOf(c.cat)<0)cats.push(c.cat);});
