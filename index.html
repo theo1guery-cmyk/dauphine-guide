@@ -24022,7 +24022,23 @@ var SCHEMA_THEMES = {
 };
 function schemaGetTheme(d) {
   var id = String((d && d.theme) || '').toLowerCase().trim();
-  return SCHEMA_THEMES[id] || SCHEMA_THEMES.parchemin;
+  if (SCHEMA_THEMES[id]) return SCHEMA_THEMES[id];
+  // L'IA n'a pas renvoyé un id exact -> on déduit depuis theme + titre + matière
+  var hay = (id + ' ' + ((d && d.titre) || '') + ' ' + ((d && d.matiere) || '')).toLowerCase();
+  var rules = [
+    ['guerre', /guerre|conflit|bataille|militaire|14.?18|39.?45|1914|1939|tranch[ée]/],
+    ['europe', /europ|union europ|\bu\.?e\.?\b|bruxelles|commission europ/],
+    ['eco', /\beco|[ée]conom|micro[ée]?con|macro[ée]?con|march[ée]|mon[ée]taire|\bpib\b|inflation|budg[ée]t|capitalis|\bfirme|consommateur|offre|demande|bien-?[êe]tre/],
+    ['gestion', /gestion|management|comptab|\bentreprise|bilan/],
+    ['droit', /\bdroit|juridiq|justice|constitu|p[ée]nal|\bcivil|jurisprud|tribunal|arr[êe]t|l[ée]gisl/],
+    ['maths', /math[ée]matiq|\bmaths?\b|statisti|optimisation|d[ée]riv[ée]|int[ée]grale|\bfonction|lagrang/],
+    ['socio', /sociolog|sciences? politiq|d[ée]mocratie|\bweber|durkheim|\bmarx|tocqueville|question sociale/],
+    ['info', /informatiq|\bexcel|\bvba\b|algorithm|programmation|tableur/],
+    ['nature', /[ée]colog|climat|biodiversit|environnement|[ée]nergie|durable|plan[ée]taire/],
+    ['anglais', /\banglais\b|english/]
+  ];
+  for (var i = 0; i < rules.length; i++) { if (rules[i][1].test(hay)) return SCHEMA_THEMES[rules[i][0]]; }
+  return SCHEMA_THEMES.parchemin;
 }
 function schemaWrapSVG(W, H, inner, t) {
   t = t || SCHEMA_THEMES.parchemin;
