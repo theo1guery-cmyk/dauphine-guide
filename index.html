@@ -23564,6 +23564,10 @@ function dgLoadHtml2Pdf() {
   if (window.html2pdf) return Promise.resolve();
   return dgLoadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
 }
+function dgLoadJsPdf() {
+  if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve();
+  return dgLoadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+}
 
 function exportFichePDF() {
   if (!(typeof isPremium === 'function' && isPremium())) {
@@ -23629,35 +23633,51 @@ function exportFichePDF() {
 
   if (typeof gtag === 'function') try{ gtag('event','fiche_pdf_export'); }catch(e){}
   toast('Préparation du PDF…', '⏳');
-  dgLoadHtml2Pdf().then(function() {
-    if (!window.html2pdf) { fichePrintFallback(); return; }
-    // Style injecté dans le <head> (scopé .pf-doc) -> html2canvas applique bien les styles
-    var cssScoped = css.replace('@page{margin:16mm}', '')
-      .replace('body{', '.pf-doc{')
-      .replace(/(^|})b\{/g, '$1.pf-doc b{');
-    var styleEl = document.createElement('style');
-    styleEl.id = 'dgPdfStyle';
-    styleEl.textContent = cssScoped;
-    document.head.appendChild(styleEl);
-    // Élément rendu en absolu (visible pour html2canvas, mais hors écran), PAS de <style> dedans
-    var stage = document.createElement('div');
-    stage.className = 'pf-doc';
-    stage.style.cssText = 'position:absolute;left:-10000px;top:0;width:780px;background:#fff;font-family:Georgia,\'Times New Roman\',serif;color:#1a1a1a;line-height:1.55;padding:16px;box-sizing:border-box';
-    stage.innerHTML = bodyHtml;
-    document.body.appendChild(stage);
-    function cleanup() { try { stage.remove(); } catch(e){} try { styleEl.remove(); } catch(e){} }
-    setTimeout(function() {
-      window.html2pdf().set({
-        margin: 10,
-        filename: 'fiche-dauphineguide.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 820 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] }
-      }).from(stage).save().then(function() {
-        cleanup(); toast('Fiche téléchargée ! 📄', '✅');
-      }).catch(function() { cleanup(); fichePrintFallback(); });
-    }, 80);
+  // Génération PDF directe au texte (jsPDF) — fiable, vrai fichier, pas de capture d'image
+  dgLoadJsPdf().then(function() {
+    if (!(window.jspdf && window.jspdf.jsPDF)) { fichePrintFallback(); return; }
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var M = 16, W = 178, BOT = 281, y = M;
+    function strip(t) { return String(t == null ? '' : t).replace(/\*\*/g, '').replace(/\r/g, ''); }
+    function block(text, size, bold, color, indent, gapAfter) {
+      doc.setFont('times', bold ? 'bold' : 'normal');
+      doc.setFontSize(size);
+      doc.setTextColor(color[0], color[1], color[2]);
+      var x = M + (indent || 0);
+      var lines = doc.splitTextToSize(text, W - (indent || 0));
+      var lh = size * 0.3528 * 1.3;
+      for (var i = 0; i < lines.length; i++) {
+        if (y > BOT) { doc.addPage(); y = M; }
+        doc.text(lines[i], x, y);
+        y += lh;
+      }
+      if (gapAfter) y += gapAfter;
+    }
+    block('Fiche de révision', 20, true, [10, 42, 82], 0, 1);
+    block('DauphineGuide · L1 LSO · Paris-Dauphine PSL', 9, false, [110, 110, 110], 0, 2.5);
+    doc.setDrawColor(0, 87, 173); doc.setLineWidth(0.6); doc.line(M, y, M + W, y); y += 7;
+    (d.sections || []).forEach(function(s) {
+      if (y > BOT - 18) { doc.addPage(); y = M; }
+      block(strip(s.titre || ''), 13, true, [0, 87, 173], 0, 1.5);
+      strip(s.contenu || '').split('\n').forEach(function(ln) {
+        var t = ln.trim(); if (!t) return;
+        var bullet = /^[-•*]\s+/.test(t);
+        block(bullet ? '•  ' + t.replace(/^[-•*]\s+/, '') : t, 11, false, [38, 38, 38], bullet ? 5 : 0, 1.4);
+      });
+      y += 2.5;
+    });
+    if (qs.length) {
+      if (y > BOT - 18) { doc.addPage(); y = M; }
+      block('Questions difficiles', 15, true, [10, 42, 82], 0, 2);
+      qs.forEach(function(q, i) {
+        if (y > BOT - 14) { doc.addPage(); y = M; }
+        block((i + 1) + '. ' + strip(q.question || ''), 12, true, [10, 42, 82], 0, 1);
+        block(strip(q.reponse || ''), 11, false, [55, 55, 55], 5, 3);
+      });
+    }
+    block('Fiche générée avec DauphineGuide', 9, false, [150, 150, 150], 0, 0);
+    doc.save('fiche-dauphineguide.pdf');
+    toast('Fiche téléchargée ! 📄', '✅');
   }).catch(function() { fichePrintFallback(); });
 }
 
