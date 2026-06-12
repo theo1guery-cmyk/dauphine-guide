@@ -18010,6 +18010,7 @@ async function fluideGroq() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-AI-Purpose': 'notes-fluide',
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -18090,7 +18091,7 @@ async function resumeNote() {
   try {
     var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json',  },
+      headers: { 'Content-Type': 'application/json', 'X-AI-Purpose': 'notes-resume' },
       body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 1500, temperature: 0.4,
         messages: [{ role: 'user', content: prompt }] })
     });
@@ -18293,7 +18294,7 @@ async function planningIAGenerate() {
   try {
     var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json',  },
+      headers: { 'Content-Type': 'application/json', 'X-AI-Purpose': 'planning' },
       body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 2500, temperature: 0.6,
         messages: [{ role: 'user', content: prompt }] })
     });
