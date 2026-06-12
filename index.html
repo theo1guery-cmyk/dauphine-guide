@@ -26657,13 +26657,13 @@ window.mmGenerate = async function() {
   document.getElementById('mmControls').style.display = 'none';
   document.getElementById('mmSvgWrap').innerHTML = '';
   document.getElementById('mmLoadingPanel').style.display = 'flex';
-  document.getElementById('mmLoadingLabel').textContent = 'Analyse du cours avec le modèle 70B…';
+  document.getElementById('mmLoadingLabel').textContent = 'Analyse approfondie du cours…';
 
   var matiereCtx = matiere ? ' La matière est : ' + matiere + '.' : '';
 
   var prompt = 'Tu es un expert pédagogique spécialisé en cartographie cognitive universitaire.' + matiereCtx + '\n\n'
-    + 'COURS À ANALYSER :\n' + input.slice(0, 5000) + '\n\n'
-    + 'MISSION : Extraire et structurer UNIQUEMENT les concepts, notions, définitions, acteurs, mécanismes et exemples EXPLICITEMENT présents dans ce cours. Chaque label doit être un terme précis tiré du texte, jamais une catégorie générique inventée.\n\n'
+    + 'COURS À ANALYSER :\n' + input.slice(0, 12000) + '\n\n'
+    + 'MISSION : Cartographier TOUT le cours sans rien perdre. Extraire et structurer l\'INTÉGRALITÉ des concepts, notions, définitions, acteurs, mécanismes, distinctions et exemples EXPLICITEMENT présents dans ce cours. Couvre chaque partie du plan. Chaque label doit être un terme précis tiré du texte, jamais une catégorie générique inventée.\n\n'
     + 'INTERDICTIONS ABSOLUES — ces labels génériques sont PROHIBÉS :\n'
     + '❌ "Introduction", "Conclusion", "Résumé", "Points importants", "Généralités", "Notions clés", "Aspects", "Éléments", "Caractéristiques", "Définition", "Présentation", "Vue d\'ensemble"\n\n'
     + 'RÈGLES DE PRÉCISION OBLIGATOIRES :\n'
@@ -26682,16 +26682,17 @@ window.mmGenerate = async function() {
     + '  {"label":"[Mécanisme 2 nommé dans le cours]","children":[...]}\n'
     + ']}\n\n'
     + 'RÈGLES STRUCTURELLES :\n'
-    + '- Maximum 7 enfants directs par nœud\n'
-    + '- Maximum 3 niveaux de profondeur\n'
+    + '- Maximum 8 enfants directs par nœud\n'
+    + '- Jusqu\'à 4 niveaux de profondeur si le cours est riche\n'
     + '- Labels courts : 2-5 mots PRÉCIS maximum (jamais de périphrases vagues)\n'
-    + '- Entre 4 et 7 branches au niveau 1\n'
-    + '- Chaque branche doit avoir 2-5 sous-notions concrètes\n'
-    + '- Si le cours cite des articles, arrêts, auteurs ou dates : les inclure comme nœuds de niveau 3\n'
+    + '- Entre 5 et 9 branches au niveau 1 (une par grande partie/thème du cours)\n'
+    + '- Chaque branche doit avoir 3 à 6 sous-notions concrètes\n'
+    + '- Sois EXHAUSTIF : développe chaque branche pour ne rien laisser de côté du cours\n'
+    + '- Si le cours cite des articles, arrêts, auteurs ou dates : les inclure comme nœuds de niveau 3 ou 4\n'
     + '- Réponds UNIQUEMENT avec le JSON valide, rien d\'autre';
 
   try {
-    var raw = await profRequestXXL(prompt, 1200, 0.2);
+    var raw = await profRequestXXL(prompt, 3000, 0.2, { 'X-AI-Purpose': 'mindmap' });
     document.getElementById('mmLoadingLabel').textContent = 'Construction de la carte…';
     var data = profParseJson(raw);
     if (!data || !data.label) throw new Error('Format JSON invalide');
@@ -26745,7 +26746,7 @@ function mmLayoutNode(node, cx, cy, angleStart, angleEnd, radius, depth) {
   if (!node.children || !node.children.length) return;
 
   var totalLeaves = mmCountLeaves(node);
-  var radii = [0, 170, 310, 430];
+  var radii = [0, 250, 450, 630];
   var childRadius = radii[depth + 1] || radii[radii.length - 1];
 
   // Spread children: root fans 360°, others keep their subtree arc
@@ -26781,9 +26782,18 @@ function mmRender() {
   var totalNodes = mmAllNodes.length;
   document.getElementById('mmNodeCount').textContent = totalNodes + ' nœuds';
 
-  // Build SVG
+  // Build SVG — viewBox adaptatif : on cadre sur les nœuds réels (sinon tout est rogné/rapetissé)
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  mmAllNodes.forEach(function(n) {
+    if (n._x < minX) minX = n._x; if (n._x > maxX) maxX = n._x;
+    if (n._y < minY) minY = n._y; if (n._y > maxY) maxY = n._y;
+  });
+  if (!isFinite(minX)) { minX = 0; minY = 0; maxX = W; maxY = H; }
+  var MM_PAD = 170; // marge pour les cases + pills (le texte déborde du centre du nœud)
+  var vbX = minX - MM_PAD, vbY = minY - MM_PAD;
+  var vbW = (maxX - minX) + MM_PAD * 2, vbH = (maxY - minY) + MM_PAD * 2;
   var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   svg.style.cssText = 'width:100%;height:100%;overflow:visible';
 
@@ -26840,10 +26850,10 @@ function mmRender() {
   function drawNode(node) {
     var depth = node._depth;
     var label = String(node.label || '');
-    var maxChars = depth === 0 ? 28 : depth === 1 ? 18 : 14;
+    var maxChars = depth === 0 ? 40 : depth === 1 ? 28 : 22;
     var displayLabel = label.length > maxChars ? label.slice(0, maxChars - 1) + '…' : label;
-    var fontSize = depth === 0 ? 13 : depth === 1 ? 11 : 10;
-    var padding = depth === 0 ? 14 : depth === 1 ? 10 : 7;
+    var fontSize = depth === 0 ? 18 : depth === 1 ? 15 : 13;
+    var padding = depth === 0 ? 17 : depth === 1 ? 13 : 10;
     var textW = displayLabel.length * fontSize * 0.58;
     var rectW = textW + padding * 2;
     var rectH = fontSize + padding * 1.4;
@@ -27237,7 +27247,7 @@ async function mmGenerateFocusContent(node, color, courseText) {
     + '{"intro":"...","sections":[{"title":"...","body":"...","points":["...","..."]}]}';
 
   try {
-    var raw = await profRequestXXL(prompt, 1400, 0.25);
+    var raw = await profRequestXXL(prompt, 1400, 0.25, { 'X-AI-Purpose': 'mindmap' });
     var data = profParseJson(raw);
     if (!data || !Array.isArray(data.sections)) throw new Error('Format JSON invalide');
 
@@ -27572,7 +27582,7 @@ window.mmSendToFlashcards = async function() {
     + 'RÉPONSE = ARRAY JSON UNIQUEMENT. ZÉRO TEXTE SUPPLÉMENTAIRE.';
 
   try {
-    var raw = await profRequestXXL(prompt, 1500, 0.3);
+    var raw = await profRequestXXL(prompt, 1500, 0.3, { 'X-AI-Purpose': 'mindmap' });
     raw = raw.replace(/```json\n?/g, '').replace(/\n?```/g, '').trim();
     var start = raw.indexOf('[');
     var end = raw.lastIndexOf(']');
@@ -27635,7 +27645,7 @@ async function mmGenerateQuiz(node, color, panel) {
     + 'FORMAT JSON STRICT — réponds UNIQUEMENT avec du JSON valide :\n'
     + '{"questions":[{"q":"...","opts":["A","B","C","D"],"correct":0}]}';
   try {
-    var raw = await profRequestXXL(prompt, 600, 0.3);
+    var raw = await profRequestXXL(prompt, 600, 0.3, { 'X-AI-Purpose': 'mindmap' });
     var data = profParseJson(raw);
     if (!data || !Array.isArray(data.questions) || !data.questions.length) throw new Error('Format invalide');
     mmQuizData = data;
