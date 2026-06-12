@@ -19432,14 +19432,11 @@ getRedirectResult(auth).catch(function(e){ console.log('redirect result:', e && 
 
 // ── Auth state ──
 onAuthStateChanged(auth, async fbUser => {
+  // Pendant l'inscription, doRegister gère lui-même l'entrée (évite une course)
+  if (window._authBusy) return;
   if (fbUser) {
-    // Vérifie email confirmé
-    if (!fbUser.emailVerified) {
-      window._fbShowAuth = true;
-      document.getElementById('auth-overlay').style.display = 'flex';
-      showTab('verify');
-      return;
-    }
+    // Vérification d'email NON bloquante : on n'empêche plus l'accès si non vérifié
+    // (les emails Firebase finissent souvent en spam / bloqués). Le compte existe, on entre.
     // Charge le profil Firebase
     const snap = await get(ref(db, `users/${fbUser.uid}`));
     if (snap.exists()) {
@@ -19529,11 +19526,17 @@ window.doRegister = async function() {
   if (!promo)  { showAuthError('reg-error','Sélectionne ta promo.'); return; }
   if (pass.length < 6) { showAuthError('reg-error','Mot de passe trop court (6 car. min).'); return; }
   try {
+    window._authBusy = true;
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
     await set(ref(db, `users/${cred.user.uid}`), { pseudo, promo, email, photo: null, createdAt: Date.now() });
-    await sendEmailVerification(cred.user);
-    showTab('verify');
+    // Email de vérification envoyé mais NON bloquant (si ça échoue, on entre quand même)
+    try { await sendEmailVerification(cred.user); } catch(ve) {}
+    currentUser = { uid: cred.user.uid, pseudo, promo, email, photo: null };
+    window._authBusy = false;
+    enterChat();
+    if (typeof toast === 'function') toast('Compte créé ! 🎉 (email de vérif envoyé — pense à regarder tes spams)', '✅');
   } catch(e) {
+    window._authBusy = false;
     showAuthError('reg-error', errMsg(e.code));
   }
 };
@@ -19567,7 +19570,7 @@ window.doReset = async function() {
   if (!email) { showAuthError('login-error','Entre ton email avant.'); return; }
   try {
     await sendPasswordResetEmail(auth, email);
-    showAuthError('login-error','Email de réinitialisation envoyé !');
+    showAuthError('login-error','Email de réinitialisation envoyé ! Pense à vérifier tes spams.');
   } catch(e) {
     showAuthError('login-error', errMsg(e.code));
   }
