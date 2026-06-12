@@ -13082,48 +13082,6 @@ function filterDeck(cat,el){
 
 renderFilters();renderCard();
 
-async function generateFlashcards(){
-  const text=document.getElementById('flashInput').value.trim();
-  const apiKeyEl=document.getElementById('apiKeyInput');
-  const apiKey=apiKeyEl?apiKeyEl.value.trim():'';
-  if(!apiKey){toast('Entre ta cl\u00e9 API Anthropic d\'abord','\uD83D\uDD11');if(apiKeyEl)apiKeyEl.focus();return}
-  if(!text||text.length<30){toast('Colle un texte de cours plus long','\u26A0\uFE0F');return}
-  const btn=document.getElementById('flashGenBtn');
-  const load=document.getElementById('flashLoading');
-  btn.disabled=true;btn.textContent='\u23F3 G\u00E9n\u00E9ration\u2026';load.style.display='block';
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:'Tu es un assistant p\u00e9dagogique. \u00c0 partir du texte fourni, g\u00e9n\u00e8re exactement 6 flashcards p\u00e9dagogiques pour des \u00e9tudiants en L1 LSO \u00e0 Dauphine. Retourne UNIQUEMENT un tableau JSON valide, sans markdown, sans explication, sans backticks. Format : [{"cat":"NomMati\u00e8re","q":"Question courte ?","r":"R\u00e9ponse concise (1-2 phrases max)"}]. Utilise la langue du texte (fran\u00e7ais prioritaire). Les questions doivent tester la compr\u00e9hension, pas juste la m\u00e9moire.',
-        messages:[{role:'user',content:'G\u00e9n\u00e8re 6 flashcards depuis ce cours :\n\n'+text.slice(0,3000)}]
-      })
-    });
-    if(!resp.ok){let err={};try{err=await resp.json()}catch(x){}throw new Error(err.error&&err.error.message||'Erreur API '+resp.status)}
-    const data=await resp.json();
-    const raw=data.content[0].text.replace(/```json|```/g,'').trim();
-    const cards=JSON.parse(raw);
-    deck=[...cards,...deck];cardIdx=0;
-    renderFilters();renderCard();
-    toast(cards.length+' flashcards g\u00e9n\u00e9r\u00e9es !','\u2728');
-    document.getElementById('flashInput').value='';
-  }catch(e){
-    const msg=e.message||'';
-    if(msg.indexOf('401')>=0||msg.indexOf('invalid x-api-key')>=0)toast('Cl\u00e9 API invalide \u2014 v\u00e9rifie console.anthropic.com','\u274C');
-    else if(msg.indexOf('Failed to fetch')>=0||msg.indexOf('NetworkError')>=0)toast('Erreur r\u00e9seau \u2014 v\u00e9rifie ta connexion','\u274C');
-    else toast('Erreur : '+msg.slice(0,50),'\u274C');
-  }
-  finally{btn.disabled=false;btn.textContent='\u2728 G\u00E9n\u00E9rer les flashcards';load.style.display='none'}
-}
-
 // ─── PLANNING ───
 let wkOff=0;
 const TODAY=(function(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');})();
@@ -15270,18 +15228,19 @@ function renderLearnQcm(){
 }
 
 function generateQcmChoicesWithAI(card,callback){
-  fetch('https://api.anthropic.com/v1/messages',{
+  var sys='Tu es un cr\u00e9ateur de QCM difficiles pour \u00e9tudiants en droit et \u00e9conomie. G\u00e9n\u00e8re exactement 3 mauvaises r\u00e9ponses qui portent \u00e0 confusion : elles doivent utiliser le m\u00eame vocabulaire technique que la bonne r\u00e9ponse, appartenir au m\u00eame domaine juridique ou \u00e9conomique, \u00eatre de longueur similaire, et sembler plausibles sans une connaissance approfondie du sujet. R\u00e9ponds UNIQUEMENT par un JSON valide: {"wrong": ["rep1", "rep2", "rep3"]}.';
+  var usr='Question: '+card.q+'\nBonne r\u00e9ponse: '+card.r+'\nG\u00e9n\u00e8re 3 mauvaises r\u00e9ponses trompeuses et th\u00e9matiquement coh\u00e9rentes.';
+  fetch(GROQ_PROXY,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:(typeof dgAiHeaders==='function')?dgAiHeaders({'X-Trial-Section':'apprendre'}):{'Content-Type':'application/json'},
     body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:300,
-      system:'Tu es un cr\u00e9ateur de QCM difficiles pour \u00e9tudiants en droit et \u00e9conomie. G\u00e9n\u00e8re exactement 3 mauvaises r\u00e9ponses qui portent \u00e0 confusion : elles doivent utiliser le m\u00eame vocabulaire technique que la bonne r\u00e9ponse, appartenir au m\u00eame domaine juridique ou \u00e9conomique, \u00eatre de longueur similaire, et sembler plausibles sans une connaissance approfondie du sujet. R\u00e9ponds UNIQUEMENT par un JSON valide: {"wrong": ["rep1", "rep2", "rep3"]}.',
-      messages:[{role:'user',content:'Question: '+card.q+'\nBonne r\u00e9ponse: '+card.r+'\nG\u00e9n\u00e8re 3 mauvaises r\u00e9ponses trompeuses et th\u00e9matiquement coh\u00e9rentes.'}]
+      model:(typeof GROQ_MODEL!=='undefined'?GROQ_MODEL:'llama-3.3-70b-versatile'),
+      max_tokens:300,temperature:0.6,
+      messages:[{role:'system',content:sys},{role:'user',content:usr}]
     })
   }).then(function(r){return r.json();})
   .then(function(data){
-    var text=(data.content&&data.content[0]&&data.content[0].text)||'{"wrong":[]}';
+    var text=(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'{"wrong":[]}';
     try{
       var clean=text.replace(/```json|```/g,'').trim();
       var result=JSON.parse(clean);
@@ -15358,19 +15317,21 @@ function evaluateSimilar(userAns){
   // Show loading
   var fb = document.getElementById('lFeedback');
   if(fb){fb.className='learn-feedback correct';fb.style.display='block';fb.innerHTML='<div class="learn-feedback-title">&#129504; Analyse IA en cours...</div>';}
-  // Call Anthropic API
-  fetch('https://api.anthropic.com/v1/messages',{
+  // Évaluation via le Worker (Groq)
+  fetch(GROQ_PROXY,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:(typeof dgAiHeaders==='function')?dgAiHeaders({'X-Trial-Section':'apprendre'}):{'Content-Type':'application/json'},
     body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:200,
-      system:'Tu es un correcteur de flashcards. Reponds UNIQUEMENT par un JSON: {"correct": true/false, "comment": "explication courte"}. Correct=true si la reponse de l\'etudiant exprime la meme idee que la bonne reponse, meme si formulation differente.',
-      messages:[{role:'user',content:'Question: '+c.q+'\nBonne reponse: '+correct+'\nReponse etudiant: '+userAns}]
+      model:(typeof GROQ_MODEL!=='undefined'?GROQ_MODEL:'llama-3.3-70b-versatile'),
+      max_tokens:200,temperature:0.2,
+      messages:[
+        {role:'system',content:'Tu es un correcteur de flashcards. Reponds UNIQUEMENT par un JSON: {"correct": true/false, "comment": "explication courte"}. Correct=true si la reponse de l\'etudiant exprime la meme idee que la bonne reponse, meme si formulation differente.'},
+        {role:'user',content:'Question: '+c.q+'\nBonne reponse: '+correct+'\nReponse etudiant: '+userAns}
+      ]
     })
   }).then(function(r){return r.json();})
   .then(function(data){
-    var text = (data.content&&data.content[0]&&data.content[0].text)||'{"correct":false,"comment":""}';
+    var text = (data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'{"correct":false,"comment":""}';
     try{
       var clean = text.replace(/```json|```/g,'').trim();
       var result = JSON.parse(clean);
