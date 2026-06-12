@@ -8970,6 +8970,17 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
   .fiche-hero p{font-size:13px;color:rgba(255,255,255,.82);margin:0;line-height:1.5}
   .fiche-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:860px){.fiche-grid{grid-template-columns:1fr}}
+  .saved-block{margin-top:26px}
+  .saved-block-title{font-size:14px;font-weight:800;color:var(--text-main);margin-bottom:12px}
+  .saved-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .saved-empty{font-size:12px;color:var(--g400);padding:10px 2px}
+  .saved-item{display:flex;align-items:center;gap:8px;background:var(--bg-card,#fff);border:1px solid var(--g200);border-radius:12px;padding:10px 12px;transition:all .15s}
+  .saved-item:hover{border-color:var(--blue,#0057ad);box-shadow:0 4px 14px rgba(0,87,173,.12)}
+  .saved-item-main{flex:1;min-width:0;cursor:pointer}
+  .saved-item-title{font-size:13px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .saved-item-meta{font-size:11px;color:var(--g400);margin-top:2px}
+  .saved-item-del{background:none;border:none;cursor:pointer;font-size:14px;opacity:.55;padding:4px;border-radius:6px}
+  .saved-item-del:hover{opacity:1;background:#fee2e2}
   </style>
   <div class="wrap" style="padding-top:30px;padding-bottom:64px">
     <div class="fiche-hero">
@@ -9010,10 +9021,17 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
           <div class="prof-empty"><div><div style="font-size:38px">🧠</div><strong>La fiche apparaîtra ici</strong><span>Une synthèse exploitable tout de suite, avec questions de vérification.</span></div></div>
         </div>
         <div style="text-align:center;margin-top:12px">
-          <button class="prof-btn" onclick="exportFichePDF()" style="background:linear-gradient(135deg,#08284d,#0057ad);color:#fff">📄 Télécharger en PDF ✦</button>
-          <div style="font-size:11px;color:var(--g400);margin-top:5px">Export PDF prêt à imprimer · réservé au Premium</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <button class="prof-btn" onclick="exportFichePDF()" style="background:linear-gradient(135deg,#08284d,#0057ad);color:#fff">📄 Télécharger en PDF ✦</button>
+            <button class="prof-btn secondary" onclick="dgSaveFiche()">💾 Enregistrer sur le site</button>
+          </div>
+          <div style="font-size:11px;color:var(--g400);margin-top:5px">PDF = vrai fichier téléchargé · Enregistrer = retrouvable ici</div>
         </div>
       </div>
+    </div>
+    <div class="saved-block">
+      <div class="saved-block-title">💾 Mes fiches enregistrées</div>
+      <div class="saved-list" id="savedFichesList"></div>
     </div>
   </div>
 </div>
@@ -9081,10 +9099,18 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
           <div class="prof-empty"><div><div style="font-size:38px">📜</div><strong>Ton schéma apparaîtra ici</strong><span>Choisis un format et lance la génération.</span></div></div>
         </div>
         <div style="text-align:center;margin-top:12px">
-          <button class="prof-btn" onclick="exportSchemaPDF()" style="background:linear-gradient(135deg,#5b4327,#8a6a3b);color:#fff">📄 Télécharger en PDF</button>
-          <div style="font-size:11px;color:var(--g400);margin-top:5px">PDF parchemin prêt à imprimer</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <button class="prof-btn" onclick="exportSchemaPNG()" style="background:linear-gradient(135deg,#5b4327,#8a6a3b);color:#fff">🖼️ Télécharger (PNG)</button>
+            <button class="prof-btn secondary" onclick="dgSaveSchema()">💾 Enregistrer sur le site</button>
+            <button class="prof-btn ghost" onclick="exportSchemaPDF()">🖨️ Imprimer</button>
+          </div>
+          <div style="font-size:11px;color:var(--g400);margin-top:5px">PNG = vrai fichier · Enregistrer = retrouvable ici</div>
         </div>
       </div>
+    </div>
+    <div class="saved-block">
+      <div class="saved-block-title">💾 Mes schémas enregistrés</div>
+      <div class="saved-list" id="savedSchemasList"></div>
     </div>
   </div>
 </div>
@@ -23522,6 +23548,23 @@ async function profBuildFinalSheetFromKnowledge(kb) {
   return { sections: dataA.sections || [], questions: qs };
 }
 
+// Chargement à la volée d'un script externe (mis en cache)
+function dgLoadScript(src) {
+  return new Promise(function(resolve, reject) {
+    window._dgLoaded = window._dgLoaded || {};
+    if (window._dgLoaded[src]) { resolve(); return; }
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = function() { window._dgLoaded[src] = true; resolve(); };
+    s.onerror = function() { reject(new Error('load fail')); };
+    document.head.appendChild(s);
+  });
+}
+function dgLoadHtml2Pdf() {
+  if (window.html2pdf) return Promise.resolve();
+  return dgLoadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+}
+
 function exportFichePDF() {
   if (!(typeof isPremium === 'function' && isPremium())) {
     if (typeof openPremiumModal === 'function') openPremiumModal('fiches', false);
@@ -23566,21 +23609,127 @@ function exportFichePDF() {
     + '.pf-q{margin-bottom:11px;page-break-inside:avoid;font-size:13px}.pf-q b{color:#0a2a52}'
     + '.pf-a{margin-top:3px;color:#333;padding-left:10px;border-left:2px solid #e0e0e0}'
     + '.pf-foot{margin-top:28px;text-align:center;font-size:10px;color:#999}';
-  var html = '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Fiche de révision — DauphineGuide</title><style>' + css + '</style></head><body>';
-  html += '<div class="pf-head"><div class="pf-logo">D</div><div><div class="pf-title">Fiche de révision</div><div class="pf-sub">DauphineGuide · L1 LSO · Paris-Dauphine PSL</div></div></div>';
-  (d.sections || []).forEach(function(s){ html += '<div class="pf-sec"><h2>' + E(s.titre || '') + '</h2><div class="pf-body">' + NL(s.contenu || '') + '</div></div>'; });
+  var bodyHtml = '<div class="pf-head"><div class="pf-logo">D</div><div><div class="pf-title">Fiche de révision</div><div class="pf-sub">DauphineGuide · L1 LSO · Paris-Dauphine PSL</div></div></div>';
+  (d.sections || []).forEach(function(s){ bodyHtml += '<div class="pf-sec"><h2>' + E(s.titre || '') + '</h2><div class="pf-body">' + NL(s.contenu || '') + '</div></div>'; });
   var qs = (d.questions || []).filter(function(q){ var t=((q && q.question)||'').toLowerCase(); return t && t.indexOf('aucune question')===-1 && t.indexOf('erreur')!==0; });
   if (qs.length) {
-    html += '<h2 class="pf-qh">Questions difficiles</h2>';
-    qs.forEach(function(q,i){ html += '<div class="pf-q"><b>' + (i+1) + '. ' + E(q.question || '') + '</b><div class="pf-a">' + NL(q.reponse || '') + '</div></div>'; });
+    bodyHtml += '<h2 class="pf-qh">Questions difficiles</h2>';
+    qs.forEach(function(q,i){ bodyHtml += '<div class="pf-q"><b>' + (i+1) + '. ' + E(q.question || '') + '</b><div class="pf-a">' + NL(q.reponse || '') + '</div></div>'; });
   }
-  html += '<div class="pf-foot">Fiche générée avec DauphineGuide ✦</div></body></html>';
-  var w = window.open('', '_blank');
-  if (!w) { toast('Autorise les pop-ups pour télécharger', '⚠️'); return; }
-  w.document.open(); w.document.write(html); w.document.close();
-  setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 500);
+  bodyHtml += '<div class="pf-foot">Fiche générée avec DauphineGuide ✦</div>';
+
+  // Repli : ouvre une vue imprimable (si html2pdf indispo / bloqué)
+  function fichePrintFallback() {
+    var full = '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Fiche de révision — DauphineGuide</title><style>' + css + '</style></head><body>' + bodyHtml + '</body></html>';
+    var w = window.open('', '_blank');
+    if (!w) { toast('Autorise les pop-ups pour télécharger', '⚠️'); return; }
+    w.document.open(); w.document.write(full); w.document.close();
+    setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 500);
+  }
+
   if (typeof gtag === 'function') try{ gtag('event','fiche_pdf_export'); }catch(e){}
+  toast('Préparation du PDF…', '⏳');
+  dgLoadHtml2Pdf().then(function() {
+    if (!window.html2pdf) { fichePrintFallback(); return; }
+    var stage = document.createElement('div');
+    stage.style.cssText = 'position:fixed;left:-99999px;top:0;width:780px;background:#fff';
+    stage.innerHTML = '<style>' + css + '</style><div class="pf-doc" style="font-family:Georgia,\'Times New Roman\',serif;color:#1a1a1a;line-height:1.55;padding:16px">' + bodyHtml + '</div>';
+    document.body.appendChild(stage);
+    window.html2pdf().set({
+      margin: 10,
+      filename: 'fiche-dauphineguide.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
+    }).from(stage).save().then(function() {
+      stage.remove(); toast('Fiche téléchargée ! 📄', '✅');
+    }).catch(function() { stage.remove(); fichePrintFallback(); });
+  }).catch(function() { fichePrintFallback(); });
 }
+
+/* ══════════ SAUVEGARDE SUR LE SITE — Fiches & Schémas (localStorage) ══════════ */
+function dgGetSaved(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { return []; } }
+function dgSetSaved(key, arr) { try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {} }
+var DG_FICHES_KEY = 'dg_saved_fiches', DG_SCHEMAS_KEY = 'dg_saved_schemas';
+
+function dgSaveFiche() {
+  var d = window._lastFicheData;
+  if (!d || !(d.sections && d.sections.length)) { toast('Génère d\'abord une fiche', '⚠️'); return; }
+  var title = String((d.sections[0] && d.sections[0].titre) || 'Fiche').slice(0, 70);
+  var arr = dgGetSaved(DG_FICHES_KEY);
+  arr.unshift({ id: 'f' + Date.now(), title: title, date: Date.now(), data: d });
+  if (arr.length > 40) arr = arr.slice(0, 40);
+  dgSetSaved(DG_FICHES_KEY, arr);
+  dgRenderSavedFiches();
+  toast('Fiche enregistrée ! 💾', '✅');
+}
+function dgLoadFiche(id) {
+  var it = dgGetSaved(DG_FICHES_KEY).filter(function(x){ return x.id === id; })[0];
+  if (!it) return;
+  window._lastFicheData = it.data;
+  var result = document.getElementById('profFicheResult');
+  if (result && typeof profRenderRevisionData === 'function') profRenderRevisionData(it.data, result);
+  if (result) result.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  toast('Fiche chargée 📂', '✅');
+}
+function dgDeleteFiche(id) {
+  if (!confirm('Supprimer cette fiche enregistrée ?')) return;
+  dgSetSaved(DG_FICHES_KEY, dgGetSaved(DG_FICHES_KEY).filter(function(x){ return x.id !== id; }));
+  dgRenderSavedFiches();
+}
+function dgRenderSavedFiches() {
+  var box = document.getElementById('savedFichesList');
+  if (!box) return;
+  var arr = dgGetSaved(DG_FICHES_KEY);
+  var E = (typeof profEscapeHtml === 'function') ? profEscapeHtml : function(s){return String(s||'');};
+  if (!arr.length) { box.innerHTML = '<div class="saved-empty">Aucune fiche enregistrée pour l\'instant.</div>'; return; }
+  box.innerHTML = arr.map(function(it){
+    var nb = (it.data.sections || []).length;
+    var dt = new Date(it.date).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+    return '<div class="saved-item"><div class="saved-item-main" onclick="dgLoadFiche(\'' + it.id + '\')"><div class="saved-item-title">📄 ' + E(it.title) + '</div><div class="saved-item-meta">' + nb + ' sections · ' + dt + '</div></div><button class="saved-item-del" onclick="event.stopPropagation();dgDeleteFiche(\'' + it.id + '\')" title="Supprimer">🗑️</button></div>';
+  }).join('');
+}
+
+function dgSaveSchema() {
+  var svg = window._lastSchemaSVG;
+  if (!svg) { toast('Génère d\'abord un schéma', '⚠️'); return; }
+  var title = String(window._lastSchemaTitle || 'Schéma').slice(0, 70);
+  var arr = dgGetSaved(DG_SCHEMAS_KEY);
+  arr.unshift({ id: 's' + Date.now(), title: title, date: Date.now(), svg: svg });
+  if (arr.length > 40) arr = arr.slice(0, 40);
+  dgSetSaved(DG_SCHEMAS_KEY, arr);
+  dgRenderSavedSchemas();
+  toast('Schéma enregistré ! 💾', '✅');
+}
+function dgLoadSchema(id) {
+  var it = dgGetSaved(DG_SCHEMAS_KEY).filter(function(x){ return x.id === id; })[0];
+  if (!it) return;
+  window._lastSchemaSVG = it.svg;
+  window._lastSchemaTitle = it.title;
+  var r = document.getElementById('schResult');
+  if (r) { r.innerHTML = it.svg; r.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  toast('Schéma chargé 📂', '✅');
+}
+function dgDeleteSchema(id) {
+  if (!confirm('Supprimer ce schéma enregistré ?')) return;
+  dgSetSaved(DG_SCHEMAS_KEY, dgGetSaved(DG_SCHEMAS_KEY).filter(function(x){ return x.id !== id; }));
+  dgRenderSavedSchemas();
+}
+function dgRenderSavedSchemas() {
+  var box = document.getElementById('savedSchemasList');
+  if (!box) return;
+  var arr = dgGetSaved(DG_SCHEMAS_KEY);
+  var E = (typeof profEscapeHtml === 'function') ? profEscapeHtml : function(s){return String(s||'');};
+  if (!arr.length) { box.innerHTML = '<div class="saved-empty">Aucun schéma enregistré pour l\'instant.</div>'; return; }
+  box.innerHTML = arr.map(function(it){
+    var dt = new Date(it.date).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+    return '<div class="saved-item"><div class="saved-item-main" onclick="dgLoadSchema(\'' + it.id + '\')"><div class="saved-item-title">📜 ' + E(it.title) + '</div><div class="saved-item-meta">' + dt + '</div></div><button class="saved-item-del" onclick="event.stopPropagation();dgDeleteSchema(\'' + it.id + '\')" title="Supprimer">🗑️</button></div>';
+  }).join('');
+}
+// Rendu initial des listes au chargement
+if (document.readyState !== 'loading') { setTimeout(function(){ dgRenderSavedFiches(); dgRenderSavedSchemas(); }, 300); }
+else document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ dgRenderSavedFiches(); dgRenderSavedSchemas(); }, 300); });
 
 function profRenderRevisionData(data, result) {
   try { window._lastFicheData = data; } catch(e){}
@@ -24060,6 +24209,7 @@ async function generateSchemaSheet() {
     schemaSetProgress(85, 'Dessin du schéma…');
     var svg = (mode === 'concept') ? schemaBuildConceptSVG(data) : schemaBuildLibreSVG(data);
     window._lastSchemaSVG = svg;
+    window._lastSchemaTitle = (data && data.titre) || 'Schéma';
     result.innerHTML = svg;
     schemaSetProgress(100, 'Schéma prêt ✅');
     setTimeout(schemaHideProgress, 1000);
@@ -24070,6 +24220,33 @@ async function generateSchemaSheet() {
     window._aiBusy = false;
     profSetButtonLoading('schBtn', false, 'Génération…', '📜 Générer le schéma');
   }
+}
+// Vrai téléchargement : SVG -> PNG -> fichier dans Téléchargements
+function exportSchemaPNG() {
+  var svg = window._lastSchemaSVG;
+  if (!svg) { toast('Génère d\'abord un schéma', '⚠️'); return; }
+  var m = svg.match(/viewBox="0 0 ([0-9.]+) ([0-9.]+)"/);
+  var vw = m ? parseFloat(m[1]) : 600, vh = m ? parseFloat(m[2]) : 800;
+  var scale = 2;
+  var canvas = document.createElement('canvas');
+  canvas.width = Math.round(vw * scale); canvas.height = Math.round(vh * scale);
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  var blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var img = new Image();
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    var link = document.createElement('a');
+    link.download = 'schema-dauphineguide.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link); link.click(); link.remove();
+    toast('Schéma téléchargé ! 🖼️', '✅');
+  };
+  img.onerror = function() { URL.revokeObjectURL(url); toast('Échec de l\'export PNG', '❌'); };
+  img.src = url;
+  if (typeof gtag === 'function') try { gtag('event', 'schema_png_export'); } catch(e){}
 }
 function exportSchemaPDF() {
   var svg = window._lastSchemaSVG;
