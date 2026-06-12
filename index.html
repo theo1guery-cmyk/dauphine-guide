@@ -13681,9 +13681,14 @@ function openShareModal(){
     localStorage.setItem('dauphine_shares',JSON.stringify(existing));
   }catch(e){}
   // Firebase -> le code marche depuis N'IMPORTE QUEL appareil/compte
+  window._dgShareCloudOk=false;
   try{
     if(firebaseOk&&window._fb&&window._fb.set&&window._fb.ref){
-      window._fb.set(window._fb.ref(window._fb.db,'shared-decks/'+currentShareCode),{data:encoded,n:cards.length,ts:Date.now()});
+      window._fb.set(window._fb.ref(window._fb.db,'shared-decks/'+currentShareCode),{data:encoded,n:cards.length,ts:Date.now()})
+        .then(function(){ window._dgShareCloudOk=true; })
+        .catch(function(err){ window._dgShareCloudOk=false; try{ toast('⚠️ Cloud refusé ('+((err&&err.code)||(err&&err.message)||'règles Firebase')+') — le code ne marchera que sur cet appareil','⚠️'); }catch(e){} });
+    } else {
+      toast('Connecte-toi pour un partage qui marche partout','⚠️');
     }
   }catch(e){}
   var shareUrl=window.location.href.split('?')[0]+'?deck='+currentShareCode;
@@ -13733,18 +13738,22 @@ async function importFromCode(){
     }
   }catch(e){}
   // 2) Firebase (depuis un autre appareil / compte / navigation privée)
+  if(!(firebaseOk&&window._fb&&window._fb.get&&window._fb.ref)){
+    toast('Connecte-toi pour importer par code','\u26A0\uFE0F'); return;
+  }
   try{
-    if(firebaseOk&&window._fb&&window._fb.get&&window._fb.ref){
-      toast('Recherche du deck…','\u23F3');
-      var snap=await window._fb.get(window._fb.ref(window._fb.db,'shared-decks/'+code));
-      if(snap&&snap.exists()){
-        var v=snap.val();var enc=(v&&v.data)?v.data:v;
-        var c2=JSON.parse(decodeURIComponent(atob(enc)));
-        if(dgImportDeckCards(c2,code))return;
-      }
+    toast('Recherche du deck…','\u23F3');
+    var snap=await window._fb.get(window._fb.ref(window._fb.db,'shared-decks/'+code));
+    if(snap&&snap.exists()){
+      var v=snap.val();var enc=(v&&v.data)?v.data:v;
+      var c2=JSON.parse(decodeURIComponent(atob(enc)));
+      if(dgImportDeckCards(c2,code))return;
+      toast('Deck trouvé mais illisible — re-partage','\u274C'); return;
     }
-  }catch(e){}
-  toast('Code introuvable — vérifie le code et ta connexion','\u274C');
+    toast('Code introuvable — vérifie le code (ou demande de re-partager)','\u274C');
+  }catch(e){
+    toast('Erreur Firebase: '+((e&&e.code)||(e&&e.message)||'?'),'\u274C');
+  }
 }
 
 // Au chargement : si ?deck=CODE dans l'URL, on importe le deck partagé
