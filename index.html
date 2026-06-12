@@ -26782,16 +26782,29 @@ function mmRender() {
   var totalNodes = mmAllNodes.length;
   document.getElementById('mmNodeCount').textContent = totalNodes + ' nœuds';
 
-  // Build SVG — viewBox adaptatif : on cadre sur les nœuds réels (sinon tout est rogné/rapetissé)
+  // Build SVG — viewBox lisible : petite carte = on cadre tout ; grosse carte = fenêtre
+  // centrée sur la racine à taille LISIBLE (on explore au pan/zoom, sinon tout serait minuscule)
   var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   mmAllNodes.forEach(function(n) {
     if (n._x < minX) minX = n._x; if (n._x > maxX) maxX = n._x;
     if (n._y < minY) minY = n._y; if (n._y > maxY) maxY = n._y;
   });
   if (!isFinite(minX)) { minX = 0; minY = 0; maxX = W; maxY = H; }
-  var MM_PAD = 170; // marge pour les cases + pills (le texte déborde du centre du nœud)
-  var vbX = minX - MM_PAD, vbY = minY - MM_PAD;
-  var vbW = (maxX - minX) + MM_PAD * 2, vbH = (maxY - minY) + MM_PAD * 2;
+  var MM_PAD = 160; // marge pour les cases + pills (le label déborde du centre du nœud)
+  var WIN_W = 1150, WIN_H = 800; // fenêtre lisible de référence
+  var fullW = (maxX - minX) + MM_PAD * 2, fullH = (maxY - minY) + MM_PAD * 2;
+  var vbX, vbY, vbW, vbH;
+  if (fullW <= WIN_W && fullH <= WIN_H) {
+    // petite carte : on cadre tout
+    vbX = minX - MM_PAD; vbY = minY - MM_PAD; vbW = fullW; vbH = fullH;
+  } else {
+    // grosse carte : fenêtre lisible centrée sur la racine
+    vbW = WIN_W; vbH = WIN_H;
+    vbX = mmData._x - WIN_W / 2; vbY = mmData._y - WIN_H / 2;
+  }
+  // Mémorise la fenêtre + les bornes du contenu pour le bouton « Ajuster » (fit-all)
+  window._mmVB = { x: vbX, y: vbY, w: vbW, h: vbH };
+  window._mmFull = { cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, w: fullW, h: fullH };
   var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -27069,7 +27082,20 @@ function mmSetupInteraction(wrap) {
 
 window.mmZoomIn  = function() { mmScale = Math.min(3, mmScale * 1.2); mmApplyTransform(); };
 window.mmZoomOut = function() { mmScale = Math.max(0.3, mmScale / 1.2); mmApplyTransform(); };
-window.mmFit     = function() { mmScale = 1; mmOffsetX = 0; mmOffsetY = 0; mmApplyTransform(); };
+window.mmFit     = function() {
+  // « Ajuster » = voir TOUTE la carte (zoom arrière pour caser le contenu dans la fenêtre)
+  if (window._mmVB && window._mmFull && window._mmFull.w > 0 && window._mmFull.h > 0) {
+    var s = Math.min(window._mmVB.w / window._mmFull.w, window._mmVB.h / window._mmFull.h);
+    s = Math.max(0.18, Math.min(1, s * 0.95));
+    var vcx = window._mmVB.x + window._mmVB.w / 2, vcy = window._mmVB.y + window._mmVB.h / 2;
+    mmScale = s;
+    mmOffsetX = vcx - window._mmFull.cx * s;
+    mmOffsetY = vcy - window._mmFull.cy * s;
+  } else {
+    mmScale = 1; mmOffsetX = 0; mmOffsetY = 0;
+  }
+  mmApplyTransform();
+};
 
 window.mmExportSvg = function() {
   if (!mmSVG) return;
