@@ -965,7 +965,7 @@ html{scroll-behavior:smooth}
 .focus-brand{font-family:var(--font-serif,serif);font-size:14px;color:var(--g400);font-style:italic}
 .focus-close{background:none;border:1.5px solid var(--g200);border-radius:8px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;color:var(--g600);font-family:'Figtree',sans-serif;transition:all .15s}
 .focus-close:hover{background:var(--g100)}
-.focus-body{width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;gap:24px;margin-top:64px}
+.focus-body{width:100%;max-width:920px;display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:52px}
 .focus-pomo{text-align:center}
 .focus-pomo-ring{position:relative;display:inline-block}
 .focus-pomo-ring svg{transform:rotate(-90deg)}
@@ -974,17 +974,18 @@ html{scroll-behavior:smooth}
 .focus-pomo-btn{margin-top:10px;padding:8px 26px;border-radius:100px;background:linear-gradient(135deg,#2f4487,#1a56c4);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;box-shadow:0 4px 14px rgba(47,68,135,.25);transition:all .17s}
 .focus-pomo-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(47,68,135,.35)}
 .focus-card-wrap{width:100%}
-.focus-card-scene{perspective:1000px;width:100%;height:200px}
+.focus-card-scene{perspective:1400px;width:100%;height:min(60vh,560px);min-height:340px}
 .focus-card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.22,1,.36,1);cursor:pointer}
 .focus-card-3d.flipped{transform:rotateY(180deg)}
 .focus-card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#fff;border:2px solid var(--g100);box-shadow:0 4px 24px rgba(0,0,0,.07)}
 [data-theme="dark"] .focus-card-face{background:#1e293b;border-color:var(--border-col)}
 .focus-card-back-face{transform:rotateY(180deg);background:var(--blue-pale);border-color:var(--blue-light)}
 [data-theme="dark"] .focus-card-back-face{background:#1a2744}
-.focus-card-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);margin-bottom:8px}
-.focus-card-q{font-size:17px;font-weight:700;color:var(--g900);line-height:1.45;font-family:var(--font-serif,serif)}
-.focus-card-r{font-size:14px;color:var(--blue-mid);line-height:1.55;font-family:'Figtree',sans-serif;font-weight:500}
-.focus-card-hint{font-size:11px;color:var(--g400);margin-top:10px}
+.focus-card-cat{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g400);margin-bottom:14px}
+.focus-card-q{font-size:clamp(22px,3.4vw,34px);font-weight:700;color:var(--g900);line-height:1.4;font-family:var(--font-serif,serif)}
+.focus-card-r{font-size:clamp(17px,2.5vw,26px);color:var(--blue-mid);line-height:1.55;font-family:'Figtree',sans-serif;font-weight:500}
+.focus-card-hint{font-size:12.5px;color:var(--g400);margin-top:16px}
+.focus-card-face{padding:clamp(24px,4vw,48px)!important}
 .focus-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;width:100%}
 .focus-btn{padding:9px 20px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s;border:1.5px solid var(--g200);background:#fff;color:var(--g700)}
 [data-theme="dark"] .focus-btn{background:var(--bg-card);color:var(--text-main)}
@@ -12898,29 +12899,34 @@ var FC_TOUR_STEPS = [
   {
     sel: '#card3d',
     title: 'La carte de révision',
-    body: "Clique sur une carte pour révéler la réponse, puis auto-évalue-toi (Facile → Retravailler). L'algorithme <b>SM-2</b> fait revenir chaque carte au bon moment. Les flèches ← → permettent de naviguer.",
+    body: "Clique sur une carte pour révéler la réponse, puis auto-évalue-toi (Facile → À retravailler). L'algorithme <b>SM-2</b> fait revenir chaque carte au bon moment. Navigue avec ← →.",
     before: function(){ try{ if(typeof flipCard==='function'){ flipCard(); setTimeout(function(){ if(_fcTourI===0) flipCard(); }, 1400); } }catch(e){} }
   },
   {
-    sel: '.flash-gen',
-    title: 'Générer des flashcards',
-    body: "Colle ton cours, choisis la matière, et l'<b>IA crée tes flashcards</b> en quelques secondes. Plus besoin de les écrire à la main — idéal pour transformer un chapitre entier en cartes."
+    sel: '.fc2-bar',
+    title: "Ta barre d'actions",
+    body: "Tout part d'ici : <b>➕ Créer</b> des cartes avec l'IA, <b>🌟 Focus</b> (plein écran), <b>🎓 Apprendre</b>, <b>📝 Examen</b>, <b>🔀</b> mélanger et <b>⚙️</b> gérer ton deck."
+  },
+  {
+    sel: '#fcGenPanel',
+    title: 'Créer des flashcards',
+    body: "Clique sur <b>➕ Créer</b> : colle ton cours, choisis la matière, et l'<b>IA génère tes flashcards</b> en quelques secondes. Un chapitre entier devient un paquet de cartes.",
+    before: function(){ try{ var p=document.getElementById('fcGenPanel'); if(p) p.style.display='block'; }catch(e){} },
+    after:  function(){ try{ var p=document.getElementById('fcGenPanel'); if(p) p.style.display='none'; }catch(e){} }
   },
   {
     sel: '#focusOverlay .focus-body',
     title: 'Le Mode Focus',
-    body: "Un mode <b>plein écran avec minuteur Pomodoro</b> pour réviser tes cartes sans aucune distraction. Parfait pour une session de révision concentrée avant un partiel.",
+    body: "Un mode <b>plein écran avec de grandes cartes</b> et un minuteur Pomodoro pour réviser sans aucune distraction. Parfait avant un partiel.",
     scroll: false,
     before: function(){ try{ if(typeof openFocus==='function') openFocus(); }catch(e){} },
     after:  function(){ try{ if(typeof closeFocus==='function') closeFocus(); }catch(e){} }
   },
   {
-    sel: '#manageModal button[onclick^="syncToApprendre"]',
-    title: 'Envoyer vers Mode Apprendre',
-    body: "Dans <b>Gérer</b>, le bouton <b>Sync Apprendre</b> envoie tes flashcards vers le <b>Mode Apprendre</b> : tu t'entraînes alors à <b>écrire</b> les réponses (pas juste à les reconnaître). La mémorisation est bien plus solide !",
-    scroll: false,
-    before: function(){ try{ if(typeof openManage==='function') openManage(); }catch(e){} },
-    after:  function(){ try{ if(typeof closeManage==='function') closeManage(); }catch(e){} }
+    sel: '.fc2-opts',
+    title: "Plus d'options",
+    body: "Replié ici : <b>recherche</b>, <b>stats</b> du deck, <b>🔗 Partager à un ami</b> (un code à 6 lettres qui marche sur n'importe quel appareil), <b>export PDF</b> et ton activité de révision.",
+    before: function(){ try{ var dt=document.querySelector('.fc2-opts'); if(dt) dt.setAttribute('open',''); }catch(e){} }
   }
 ];
 // Helpers onglet/panneau Synapse pour le tour
