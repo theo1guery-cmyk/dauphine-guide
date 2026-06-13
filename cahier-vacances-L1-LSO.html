@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Cahier de vacances — Futurs L1 LSO · Dauphine (Cursus général)</title>
+<style>
+  :root{
+    --bleu:#0a2a52; --bleu2:#0057ad; --or:#c79a3a;
+    --encre:#1f2733; --gris:#5b6573; --pale:#f4f7fc; --trait:#dfe6f0;
+  }
+  @page{ size:A4; margin:17mm 15mm; }
+  *{box-sizing:border-box}
+  body{font-family:Georgia,"Times New Roman",serif; color:var(--encre); line-height:1.55; margin:0; font-size:12.5px}
+  .page{max-width:760px; margin:0 auto; padding:6px}
+  h1,h2,h3{font-family:"Helvetica Neue",Arial,sans-serif; color:var(--bleu)}
+  p{margin:0 0 8px}
+  .sec{page-break-before:always; padding-top:4px}
+
+  /* Couverture */
+  .cover{height:243mm; display:flex; flex-direction:column; justify-content:center; text-align:center; page-break-after:always}
+  .cover .kicker{font-family:"Helvetica Neue",Arial,sans-serif; letter-spacing:5px; font-size:12px; color:var(--or); font-weight:700; text-transform:uppercase}
+  .cover h1{font-size:42px; margin:14px 0 6px; line-height:1.1; color:var(--bleu)}
+  .cover .sub{font-size:16px; color:var(--gris); font-style:italic; margin-bottom:26px}
+  .cover .emoji{font-size:60px; margin:8px 0}
+  .cover .meta{font-family:"Helvetica Neue",Arial,sans-serif; font-size:12px; color:var(--gris); margin-top:30px; letter-spacing:1px}
+  .cover .rule{width:90px; height:3px; background:var(--or); margin:16px auto}
+
+  .sec-head{display:flex; align-items:center; gap:14px; border-bottom:2px solid var(--bleu); padding-bottom:10px; margin-bottom:16px}
+  .sec-num{width:46px; height:46px; flex:none; border-radius:11px; background:var(--bleu); color:#fff; display:flex; align-items:center; justify-content:center; font-size:24px}
+  .sec-head h2{margin:0; font-size:22px}
+  .sec-head .lead{font-size:11.5px; color:var(--gris); margin-top:2px; font-family:"Helvetica Neue",Arial,sans-serif}
+
+  h3{font-size:15px; margin:16px 0 7px; border-left:3px solid var(--or); padding-left:9px}
+  ul,ol{margin:0 0 9px; padding-left:21px}
+  li{margin-bottom:3px}
+  b,strong{color:var(--bleu)}
+
+  .ue{page-break-inside:avoid; margin-bottom:6px}
+  .ue-meta{font-family:"Helvetica Neue",Arial,sans-serif; font-size:11px; color:var(--gris); margin:-6px 0 10px; display:flex; gap:14px; flex-wrap:wrap}
+  .ue-meta b{color:var(--bleu2)}
+
+  .box{border-radius:9px; padding:11px 14px; margin:10px 0; page-break-inside:avoid}
+  .box .box-t{font-family:"Helvetica Neue",Arial,sans-serif; font-weight:800; font-size:11px; letter-spacing:.5px; text-transform:uppercase; margin-bottom:5px}
+  .tip{background:#fff8e8; border:1px solid #f0d99a} .tip .box-t{color:#a9781b}
+  .exo{background:var(--pale); border:1px solid var(--trait)} .exo .box-t{color:var(--bleu2)}
+  .cor{background:#eefaf1; border:1px solid #bfe6cb} .cor .box-t{color:#1c7a43}
+  .info{background:#eef3fb; border:1px solid #cfe0f5} .info .box-t{color:var(--bleu2)}
+
+  table{width:100%; border-collapse:collapse; margin:9px 0; font-size:11.5px}
+  th,td{border:1px solid var(--trait); padding:5px 8px; text-align:left; vertical-align:top}
+  th{background:var(--pale); font-family:"Helvetica Neue",Arial,sans-serif; color:var(--bleu)}
+
+  .check li{list-style:none; margin-left:-14px} .check li::before{content:"\2610 "; color:var(--bleu2); font-weight:700}
+  .foot{margin-top:22px; padding-top:9px; border-top:1px solid var(--trait); font-size:10px; color:var(--gris); text-align:center; font-family:"Helvetica Neue",Arial,sans-serif}
+  .small{font-size:11px; color:var(--gris)}
+</style>
+</head>
+<body>
+
+<!-- ════ COUVERTURE ════ -->
+<div class="page cover">
+  <div class="kicker">Paris-Dauphine · PSL · Cursus général</div>
+  <div class="emoji">📓☀️</div>
+  <h1>Cahier de vacances</h1>
+  <div class="rule"></div>
+  <div class="sub">Prépare ta L1 Sciences des Organisations<br>matière par matière, l'esprit tranquille</div>
+  <p class="small" style="max-width:450px;margin:0 auto">Un carnet à faire à ton rythme cet été : pour chaque matière du semestre 1, ce que tu vas apprendre, les points clés, comment t'y préparer, et des exercices corrigés. Pas de stress — juste les bons réflexes pour démarrer fort.</p>
+  <div class="meta">POUR LES FUTUR·E·S L1 LSO &nbsp;·&nbsp; Programme officiel 2025-2026 &nbsp;·&nbsp; Offert par DauphineGuide</div>
+</div>
+
+<!-- ════ INTRO ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">👋</div><div><h2>Bienvenue en LSO</h2><div class="lead">Ce qui t'attend, et comment ça marche à Dauphine</div></div></div>
+
+  <p>Bravo : tu rejoins la <b>Licence Sciences des Organisations (cursus général)</b> de Paris-Dauphine. C'est une formation <b>pluridisciplinaire</b> qui combine <b>économie, gestion, droit et sciences sociales</b>, complétée par des matières <b>quantitatives</b> (maths, informatique) et une vraie sensibilisation aux <b>enjeux écologiques, éthiques et politiques</b>. Objectif : comprendre les organisations (entreprises, administrations, marchés, institutions) sous tous les angles. <b>60 ECTS</b> sur l'année.</p>
+
+  <div class="info"><div class="box-t">💡 Bon à savoir</div> Tu ne te spécialises pas tout de suite : la L1 te donne une <b>culture large et solide</b>. Tu choisiras ta spécialisation (Gestion, Économie appliquée, Sciences sociales ou Droit) plus tard. Tu gardes donc toutes les portes ouvertes.</div>
+
+  <h3>La particularité Dauphine : (presque) que des TD</h3>
+  <p>Contrairement à beaucoup de facs, l'enseignement à Dauphine est <b>principalement dispensé en Travaux Dirigés (TD)</b>, en <b>petits groupes (~30 étudiants)</b>. Très peu de grands amphis impersonnels.</p>
+  <ul>
+    <li><b>La présence et la participation comptent vraiment.</b> On te connaît, on te voit travailler (ou pas).</li>
+    <li><b>Le contrôle continu est partout</b> : tests, participation, travaux à rendre comptent pour <b>~50 % de la note</b> (l'autre moitié = examen terminal).</li>
+    <li>Il faut <b>préparer les séances en amont</b> (lectures, exercices, parfois quizz en début de cours).</li>
+    <li>L'année = <b>2 semestres de 12 semaines</b> + 2 semaines de prérentrée. <b>22 UE</b> de tronc commun + 1 option annuelle.</li>
+  </ul>
+  <div class="tip"><div class="box-t">⭐ Le réflexe n°1</div> Mets tes notes au propre <b>le soir même</b> (15 min) et prépare chaque TD. Avec un système en TD, la régularité paie immédiatement — impossible de se cacher dans la masse.</div>
+
+  <h3>Ton semestre 1 en un coup d'œil (tronc commun)</h3>
+  <table>
+    <tr><th>Matière</th><th>ECTS</th><th>Discipline</th></tr>
+    <tr><td>Sociologie — Naissance de la question sociale</td><td>4</td><td>Sciences sociales</td></tr>
+    <tr><td>Outils mathématiques</td><td>4</td><td>Quantitatif</td></tr>
+    <tr><td>Microéconomie — le consommateur</td><td>3</td><td>Économie</td></tr>
+    <tr><td>Comptabilité financière</td><td>3</td><td>Gestion</td></tr>
+    <tr><td>Introduction au droit public et européen</td><td>3</td><td>Droit</td></tr>
+    <tr><td>Anglais</td><td>3</td><td>Langue</td></tr>
+    <tr><td>Introduction à la gestion</td><td>2</td><td>Gestion</td></tr>
+    <tr><td>Informatique — Excel / VBA</td><td>2</td><td>Quantitatif</td></tr>
+    <tr><td>Enjeux éthiques et politiques du monde contemporain</td><td>2</td><td>Transversal</td></tr>
+    <tr><td>Les données de la macroéconomie</td><td>1</td><td>Économie</td></tr>
+    <tr><td>Culture économique</td><td>1</td><td>Économie</td></tr>
+    <tr><td>Soft Skills</td><td>—</td><td>Validation</td></tr>
+  </table>
+  <p class="small">👉 <b>Tout part de zéro</b> : personne n'arrive en connaissant le droit ou la compta. Ce cahier te donne juste une longueur d'avance, matière par matière. <span style="color:var(--gris)">(Le <b>cursus juridique</b> a un programme un peu différent — il aura son propre cahier.)</span></p>
+</div>
+
+<!-- ════ 1. SOCIOLOGIE ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🏛️</div><div><h2>1 · Sociologie</h2><div class="lead">Naissance de la question sociale</div></div></div>
+  <div class="ue-meta"><span><b>4 ECTS</b></span><span>36h</span><span>Éval : <b>dissertation</b> sur table + travaux de TD</span></div>
+
+  <p>Ce cours t'initie à la <b>pensée sociologique</b> à travers ses grands fondateurs, dans une perspective historique. Il a un <b>double objectif</b> : théorique (comprendre la société) <b>et méthodologique</b> (apprendre le travail universitaire : lecture de texte, problématisation, fiche de lecture, commentaire de texte, <b>dissertation</b>).</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    <ul style="margin-bottom:0">
+      <li><b>Introduction</b> : c'est quoi la sociologie + les deux révolutions des 18<sup>e</sup>-19<sup>e</sup> siècles (industrielle et démocratique).</li>
+      <li><b>Tocqueville</b> et l'<b>égalisation des conditions</b> (la marche vers l'égalité dans les sociétés démocratiques).</li>
+      <li><b>Marx</b> et la <b>lutte des classes</b> (rapports de production, conflit capital/travail).</li>
+      <li><b>Weber</b> et le <b>processus de rationalisation</b> (le monde moderne devient calculable, bureaucratique).</li>
+      <li>Notions transversales : le <b>lien social</b>, la <b>conflictualité et les inégalités</b>, la <b>rationalisation</b>.</li>
+    </ul>
+  </div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li>Lis quelques <b>pages</b> de chaque auteur (extraits faciles à trouver) pour mettre un nom sur une idée.</li>
+    <li>Entraîne-toi à la <b>dissertation</b> : accroche → définition → problématique → plan en 2 parties (voir la partie Méthodo).</li>
+    <li>Suis l'actualité sociale (inégalités, travail) : ça nourrit tes exemples.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Auteur ↔ concept</div> Associe chaque auteur à SA notion clé : <b>(1)</b> Tocqueville · <b>(2)</b> Marx · <b>(3)</b> Weber — &nbsp; <b>(a)</b> rationalisation · <b>(b)</b> égalisation des conditions · <b>(c)</b> lutte des classes.</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> 1-b (Tocqueville → égalisation des conditions) · 2-c (Marx → lutte des classes) · 3-a (Weber → rationalisation).</div>
+</div>
+
+<!-- ════ 2. MATHS ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🔢</div><div><h2>2 · Outils mathématiques</h2><div class="lead">La boîte à outils de l'éco et de la gestion</div></div></div>
+  <div class="ue-meta"><span><b>4 ECTS</b></span><span>36h</span><span>Prérequis : programme de terminale</span><span>Éval : examen</span></div>
+
+  <p>Les maths te serviront <b>partout</b> : micro, macro, optimisation. Le cours reprend les fonctions et le calcul intégral. Pas besoin d'être un crack — il faut être <b>à l'aise avec les automatismes</b>.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    Fonctions d'une variable · calcul de <b>limites</b> · <b>continuité</b> · <b>dérivée</b> · <b>étude de fonction &amp; tracé de graphes</b> · fonctions bijectives · fonctions <b>convexes</b> · <b>calcul intégral</b> (intégration par parties, changement de variable, intégrales généralisées).
+  </div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li><b>Réactive les dérivées</b> : <i>x<sup>n</sup> → n·x<sup>n-1</sup></i>, dérivée d'une somme, d'un produit, d'un quotient.</li>
+    <li>Sache faire une <b>étude de fonction</b> : dérivée → signe → tableau de variations → tracé.</li>
+    <li>Revois la <b>pente d'une droite</b> et la lecture de graphes (tu en auras besoin en micro).</li>
+    <li>3-4 vidéos de révision (niveau terminale) suffisent à tout réactiver.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercices</div>
+    <b>1.</b> Dérive <i>f(x) = 2x³ − 5x² + 4x − 1</i>. &nbsp; <b>2.</b> Trouve le point où <i>g(x) = x² − 6x + 5</i> atteint son minimum (indice : <i>g'(x) = 0</i>).
+  </div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div>
+    <b>1.</b> <i>f '(x) = 6x² − 10x + 4</i>. &nbsp; <b>2.</b> <i>g'(x) = 2x − 6 = 0 → x = 3</i> ; minimum en <i>x = 3</i>, avec <i>g(3) = 9 − 18 + 5 = −4</i>.
+  </div>
+</div>
+
+<!-- ════ 3. MICRO ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">📈</div><div><h2>3 · Microéconomie</h2><div class="lead">Comportement du consommateur</div></div></div>
+  <div class="ue-meta"><span><b>3 ECTS</b></span><span>18h</span><span>Prérequis : dérivées, étude de fonction</span><span>Éval : 50% CC / 50% examen</span></div>
+
+  <p>La microéconomie analyse les <b>choix des agents</b> (consommateurs, producteurs…). En S1, focus sur le <b>consommateur</b> : comment il choisit quoi acheter avec un budget limité.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    <ul style="margin-bottom:0">
+      <li>La <b>contrainte budgétaire</b> : ce que tu peux t'offrir avec ton revenu et les prix (<i>p₁·x₁ + p₂·x₂ = R</i>).</li>
+      <li>L'<b>utilité</b> et les <b>préférences</b> : mesurer la satisfaction ; l'utilité marginale (décroissante).</li>
+      <li>Le <b>choix optimal</b> : le meilleur panier compte tenu du budget ; les <b>fonctions de demande</b> qui en découlent.</li>
+      <li>Les <b>effets des variations</b> de revenu et de prix sur la demande ; arbitrages travail-loisir et intertemporel.</li>
+    </ul>
+  </div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li>Sois au point sur les <b>droites</b> (pente, équation) et les <b>dérivées</b> : la micro, c'est des maths appliquées.</li>
+    <li>Visualise l'idée : avec un budget fixe, si un produit coûte plus cher, on en achète moins → c'est tout l'enjeu.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Contrainte budgétaire</div> Tu as <b>60 €</b>. Le bien A coûte <b>4 €</b>, le bien B coûte <b>6 €</b>. Écris l'équation de ta contrainte budgétaire. Si tu achètes 9 unités de A, combien de B peux-tu acheter au maximum ?</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> Contrainte : <i>4·A + 6·B = 60</i>. Avec A = 9 : <i>36 + 6B = 60 → 6B = 24 → B = 4</i>. Tu peux acheter <b>4 unités de B</b>.</div>
+</div>
+
+<!-- ════ 4. MACRO (données) ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">📊</div><div><h2>4 · Les données de la macroéconomie</h2><div class="lead">Mesurer l'économie : la comptabilité nationale</div></div></div>
+  <div class="ue-meta"><span><b>1 ECTS</b></span><span>9h</span><span>Éval : 70% examen / 30% CC (quizz + participation)</span></div>
+
+  <p>Ce cours t'apprend à <b>mesurer l'activité d'un pays</b> grâce à la comptabilité nationale (celle de l'INSEE). On étudie les opérations sur les produits, le <b>TES</b> (tableau d'entrées-sorties), les comptes de secteur et le <b>TEE</b>.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    <ul style="margin-bottom:0">
+      <li>Les <b>secteurs institutionnels</b> (ménages, entreprises, administrations, reste du monde) et les opérations (production, répartition, redistribution).</li>
+      <li>La construction du <b>PIB</b> (Produit Intérieur Brut) et des indicateurs de conjoncture.</li>
+      <li>L'analyse d'une <b>économie simplifiée</b> et la pertinence des indicateurs de l'INSEE.</li>
+    </ul>
+  </div>
+  <div class="tip"><div class="box-t">⭐ Important</div> Format « classe inversée » : tu dois <b>lire le poly et regarder les vidéos AVANT</b> chaque séance (qui démarre par un quizz noté). Prends vite le pli d'anticiper.</div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li>Sois solide sur les <b>pourcentages</b> et la <b>lecture de tableaux</b>.</li>
+    <li>Retiens les <b>3 façons de calculer le PIB</b> : par la <b>production</b> (somme des valeurs ajoutées), par la <b>demande</b> (C + I + G + (X − M)), par les <b>revenus</b>.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — PIB par la demande</div> Consommation C = 1200 · Investissement I = 300 · Dépenses publiques G = 400 · Exportations X = 250 · Importations M = 150. Calcule le PIB par l'approche de la demande.</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> <i>PIB = C + I + G + (X − M) = 1200 + 300 + 400 + (250 − 150) = <b>2000</b></i>.</div>
+</div>
+
+<!-- ════ 5. GESTION ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🏢</div><div><h2>5 · Introduction à la gestion</h2><div class="lead">Comprendre le management et l'entreprise</div></div></div>
+  <div class="ue-meta"><span><b>2 ECTS</b></span><span>18h</span><span>Éval : <b>QCM 60 questions, avec points négatifs</b></span></div>
+
+  <p>Ce cours décortique le <b>management</b> et la place croissante des logiques managériales dans la société. Il mêle concepts, méthodes et <b>enjeux contemporains</b> (nouvelles formes de marketing, RSE, management public, finance, rôle des dirigeants et des consultants…).</p>
+
+  <div class="info"><div class="box-t">📖 Au programme (exemples de thèmes)</div>
+    Nouvelles tendances du marketing · la <b>responsabilité sociétale de l'entreprise (RSE)</b> · le management public · les mutations (comptabilité, finance) · les acteurs (dirigeants, managers, consultants).
+  </div>
+
+  <div class="tip"><div class="box-t">⭐ Stratégie d'examen</div> L'examen = <b>QCM avec points négatifs</b> : une mauvaise réponse retire des points. Conséquence : <b>ne réponds pas au hasard</b>. Si tu hésites vraiment, mieux vaut parfois s'abstenir. Apprends le cours <b>précisément</b>.</div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li>Lis l'<b>actu business</b> (Les Échos, Xerfi Canal) : ça rend les concepts concrets.</li>
+    <li>Repère les <b>grandes fonctions</b> d'une entreprise : marketing, RH, finance, production, stratégie.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — QCM (1 seule bonne réponse)</div> La RSE désigne : <b>a)</b> la rentabilité d'une entreprise · <b>b)</b> la prise en compte par l'entreprise des enjeux sociaux et environnementaux · <b>c)</b> un type de contrat de travail.</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> <b>b)</b> — la <i>responsabilité sociétale des entreprises</i> = intégrer les enjeux sociaux et environnementaux dans son activité.</div>
+</div>
+
+<!-- ════ 6. COMPTA ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">📒</div><div><h2>6 · Comptabilité financière</h2><div class="lead">Lire et comprendre les états financiers</div></div></div>
+  <div class="ue-meta"><span><b>3 ECTS</b></span><span>18h</span><span>Éval : 50% CC / 50% examen</span><span>Tout en ligne + TD (pas de manuel)</span></div>
+
+  <p>Toute décision sur une entreprise suppose de <b>comprendre sa situation financière</b>. Les entreprises publient des <b>états financiers</b> : ce cours t'apprend à les <b>lire</b>. Rassure-toi : c'est de la <b>logique</b>, pas des maths compliquées.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme (5 modules)</div>
+    <ul style="margin-bottom:0">
+      <li>La réalité financière de l'entreprise que les états cherchent à retranscrire.</li>
+      <li>Les <b>états financiers</b> : le <b>bilan</b>, le <b>compte de résultat</b>, leurs objectifs et caractéristiques.</li>
+      <li>La <b>mesure du résultat</b> : distinguer <b>charge ≠ décaissement</b>, <b>charge ≠ investissement</b>, <b>produit ≠ encaissement</b>.</li>
+      <li>L'articulation des états financiers, puis la lecture d'un <b>rapport annuel</b> d'entreprise cotée.</li>
+    </ul>
+  </div>
+
+  <h3>Les 2 idées à graver</h3>
+  <ul>
+    <li><b>Le bilan est toujours équilibré</b> : <i>Actif (ce que l'entreprise possède) = Passif (comment c'est financé)</i>.</li>
+    <li><b>Le résultat</b> = <i>Produits − Charges</i>. Positif → bénéfice ; négatif → perte.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice</div> <b>1.</b> Une entreprise a un total d'actif de <b>500 000 €</b> et des dettes (passif externe) de <b>180 000 €</b>. Quel est le montant des capitaux propres ? &nbsp; <b>2.</b> Produits = 420 000 €, Charges = 365 000 €. Résultat ?</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> <b>1.</b> Actif = Capitaux propres + Dettes → Capitaux propres = 500 000 − 180 000 = <b>320 000 €</b>. &nbsp; <b>2.</b> Résultat = 420 000 − 365 000 = <b>+55 000 €</b> (bénéfice).</div>
+</div>
+
+<!-- ════ 7. DROIT ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">⚖️</div><div><h2>7 · Introduction au droit public et européen</h2><div class="lead">L'État, les institutions, l'Union européenne</div></div></div>
+  <div class="ue-meta"><span><b>3 ECTS</b></span><span>18h</span><span>Éval : contrôle terminal</span></div>
+
+  <p>Le droit, c'est d'abord une <b>façon de raisonner</b>. Ce cours pose les bases du <b>droit public</b> : l'État, ses institutions, et le cadre européen et international — chaque branche illustrée par un <b>exemple d'actualité</b>.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    <ul style="margin-bottom:0">
+      <li>Qu'est-ce que le <b>droit public</b> ? Qu'est-ce qu'un <b>État</b> ?</li>
+      <li>La distinction <b>droit public / droit privé</b>.</li>
+      <li>Le <b>droit constitutionnel</b>, le <b>droit international public</b>, le <b>droit administratif</b>.</li>
+      <li>Le <b>droit européen</b> (principalement le droit de l'Union européenne : institutions, compétences, rapports UE/États).</li>
+      <li>L'<b>État de droit</b>.</li>
+    </ul>
+  </div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li>Prends l'habitude de <b>définir chaque mot</b> : en droit, des définitions précises = des points.</li>
+    <li>Repère les grandes <b>institutions</b> (Président, Gouvernement, Parlement, Conseil constitutionnel) et celles de l'<b>UE</b> (Commission, Parlement européen, Conseil).</li>
+    <li>Suis un peu l'<b>actualité institutionnelle</b> (réformes, décisions) : le cours s'appuie dessus.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Public ou privé ?</div> Classe : <b>a)</b> un litige entre deux voisins · <b>b)</b> un recours d'un citoyen contre une décision de l'administration · <b>c)</b> l'organisation des pouvoirs de l'État dans la Constitution.</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> <b>a)</b> droit <b>privé</b> (rapports entre particuliers). · <b>b)</b> droit <b>public</b> (administratif). · <b>c)</b> droit <b>public</b> (constitutionnel). <span class="small">Le droit public régit l'État et les rapports avec les personnes publiques ; le droit privé régit les rapports entre particuliers.</span></div>
+</div>
+
+<!-- ════ 8. INFO ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">💻</div><div><h2>8 · Informatique — Excel / VBA</h2><div class="lead">Tableur et premières lignes de code</div></div></div>
+  <div class="ue-meta"><span><b>2 ECTS</b></span><span>18h</span><span>Éval : interro en TD + examen</span></div>
+
+  <p>Tu apprends à maîtriser le <b>tableur Excel</b> et à écrire tes premières <b>macros en VBA</b> (le langage de programmation d'Excel). C'est une matière <b>très rentable</b> : avec un peu d'avance, tu gagnes des points faciles.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    Le classeur et le système de <b>coordonnées (lignes/colonnes)</b> · les bases de la <b>programmation</b> : variables, <b>tests booléens</b> (vrai/faux), <b>boucles</b>, fonctions récursives · applications en <b>VBA</b> pour automatiser Excel.
+  </div>
+
+  <div class="tip"><div class="box-t">⭐ Le gros bon plan de l'été</div> <b>Entraîne-toi sur Excel</b> (gratuit, ou Google Sheets) : formules de base (<b>SOMME, MOYENNE, SI, RECHERCHEV</b>), <b>références absolues</b> (le <b>$</b> : <i>$A$1</i>), et fais 2-3 graphiques. Arriver en connaissant déjà Excel = une matière quasi acquise.</div>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Excel</div> Quelle formule écris-tu en C1 pour additionner les cellules A1 et B1 ? Et pour afficher « OK » si A1 est supérieur à 10, sinon « NON » ?</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> Somme : <i>=A1+B1</i> (ou <i>=SOMME(A1:B1)</i>). Condition : <i>=SI(A1&gt;10;"OK";"NON")</i>.</div>
+</div>
+
+<!-- ════ 9. ENJEUX ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🌍</div><div><h2>9 · Enjeux éthiques et politiques</h2><div class="lead">Climat, énergie et grands cycles naturels</div></div></div>
+  <div class="ue-meta"><span><b>2 ECTS</b></span><span>18h</span><span>Éval : contrôle intermédiaire + examen final</span></div>
+
+  <p>Une introduction aux <b>grands cycles naturels</b> et à la façon dont les activités humaines les perturbent. Un cours pour comprendre le <b>changement climatique</b> avec des bases scientifiques solides et de l'esprit critique.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    Climat et <b>effet de serre</b> · la biosphère et le <b>cycle du carbone</b> · réchauffement et perte de <b>biodiversité</b> (état des lieux) · les scénarios du <b>GIEC</b> (quelle confiance leur accorder ?) · histoire des idées et la <b>croissance</b> comme idéologie · <b>énergie et PIB</b> : une transition est-elle possible ?
+  </div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul>
+    <li><b>Informe-toi</b> : documentaires, podcasts, entretiens sur le climat et l'énergie. Sois curieux·se.</li>
+    <li>Travaille ton <b>esprit critique</b> : distinguer un fait, une projection, une opinion.</li>
+  </ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Vrai / Faux</div> <b>a)</b> Le GIEC produit des projections, pas des certitudes absolues. · <b>b)</b> L'effet de serre est un phénomène entièrement artificiel. · <b>c)</b> Il existe un lien fort entre consommation d'énergie et PIB.</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> a) <b>Vrai</b> (scénarios probabilisés). · b) <b>Faux</b> (l'effet de serre est naturel ; les activités humaines l'<i>amplifient</i>). · c) <b>Vrai</b> (historiquement très corrélés).</div>
+</div>
+
+<!-- ════ 10. ANGLAIS ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🇬🇧</div><div><h2>10 · Anglais</h2><div class="lead">Anglais de spécialité &amp; enjeux contemporains</div></div></div>
+  <div class="ue-meta"><span><b>3 ECTS</b></span><span>27h</span><span>Éval : 50% CC / 50% examen</span><span>Niveau attendu : bon B2</span></div>
+
+  <p>Au S1, trois thèmes : <b>Technologies</b>, <b>Globalization &amp; World Trade</b>, <b>The EU</b>. Travail sur des <b>textes authentiques</b> de la presse anglo-saxonne, traduction (thème grammatical français → anglais), prise de parole, labo de langue.</p>
+
+  <div class="tip"><div class="box-t">⭐ Garder le contact cet été</div>
+    <ul style="margin-bottom:0">
+      <li>Séries / films / vidéos en <b>VO sous-titrée</b>, un podcast par semaine.</li>
+      <li>Lis la <b>presse anglophone</b> (BBC, The Economist, The Guardian) — c'est explicitement conseillé.</li>
+      <li>Note 5 mots de vocabulaire éco/business par semaine.</li>
+    </ul>
+  </div>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Thème (français → anglais)</div> Traduis : « L'Union européenne est le premier partenaire commercial de la France. »</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> « <i>The European Union is France's largest trading partner.</i> » (vocab utile : <i>trade, trading partner, market, supply, demand</i>).</div>
+</div>
+
+<!-- ════ 11. CULTURE ÉCO ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">💡</div><div><h2>11 · Culture économique</h2><div class="lead">Croissance, PIB et rôle de l'État</div></div></div>
+  <div class="ue-meta"><span><b>1 ECTS</b></span><span>12h</span></div>
+
+  <p>Un cours de <b>culture économique générale</b> autour de deux grands thèmes structurants : la <b>croissance</b> et le <b>rôle de l'État</b> dans l'économie. Idéal pour avoir les bonnes références.</p>
+
+  <div class="info"><div class="box-t">📖 Au programme</div>
+    <ul style="margin-bottom:0">
+      <li><b>La croissance</b> : définitions, mesure (le PIB et ses 3 approches), PIB par habitant, PIB à prix constants, taux de croissance, <b>limites du PIB</b> (IDH, bien-être).</li>
+      <li><b>Les déterminants</b> de la croissance : productivité, capital physique, <b>capital humain</b>, technologie, institutions.</li>
+      <li><b>Marché et intervention publique</b> : les formes de l'action de l'État, son financement (taxes, cotisations), la vision libérale (l'État régalien).</li>
+    </ul>
+  </div>
+
+  <h3>Comment t'y préparer cet été</h3>
+  <ul><li>Maîtrise le vocabulaire de base : <b>PIB, croissance, productivité, redistribution, biens publics</b>.</li>
+  <li>Lis 2-3 articles éco par semaine pour avoir des exemples chiffrés en tête.</li></ul>
+
+  <div class="exo"><div class="box-t">📝 Exercice — Définitions express</div> En une phrase : <b>a)</b> qu'est-ce que le PIB ? <b>b)</b> que mesure le PIB <i>par habitant</i> ? <b>c)</b> cite une <b>limite</b> du PIB.</div>
+  <div class="cor"><div class="box-t">✅ Corrigé</div> a) La valeur de tous les biens et services produits dans un pays sur un an. · b) La richesse moyenne par personne (PIB ÷ population) — un proxy du niveau de vie. · c) Il ignore la production domestique, les inégalités, l'environnement et le bien-être (d'où l'IDH).</div>
+</div>
+
+<!-- ════ 12. SOFT SKILLS ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🧠</div><div><h2>12 · Soft Skills</h2><div class="lead">Se connaître pour mieux travailler</div></div></div>
+  <div class="ue-meta"><span>Validation (pas de note)</span><span>24 modules en ligne · micro-learning</span></div>
+
+  <p>Une UE <b>validée, pas notée</b>. En L1, elle porte sur la <b>dimension individuelle</b> : mieux te connaître via la <b>personnalité</b> (modèle « Big 5 ») et les <b>biais cognitifs</b>. Le tout en <b>micro-learning</b> : 24 modules courts (5-10 min) à suivre dans l'année, ~1 par semaine.</p>
+
+  <div class="tip"><div class="box-t">⭐ À retenir</div> Rien à préparer cet été : il suffit de <b>ne pas oublier de faire les modules</b> au fil de l'année (et le webinaire + formulaire de fin de semestre). C'est facile à valider… à condition de ne pas tout laisser traîner.</div>
+</div>
+
+<!-- ════ MÉTHODO ════ -->
+<div class="page sec">
+  <div class="sec-head"><div class="sec-num">🧭</div><div><h2>Méthodo &amp; organisation</h2><div class="lead">Les habitudes qui font la différence en L1</div></div></div>
+
+  <h3>✍️ Prendre des notes &amp; ficher</h3>
+  <ul>
+    <li>Note les <b>idées</b>, pas chaque mot. Utilise des abréviations (<i>tjs, càd, ≠, →, def</i>).</li>
+    <li><b>Relis le soir même</b> et surligne l'essentiel — tes fiches sont à moitié faites.</li>
+    <li>Fais des <b>fiches au fil de l'eau</b> (synthèse d'un chapitre : définitions, mécanismes, exemples, auteurs/dates).</li>
+    <li>Révise en <b>répétition espacée</b> (flashcards) : bien plus efficace que relire.</li>
+  </ul>
+
+  <h3>🧠 La dissertation (la base partout)</h3>
+  <ul>
+    <li><b>Introduction</b> : accroche → définition des termes → <b>problématique</b> → annonce du plan.</li>
+    <li><b>Développement</b> : 2 parties, 2 sous-parties, un <b>exemple</b> à chaque fois.</li>
+    <li><b>Conclusion</b> : réponse claire à la problématique + ouverture.</li>
+  </ul>
+  <p class="small">👉 Tu rencontreras aussi le <b>commentaire de texte</b> (en socio) et des <b>QCM</b> (gestion, parfois avec points négatifs).</p>
+
+  <h3>⏱️ S'organiser à Dauphine</h3>
+  <ul>
+    <li><b>Régularité &gt; bachotage.</b> Avec des TD partout et du contrôle continu, le travail constant paie toute l'année.</li>
+    <li><b>Prépare chaque TD</b> (lectures, exercices) : c'est attendu, et c'est noté.</li>
+    <li>Travaille en <b>groupe</b> : s'expliquer un cours = le meilleur moyen de le retenir.</li>
+  </ul>
+
+  <div class="info"><div class="box-t">🚫 Les pièges classiques de L1</div>
+    <ul style="margin-bottom:0">
+      <li>Attendre les partiels pour s'y mettre.</li>
+      <li>Ne pas ficher au fur et à mesure.</li>
+      <li>Négliger les TD (présence, participation, travaux) alors qu'ils font ~50 % de la note.</li>
+      <li>Apprendre par cœur sans comprendre la logique.</li>
+      <li>Répondre au hasard à un QCM à points négatifs.</li>
+    </ul>
+  </div>
+
+  <h3>✅ Check-list de la rentrée</h3>
+  <ul class="check">
+    <li>Activer ton <b>compte étudiant / ENT</b> et ton mail Dauphine</li>
+    <li>Repérer ton <b>emploi du temps</b>, tes groupes de TD et les salles</li>
+    <li>Te procurer le <b>matériel</b> (un cahier/classeur par matière, un ordi pour Excel)</li>
+    <li>Installer et tester <b>Excel</b> (ou Google Sheets)</li>
+    <li>Repérer la <b>BU</b> et comment emprunter</li>
+    <li>Rejoindre les groupes de ta <b>promo</b></li>
+    <li>Choisir ton <b>option annuelle</b> (langue, sport, certificat…)</li>
+    <li>Installer <b>DauphineGuide</b> 😉</li>
+  </ul>
+
+  <div class="foot">
+    Cahier de vacances — Futur·e·s L1 LSO (cursus général) · Paris-Dauphine PSL · Programme officiel 2025-2026<br>
+    Réalisé avec ❤️ par DauphineGuide · Bon courage, tu vas tout déchirer !
+  </div>
+</div>
+
+</body>
+</html>

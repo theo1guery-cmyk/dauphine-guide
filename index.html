@@ -9018,6 +9018,7 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
           <button class="prof-btn" id="profFicheXXLBtn" onclick="generateRevisionSheetXXL()" style="background:linear-gradient(135deg,#b8860b,#f5c542,#b8860b);color:#3a2c00;border:none;font-weight:800;box-shadow:0 4px 14px rgba(184,134,11,.4)">🚀 Mode XXL <span style="background:rgba(58,44,0,.18);padding:1px 7px;border-radius:999px;font-size:11px;margin-left:3px">✦ Premium</span></button>
           <button class="prof-btn ghost" type="button" onclick="resetProfRevisionSheet()">🗑️ Réinitialiser</button>
         </div>
+        <div class="dg-trial-inline" id="trialInline-fiches"></div>
         <div id="profFicheProgress" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;background:var(--g50)">
           <div id="profFicheProgressLabel" style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px">Préparation…</div>
           <div style="height:6px;background:var(--g200);border-radius:999px;overflow:hidden">
@@ -9096,6 +9097,7 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
           <button class="prof-btn" id="schBtn" onclick="generateSchemaSheet()" style="background:linear-gradient(135deg,#5b4327,#8a6a3b);color:#fff;border:none;font-weight:800">📜 Générer le schéma</button>
           <button class="prof-btn ghost" type="button" onclick="resetSchema()">🗑️ Réinitialiser</button>
         </div>
+        <div class="dg-trial-inline" id="trialInline-schemas"></div>
         <div id="schProgress" style="display:none;margin-top:12px;padding:10px 12px;border:1px solid var(--g200);border-radius:12px;background:var(--g50)">
           <div id="schProgressLabel" style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:7px">Préparation…</div>
           <div style="height:6px;background:var(--g200);border-radius:999px;overflow:hidden">
@@ -10272,6 +10274,9 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
 .trial-counter{position:fixed;top:74px;right:24px;z-index:9000;display:none;align-items:center;gap:6px;background:var(--bg-card,#fff);border:1.5px solid var(--blue,#0057ad);color:var(--blue,#0057ad);padding:7px 14px;border-radius:20px;font-size:12.5px;font-weight:600;font-family:'Figtree',sans-serif;box-shadow:0 4px 16px rgba(0,40,90,.16);cursor:pointer;transition:transform .15s,box-shadow .2s;animation:tcIn .3s ease}
 .trial-counter:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,40,90,.24)}
 .trial-counter.exhausted{border-color:#dc2626;color:#dc2626;background:var(--bg-card,#fff)}
+.dg-trial-inline{display:none;align-items:center;gap:6px;background:#eef4ff;border:1px solid #cfe0f5;color:#0a3a78;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;font-family:'Figtree',sans-serif;margin:4px 0 2px}
+.dg-trial-inline.exhausted{background:#fff1f0;border-color:#f5c2bd;color:#b42318}
+[data-theme="dark"] .dg-trial-inline{background:#15233c;border-color:#27406b;color:#bcd4f5}
 @keyframes tcIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @media(max-width:640px){.trial-counter{top:auto;bottom:84px;right:14px;font-size:12px;padding:6px 12px}}
 </style>
@@ -17087,10 +17092,11 @@ function hideTrialCounter(){
   if(el) el.style.display = 'none';
 }
 function setTrialCounterValue(remaining, limit){
+  limit = limit || 5;
+  dgRefreshInlineTrial(remaining, limit);
   var el = document.getElementById('trialCounter');
   if(!el) return;
   if(typeof isPremium === 'function' && isPremium()){ el.style.display='none'; return; }
-  limit = limit || 5;
   if(remaining <= 0){
     el.innerHTML = '🔒 Essais épuisés · <b>Passer Premium</b>';
     el.classList.add('exhausted');
@@ -17100,8 +17106,26 @@ function setTrialCounterValue(remaining, limit){
   }
   el.style.display = 'flex';
 }
+// Badge "5 essais gratuits" affiché DANS la page (à côté du bouton générer)
+function dgRefreshInlineTrial(remaining, limit){
+  var sec = (typeof _dgAISection !== 'undefined') ? _dgAISection : '';
+  var el = document.getElementById('trialInline-' + sec);
+  if(!el) return;
+  if(typeof isPremium === 'function' && isPremium()){ el.style.display = 'none'; return; }
+  limit = limit || 5;
+  if(remaining <= 0){
+    el.innerHTML = '🔒 Essais gratuits épuisés — passe en Premium pour un accès illimité';
+    el.className = 'dg-trial-inline exhausted';
+  } else {
+    el.innerHTML = '✨ <b>' + remaining + '/' + limit + '</b> essais gratuits sur cette fonctionnalité';
+    el.className = 'dg-trial-inline';
+  }
+  el.style.display = 'inline-flex';
+}
 // Interroge le Worker pour connaître le solde de la section (sans consommer)
 async function updateTrialCounter(section){
+  // Masque tous les badges inline par défaut (on réaffiche celui de la section active)
+  document.querySelectorAll('.dg-trial-inline').forEach(function(b){ b.style.display='none'; });
   var el = document.getElementById('trialCounter');
   if(!el) return;
   if(typeof isPremium === 'function' && isPremium()){ hideTrialCounter(); return; }
