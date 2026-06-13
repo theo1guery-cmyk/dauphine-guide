@@ -9141,40 +9141,57 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
     <div class="section-header-date" id="sh-date-page-mescours"></div>
   </div>
   <style>
-    .mesc-hero{background:linear-gradient(135deg,#08284d,#0057ad);border-radius:18px;padding:22px 24px;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(0,87,173,.25)}
-    .mesc-hero h2{font-family:var(--font-serif,Georgia,serif);font-size:22px;font-weight:600;margin:0 0 4px}
-    .mesc-hero p{font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.5}
+    .mesc-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#08284d 0%,#0a4f9e 58%,#1f74d6 100%);border-radius:22px;padding:28px 30px;color:#fff;margin-bottom:18px;box-shadow:0 14px 42px rgba(0,55,125,.32)}
+    .mesc-hero::after{content:'📚';position:absolute;right:8px;bottom:-30px;font-size:150px;opacity:.13;transform:rotate(-12deg);pointer-events:none}
+    .mesc-hero h2{font-family:var(--font-serif,Georgia,serif);font-size:26px;font-weight:600;margin:0 0 7px;position:relative}
+    .mesc-hero p{font-size:13.5px;color:rgba(255,255,255,.9);margin:0;line-height:1.55;max-width:560px;position:relative}
+    .mesc-stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+    .mesc-stat{flex:1;min-width:130px;background:var(--bg-card,#fff);border:1px solid var(--g200);border-radius:15px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+    .mesc-stat .ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}
+    .mesc-stat .n{font-size:23px;font-weight:800;color:var(--text-main);line-height:1}
+    .mesc-stat .l{font-size:11px;color:var(--g500);font-weight:600;margin-top:3px}
     .mesc-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-    .mesc-search{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1.5px solid var(--g200);border-radius:11px;padding:8px 12px;background:var(--bg-card,#fff)}
+    .mesc-search{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1.5px solid var(--g200);border-radius:12px;padding:9px 13px;background:var(--bg-card,#fff)}
     .mesc-search input{border:none;outline:none;flex:1;font-size:13px;font-family:'Figtree',sans-serif;background:transparent;color:var(--text-main)}
-    .mesc-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-    .mesc-chip{padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif}
-    .mesc-chip.on{background:var(--blue,#0057ad);border-color:var(--blue,#0057ad);color:#fff}
-    .mesc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-    .mesc-card{border:1px solid var(--g200);border-radius:13px;padding:14px;background:var(--bg-card,#fff);display:flex;flex-direction:column;gap:8px}
-    .mesc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-    .mesc-card-title{font-weight:800;font-size:14px;color:var(--text-main);line-height:1.3}
-    .mesc-card-tags{display:flex;gap:6px;flex-wrap:wrap;font-size:11px}
-    .mesc-tag{padding:2px 8px;border-radius:20px;background:var(--g100,#eef2f7);color:var(--g600);font-weight:700}
-    .mesc-tag.note{background:#fef3c7;color:#92400e}
-    .mesc-tag.cours{background:#dbeafe;color:#1e40af}
-    .mesc-card-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
-    .mesc-mini{font-size:11px;font-weight:700;padding:5px 9px;border-radius:8px;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif}
+    .mesc-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+    .mesc-chip{padding:6px 13px;border-radius:999px;font-size:12px;font-weight:700;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
+    .mesc-chip:hover{border-color:var(--blue,#0057ad);color:var(--blue,#0057ad)}
+    .mesc-chip.on{background:linear-gradient(135deg,#08284d,#0057ad);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(0,60,130,.25)}
+    .mesc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:14px}
+    .mesc-card{position:relative;border:1px solid var(--g200);border-radius:16px;padding:16px 16px 14px;background:var(--bg-card,#fff);display:flex;flex-direction:column;gap:9px;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+    .mesc-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--acc,#0057ad)}
+    .mesc-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(10,40,80,.15);border-color:var(--acc,#0057ad)}
+    .mesc-card-top{display:flex;align-items:center;gap:11px}
+    .mesc-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none;background:color-mix(in srgb,var(--acc) 15%,#fff);border:1px solid color-mix(in srgb,var(--acc) 30%,#fff)}
+    [data-theme="dark"] .mesc-ico{background:color-mix(in srgb,var(--acc) 26%,#1a2436)}
+    .mesc-card-title{font-weight:800;font-size:14.5px;color:var(--text-main);line-height:1.25}
+    .mesc-card-tags{display:flex;gap:6px;flex-wrap:wrap;font-size:10.5px;align-items:center}
+    .mesc-tag{padding:2px 9px;border-radius:20px;background:var(--g100,#eef2f7);color:var(--g600);font-weight:700}
+    .mesc-tag.matc{background:color-mix(in srgb,var(--acc) 14%,#fff);color:var(--acc)}
+    [data-theme="dark"] .mesc-tag.matc{background:color-mix(in srgb,var(--acc) 28%,#1a2436);color:#fff}
+    .mesc-preview{font-size:12px;color:var(--g500);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:18px}
+    .mesc-card-actions{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:3px;padding-top:10px;border-top:1px solid var(--g100)}
+    .mesc-mini{font-size:11px;font-weight:700;padding:5px 9px;border-radius:8px;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
     .mesc-mini:hover{border-color:var(--blue,#0057ad);color:var(--blue,#0057ad)}
+    .mesc-mini.gen:hover{border-color:var(--acc);color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,#fff)}
+    .mesc-mini.del{margin-left:auto}
     .mesc-mini.del:hover{border-color:#dc2626;color:#dc2626}
-    .mesc-empty{grid-column:1/-1;text-align:center;color:var(--g400);padding:30px;font-size:13px}
-    .mesc-form{border:1px solid var(--g200);border-radius:14px;padding:16px;margin-bottom:18px;background:var(--g50);display:none}
-    .mesc-form.open{display:block}
-    .mesc-form input,.mesc-form textarea{width:100%;border:1.5px solid var(--g200);border-radius:10px;padding:9px 12px;font-size:13px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);margin-bottom:10px}
-    .mesc-form textarea{min-height:120px;resize:vertical;font-family:Georgia,serif}
+    .mesc-empty{grid-column:1/-1;text-align:center;color:var(--g500);padding:42px 22px;font-size:13px;border:2px dashed var(--g200);border-radius:18px;background:var(--g50)}
+    .mesc-form{border:1px solid var(--g200);border-radius:16px;padding:18px;margin-bottom:18px;background:var(--g50);display:none}
+    .mesc-form.open{display:block;animation:tcIn .25s ease}
+    .mesc-form input,.mesc-form textarea{width:100%;border:1.5px solid var(--g200);border-radius:11px;padding:10px 13px;font-size:13px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);margin-bottom:10px}
+    .mesc-form textarea{min-height:130px;resize:vertical;font-family:Georgia,serif;line-height:1.5}
   </style>
   <div class="wrap" style="padding-top:30px;padding-bottom:64px">
     <div class="mesc-hero">
-      <div style="font-size:40px">📚</div>
-      <div style="flex:1;min-width:200px">
-        <h2>Ta bibliothèque de cours</h2>
-        <p>Colle tes cours pour les <b>ranger par matière</b>, les retrouver, et générer <b>fiches, flashcards ou schémas</b> en 1 clic. Tes <b>prises de notes</b> apparaissent ici automatiquement.</p>
-      </div>
+      <h2>Ta bibliothèque de cours 📖</h2>
+      <p>Range tous tes cours par matière, retrouve-les en un clin d'œil, et transforme-les en <b>fiches, flashcards ou schémas</b> d'un seul clic. Tes <b>prises de notes</b> arrivent ici automatiquement.</p>
+    </div>
+
+    <div class="mesc-stats">
+      <div class="mesc-stat"><div class="ic" style="background:#dbeafe">📄</div><div><div class="n" id="mescStatCours">0</div><div class="l">cours déposés</div></div></div>
+      <div class="mesc-stat"><div class="ic" style="background:#fef3c7">📓</div><div><div class="n" id="mescStatNotes">0</div><div class="l">prises de notes</div></div></div>
+      <div class="mesc-stat"><div class="ic" style="background:#dcfce7">🏷️</div><div><div class="n" id="mescStatMat">0</div><div class="l">matières</div></div></div>
     </div>
 
     <div class="mesc-toolbar">
@@ -24364,21 +24381,31 @@ function mescRender(){
     if(q){ return (x.title+' '+x.content+' '+x.mat).toLowerCase().indexOf(q)!==-1; }
     return true;
   });
-  if(!items.length){ grid.innerHTML='<div class="mesc-empty">Aucun cours ici pour l\'instant. Clique sur « ➕ Ajouter un cours », ou écris une note dans <b>Prise de notes</b> — elle apparaîtra automatiquement.</div>'; return; }
+  // Stats
+  var sc=document.getElementById('mescStatCours'), sn=document.getElementById('mescStatNotes'), sm=document.getElementById('mescStatMat');
+  if(sc) sc.textContent=lib.filter(function(z){return z.source==='cours';}).length;
+  if(sn) sn.textContent=lib.filter(function(z){return z.source==='note';}).length;
+  if(sm) sm.textContent=present.filter(function(z){return z!=='Sans matière';}).length;
+  if(!items.length){ grid.innerHTML='<div class="mesc-empty"><div style="font-size:34px;margin-bottom:8px">🗂️</div>Aucun cours ici pour l\'instant.<br>Clique sur <b>« ➕ Ajouter un cours »</b>, ou écris une note dans <b>Prise de notes</b> — elle apparaîtra automatiquement.</div>'; return; }
   grid.innerHTML=items.map(function(x){
     var dt=x.updated?new Date(x.updated).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'';
     var words=(x.content||'').trim()? (x.content||'').trim().split(/\s+/).length : 0;
+    var acc='hsl('+mescHue(x.mat||x.title)+',62%,46%)';
+    var preview=(x.content||'').replace(/\s+/g,' ').trim().slice(0,170);
     var del = x.source==='cours' ? '<button class="mesc-mini del" onclick="mescDelete(\''+x.id+'\')" title="Supprimer">🗑️</button>' : '';
     var openBtn = x.source==='note' ? '<button class="mesc-mini" onclick="mescOpenNote('+x.rawId+')">✏️ Ouvrir</button>' : '<button class="mesc-mini" onclick="mescPreview(\''+x.id+'\')">👁️ Voir</button>';
-    return '<div class="mesc-card"><div class="mesc-card-top"><div class="mesc-card-title">'+E(x.title)+'</div></div>'
-      +'<div class="mesc-card-tags"><span class="mesc-tag '+x.source+'">'+(x.source==='note'?'📓 Note':'📄 Cours')+'</span>'+(x.mat?'<span class="mesc-tag">'+E(x.mat)+'</span>':'')+'<span class="mesc-tag" style="background:transparent;color:var(--g400)">'+words+' mots · '+dt+'</span></div>'
+    return '<div class="mesc-card" style="--acc:'+acc+'">'
+      +'<div class="mesc-card-top"><div class="mesc-ico">'+(x.source==='note'?'📓':'📄')+'</div><div class="mesc-card-title">'+E(x.title)+'</div></div>'
+      +'<div class="mesc-card-tags">'+(x.mat?'<span class="mesc-tag matc">'+E(x.mat)+'</span>':'<span class="mesc-tag">Sans matière</span>')+'<span class="mesc-tag" style="background:transparent;color:var(--g400)">'+(x.source==='note'?'Note':'Cours')+' · '+words+' mots · '+dt+'</span></div>'
+      +(preview?'<div class="mesc-preview">'+E(preview)+'</div>':'<div class="mesc-preview" style="opacity:.5;font-style:italic">(vide)</div>')
       +'<div class="mesc-card-actions">'+openBtn
-      +'<button class="mesc-mini" onclick="mescUse(\''+x.id+'\',\'fiche\')">📄 Fiche</button>'
-      +'<button class="mesc-mini" onclick="mescUse(\''+x.id+'\',\'flash\')">🃏 Flashcards</button>'
-      +'<button class="mesc-mini" onclick="mescUse(\''+x.id+'\',\'schema\')">📜 Schéma</button>'
+      +'<button class="mesc-mini gen" onclick="mescUse(\''+x.id+'\',\'fiche\')">📄 Fiche</button>'
+      +'<button class="mesc-mini gen" onclick="mescUse(\''+x.id+'\',\'flash\')">🃏 Cartes</button>'
+      +'<button class="mesc-mini gen" onclick="mescUse(\''+x.id+'\',\'schema\')">📜 Schéma</button>'
       +del+'</div></div>';
   }).join('');
 }
+function mescHue(s){ s=String(s||''); var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))%360; } return h; }
 function mescDelete(id){
   if(!confirm('Supprimer ce cours enregistré ?')) return;
   var raw=Number(id.slice(1));
