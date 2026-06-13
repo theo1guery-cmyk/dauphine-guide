@@ -7133,6 +7133,7 @@ aside.sidebar {
             <button class="notes-del-btn" onclick="deleteCurrentNote()">🗑</button>
             <span class="notes-save-badge" id="noteSaveBadge">✓ Sauvegarde</span>
           </div>
+          <div style="margin:6px 0 2px"><span class="dg-trial-inline" id="trialInline-notes-resume"></span></div>
           <!-- Gen overlay -->
           <div class="notes-gen-overlay" id="notesGenOverlay">
             <div class="notes-gen-spinner"></div>
@@ -7823,7 +7824,7 @@ aside.sidebar {
       <div id="cpLoading" style="display:none;text-align:center;padding:12px;font-size:13px;color:var(--g600)">⏳ Generation en cours…</div>
       <div class="rev-modal-actions">
         <button class="rev-modal-cancel" onclick="closeCpModal()">Annuler</button>
-        <button class="rev-modal-save" id="cpGenBtn" onclick="generateCpGroq()">⚖️ Générer avec Groq</button>
+        <button class="rev-modal-save" id="cpGenBtn" onclick="generateCpGroq()">⚖️ Générer avec l'IA</button>
       </div>
 
       <details style="margin-top:12px">
@@ -10587,11 +10588,12 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
         Clique sur <strong>Fluidifier</strong> — la note sera corrigée et structurée directement.
       </p>
       <p style="font-size:11px;color:var(--g400);margin-bottom:12px;background:var(--g50);padding:8px 12px;border-radius:8px;line-height:1.6">
-        💡 Groq va <strong>uniquement corriger les fautes</strong> et ajouter des titres/sous-titres — sans changer un seul mot du contenu.
+        💡 L'IA va <strong>uniquement corriger les fautes</strong> et ajouter des titres/sous-titres — sans changer un seul mot du contenu.
       </p>
+      <div style="text-align:center;margin-bottom:8px"><span class="dg-trial-inline" id="trialInline-notes-fluide"></span></div>
       <div class="rev-modal-actions">
         <button class="rev-modal-cancel" onclick="fluideClose()">Annuler</button>
-        <button class="rev-modal-save" id="fluideCopyBtn" onclick="fluideGroq()">✍️ Fluidifier avec Groq</button>
+        <button class="rev-modal-save" id="fluideCopyBtn" onclick="fluideGroq()">✍️ Fluidifier avec l'IA</button>
       </div>
       <div id="fluideLoading" style="display:none;text-align:center;padding:12px;font-size:13px;color:var(--g600)">⏳ Fluidification en cours…</div>
 
@@ -10673,7 +10675,7 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
     </div>
     <div id="planningIALoading" style="display:none;text-align:center;padding:24px">
       <div class="notes-gen-spinner"></div>
-      <div style="font-size:13px;color:var(--g600);margin-top:8px">Groq analyse tes examens et tes notes…</div>
+      <div style="font-size:13px;color:var(--g600);margin-top:8px">L'IA analyse tes examens et tes notes…</div>
     </div>
     <div id="planningIAResult" class="ia-result-content" style="display:none;background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:14px;max-height:460px;overflow-y:auto;margin-bottom:12px"></div>
     <div class="rev-modal-actions" id="planningIAResultActions" style="display:none">
@@ -10695,9 +10697,10 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
         Clique sur <strong>Générer</strong> — les flashcards apparaîssent directement depuis ta note.
       </p>
       <div id="notesGenLoading" style="display:none;text-align:center;padding:12px;font-size:13px;color:var(--g600)">⏳ Generation en cours…</div>
+      <div style="text-align:center;margin-bottom:8px"><span class="dg-trial-inline" id="trialInline-notes-gen"></span></div>
       <div class="rev-modal-actions">
         <button class="rev-modal-cancel" onclick="notesGenClose()">Annuler</button>
-        <button class="rev-modal-save" id="notesGenCopyBtn" onclick="notesGenGroq()">✨ Générer avec Groq</button>
+        <button class="rev-modal-save" id="notesGenCopyBtn" onclick="notesGenGroq()">✨ Générer avec l'IA</button>
       </div>
 
       <details style="margin-top:12px">
@@ -11937,7 +11940,7 @@ function dgDeviceId(){
   var WORKER_HOST = 'shiny-lake-f66d.theo1-guery.workers.dev';
   var _origFetch = window.fetch.bind(window);
   window.fetch = function(url, opts){
-    var isWorker = false, isAction = false;
+    var isWorker = false, isAction = false, trialSection = 'default';
     try{
       var u = (typeof url === 'string') ? url : (url && url.url) || '';
       isWorker = u.indexOf(WORKER_HOST) !== -1;
@@ -11947,11 +11950,14 @@ function dgDeviceId(){
         if(!isAction){
           if(!opts.headers) opts.headers = {};
           var setH = function(k,v){ if(opts.headers instanceof Headers) opts.headers.set(k,v); else opts.headers[k]=v; };
+          var hasH = function(k){ try{ if(opts.headers instanceof Headers) return opts.headers.has(k); return Object.keys(opts.headers).some(function(x){return x.toLowerCase()===k.toLowerCase();}); }catch(e){ return false; } };
           var code = '';
           try{ code = localStorage.getItem('dg_premium_code') || ''; }catch(e){}
           setH('X-Premium-Code', code);
           setH('X-Device-Id', dgDeviceId());
-          setH('X-Trial-Section', _dgAISection || 'default');
+          // Respecte une section d'essai explicite (fluidifier/résumé… comptés séparément)
+          if(!hasH('X-Trial-Section')) setH('X-Trial-Section', _dgAISection || 'default');
+          try{ trialSection = (opts.headers instanceof Headers) ? (opts.headers.get('X-Trial-Section')||trialSection) : (opts.headers['X-Trial-Section']||trialSection); }catch(e){}
         }
       }
     }catch(e){}
@@ -11963,6 +11969,7 @@ function dgDeviceId(){
           if(res.status === 403){
             // Essais épuisés (ou premium requis) → compteur + paywall
             if(typeof setTrialCounterValue === 'function' && !prem) setTrialCounterValue(0, 5);
+            if(typeof dgRenderInlineTrialEl === 'function' && !prem) dgRenderInlineTrialEl(document.getElementById('trialInline-'+trialSection), 0, 5);
             if(typeof openPremiumModal === 'function') openPremiumModal(_dgAISection || null, true);
           } else if(res.ok && !prem){
             var rem = res.headers.get('X-Trial-Remaining');
@@ -11970,7 +11977,8 @@ function dgDeviceId(){
               var n = parseInt(rem);
               if(!isNaN(n)){
                 if(typeof setTrialCounterValue === 'function') setTrialCounterValue(n, 5);
-                if(typeof toast === 'function') toast('✨ Essai gratuit : ' + n + ' restant' + (n>1?'s':'') + ' sur cette section', '✨');
+                if(typeof dgRenderInlineTrialEl === 'function') dgRenderInlineTrialEl(document.getElementById('trialInline-'+trialSection), n, 5);
+                if(typeof toast === 'function') toast('✨ Essai gratuit : ' + n + ' restant' + (n>1?'s':'') + ' sur cette fonctionnalité', '✨');
               }
             }
           }
@@ -15747,6 +15755,7 @@ async function notesGenGroq() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Trial-Section': 'notes-gen',
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -15830,7 +15839,7 @@ async function notesGenGroq() {
     }
   } finally {
     btn.disabled = false;
-    btn.textContent = '✨ Générer avec Groq';
+    btn.textContent = '✨ Générer avec l'IA';
     if (load) load.style.display = 'none';
   }
 }
@@ -16814,7 +16823,7 @@ function analyzeDocumentsWithGroq() {
 
   formDiv.style.display = 'none';
   resultsDiv.style.display = 'block';
-  outputDiv.innerHTML = '<div style="text-align:center;padding:40px;color:var(--blue)"><div style="font-size:24px;margin-bottom:12px">⏳</div><strong>Analyse en cours...</strong><div style="font-size:12px;color:var(--text-sub);margin-top:8px">Patiente un moment pendant que Groq analyse ton profil...</div></div>';
+  outputDiv.innerHTML = '<div style="text-align:center;padding:40px;color:var(--blue)"><div style="font-size:24px;margin-bottom:12px">⏳</div><strong>Analyse en cours...</strong><div style="font-size:12px;color:var(--text-sub);margin-top:8px">Patiente un moment pendant que l'IA analyse ton profil...</div></div>';
 
   var prompt = `Tu es un expert en recrutement et carrière pour les étudiants Dauphine en droit et économie.
 
@@ -17177,22 +17186,35 @@ function setTrialCounterValue(remaining, limit){
   }
   el.style.display = 'flex';
 }
-// Badge "5 essais gratuits" affiché DANS la page (à côté du bouton générer)
-function dgRefreshInlineTrial(remaining, limit){
-  var sec = (typeof _dgAISection !== 'undefined') ? _dgAISection : '';
-  var el = document.getElementById('trialInline-' + sec);
+// Rend un badge "essais gratuits" donné
+function dgRenderInlineTrialEl(el, remaining, limit){
   if(!el) return;
-  if(typeof isPremium === 'function' && isPremium()){ el.style.display = 'none'; return; }
+  if(typeof isPremium === 'function' && isPremium()){ el.style.display='none'; return; }
   limit = limit || 5;
   if(remaining <= 0){
     el.innerHTML = '🔒 Essais gratuits épuisés — passe en Premium pour un accès illimité';
     el.className = 'dg-trial-inline exhausted';
   } else {
-    el.innerHTML = '✨ <b>' + remaining + '/' + limit + '</b> essais gratuits sur cette fonctionnalité';
+    el.innerHTML = '✨ <b>' + remaining + '/' + limit + '</b> essais gratuits';
     el.className = 'dg-trial-inline';
   }
   el.style.display = 'inline-flex';
 }
+// Badge piloté par la section IA courante (fiches, schémas…)
+function dgRefreshInlineTrial(remaining, limit){
+  var sec = (typeof _dgAISection !== 'undefined') ? _dgAISection : '';
+  dgRenderInlineTrialEl(document.getElementById('trialInline-' + sec), remaining, limit);
+}
+// Va chercher le solde d'une section précise et met à jour son badge (pour la prise de notes)
+function dgUpdateInlineTrialFor(section){
+  var el = document.getElementById('trialInline-' + section); if(!el) return;
+  if(typeof isPremium === 'function' && isPremium()){ el.style.display='none'; return; }
+  fetch(GROQ_PROXY, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'trial_status', deviceId: dgDeviceId(), section: section }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if(d && typeof d.remaining === 'number') dgRenderInlineTrialEl(el, d.remaining, d.limit); else el.style.display='none'; })
+    .catch(function(){ el.style.display='none'; });
+}
+function dgRefreshNotesTrials(){ ['notes-fluide','notes-resume','notes-gen'].forEach(dgUpdateInlineTrialFor); }
 // Interroge le Worker pour connaître le solde de la section (sans consommer)
 async function updateTrialCounter(section){
   // Masque tous les badges inline par défaut (on réaffiche celui de la section active)
@@ -17221,6 +17243,7 @@ function showPage(pageId, btn) {
   _dgAISection = pageId;
   if(typeof updateTrialCounter === 'function') updateTrialCounter(pageId);
   if(pageId==='mescours' && typeof mescRender==='function') setTimeout(mescRender, 40);
+  if(pageId==='notes' && typeof dgRefreshNotesTrials==='function') setTimeout(dgRefreshNotesTrials, 60);
   document.querySelectorAll('.page-section').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
@@ -18013,6 +18036,7 @@ async function fluideGroq() {
       headers: {
         'Content-Type': 'application/json',
         'X-AI-Purpose': 'notes-fluide',
+        'X-Trial-Section': 'notes-fluide',
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -18043,7 +18067,7 @@ async function fluideGroq() {
     renderNotePreview();
 
     fluideClose();
-    toast('Note fluidifiée avec Groq !', '✅');
+    toast('Note fluidifiée ! ✨', '✅');
 
   } catch(e) {
     console.error('Groq fluide error:', e);
@@ -18056,7 +18080,7 @@ async function fluideGroq() {
     }
   } finally {
     btn.disabled = false;
-    btn.textContent = '✍️ Fluidifier avec Groq';
+    btn.textContent = '✍️ Fluidifier avec l'IA';
     if (load) load.style.display = 'none';
   }
 }
@@ -18093,7 +18117,7 @@ async function resumeNote() {
   try {
     var res = await fetch(GROQ_PROXY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-AI-Purpose': 'notes-resume' },
+      headers: { 'Content-Type': 'application/json', 'X-AI-Purpose': 'notes-resume', 'X-Trial-Section': 'notes-resume' },
       body: JSON.stringify({ model: GROQ_MODEL, max_tokens: 1500, temperature: 0.4,
         messages: [{ role: 'user', content: prompt }] })
     });
@@ -19212,7 +19236,7 @@ async function generateCpGroq() {
     }
   } finally {
     btn.disabled = false;
-    btn.textContent = '⚖️ Generer avec Groq';
+    btn.textContent = '⚖️ Générer avec l'IA';
     if (load) load.style.display = 'none';
   }
 }
