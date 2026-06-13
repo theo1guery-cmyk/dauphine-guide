@@ -5781,6 +5781,7 @@ aside.sidebar {
     <div class="sidebar-section-label">Organisation</div>
     <button class="sidebar-item" data-page="planning" onclick="showPage(&#39;planning&#39;,this)"><span class="s-ic">📅</span> Planning<span class="sb-badge" id="sidebarUrgentBadge">0</span></button>
   <button class="sidebar-item" data-page="notes" onclick="showPage(&#39;notes&#39;,this)"><span class="s-ic">📝</span> Prise de notes</button>
+    <button class="sidebar-item" data-page="mescours" onclick="showPage('mescours',this)"><span class="s-ic">📚</span> Mes cours<span class="sb-badge" style="background:#f59e0b;color:#fff;font-size:9px;padding:1px 6px;border-radius:4px;margin-left:4px">NEW</span></button>
     <div class="sidebar-section-label">Actualités</div>
     <button class="sidebar-item" data-page="culture" onclick="showPage(&#39;culture&#39;,this)"><span class="s-ic">🌍</span> Culture G</button>
     <button class="sidebar-item" data-page="news" onclick="showPage(&#39;news&#39;,this)"><span class="s-ic">📰</span> News</button>
@@ -9123,6 +9124,76 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
       <div class="saved-block-title">💾 Mes schémas enregistrés</div>
       <div class="saved-list" id="savedSchemasList"></div>
     </div>
+  </div>
+</div>
+
+<!-- MES COURS -->
+<div class="page-section" id="page-mescours">
+  <div class="section-header">
+    <div class="section-header-left">
+      <div class="section-header-ic">📚</div>
+      <div>
+        <div class="section-header-title">Mes cours</div>
+        <div class="section-header-sub">Dépose, range et retrouve tous tes cours &amp; notes</div>
+      </div>
+    </div>
+    <div class="section-header-date" id="sh-date-page-mescours"></div>
+  </div>
+  <style>
+    .mesc-hero{background:linear-gradient(135deg,#08284d,#0057ad);border-radius:18px;padding:22px 24px;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 10px 30px rgba(0,87,173,.25)}
+    .mesc-hero h2{font-family:var(--font-serif,Georgia,serif);font-size:22px;font-weight:600;margin:0 0 4px}
+    .mesc-hero p{font-size:13px;color:rgba(255,255,255,.85);margin:0;line-height:1.5}
+    .mesc-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+    .mesc-search{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1.5px solid var(--g200);border-radius:11px;padding:8px 12px;background:var(--bg-card,#fff)}
+    .mesc-search input{border:none;outline:none;flex:1;font-size:13px;font-family:'Figtree',sans-serif;background:transparent;color:var(--text-main)}
+    .mesc-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+    .mesc-chip{padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif}
+    .mesc-chip.on{background:var(--blue,#0057ad);border-color:var(--blue,#0057ad);color:#fff}
+    .mesc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .mesc-card{border:1px solid var(--g200);border-radius:13px;padding:14px;background:var(--bg-card,#fff);display:flex;flex-direction:column;gap:8px}
+    .mesc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .mesc-card-title{font-weight:800;font-size:14px;color:var(--text-main);line-height:1.3}
+    .mesc-card-tags{display:flex;gap:6px;flex-wrap:wrap;font-size:11px}
+    .mesc-tag{padding:2px 8px;border-radius:20px;background:var(--g100,#eef2f7);color:var(--g600);font-weight:700}
+    .mesc-tag.note{background:#fef3c7;color:#92400e}
+    .mesc-tag.cours{background:#dbeafe;color:#1e40af}
+    .mesc-card-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+    .mesc-mini{font-size:11px;font-weight:700;padding:5px 9px;border-radius:8px;border:1.5px solid var(--g200);background:var(--bg-card,#fff);color:var(--g600);cursor:pointer;font-family:'Figtree',sans-serif}
+    .mesc-mini:hover{border-color:var(--blue,#0057ad);color:var(--blue,#0057ad)}
+    .mesc-mini.del:hover{border-color:#dc2626;color:#dc2626}
+    .mesc-empty{grid-column:1/-1;text-align:center;color:var(--g400);padding:30px;font-size:13px}
+    .mesc-form{border:1px solid var(--g200);border-radius:14px;padding:16px;margin-bottom:18px;background:var(--g50);display:none}
+    .mesc-form.open{display:block}
+    .mesc-form input,.mesc-form textarea{width:100%;border:1.5px solid var(--g200);border-radius:10px;padding:9px 12px;font-size:13px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);margin-bottom:10px}
+    .mesc-form textarea{min-height:120px;resize:vertical;font-family:Georgia,serif}
+  </style>
+  <div class="wrap" style="padding-top:30px;padding-bottom:64px">
+    <div class="mesc-hero">
+      <div style="font-size:40px">📚</div>
+      <div style="flex:1;min-width:200px">
+        <h2>Ta bibliothèque de cours</h2>
+        <p>Colle tes cours pour les <b>ranger par matière</b>, les retrouver, et générer <b>fiches, flashcards ou schémas</b> en 1 clic. Tes <b>prises de notes</b> apparaissent ici automatiquement.</p>
+      </div>
+    </div>
+
+    <div class="mesc-toolbar">
+      <button class="prof-btn" onclick="mescToggleForm()" style="background:linear-gradient(135deg,#08284d,#0057ad);color:#fff;border:none">➕ Ajouter un cours</button>
+      <div class="mesc-search"><span>🔍</span><input id="mescSearch" placeholder="Rechercher un cours, une note…" oninput="mescRender()"></div>
+    </div>
+
+    <div class="mesc-form" id="mescForm">
+      <input id="mescTitle" placeholder="Titre du cours (ex : Chapitre 2 — Le marché)">
+      <input id="mescMat" placeholder="Matière (ex : Microéconomie)" list="mescMatList">
+      <datalist id="mescMatList"></datalist>
+      <textarea id="mescContent" placeholder="Colle ici le contenu de ton cours…"></textarea>
+      <div style="display:flex;gap:8px">
+        <button class="prof-btn" onclick="mescSaveCourse()">💾 Enregistrer le cours</button>
+        <button class="prof-btn ghost" onclick="mescToggleForm()">Annuler</button>
+      </div>
+    </div>
+
+    <div class="mesc-chips" id="mescChips"></div>
+    <div class="mesc-grid" id="mescGrid"></div>
   </div>
 </div>
 
@@ -17149,6 +17220,7 @@ function showPage(pageId, btn) {
   // Section IA courante (pour le compteur d'essais gratuits)
   _dgAISection = pageId;
   if(typeof updateTrialCounter === 'function') updateTrialCounter(pageId);
+  if(pageId==='mescours' && typeof mescRender==='function') setTimeout(mescRender, 40);
   document.querySelectorAll('.page-section').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById('page-' + pageId);
   if (target) target.classList.add('active');
@@ -24217,6 +24289,111 @@ function resetSchema() {
   if (r) r.innerHTML = '<div class="prof-empty"><div><div style="font-size:38px">📜</div><strong>Ton schéma apparaîtra ici</strong><span>Choisis un format et lance la génération.</span></div></div>';
   window._lastSchemaSVG = null;
 }
+
+/* ══════════ MES COURS — bibliothèque (cours déposés + prises de notes) ══════════ */
+function mescGetCourses(){ try{ return JSON.parse(localStorage.getItem('dg_mescours')||'[]'); }catch(e){ return []; } }
+function mescSetCourses(a){ try{ localStorage.setItem('dg_mescours', JSON.stringify(a)); }catch(e){} }
+var mescFilter = 'all';
+function mescToggleForm(){ var f=document.getElementById('mescForm'); if(f) f.classList.toggle('open'); }
+function mescSaveCourse(){
+  var t=(document.getElementById('mescTitle').value||'').trim();
+  var m=(document.getElementById('mescMat').value||'').trim();
+  var c=(document.getElementById('mescContent').value||'').trim();
+  if(!t){ toast('Donne un titre à ton cours','⚠️'); return; }
+  if(!c){ toast('Colle le contenu du cours','⚠️'); return; }
+  var arr=mescGetCourses();
+  arr.unshift({ id:Date.now(), title:t, mat:m, content:c, updated:Date.now() });
+  mescSetCourses(arr);
+  document.getElementById('mescTitle').value=''; document.getElementById('mescMat').value=''; document.getElementById('mescContent').value='';
+  var f=document.getElementById('mescForm'); if(f) f.classList.remove('open');
+  mescRender(); toast('Cours enregistré 📚','✅');
+}
+function mescNotes(){
+  var src=[];
+  try{ if(typeof notes!=='undefined' && Array.isArray(notes)) src=notes; else src=JSON.parse(localStorage.getItem('dauphine_notes')||'[]'); }catch(e){ src=[]; }
+  return src.map(function(n){ return { id:'n'+n.id, rawId:n.id, title:n.title||'Note sans titre', mat:n.mat||'', content:n.content||'', updated:n.updated||0, source:'note' }; });
+}
+function mescLibrary(){
+  var cours=mescGetCourses().map(function(c){ return { id:'c'+c.id, rawId:c.id, title:c.title, mat:c.mat||'', content:c.content||'', updated:c.updated||0, source:'cours' }; });
+  return cours.concat(mescNotes()).sort(function(a,b){ return (b.updated||0)-(a.updated||0); });
+}
+function mescItem(id){ return mescLibrary().filter(function(x){ return x.id===id; })[0]; }
+function mescSetFilter(m){ mescFilter=m; mescRender(); }
+function mescRender(){
+  var grid=document.getElementById('mescGrid'); if(!grid) return;
+  var E=(typeof profEscapeHtml==='function')?profEscapeHtml:function(s){return String(s||'');};
+  var lib=mescLibrary();
+  var dl=document.getElementById('mescMatList');
+  var mats=[];
+  lib.forEach(function(x){ if(x.mat && mats.indexOf(x.mat)===-1) mats.push(x.mat); });
+  if(typeof MATIERES!=='undefined') MATIERES.forEach(function(mm){ if(mm.nom && mats.indexOf(mm.nom)===-1) mats.push(mm.nom); });
+  if(dl) dl.innerHTML=mats.map(function(m){ return '<option value="'+E(m)+'">'; }).join('');
+  var present=[]; lib.forEach(function(x){ var m=x.mat||'Sans matière'; if(present.indexOf(m)===-1) present.push(m); });
+  var chips=document.getElementById('mescChips');
+  if(chips){
+    chips.innerHTML='<span class="mesc-chip'+(mescFilter==='all'?' on':'')+'" onclick="mescSetFilter(\'all\')">Tout ('+lib.length+')</span>'
+      + present.map(function(m){ return '<span class="mesc-chip'+(mescFilter===m?' on':'')+'" onclick="mescSetFilter(\''+m.replace(/\\/g,'').replace(/'/g,"\\'")+'\')">'+E(m)+'</span>'; }).join('');
+  }
+  var q=((document.getElementById('mescSearch')||{}).value||'').toLowerCase().trim();
+  var items=lib.filter(function(x){
+    if(mescFilter!=='all'){ if((x.mat||'Sans matière')!==mescFilter) return false; }
+    if(q){ return (x.title+' '+x.content+' '+x.mat).toLowerCase().indexOf(q)!==-1; }
+    return true;
+  });
+  if(!items.length){ grid.innerHTML='<div class="mesc-empty">Aucun cours ici pour l\'instant. Clique sur « ➕ Ajouter un cours », ou écris une note dans <b>Prise de notes</b> — elle apparaîtra automatiquement.</div>'; return; }
+  grid.innerHTML=items.map(function(x){
+    var dt=x.updated?new Date(x.updated).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'';
+    var words=(x.content||'').trim()? (x.content||'').trim().split(/\s+/).length : 0;
+    var del = x.source==='cours' ? '<button class="mesc-mini del" onclick="mescDelete(\''+x.id+'\')" title="Supprimer">🗑️</button>' : '';
+    var openBtn = x.source==='note' ? '<button class="mesc-mini" onclick="mescOpenNote('+x.rawId+')">✏️ Ouvrir</button>' : '<button class="mesc-mini" onclick="mescPreview(\''+x.id+'\')">👁️ Voir</button>';
+    return '<div class="mesc-card"><div class="mesc-card-top"><div class="mesc-card-title">'+E(x.title)+'</div></div>'
+      +'<div class="mesc-card-tags"><span class="mesc-tag '+x.source+'">'+(x.source==='note'?'📓 Note':'📄 Cours')+'</span>'+(x.mat?'<span class="mesc-tag">'+E(x.mat)+'</span>':'')+'<span class="mesc-tag" style="background:transparent;color:var(--g400)">'+words+' mots · '+dt+'</span></div>'
+      +'<div class="mesc-card-actions">'+openBtn
+      +'<button class="mesc-mini" onclick="mescUse(\''+x.id+'\',\'fiche\')">📄 Fiche</button>'
+      +'<button class="mesc-mini" onclick="mescUse(\''+x.id+'\',\'flash\')">🃏 Flashcards</button>'
+      +'<button class="mesc-mini" onclick="mescUse(\''+x.id+'\',\'schema\')">📜 Schéma</button>'
+      +del+'</div></div>';
+  }).join('');
+}
+function mescDelete(id){
+  if(!confirm('Supprimer ce cours enregistré ?')) return;
+  var raw=Number(id.slice(1));
+  mescSetCourses(mescGetCourses().filter(function(c){ return c.id!==raw; }));
+  mescRender();
+}
+function mescOpenNote(rawId){
+  if(typeof showPage==='function') showPage('notes',null);
+  if(typeof openNote==='function') setTimeout(function(){ try{ openNote(rawId); }catch(e){} },150);
+}
+function mescPreview(id){
+  var it=mescItem(id); if(!it) return;
+  var w=window.open('','_blank'); if(!w){ toast('Autorise les pop-ups','⚠️'); return; }
+  var E=function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  w.document.open();
+  w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>'+E(it.title)+'</title></head><body style="font-family:Georgia,serif;max-width:760px;margin:26px auto;padding:0 18px;line-height:1.6;color:#1a1a1a"><h2 style="color:#0a2a52;margin-bottom:2px">'+E(it.title)+'</h2><div style="color:#8a8a8a;font-size:13px;margin-bottom:18px">'+E(it.mat)+'</div><div style="white-space:pre-wrap">'+E(it.content)+'</div></body></html>');
+  w.document.close();
+}
+function mescUse(id,target){
+  var it=mescItem(id); if(!it) return;
+  var c=it.content||'';
+  if(!c.trim()){ toast('Ce cours est vide','⚠️'); return; }
+  if(target==='fiche'){
+    if(typeof showPage==='function') showPage('fiches',null);
+    var el=document.getElementById('profFicheCours'); if(el) el.value=c;
+    toast('Cours chargé dans Fiches IA 📄 — clique sur Générer','✅');
+  } else if(target==='schema'){
+    if(typeof showPage==='function') showPage('schemas',null);
+    if(typeof setSchemaMode==='function') setSchemaMode('libre', document.getElementById('schModeLibre'));
+    var el2=document.getElementById('schInput'); if(el2) el2.value=c;
+    toast('Cours chargé dans Schémas 📜 — clique sur Générer','✅');
+  } else if(target==='flash'){
+    if(typeof showPage==='function') showPage('flashcards',null);
+    var el3=document.getElementById('flashInput'); if(el3) el3.value=c;
+    var p=document.getElementById('fcGenPanel'); if(p && p.style.display==='none' && typeof toggleFcGen==='function') toggleFcGen();
+    toast('Cours chargé dans Flashcards 🃏 — clique sur Générer','✅');
+  }
+}
+if(document.readyState!=='loading'){ setTimeout(mescRender,400); } else document.addEventListener('DOMContentLoaded',function(){ setTimeout(mescRender,400); });
 
 function toggleProfAnswer(button) {
   var answer = button.parentNode.querySelector('.prof-answer');
