@@ -6419,6 +6419,7 @@ aside.sidebar {
 
   <!-- Filtres matière -->
   <div class="deck-filter fc2-filters" id="deckFilter"></div>
+  <div class="deck-filter fc2-filters" id="deckSubFilter" style="margin-top:-4px"></div>
 
   <!-- Toolbar épurée -->
   <div class="fc2-bar">
@@ -6453,6 +6454,8 @@ aside.sidebar {
       <option value="autre">Autre (préciser)</option>
     </select>
     <input type="text" id="flashMatiereAutre" class="flash-autre" placeholder="Nom de la matière...">
+    <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin:10px 0 4px">📁 Dossier <span style="font-weight:400;color:var(--g400)">(optionnel — ex : « Chapitre 2 », pour ranger dans la matière)</span></label>
+    <input type="text" id="flashFolder" class="flash-autre" style="display:block" placeholder="Nom du dossier (laisser vide si aucun)">
     <label style="font-size:11px;font-weight:600;color:var(--g600);display:block;margin:12px 0 4px">📝 Colle ton cours — l'IA en fait des flashcards</label>
     <textarea class="flash-textarea" id="flashInput" placeholder="Ex : La microéconomie analyse les comportements des agents..." style="min-height:95px"></textarea>
     <button class="flash-btn" id="flashGenBtn" onclick="generateFlashcardsGroq()" style="margin-top:10px">✨ Générer les flashcards</button>
@@ -6476,6 +6479,7 @@ aside.sidebar {
       <div class="card-3d" id="card3d" onclick="flipCard()">
         <div class="card-face card-front">
           <button class="card-del-btn" onclick="event.stopPropagation();deleteCurrentCard()" title="Supprimer">✕</button>
+          <button class="card-del-btn" style="right:38px;background:rgba(255,255,255,.18)" onclick="event.stopPropagation();setCardFolder()" title="Ranger dans un dossier">📁</button>
           <div class="card-cat" id="cCat">Droit</div>
           <div class="card-text" id="cQ">Qu'est-ce que la règle de droit ?</div>
           <div class="card-hint">Clique pour voir la réponse →</div><div id="sm2Label" style="font-size: 10px; color: rgb(156, 163, 175); margin-top: 6px; font-weight: 600; letter-spacing: 0.04em; display: none;"></div>
@@ -12493,7 +12497,8 @@ async function generateFlashcardsGroq() {
 
     console.log('Extracted JSON:', clean); // Debug
 
-    cards = cards.map(function(c) { return { cat: matiere, q: String(c.q==null?'':c.q), r: String(c.r==null?'':c.r), status: 'none' }; });
+    var _fold = dgFlashFolder();
+    cards = cards.map(function(c) { return { cat: matiere, folder: _fold, q: String(c.q==null?'':c.q), r: String(c.r==null?'':c.r), status: 'none' }; });
     deck  = cards.concat(deck);
     cardIdx = 0;
     renderFilters(); renderCard(); renderStats();
@@ -12542,6 +12547,7 @@ function getSelectedMatiere(){
   if(sel.value==='autre')return autre?autre.value.trim():'';
   return sel.value;
 }
+function dgFlashFolder(){ var f=document.getElementById('flashFolder'); return f?f.value.trim():''; }
 
 function toggleAutreMatiere(){
   var sel=document.getElementById('flashMatiereSelect');
@@ -12583,7 +12589,8 @@ function importFlashJSON(){
     var cleaned=raw.replace(/```json|```/g,'').trim();
     var cards=JSON.parse(cleaned);
     if(!Array.isArray(cards)||!cards[0]||!cards[0].q)throw new Error('Format invalide');
-    cards=cards.map(function(c){return {cat:matiere,q:String(c.q==null?'':c.q),r:String(c.r==null?'':c.r),status:'none'}});
+    var _fold2=dgFlashFolder();
+    cards=cards.map(function(c){return {cat:matiere,folder:_fold2,q:String(c.q==null?'':c.q),r:String(c.r==null?'':c.r),status:'none'}});
     deck=cards.concat(deck);
     cardIdx=0;
     renderFilters();renderCard();renderStats();renderStats();
@@ -12599,7 +12606,7 @@ function importFlashJSON(){
 }
 
 
-let deck=[...CARDS_INIT],cardIdx=0,flipped=false,activeFilter='all';
+let deck=[...CARDS_INIT],cardIdx=0,flipped=false,activeFilter='all',folderFilter='all';
 
 
 function sm2CardLabel(card) {
@@ -12616,9 +12623,9 @@ function renderCard(){
   const d=getFilteredDeck();
   if(!d.length)return;
   const c=d[cardIdx%d.length];
-  document.getElementById('cCat').textContent=c.cat;
+  document.getElementById('cCat').textContent=c.cat+(c.folder?' · 📁 '+c.folder:'');
   document.getElementById('cQ').textContent=c.q;
-  document.getElementById('cCatB').textContent=c.cat;
+  document.getElementById('cCatB').textContent=c.cat+(c.folder?' · 📁 '+c.folder:'');
   document.getElementById('cR').textContent=c.r;
   var _c3d=document.getElementById('card3d');
   _c3d.classList.remove('flipped','card-entering');
@@ -12639,6 +12646,16 @@ function renderCard(){
   }
 }
 
+function setCardFolder(){
+  var d=getFilteredDeck(); if(!d.length)return;
+  var c=d[cardIdx%d.length];
+  var fo=prompt('Ranger cette carte dans quel dossier ?\n(laisse vide pour aucun dossier)', c.folder||'');
+  if(fo===null)return;
+  c.folder=fo.trim();
+  if(typeof saveDeck==='function')saveDeck();
+  renderFilters(); renderFolderChips(activeFilter); renderCard();
+  toast(c.folder?('Rangée dans 📁 '+c.folder):'Dossier retiré','✅');
+}
 function flipCard(){
   flipped=!flipped;
   var _c3dFlip=document.getElementById('card3d');
@@ -12774,16 +12791,17 @@ function rateCard(status){
 }
 
 function getFilteredDeck(){
-  if(activeFilter==='all')return deck;
-  if(activeFilter==='active')return deck.filter(function(c){return c.status!=='easy';});
-  if(activeFilter==='due'){
+  var base;
+  if(activeFilter==='all') base=deck;
+  else if(activeFilter==='active') base=deck.filter(function(c){return c.status!=='easy';});
+  else if(activeFilter==='due'){
     var today=sm2Today();
-    return deck.filter(function(c){
-      if(!c.sm2) return c.status!=='easy';
-      return c.sm2.due<=today;
-    });
+    base=deck.filter(function(c){ if(!c.sm2) return c.status!=='easy'; return c.sm2.due<=today; });
   }
-  return deck.filter(function(c){return c.cat===activeFilter;});
+  else base=deck.filter(function(c){return c.cat===activeFilter;});
+  // Sous-filtre par dossier (uniquement quand une matière précise est sélectionnée)
+  if(folderFilter && folderFilter!=='all'){ base=base.filter(function(c){return (c.folder||'')===folderFilter;}); }
+  return base;
 }
 
 function deleteCurrentCard(){
@@ -13039,11 +13057,31 @@ function deleteAllCards(){
 
 function filterDeck(cat,el){
   activeFilter=cat;
-  document.querySelectorAll('.dftag').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
+  folderFilter='all';
+  document.querySelectorAll('#deckFilter .dftag').forEach(x=>x.classList.remove('on'));
+  if(el) el.classList.add('on');
+  renderFolderChips(cat);
   cardIdx=0;renderCard();
   const n=getFilteredDeck().length;
   document.getElementById('deckInfo').textContent=n+' carte'+(n>1?'s':'')+' · '+(cat==='all'?'Toutes matières':cat);
+}
+// Sous-dossiers d'une matière
+function renderFolderChips(cat){
+  var sub=document.getElementById('deckSubFilter'); if(!sub)return;
+  if(cat==='all'||cat==='active'||cat==='due'){ sub.innerHTML=''; return; }
+  var folders=[]; deck.forEach(function(c){ if(c.cat===cat && c.folder && folders.indexOf(c.folder)<0) folders.push(c.folder); });
+  if(!folders.length){ sub.innerHTML=''; return; }
+  var html='<span class="dftag'+(folderFilter==='all'?' on':'')+'" onclick="filterFolder(\'all\',this)">📂 Tous</span>';
+  folders.forEach(function(fo){ var safe=fo.replace(/\\/g,'').replace(/'/g,"\\'"); html+='<span class="dftag'+(folderFilter===fo?' on':'')+'" onclick="filterFolder(\''+safe+'\',this)">📁 '+fo+'</span>'; });
+  sub.innerHTML=html;
+}
+function filterFolder(fo,el){
+  folderFilter=fo;
+  document.querySelectorAll('#deckSubFilter .dftag').forEach(x=>x.classList.remove('on'));
+  if(el) el.classList.add('on');
+  cardIdx=0;renderCard();
+  var n=getFilteredDeck().length;
+  document.getElementById('deckInfo').textContent=n+' carte'+(n>1?'s':'')+(fo!=='all'?' · 📁 '+fo:'');
 }
 
 renderFilters();renderCard();
