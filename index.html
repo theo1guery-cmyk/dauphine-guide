@@ -6575,6 +6575,7 @@ aside.sidebar {
 
   <!-- Filtres matière -->
   <div id="ap-filters" style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 24px"><button data-cat="all" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(26, 86, 196); background: rgb(26, 86, 196); color: rgb(255, 255, 255); cursor: pointer; font-family: Figtree, sans-serif;">Toutes</button><button data-cat="Comptabilité" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Comptabilité</button><button data-cat="Droit" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Droit</button><button data-cat="Droit constit." style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Droit constit.</button><button data-cat="Macroéco" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Macroéco</button><button data-cat="Maths" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Maths</button><button data-cat="Microéco" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Microéco</button><button data-cat="Sciences Po" style="padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1.5px solid rgb(229, 231, 235); background: rgb(255, 255, 255); color: rgb(75, 85, 99); cursor: pointer; font-family: Figtree, sans-serif;">Sciences Po</button></div>
+  <div id="ap-folders" style="display:flex;gap:7px;flex-wrap:wrap;margin:-14px 0 24px"></div>
 
   <!-- Compteurs + barre -->
   <div style="display:flex;align-items:center;gap:16px;font-size:13px;font-weight:700;margin-bottom:10px;flex-wrap:wrap">
@@ -6628,7 +6629,7 @@ aside.sidebar {
 
   (function() {
     var CARDS = [{"cat": "Droit", "q": "Qu'est-ce que la règle de droit ?", "r": "Règle de conduite sociale, générale, abstraite et obligatoire, assortie d'une sanction étatique.", "status": "none"}, {"cat": "Droit", "q": "Hiérarchie des normes (pyramide de Kelsen)", "r": "Constitution → Traités int. → Lois organiques → Lois ordinaires → Règlements (décrets, arrêtés).", "status": "none"}, {"cat": "Droit", "q": "Qu'est-ce que l'effet relatif des conventions ?", "r": "Le contrat ne crée d'obligations qu'entre les parties — ne profite ni ne nuit aux tiers (art. 1199 C.civ).", "status": "none"}, {"cat": "Droit", "q": "Définition de l'infraction pénale", "r": "Fait prévu et puni par la loi. 3 éléments : légal, matériel, moral.", "status": "none"}, {"cat": "Droit", "q": "Nullum crimen, nulla poena sine lege", "r": "Principe de légalité des peines : on ne peut être puni que pour un fait prévu par un texte antérieur.", "status": "none"}, {"cat": "Droit", "q": "Conseil de l'Europe vs Union européenne", "r": "CdE : 46 États, CEDH. UE : 27 États, marché unique, CJUE, droit contraignant.", "status": "none"}, {"cat": "Droit constit.", "q": "Exécutif bicéphale sous la Ve République", "r": "Président (élu SUD, 5 ans) + Premier ministre nommé par le Président, responsable devant l'AN.", "status": "none"}, {"cat": "Droit constit.", "q": "Qu'est-ce qu'une QPC ?", "r": "Question Prioritaire de Constitutionnalité : contester la conformité d'une loi aux droits fondamentaux (art. 61-1).", "status": "none"}, {"cat": "Microéco", "q": "Contrainte budgétaire du consommateur", "r": "pX·X + pY·Y ≤ R — dépenses limitées au revenu R aux prix pX, pY.", "status": "none"}, {"cat": "Microéco", "q": "Condition d'optimum du consommateur", "r": "TmS(x/y) = px/py — le taux marginal de substitution égale le rapport des prix.", "status": "none"}, {"cat": "Microéco", "q": "Effet de substitution", "r": "Hausse de prix d'un bien → substitution vers le bien moins cher, à utilité constante.", "status": "none"}, {"cat": "Microéco", "q": "Optimum de Pareto", "r": "Allocation où améliorer la situation d'un agent est impossible sans détériorer celle d'un autre.", "status": "none"}, {"cat": "Macroéco", "q": "PIB par l'approche dépenses", "r": "PIB = C + I + G + (X − M)", "status": "none"}, {"cat": "Macroéco", "q": "Modèle de Solow (résumé)", "r": "Y = f(K, L). Capital s'accumule jusqu'à l'état stationnaire. Croissance LT = progrès technique.", "status": "none"}, {"cat": "Macroéco", "q": "3 fonctions de la monnaie", "r": "Intermédiaire des échanges · Unité de compte · Réserve de valeur.", "status": "none"}, {"cat": "Comptabilité", "q": "Principe de prudence", "r": "On comptabilise les pertes probables immédiatement, mais on n'anticipe pas les gains futurs.", "status": "none"}, {"cat": "Comptabilité", "q": "Résultat net comptable", "r": "Résultat = Produits – Charges. Bénéfice si > 0, perte si < 0.", "status": "none"}, {"cat": "Comptabilité", "q": "Différence charge / décaissement", "r": "Charge diminue le résultat (ex. amortissement). Décaissement = sortie de trésorerie réelle.", "status": "none"}, {"cat": "Maths", "q": "Condition nécessaire d'extremum f(x,y)", "r": "∂f/∂x = 0 ET ∂f/∂y = 0 (point critique). Vérifier le hessien pour la suffisance.", "status": "none"}, {"cat": "Maths", "q": "Méthode du Lagrangien", "r": "L(x,y,λ) = f(x,y) − λ·g(x,y). Résoudre ∇L = 0 pour optimiser sous contrainte g(x,y) = 0.", "status": "none"}, {"cat": "Sciences Po", "q": "3 types de légitimité (Weber)", "r": "Traditionnelle (coutume) · Charismatique (personnalité) · Rationnelle-légale (droit, procédure).", "status": "none"}, {"cat": "Sciences Po", "q": "Gouvernement représentatif", "r": "Délégation du pouvoir à des représentants élus, distinct de la démocratie directe. Principe de mandat.", "status": "none"}];
-    var ap = { pile:[], cur:null, ok:0, ko:0, total:0, cat:'all' };
+    var ap = { pile:[], cur:null, ok:0, ko:0, total:0, cat:'all', folder:'all' };
 
     function g(id) { return document.getElementById(id); }
 
@@ -6641,8 +6642,9 @@ aside.sidebar {
     }
     function getDeck() {
       var src = getLive();
-      if (ap.cat === 'all') return src;
-      return src.filter(function(c) { return c.cat === ap.cat; });
+      if (ap.cat !== 'all') src = src.filter(function(c) { return c.cat === ap.cat; });
+      if (ap.folder && ap.folder !== 'all') src = src.filter(function(c) { return (c.folder||'') === ap.folder; });
+      return src;
     }
 
     function start() {
@@ -6771,13 +6773,39 @@ aside.sidebar {
           + 'cursor:pointer;font-family:"Figtree",sans-serif';
         b.addEventListener('click', function() {
           ap.cat = cat;
+          ap.folder = 'all';
           buildFilters();
+          buildFolderFilters();
           start();
         });
         bar.appendChild(b);
       }
       makeBtn('Toutes', 'all');
       cats.forEach(function(cat) { makeBtn(cat, cat); });
+      buildFolderFilters();
+    }
+    function buildFolderFilters() {
+      var bar = g('ap-folders'); if (!bar) return;
+      bar.innerHTML = '';
+      if (ap.cat === 'all') return;
+      var src = getLive(), folders = [];
+      src.forEach(function(c) { if (c.cat === ap.cat && c.folder && folders.indexOf(c.folder) < 0) folders.push(c.folder); });
+      if (!folders.length) return;
+      folders.sort();
+      function fbtn(label, fo) {
+        var b = document.createElement('button');
+        b.textContent = label;
+        var active = fo === ap.folder;
+        b.style.cssText = 'padding:5px 12px;border-radius:100px;font-size:11.5px;font-weight:600;'
+          + 'border:1.5px solid ' + (active ? '#1a56c4' : '#e5e7eb') + ';'
+          + 'background:' + (active ? '#eef4ff' : '#fff') + ';'
+          + 'color:' + (active ? '#1a56c4' : '#6b7280') + ';'
+          + 'cursor:pointer;font-family:"Figtree",sans-serif';
+        b.addEventListener('click', function() { ap.folder = fo; buildFolderFilters(); start(); });
+        bar.appendChild(b);
+      }
+      fbtn('📂 Tous les dossiers', 'all');
+      folders.forEach(function(fo) { fbtn('📁 ' + fo, fo); });
     }
 
     // Boutons
