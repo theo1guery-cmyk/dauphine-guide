@@ -12493,7 +12493,7 @@ async function generateFlashcardsGroq() {
 
     console.log('Extracted JSON:', clean); // Debug
 
-    cards = cards.map(function(c) { return { cat: matiere, q: c.q, r: c.r, status: 'none' }; });
+    cards = cards.map(function(c) { return { cat: matiere, q: String(c.q==null?'':c.q), r: String(c.r==null?'':c.r), status: 'none' }; });
     deck  = cards.concat(deck);
     cardIdx = 0;
     renderFilters(); renderCard(); renderStats();
@@ -12583,7 +12583,7 @@ function importFlashJSON(){
     var cleaned=raw.replace(/```json|```/g,'').trim();
     var cards=JSON.parse(cleaned);
     if(!Array.isArray(cards)||!cards[0]||!cards[0].q)throw new Error('Format invalide');
-    cards=cards.map(function(c){return {cat:matiere,q:c.q,r:c.r,status:'none'}});
+    cards=cards.map(function(c){return {cat:matiere,q:String(c.q==null?'':c.q),r:String(c.r==null?'':c.r),status:'none'}});
     deck=cards.concat(deck);
     cardIdx=0;
     renderFilters();renderCard();renderStats();renderStats();
@@ -13023,7 +13023,7 @@ function deleteCardByIndex(i){
 }
 
 function resetProgress(){
-  deck=deck.map(function(c){return {cat:c.cat,q:c.q,r:c.r,status:'none'};});
+  deck=deck.map(function(c){return {cat:c.cat,q:String(c.q==null?'':c.q),r:String(c.r==null?'':c.r),status:'none'};});
   renderManageList();
   renderStats();
   renderFilters();
@@ -15309,14 +15309,14 @@ function submitLearnAnswer(){
 
 function evaluateStrict(userAns){
   var c = learnState.current;
-  var correct = c.r||'';
+  var correct = String(c.r==null?'':c.r);
   var isOk = userAns.toLowerCase().trim() === correct.toLowerCase().trim();
   showLearnFeedback(isOk, userAns, correct);
 }
 
 function evaluateSimilar(userAns){
   var c = learnState.current;
-  var correct = c.r||'';
+  var correct = String(c.r==null?'':c.r);
   var inp = document.getElementById('learnInput');
   if(inp) inp.disabled = true;
   // Show loading
@@ -15383,7 +15383,7 @@ function checkRetype(){
   var next = document.getElementById('learnRetypeNext');
   if(!rt||!next)return;
   var c = learnState.current;
-  if(rt.value.toLowerCase().trim()===(c.r||'').toLowerCase().trim()){
+  if(rt.value.toLowerCase().trim()===String(c.r==null?'':c.r).toLowerCase().trim()){
     rt.style.borderColor='#16a34a';rt.style.background='#f0fdf4';
     next.style.display='block';
   }
@@ -15833,7 +15833,7 @@ async function notesGenGroq() {
     console.log('Extracted JSON for notesGen:', clean); // Debug
 
     cards = cards.map(function(c) {
-      return { cat: c.cat || mat, q: c.q, r: c.r, status: 'none' };
+      return { cat: c.cat || mat, q: String(c.q==null?'':c.q), r: String(c.r==null?'':c.r), status: 'none' };
     });
     deck = cards.concat(deck);
     saveDeck();
@@ -28066,7 +28066,7 @@ window.mmSendToFlashcards = async function() {
     var now = Date.now();
     cards.forEach(function(c) {
       if (!c.q || !c.r) return;
-      deck.unshift({ id: now + added, cat: c.cat || matiere, q: c.q, r: c.r, sm2_n: 0, sm2_ef: 2.5, sm2_next: 0 });
+      deck.unshift({ id: now + added, cat: c.cat || matiere, q: String(c.q==null?'':c.q), r: String(c.r==null?'':c.r), sm2_n: 0, sm2_ef: 2.5, sm2_next: 0 });
       added++;
     });
 
