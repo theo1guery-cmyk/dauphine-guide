@@ -10188,8 +10188,16 @@ window.openLegal=openLegal; window.closeLegal=closeLegal;
 <div class="manage-modal" id="manageModal" onclick="if(event.target===this)closeManage()">
   <div class="manage-inner">
     <div class="manage-head">
-      <h3>🗂️ Gérer les flashcards (<span id="manageCount">0</span>)</h3>
+      <h3>🗂️ Gérer & ranger les flashcards (<span id="manageCount">0</span>)</h3>
       <button class="manage-close" onclick="closeManage()">✕</button>
+    </div>
+    <div class="manage-tools" style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding:0 0 10px;border-bottom:1px solid var(--g100);margin-bottom:8px">
+      <select id="manageMatFilter" onchange="renderManageList()" style="border:1.5px solid var(--g200);border-radius:9px;padding:7px 10px;font-size:12px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main)"></select>
+      <span style="flex:1;min-width:8px"></span>
+      <input id="manageFolderInput" placeholder="📁 Nom du dossier…" list="manageFolderList" style="border:1.5px solid var(--g200);border-radius:9px;padding:7px 10px;font-size:12px;font-family:'Figtree',sans-serif;background:var(--bg-card,#fff);color:var(--text-main);min-width:140px">
+      <datalist id="manageFolderList"></datalist>
+      <button class="pdf-btn" onclick="manageAssignFolder()" style="background:var(--blue);color:#fff;border-color:var(--blue)">Ranger la sélection</button>
+      <button class="pdf-btn" onclick="manageToggleAll()">☑️ Tout</button>
     </div>
     <div class="manage-list" id="manageList"></div>
     <div class="manage-foot">
@@ -13018,16 +13026,55 @@ function renderManageList(){
   var list=document.getElementById('manageList');
   var cnt=document.getElementById('manageCount');
   if(cnt)cnt.textContent=deck.length;
+  // Remplir le filtre matière + la liste de dossiers existants
+  var mats=[]; deck.forEach(function(c){ if(mats.indexOf(c.cat)<0)mats.push(c.cat); });
+  var selEl=document.getElementById('manageMatFilter');
+  var curMat = selEl ? selEl.value : '';
+  if(selEl){ selEl.innerHTML='<option value="">Toutes les matières</option>'+mats.map(function(m){return '<option value="'+m.replace(/"/g,'')+'"'+(m===curMat?' selected':'')+'>'+m+'</option>';}).join(''); }
+  var dlEl=document.getElementById('manageFolderList');
+  if(dlEl){ var fset=[]; deck.forEach(function(c){ if(c.folder&&fset.indexOf(c.folder)<0)fset.push(c.folder); }); dlEl.innerHTML=fset.map(function(f){return '<option value="'+f.replace(/"/g,'')+'">';}).join(''); }
   if(!deck.length){list.innerHTML='<div style="text-align:center;padding:32px;color:var(--g400);font-size:13px">Aucune flashcard</div>';return;}
-  var statusLabel={easy:'✅ Facile',ok:'🟡 Moyen',hard:'🟠 Difficile',miss:'❌ Retravailler',none:'—'};
-  list.innerHTML=deck.map(function(c,i){
+  var statusLabel={easy:'✅',ok:'🟡',hard:'🟠',miss:'❌',none:'—'};
+  var rows=deck.map(function(c,i){ return {c:c,i:i}; });
+  if(curMat) rows=rows.filter(function(o){return o.c.cat===curMat;});
+  list.innerHTML=rows.map(function(o){
+    var c=o.c,i=o.i;
+    var fol = c.folder ? '<button class="manage-fold" onclick="setFolderByIndex('+i+')" style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:none;background:#e0edff;color:#0057ad;cursor:pointer;white-space:nowrap;flex-shrink:0">📁 '+c.folder+'</button>'
+                       : '<button class="manage-fold" onclick="setFolderByIndex('+i+')" style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;border:1px dashed var(--g300,#cbd5e1);background:transparent;color:var(--g400);cursor:pointer;white-space:nowrap;flex-shrink:0">📁 Ranger</button>';
     return '<div class="manage-item">'
+      +'<input type="checkbox" class="manage-chk" data-i="'+i+'" style="flex-shrink:0;width:16px;height:16px;cursor:pointer">'
       +'<span class="manage-cat">'+c.cat+'</span>'
       +'<span class="manage-q">'+c.q+'</span>'
-      +'<span style="font-size:10px;color:var(--g400);white-space:nowrap;flex-shrink:0">'+(statusLabel[c.status]||'—')+'</span>'
+      +fol
+      +'<span style="font-size:11px;color:var(--g400);flex-shrink:0">'+(statusLabel[c.status]||'—')+'</span>'
       +'<button class="manage-del" onclick="deleteCardByIndex('+i+')">&#x2715;</button>'
       +'</div>';
   }).join('');
+}
+// Ranger une carte (par index global dans deck)
+function setFolderByIndex(i){
+  var c=deck[i]; if(!c)return;
+  var fo=prompt('Ranger cette carte dans quel dossier ?\n(laisse vide pour aucun)', c.folder||'');
+  if(fo===null)return;
+  c.folder=fo.trim(); if(typeof saveDeck==='function')saveDeck();
+  renderManageList(); renderFilters();
+}
+// Ranger toutes les cartes cochées dans le dossier saisi
+function manageAssignFolder(){
+  var inp=document.getElementById('manageFolderInput');
+  var folder=inp?inp.value.trim():'';
+  var checks=document.querySelectorAll('.manage-chk:checked');
+  if(!checks.length){ toast('Coche d\'abord des cartes','⚠️'); return; }
+  var nb=0;
+  checks.forEach(function(ch){ var idx=parseInt(ch.getAttribute('data-i')); if(deck[idx]){ deck[idx].folder=folder; nb++; } });
+  if(typeof saveDeck==='function')saveDeck();
+  renderManageList(); renderFilters();
+  toast(nb+' carte'+(nb>1?'s':'')+(folder?(' rangée'+(nb>1?'s':'')+' dans 📁 '+folder):' sorties du dossier'),'✅');
+}
+function manageToggleAll(){
+  var checks=document.querySelectorAll('.manage-chk');
+  var allOn=true; checks.forEach(function(c){ if(!c.checked) allOn=false; });
+  checks.forEach(function(c){ c.checked=!allOn; });
 }
 
 function deleteCardByIndex(i){
@@ -13041,7 +13088,7 @@ function deleteCardByIndex(i){
 }
 
 function resetProgress(){
-  deck=deck.map(function(c){return {cat:c.cat,q:String(c.q==null?'':c.q),r:String(c.r==null?'':c.r),status:'none'};});
+  deck=deck.map(function(c){return {cat:c.cat,folder:c.folder||'',q:String(c.q==null?'':c.q),r:String(c.r==null?'':c.r),status:'none'};});
   renderManageList();
   renderStats();
   renderFilters();
